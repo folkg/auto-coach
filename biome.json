@@ -4,10 +4,13 @@
   "files": {
     "ignoreUnknown": false,
     "ignore": [
+      "node_modules/**/*",
       "**/node_modules/**/*",
-      "eslint.config.mjs",
-      "functions/lib",
-      "dist/**/*"
+      "client/.angular/**/*",
+      "client/dist/**/*",
+      "server/dist/**/*",
+      "server/functions/lib/**/*",
+      "server/coverage/**/*"
     ],
     "maxSize": 3145278
   },
@@ -63,7 +66,8 @@
     "ignore": [
       "node_modules/**/*",
       "**/node_modules/**/*",
-      "**/vitest.config.js"
+      "client/vitest.config.ts",
+      "server/functions/vite.config.ts"
     ]
   },
   "javascript": {
