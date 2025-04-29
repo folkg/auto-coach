@@ -6,10 +6,6 @@
     "declaration": false,
     "noEmit": false
   },
-  "files": [
-    "src/main.ts"
-  ],
-  "exclude": [
-    "**/*.spec.ts"
-  ]
+  "files": ["src/main.ts"],
+  "exclude": ["**/*.spec.ts"]
 }

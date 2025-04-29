@@ -1,7 +1,7 @@
 import { type } from "arktype";
 import { GoogleAuth } from "google-auth-library";
 import spacetime from "spacetime";
-import { assertType } from "../helpers/checks";
+import { assertType } from "../helpers/checks.js";
 
 /**
  * The properties of the Player object are not consistent.

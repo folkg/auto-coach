@@ -1,4 +1,3 @@
-
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
@@ -24,10 +23,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "include": [
-    "src/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*.d.ts"],
+  "exclude": ["node_modules"]
 }

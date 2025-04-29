@@ -2,10 +2,7 @@
   "name": "auto-coach-monorepo",
   "private": true,
   "type": "module",
-  "workspaces": [
-    "client",
-    "server/functions"
-  ],
+  "workspaces": ["client", "server/functions"],
   "scripts": {
     "test": "bun --filter '*' test",
     "test:ci": "bun --filter '*' test:ci",

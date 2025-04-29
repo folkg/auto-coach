@@ -1,7 +1,7 @@
 import { type } from "arktype";
-import { TransactionDetailsSchema } from "../services/yahooAPI/yahooTeamProcesssing.services";
-import { PlayerSchema } from "./Player";
-import { SportLeagueSchema } from "./SportLeague";
+import { TransactionDetailsSchema } from "../services/yahooAPI/yahooTeamProcesssing.services.js";
+import { PlayerSchema } from "./Player.js";
+import { SportLeagueSchema } from "./SportLeague.js";
 
 const CommonTeam = type({
   team_key: "string",

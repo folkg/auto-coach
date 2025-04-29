@@ -10,11 +10,6 @@
     "declaration": true,
     "declarationMap": true
   },
-  "exclude": [
-    "node_modules",
-    "lib"
-  ],
-  "include": [
-    "src/**/*.ts"
-  ]
+  "exclude": ["node_modules", "lib"],
+  "include": ["src/**/*.ts"]
 }

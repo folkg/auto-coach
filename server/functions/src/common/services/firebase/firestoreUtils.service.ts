@@ -1,5 +1,5 @@
 import { logger } from "firebase-functions";
-import { isEqual } from "lodash";
+import { deepEqual } from "../../helpers/checks.js";
 import type { FirestoreTeam, TeamOptimizer } from "../../interfaces/Team.js";
 import { updateTeamFirestore } from "./firestore.service.js";
 
@@ -46,7 +46,7 @@ export async function patchTeamChangesInFirestore(
     for (const key of sharedKeys) {
       const yahooValue = yahooTeam[key as keyof TeamOptimizer];
       const firestoreValue = firestoreTeam[key as keyof FirestoreTeam];
-      if (!isEqual(yahooValue, firestoreValue)) {
+      if (!deepEqual(yahooValue, firestoreValue)) {
         differences[key] = yahooValue;
       }
     }
