@@ -1,10 +1,28 @@
 {
-  "name": "auto-coach",
+  "name": "auto-coach-monorepo",
+  "private": true,
   "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest"
+  "workspaces": [
+    "client",
+    "server/functions"
+  ],
+  "scripts": {
+    "test": "bun --filter '*' test",
+    "test:ci": "bun --filter '*' test:ci",
+    "checks": "bun --filter '*' checks",
+    "fix": "bun --filter '*' fix",
+    "types": "bun --filter '*' types",
+    "all-checks": "bun --filter '*' all-checks",
+    "build": "bun --filter '*' build"
   },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
+  "dependencies": {
+    "arktype": "2.1.9",
+    "spacetime": "7.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@vitest/coverage-v8": "3.0.6",
+    "typescript": "5.8.3",
+    "vitest": "3.0.6"
   }
 }
