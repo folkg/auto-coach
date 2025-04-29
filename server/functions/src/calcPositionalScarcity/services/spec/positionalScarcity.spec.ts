@@ -1,4 +1,5 @@
 import {
+  type MockInstance,
   afterEach,
   beforeAll,
   beforeEach,
@@ -710,17 +711,12 @@ describe("generateFetchPlayerPromises", () => {
   const uid = "testuid";
   const position = "F";
   const gameCode = "nhl";
-
-  beforeAll(() => {
-    vi.restoreAllMocks();
-  });
+  let getTopPlayersGeneralSpy: MockInstance;
 
   beforeEach(() => {
-    getTopPlayersGeneralSpy.mockResolvedValue(createMock({}));
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
+    getTopPlayersGeneralSpy = vi
+      .spyOn(yahooAPI, "getTopPlayersGeneral")
+      .mockResolvedValue(createMock({}));
   });
 
   it("should return an array of 1 promise if count is <= 25", async () => {

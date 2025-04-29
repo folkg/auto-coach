@@ -13,6 +13,7 @@
     "deploy:email": "bun run pp && firebase deploy --only functions:email",
     "deploy:tx": "bun run pp && firebase deploy --only functions:transactions",
     "deploy:notblock": "bun run pp && firebase deploy --only functions:lineup,functions:email,functions:transactions",
+    "deploy:dry": "bun run pp && firebase deploy --only functions --dry-run && echo 'Server dry run complete!'",
     "pp": "bun run all-checks && bun run build",
     "logs": "firebase functions:log",
     "test:debug": "vitest --test-timeout=999999999 --silent",
@@ -21,7 +22,7 @@
     "checks": "bunx biome check",
     "fix": "bunx biome check --fix",
     "types": "tsc --noEmit",
-    "all-checks": "bun run fix && bun run types && bun run test:ci",
+    "all-checks": "bun run fix && bun run types && bun run test:ci && echo 'All Server checks passed!'",
     "coverage": "vitest --coverage --silent"
   },
   "engines": {
@@ -31,11 +32,11 @@
   "main": "lib/index.js",
   "dependencies": {
     "@sendgrid/mail": "8.1.5",
-    "axios": "1.8.4",
+    "axios": "1.9.0",
     "axios-retry": "4.5.0",
     "dotenv": "16.5.0",
-    "fast-xml-parser": "4.5.3",
-    "firebase-admin": "13.2.0",
+    "fast-xml-parser": "5.2.1",
+    "firebase-admin": "13.3.0",
     "firebase-functions": "6.3.2",
     "js2xmlparser": "5.0.0",
     "p-limit": "6.2.0"
