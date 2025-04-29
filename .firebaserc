@@ -1,4 +1,7 @@
 {
+  "projects": {
+    "default": "auto-gm-372620"
+  },
   "targets": {
     "auto-gm-372620": {
       "hosting": {
@@ -7,8 +10,5 @@
         ]
       }
     }
-  },
-  "projects": {
-    "default": "auto-gm-372620"
   }
 }

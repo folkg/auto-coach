@@ -1,0 +1,83 @@
+{
+  "hosting": {
+    "public": "client/dist/auto-gm/browser",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/fetchuserteams",
+        "run": {
+          "serviceId": "lineup-fetchuserteams",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/api/gettransactions",
+        "run": {
+          "serviceId": "transactions-gettransactions",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/api/posttransactions",
+        "run": {
+          "serviceId": "transactions-posttransactions",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "/api/sendfeedbackemail",
+        "run": {
+          "serviceId": "email-sendfeedbackemail",
+          "region": "us-central1"
+        }
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "server/functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        ".gitignore",
+        "tsconfig.json",
+        "vite.config.ts",
+        "firebase-debug.log",
+        "firestore-debug.log",
+        ".eslintrc.cjs",
+        "ui-debug.log",
+        "src",
+        "coverage"
+      ],
+      "runtime": "nodejs22"
+    }
+  ],
+  "emulators": {
+    "firestore": {
+      "host": "localhost",
+      "port": 5000
+    },
+    "hosting": {
+      "port": 5001
+    },
+    "functions": {
+      "port": 5002
+    },
+    "auth": {
+      "port": 9099
+    }
+  }
+}
