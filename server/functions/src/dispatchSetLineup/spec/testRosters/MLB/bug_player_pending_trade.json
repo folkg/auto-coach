@@ -1,0 +1,760 @@
+{
+  "weekly_deadline": "intraday",
+  "current_season_adds": 1,
+  "start_date": 1680159600000,
+  "max_weekly_adds": 4,
+  "allow_dropping": false,
+  "coverage_period": "2023-05-17",
+  "game_code": "mlb",
+  "team_key": "422.l.119636.t.8",
+  "roster_positions": {
+    "BN": 5,
+    "P": 3,
+    "SS": 1,
+    "3B": 1,
+    "SP": 3,
+    "C": 1,
+    "1B": 1,
+    "RP": 2,
+    "OF": 3,
+    "IL": 3,
+    "2B": 1,
+    "Util": 2
+  },
+  "allow_adding": false,
+  "automated_transaction_processing": true,
+  "transactions": [
+    [
+      {
+        "trade_note": "",
+        "tradee_team_name": "Swaffles waffle shop",
+        "current_login_can_respond": 1,
+        "trader_team_name": "YorDONGIN",
+        "trade_roster_reflect_key": "2023-05-19",
+        "trade_proposed_time": "1684329869",
+        "transaction_key": "422.l.119636.pt.170",
+        "status": "proposed",
+        "tradee_team_key": "422.l.119636.t.8",
+        "trader_team_key": "422.l.119636.t.1",
+        "type": "pending_trade",
+        "tradee_unused_roster_spots": 0
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.11809"
+                },
+                {
+                  "player_id": "11809"
+                },
+                {
+                  "name": {
+                    "last": "Volpe",
+                    "full": "Anthony Volpe",
+                    "ascii_last": "Volpe",
+                    "ascii_first": "Anthony",
+                    "first": "Anthony"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "NYY"
+                },
+                {
+                  "display_position": "SS"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "destination_team_key": "422.l.119636.t.8",
+                    "source_type": "team",
+                    "destination_type": "team",
+                    "source_team_key": "422.l.119636.t.1",
+                    "type": "pending_trade",
+                    "destination_team_name": "Swaffles waffle shop",
+                    "source_team_name": "YorDONGIN"
+                  }
+                ]
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.10514"
+                },
+                {
+                  "player_id": "10514"
+                },
+                {
+                  "name": {
+                    "last": "Castillo",
+                    "ascii_first": "Luis",
+                    "first": "Luis",
+                    "ascii_last": "Castillo",
+                    "full": "Luis Castillo"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "SEA"
+                },
+                {
+                  "display_position": "SP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "source_team_name": "YorDONGIN",
+                    "destination_team_name": "Swaffles waffle shop",
+                    "destination_team_key": "422.l.119636.t.8",
+                    "type": "pending_trade",
+                    "destination_type": "team",
+                    "source_type": "team",
+                    "source_team_key": "422.l.119636.t.1"
+                  }
+                ]
+              }
+            ]
+          },
+          "2": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.11573"
+                },
+                {
+                  "player_id": "11573"
+                },
+                {
+                  "name": {
+                    "full": "Wander Franco",
+                    "ascii_first": "Wander",
+                    "last": "Franco",
+                    "first": "Wander",
+                    "ascii_last": "Franco"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "TB"
+                },
+                {
+                  "display_position": "SS"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "destination_type": "team",
+                    "source_team_name": "Swaffles waffle shop",
+                    "source_type": "team",
+                    "destination_team_key": "422.l.119636.t.1",
+                    "source_team_key": "422.l.119636.t.8",
+                    "destination_team_name": "YorDONGIN",
+                    "type": "pending_trade"
+                  }
+                ]
+              }
+            ]
+          },
+          "3": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.10730"
+                },
+                {
+                  "player_id": "10730"
+                },
+                {
+                  "name": {
+                    "last": "Woodruff",
+                    "full": "Brandon Woodruff",
+                    "ascii_first": "Brandon",
+                    "first": "Brandon",
+                    "ascii_last": "Woodruff"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "MIL"
+                },
+                {
+                  "display_position": "SP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "source_type": "team",
+                    "source_team_key": "422.l.119636.t.8",
+                    "type": "pending_trade",
+                    "source_team_name": "Swaffles waffle shop",
+                    "destination_type": "team",
+                    "destination_team_key": "422.l.119636.t.1",
+                    "destination_team_name": "YorDONGIN"
+                  }
+                ]
+              }
+            ]
+          },
+          "count": 4
+        }
+      }
+    ]
+  ],
+  "players": [
+    {
+      "is_editable": true,
+      "eligible_positions": ["C", "Util"],
+      "ranks": {
+        "next4Weeks": -1,
+        "last14Days": 153,
+        "restOfSeason": 674,
+        "last4Weeks": -1,
+        "next7Days": 856,
+        "last30Days": 31,
+        "projectedWeek": -1
+      },
+      "is_undroppable": false,
+      "is_starting": "N/A",
+      "is_playing": true,
+      "percent_started": 85,
+      "percent_owned": 90,
+      "injury_status": "Healthy",
+      "player_key": "422.p.10929",
+      "selected_position": "C",
+      "player_name": "Sean Murphy"
+    },
+    {
+      "injury_status": "Healthy",
+      "is_starting": "N/A",
+      "percent_started": 10,
+      "is_undroppable": false,
+      "player_name": "Isaac Paredes",
+      "selected_position": "1B",
+      "ranks": {
+        "restOfSeason": 1177,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "last30Days": 76,
+        "next7Days": 314,
+        "last14Days": 81
+      },
+      "percent_owned": 16,
+      "eligible_positions": ["1B", "2B", "3B", "Util"],
+      "is_playing": true,
+      "is_editable": true,
+      "player_key": "422.p.10881"
+    },
+    {
+      "is_undroppable": false,
+      "eligible_positions": ["2B", "SS", "Util"],
+      "is_editable": true,
+      "ranks": {
+        "next4Weeks": -1,
+        "last30Days": 850,
+        "last14Days": 752,
+        "next7Days": 119,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "restOfSeason": 157
+      },
+      "player_name": "Andrés Giménez",
+      "injury_status": "Healthy",
+      "is_starting": "N/A",
+      "percent_owned": 51,
+      "player_key": "422.p.10919",
+      "is_playing": true,
+      "selected_position": "2B",
+      "percent_started": 32
+    },
+    {
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "eligible_positions": ["3B", "Util"],
+      "player_name": "Matt Chapman",
+      "percent_started": 77,
+      "is_editable": true,
+      "selected_position": "3B",
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "ranks": {
+        "last30Days": 575,
+        "next4Weeks": -1,
+        "next7Days": 276,
+        "restOfSeason": 219,
+        "projectedWeek": -1,
+        "last14Days": 805,
+        "last4Weeks": -1
+      },
+      "percent_owned": 89,
+      "player_key": "422.p.10205"
+    },
+    {
+      "percent_started": 80,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 395,
+        "last4Weeks": -1,
+        "next7Days": 817,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "restOfSeason": 61,
+        "last14Days": 524
+      },
+      "injury_status": "Healthy",
+      "player_key": "422.p.10234",
+      "percent_owned": 87,
+      "is_editable": true,
+      "player_name": "Dansby Swanson",
+      "selected_position": "SS",
+      "is_undroppable": false,
+      "is_playing": true,
+      "eligible_positions": ["SS", "Util"]
+    },
+    {
+      "percent_owned": 97,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 93,
+      "player_name": "Kyle Tucker",
+      "ranks": {
+        "next7Days": 71,
+        "projectedWeek": -1,
+        "last14Days": 307,
+        "last4Weeks": -1,
+        "restOfSeason": 36,
+        "next4Weeks": -1,
+        "last30Days": 309
+      },
+      "is_undroppable": true,
+      "player_key": "422.p.10480",
+      "eligible_positions": ["OF", "Util"],
+      "is_starting": "N/A",
+      "is_editable": true,
+      "selected_position": "OF"
+    },
+    {
+      "is_starting": "N/A",
+      "is_playing": true,
+      "is_editable": true,
+      "injury_status": "Healthy",
+      "percent_started": 92,
+      "percent_owned": 95,
+      "player_name": "Adolis García",
+      "ranks": {
+        "restOfSeason": 128,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last30Days": 3,
+        "last14Days": 42,
+        "next7Days": 113
+      },
+      "player_key": "422.p.11127",
+      "is_undroppable": false,
+      "selected_position": "OF",
+      "eligible_positions": ["OF", "Util"]
+    },
+    {
+      "is_playing": true,
+      "is_undroppable": false,
+      "injury_status": "Healthy",
+      "percent_started": 47,
+      "player_key": "422.p.12314",
+      "is_editable": true,
+      "selected_position": "OF",
+      "player_name": "Steven Kwan",
+      "percent_owned": 68,
+      "eligible_positions": ["OF", "Util"],
+      "ranks": {
+        "last4Weeks": -1,
+        "last30Days": 321,
+        "restOfSeason": 73,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "last14Days": 277,
+        "next7Days": 142
+      },
+      "is_starting": "N/A"
+    },
+    {
+      "player_key": "422.p.10849",
+      "is_playing": true,
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": "Util",
+      "percent_started": 95,
+      "player_name": "Cedric Mullins",
+      "injury_status": "Healthy",
+      "percent_owned": 96,
+      "is_editable": true,
+      "ranks": {
+        "next7Days": 50,
+        "restOfSeason": 58,
+        "next4Weeks": -1,
+        "last14Days": 99,
+        "last30Days": 95,
+        "projectedWeek": -1,
+        "last4Weeks": -1
+      },
+      "is_undroppable": false,
+      "is_starting": "N/A"
+    },
+    {
+      "is_starting": "N/A",
+      "is_editable": true,
+      "ranks": {
+        "next7Days": 52,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "restOfSeason": 50,
+        "last30Days": 69,
+        "last14Days": 61,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "eligible_positions": ["SS", "Util"],
+      "percent_owned": 97,
+      "injury_status": "Healthy",
+      "player_key": "422.p.11573",
+      "is_playing": true,
+      "selected_position": "Util",
+      "percent_started": 87,
+      "player_name": "Wander Franco"
+    },
+    {
+      "selected_position": "BN",
+      "percent_owned": 13,
+      "player_name": "Ryan McMahon",
+      "ranks": {
+        "last4Weeks": -1,
+        "next7Days": 743,
+        "last30Days": 468,
+        "last14Days": 500,
+        "next4Weeks": -1,
+        "restOfSeason": 200,
+        "projectedWeek": -1
+      },
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "is_starting": 1,
+      "eligible_positions": ["2B", "3B", "Util"],
+      "player_key": "422.p.10175",
+      "percent_started": 8,
+      "is_playing": true,
+      "is_editable": true
+    },
+    {
+      "selected_position": "BN",
+      "ranks": {
+        "restOfSeason": 357,
+        "last30Days": 795,
+        "next4Weeks": -1,
+        "next7Days": 787,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "last14Days": 870
+      },
+      "is_playing": true,
+      "is_undroppable": false,
+      "eligible_positions": ["OF", "Util"],
+      "percent_owned": 7,
+      "is_starting": 0,
+      "player_name": "Mitch Haniger",
+      "percent_started": 4,
+      "is_editable": true,
+      "player_key": "422.p.10369",
+      "injury_status": "Healthy"
+    },
+    {
+      "player_name": "Nico Hoerner",
+      "is_playing": true,
+      "eligible_positions": ["2B", "SS", "Util", "IL"],
+      "ranks": {
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 203,
+        "last30Days": 129,
+        "last14Days": 599,
+        "next7Days": 1076
+      },
+      "injury_status": "10-Day Injured List",
+      "selected_position": "BN",
+      "is_editable": true,
+      "percent_owned": 82,
+      "is_undroppable": false,
+      "is_starting": "N/A",
+      "player_key": "422.p.11284",
+      "percent_started": 2
+    },
+    {
+      "selected_position": "BN",
+      "is_undroppable": false,
+      "is_editable": true,
+      "percent_started": null,
+      "is_playing": true,
+      "ranks": {
+        "last4Weeks": -1,
+        "restOfSeason": 285,
+        "next7Days": 59,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "last30Days": 873,
+        "last14Days": 785
+      },
+      "player_name": "Jean Segura",
+      "percent_owned": 1,
+      "injury_status": "Healthy",
+      "eligible_positions": ["2B", "3B", "Util"],
+      "player_key": "422.p.9247",
+      "is_starting": "N/A"
+    },
+    {
+      "is_undroppable": false,
+      "is_playing": true,
+      "player_key": "422.p.10597",
+      "is_starting": "N/A",
+      "selected_position": "SP",
+      "is_editable": true,
+      "percent_started": 36,
+      "player_name": "Sandy Alcantara",
+      "eligible_positions": ["SP", "P"],
+      "percent_owned": 94,
+      "ranks": {
+        "next7Days": 48,
+        "projectedWeek": -1,
+        "restOfSeason": 9,
+        "next4Weeks": -1,
+        "last30Days": 365,
+        "last4Weeks": -1,
+        "last14Days": 195
+      },
+      "injury_status": "Healthy"
+    },
+    {
+      "ranks": {
+        "last14Days": 66,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next7Days": 152,
+        "last30Days": 33,
+        "restOfSeason": 134,
+        "next4Weeks": -1
+      },
+      "player_key": "422.p.9640",
+      "player_name": "Lucas Giolito",
+      "percent_started": 30,
+      "is_starting": "N/A",
+      "percent_owned": 86,
+      "is_editable": true,
+      "is_playing": true,
+      "eligible_positions": ["SP", "P"],
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "selected_position": "SP"
+    },
+    {
+      "is_editable": true,
+      "selected_position": "SP",
+      "eligible_positions": ["SP", "P"],
+      "is_undroppable": false,
+      "is_playing": true,
+      "percent_started": 8,
+      "injury_status": "Healthy",
+      "player_name": "Edward Cabrera",
+      "ranks": {
+        "last30Days": 491,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "restOfSeason": 699,
+        "next7Days": 156,
+        "next4Weeks": -1,
+        "last14Days": 519
+      },
+      "player_key": "422.p.10903",
+      "is_starting": 1,
+      "percent_owned": 14
+    },
+    {
+      "is_starting": "N/A",
+      "eligible_positions": ["RP", "P"],
+      "percent_started": 91,
+      "player_key": "422.p.11628",
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "selected_position": "RP",
+      "is_playing": true,
+      "percent_owned": 91,
+      "ranks": {
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last30Days": 97,
+        "projectedWeek": -1,
+        "restOfSeason": 39,
+        "next7Days": 45,
+        "last14Days": 160
+      },
+      "is_editable": true,
+      "player_name": "Devin Williams"
+    },
+    {
+      "is_starting": "N/A",
+      "percent_started": 69,
+      "ranks": {
+        "next7Days": 34,
+        "last14Days": 52,
+        "restOfSeason": 67,
+        "next4Weeks": -1,
+        "last30Days": 72,
+        "projectedWeek": -1,
+        "last4Weeks": -1
+      },
+      "is_undroppable": false,
+      "player_name": "Evan Phillips",
+      "selected_position": "RP",
+      "player_key": "422.p.11052",
+      "percent_owned": 70,
+      "injury_status": "Healthy",
+      "is_editable": true,
+      "is_playing": true,
+      "eligible_positions": ["RP", "P"]
+    },
+    {
+      "percent_started": 51,
+      "injury_status": "Healthy",
+      "ranks": {
+        "next4Weeks": -1,
+        "restOfSeason": 155,
+        "next7Days": 141,
+        "last30Days": 280,
+        "last4Weeks": -1,
+        "last14Days": 455,
+        "projectedWeek": -1
+      },
+      "selected_position": "P",
+      "percent_owned": 89,
+      "player_name": "Freddy Peralta",
+      "player_key": "422.p.11014",
+      "eligible_positions": ["SP", "P"],
+      "is_undroppable": false,
+      "is_playing": true,
+      "is_starting": "N/A",
+      "is_editable": true
+    },
+    {
+      "is_editable": true,
+      "is_undroppable": true,
+      "ranks": {
+        "last4Weeks": -1,
+        "restOfSeason": 12,
+        "last30Days": 94,
+        "next7Days": 14,
+        "next4Weeks": -1,
+        "last14Days": 76,
+        "projectedWeek": -1
+      },
+      "player_key": "422.p.10910",
+      "player_name": "Corbin Burnes",
+      "selected_position": "P",
+      "is_starting": 1,
+      "is_playing": true,
+      "percent_started": 76,
+      "injury_status": "Healthy",
+      "eligible_positions": ["SP", "P"],
+      "percent_owned": 97
+    },
+    {
+      "ranks": {
+        "projectedWeek": -1,
+        "next7Days": 161,
+        "restOfSeason": 107,
+        "last30Days": 169,
+        "last14Days": 59,
+        "last4Weeks": -1,
+        "next4Weeks": -1
+      },
+      "selected_position": "P",
+      "is_undroppable": false,
+      "percent_started": 47,
+      "player_name": "Logan Gilbert",
+      "injury_status": "Healthy",
+      "is_starting": "N/A",
+      "eligible_positions": ["SP", "P"],
+      "is_editable": true,
+      "percent_owned": 89,
+      "player_key": "422.p.11381",
+      "is_playing": true
+    },
+    {
+      "is_editable": true,
+      "player_name": "Brandon Woodruff",
+      "is_undroppable": false,
+      "injury_status": "60-Day Injured List",
+      "player_key": "422.p.10730",
+      "eligible_positions": ["SP", "P", "IL"],
+      "is_starting": "N/A",
+      "ranks": {
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "last30Days": 2268,
+        "last14Days": 2220,
+        "restOfSeason": 41,
+        "next7Days": 2404,
+        "projectedWeek": -1
+      },
+      "percent_started": 1,
+      "selected_position": "BN",
+      "percent_owned": 86,
+      "is_playing": true
+    },
+    {
+      "is_editable": true,
+      "is_playing": true,
+      "player_name": "C.J. Cron",
+      "eligible_positions": ["1B", "Util", "IL"],
+      "player_key": "422.p.9583",
+      "injury_status": "10-Day Injured List",
+      "is_undroppable": false,
+      "selected_position": "IL",
+      "percent_started": 2,
+      "ranks": {
+        "next7Days": 1197,
+        "last4Weeks": -1,
+        "restOfSeason": 202,
+        "last14Days": 694,
+        "last30Days": 514,
+        "next4Weeks": -1,
+        "projectedWeek": -1
+      },
+      "is_starting": 0,
+      "percent_owned": 38
+    }
+  ],
+  "scoring_type": null,
+  "num_teams": 10,
+  "edit_key": "2023-05-17",
+  "end_date": 1695625199999,
+  "max_season_adds": 60,
+  "coverage_type": "date",
+  "faab_balance": -1,
+  "current_weekly_adds": 1,
+  "waiver_rule": "all"
+}

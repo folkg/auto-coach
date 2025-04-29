@@ -1,0 +1,55 @@
+{
+  "name": "functions",
+  "scripts": {
+    "build": "tsc --outDir lib",
+    "build:watch": "tsc --watch",
+    "serve": "bun run build:watch & firebase emulators:start --only functions",
+    "shell": "bun run build:watch & firebase functions:shell",
+    "start": "bun run shell",
+    "debug": "bun run build:watch & firebase functions:shell --inspect-functions",
+    "deploy": "bun run pp && firebase deploy --only functions",
+    "deploy:lineup": "bun run pp && firebase deploy --only functions:lineup",
+    "deploy:authBlock": "bun run pp && firebase deploy --only functions:authBlock",
+    "deploy:email": "bun run pp && firebase deploy --only functions:email",
+    "deploy:tx": "bun run pp && firebase deploy --only functions:transactions",
+    "deploy:notblock": "bun run pp && firebase deploy --only functions:lineup,functions:email,functions:transactions",
+    "pp": "bun run all-checks && bun run build",
+    "logs": "firebase functions:log",
+    "test:debug": "vitest --test-timeout=999999999 --silent",
+    "test": "bun run vitest",
+    "test:ci": "bun run vitest run --silent",
+    "checks": "bunx biome check",
+    "fix": "bunx biome check --fix",
+    "types": "tsc --noEmit",
+    "all-checks": "bun run fix && bun run types && bun run test:ci",
+    "coverage": "vitest --coverage --silent"
+  },
+  "engines": {
+    "node": "22"
+  },
+  "type": "module",
+  "main": "lib/index.js",
+  "dependencies": {
+    "@sendgrid/mail": "8.1.5",
+    "arktype": "2.1.9",
+    "axios": "1.8.4",
+    "axios-retry": "4.5.0",
+    "dotenv": "16.5.0",
+    "fast-xml-parser": "4.5.3",
+    "firebase-admin": "13.2.0",
+    "firebase-functions": "6.3.2",
+    "js2xmlparser": "5.0.0",
+    "lodash": "4.17.21",
+    "p-limit": "6.2.0",
+    "spacetime": "7.9.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@types/nodemailer": "6.4.17",
+    "@vitest/coverage-v8": "3.0.6",
+    "firebase-functions-test": "3.4.1",
+    "typescript": "5.8.3",
+    "vitest": "3.0.6"
+  },
+  "private": true
+}

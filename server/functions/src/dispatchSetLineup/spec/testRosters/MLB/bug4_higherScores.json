@@ -1,0 +1,737 @@
+{
+  "start_date": 1681110000000,
+  "scoring_type": null,
+  "edit_key": "2023-04-13",
+  "team_key": "422.l.139314.t.12",
+  "allow_adding": false,
+  "automated_transaction_processing": true,
+  "faab_balance": 89,
+  "coverage_type": "date",
+  "num_teams": 12,
+  "game_code": "mlb",
+  "weekly_deadline": "intraday",
+  "max_season_adds": -1,
+  "current_season_adds": 11,
+  "roster_positions": {
+    "RP": 2,
+    "BN": 5,
+    "Util": 2,
+    "OF": 3,
+    "IL": 4,
+    "P": 4,
+    "3B": 1,
+    "2B": 1,
+    "SS": 1,
+    "1B": 1,
+    "C": 1,
+    "SP": 2
+  },
+  "end_date": 1696229999999,
+  "coverage_period": "2023-04-13",
+  "max_weekly_adds": 6,
+  "message": "Error: Original roster for problematic team 422.l.139314.t.12\n    at entryFromArgs (/workspace/node_modules/firebase-functions/lib/logger/index.js:130:19)\n    at Object.error (/workspace/node_modules/firebase-functions/lib/logger/index.js:116:11)\n    at processTodaysLineupChanges (/workspace/lib/dispatchSetLineup/services/setLineups.service.js:104:41)\n    at setUsersLineup (/workspace/lib/dispatchSetLineup/services/setLineups.service.js:41:24)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async /workspace/lib/dispatchSetLineup/dispatchSetLineup.js:35:16\n    at async /workspace/node_modules/firebase-functions/lib/common/providers/tasks.js:62:17",
+  "transactions": [
+    [
+      {
+        "type": "waiver",
+        "waiver_player_key": "422.p.9597",
+        "status": "pending",
+        "waiver_priority": 1,
+        "waiver_date": "2023-04-14",
+        "waiver_team_name": "KershawCrew20",
+        "faab_bid": "0",
+        "waiver_team_key": "422.l.139314.t.12",
+        "waiver_priority_options": {
+          "0": {
+            "option": 1
+          },
+          "count": 1
+        },
+        "waiver_roster_reflect_key": "2023-04-14",
+        "transaction_key": "422.l.139314.w.c.12_9597_11103"
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9597"
+                },
+                {
+                  "player_id": "9597"
+                },
+                {
+                  "name": {
+                    "full": "Noah Syndergaard",
+                    "last": "Syndergaard",
+                    "ascii_first": "Noah",
+                    "ascii_last": "Syndergaard",
+                    "first": "Noah"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "LAD"
+                },
+                {
+                  "display_position": "SP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "source_type": "waivers",
+                  "type": "add",
+                  "destination_type": "team",
+                  "destination_team_key": "422.l.139314.t.12",
+                  "destination_team_name": "KershawCrew20"
+                }
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.11103"
+                },
+                {
+                  "player_id": "11103"
+                },
+                {
+                  "name": {
+                    "full": "Cole Irvin",
+                    "first": "Cole",
+                    "last": "Irvin",
+                    "ascii_first": "Cole",
+                    "ascii_last": "Irvin"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "BAL"
+                },
+                {
+                  "display_position": "SP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "source_team_key": "422.l.139314.t.12",
+                  "type": "drop",
+                  "source_type": "team",
+                  "source_team_name": "KershawCrew20",
+                  "destination_type": "waivers"
+                }
+              }
+            ]
+          },
+          "count": 2
+        }
+      }
+    ]
+  ],
+  "current_weekly_adds": 5,
+  "allow_dropping": false,
+  "waiver_rule": "continuous",
+  "players": [
+    {
+      "player_name": "J.T. Realmuto",
+      "is_editable": true,
+      "eligible_positions": ["C", "Util"],
+      "percent_owned": 97,
+      "is_playing": true,
+      "is_undroppable": false,
+      "is_starting": "N/A",
+      "player_key": "422.p.9718",
+      "percent_started": 96,
+      "ranks": {
+        "last14Days": 551,
+        "projectedWeek": -1,
+        "next7Days": 65,
+        "restOfSeason": 65,
+        "last30Days": 551,
+        "last4Weeks": -1,
+        "next4Weeks": -1
+      },
+      "selected_position": "C",
+      "injury_status": "Healthy"
+    },
+    {
+      "percent_started": 61,
+      "ranks": {
+        "last14Days": 65,
+        "last4Weeks": -1,
+        "restOfSeason": 221,
+        "last30Days": 65,
+        "next7Days": 172,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_starting": "N/A",
+      "eligible_positions": ["1B", "2B", "Util"],
+      "selected_position": "1B",
+      "injury_status": "Healthy",
+      "is_editable": true,
+      "is_undroppable": false,
+      "player_key": "422.p.11221",
+      "is_playing": false,
+      "percent_owned": 74,
+      "player_name": "Luis Arraez"
+    },
+    {
+      "selected_position": "2B",
+      "is_playing": true,
+      "is_undroppable": false,
+      "eligible_positions": ["2B", "SS", "Util"],
+      "is_starting": "N/A",
+      "player_key": "422.p.11596",
+      "is_editable": true,
+      "injury_status": "Healthy",
+      "percent_started": 70,
+      "ranks": {
+        "last30Days": 413,
+        "last4Weeks": -1,
+        "restOfSeason": 102,
+        "next7Days": 252,
+        "next4Weeks": -1,
+        "last14Days": 413,
+        "projectedWeek": -1
+      },
+      "percent_owned": 86,
+      "player_name": "Tommy Edman"
+    },
+    {
+      "eligible_positions": ["3B", "OF", "Util"],
+      "is_playing": true,
+      "player_key": "422.p.12024",
+      "player_name": "Jordan Walker",
+      "is_undroppable": false,
+      "selected_position": "3B",
+      "percent_owned": 86,
+      "injury_status": "Healthy",
+      "ranks": {
+        "next4Weeks": -1,
+        "restOfSeason": 105,
+        "last30Days": 166,
+        "last14Days": 166,
+        "last4Weeks": -1,
+        "next7Days": 34,
+        "projectedWeek": -1
+      },
+      "is_starting": "N/A",
+      "percent_started": 84,
+      "is_editable": true
+    },
+    {
+      "percent_started": 50,
+      "player_key": "422.p.11284",
+      "is_undroppable": false,
+      "selected_position": "SS",
+      "percent_owned": 63,
+      "is_starting": "N/A",
+      "player_name": "Nico Hoerner",
+      "eligible_positions": ["2B", "SS", "Util"],
+      "ranks": {
+        "restOfSeason": 141,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "last14Days": 41,
+        "next7Days": 63,
+        "next4Weeks": -1,
+        "last30Days": 41
+      },
+      "is_editable": true,
+      "injury_status": "Healthy",
+      "is_playing": false
+    },
+    {
+      "injury_status": "Healthy",
+      "percent_owned": 94,
+      "is_playing": false,
+      "percent_started": 71,
+      "is_undroppable": false,
+      "selected_position": "OF",
+      "player_key": "422.p.9118",
+      "player_name": "Starling Marte",
+      "is_editable": true,
+      "eligible_positions": ["OF", "Util"],
+      "ranks": {
+        "next7Days": 118,
+        "last30Days": 256,
+        "restOfSeason": 49,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "last14Days": 256
+      },
+      "is_starting": "N/A"
+    },
+    {
+      "player_name": "Steven Kwan",
+      "is_undroppable": false,
+      "percent_started": 73,
+      "selected_position": "OF",
+      "ranks": {
+        "restOfSeason": 80,
+        "next4Weeks": -1,
+        "next7Days": 47,
+        "last4Weeks": -1,
+        "last30Days": 152,
+        "last14Days": 152,
+        "projectedWeek": -1
+      },
+      "injury_status": "Healthy",
+      "is_playing": false,
+      "player_key": "422.p.12314",
+      "is_starting": "N/A",
+      "eligible_positions": ["OF", "Util"],
+      "percent_owned": 88,
+      "is_editable": true
+    },
+    {
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "percent_started": 34,
+      "is_editable": true,
+      "player_name": "Brandon Nimmo",
+      "player_key": "422.p.9876",
+      "ranks": {
+        "next7Days": 762,
+        "projectedWeek": -1,
+        "last30Days": 290,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last14Days": 290,
+        "restOfSeason": 191
+      },
+      "selected_position": "OF",
+      "eligible_positions": ["OF", "Util"],
+      "is_playing": false,
+      "injury_status": "Healthy",
+      "percent_owned": 50
+    },
+    {
+      "is_starting": "N/A",
+      "selected_position": "Util",
+      "is_playing": false,
+      "eligible_positions": ["OF", "Util"],
+      "percent_started": 32,
+      "is_editable": true,
+      "percent_owned": 48,
+      "player_key": "422.p.11165",
+      "is_undroppable": false,
+      "player_name": "Myles Straw",
+      "injury_status": "Healthy",
+      "ranks": {
+        "last14Days": 95,
+        "restOfSeason": 615,
+        "next7Days": 361,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last30Days": 95
+      }
+    },
+    {
+      "player_key": "422.p.11912",
+      "player_name": "Chas McCormick",
+      "ranks": {
+        "last4Weeks": -1,
+        "last30Days": 50,
+        "next7Days": 91,
+        "restOfSeason": 334,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "last14Days": 50
+      },
+      "selected_position": "Util",
+      "percent_started": 4,
+      "is_starting": "N/A",
+      "eligible_positions": ["OF", "Util"],
+      "injury_status": "Healthy",
+      "percent_owned": 7,
+      "is_playing": false,
+      "is_editable": true,
+      "is_undroppable": false
+    },
+    {
+      "is_starting": "N/A",
+      "eligible_positions": ["SP", "P"],
+      "is_editable": true,
+      "is_playing": false,
+      "player_key": "422.p.8180",
+      "selected_position": "SP",
+      "player_name": "Clayton Kershaw",
+      "ranks": {
+        "next4Weeks": -1,
+        "restOfSeason": 31,
+        "next7Days": 2,
+        "projectedWeek": -1,
+        "last30Days": 149,
+        "last4Weeks": -1,
+        "last14Days": 149
+      },
+      "percent_owned": 97,
+      "percent_started": 82,
+      "is_undroppable": false,
+      "injury_status": "Healthy"
+    },
+    {
+      "selected_position": "SP",
+      "percent_started": 81,
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "ranks": {
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "next7Days": 17,
+        "last14Days": 6,
+        "last30Days": 6,
+        "restOfSeason": 60,
+        "last4Weeks": -1
+      },
+      "is_playing": true,
+      "eligible_positions": ["SP", "RP", "P"],
+      "is_editable": true,
+      "player_name": "Jeffrey Springs",
+      "percent_owned": 96,
+      "player_key": "422.p.11121",
+      "is_starting": 1
+    },
+    {
+      "selected_position": "RP",
+      "is_undroppable": false,
+      "player_name": "Craig Kimbrel",
+      "percent_started": 31,
+      "injury_status": "Healthy",
+      "is_playing": true,
+      "is_starting": "N/A",
+      "ranks": {
+        "projectedWeek": -1,
+        "last30Days": 651,
+        "next7Days": 116,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "last14Days": 651,
+        "restOfSeason": 173
+      },
+      "percent_owned": 32,
+      "player_key": "422.p.8622",
+      "is_editable": true,
+      "eligible_positions": ["RP", "P"]
+    },
+    {
+      "is_starting": "N/A",
+      "percent_owned": 69,
+      "selected_position": "RP",
+      "player_key": "422.p.10794",
+      "is_editable": true,
+      "is_undroppable": false,
+      "eligible_positions": ["RP", "P"],
+      "ranks": {
+        "last4Weeks": -1,
+        "next7Days": 95,
+        "last14Days": 103,
+        "restOfSeason": 116,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last30Days": 103
+      },
+      "is_playing": false,
+      "player_name": "A.J. Minter",
+      "injury_status": "Healthy",
+      "percent_started": 65
+    },
+    {
+      "selected_position": "P",
+      "eligible_positions": ["RP", "P"],
+      "is_editable": true,
+      "ranks": {
+        "last14Days": 80,
+        "last30Days": 80,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 329,
+        "next7Days": 759,
+        "projectedWeek": -1
+      },
+      "is_starting": "N/A",
+      "percent_started": 34,
+      "player_name": "Aroldis Chapman",
+      "injury_status": "Healthy",
+      "is_playing": false,
+      "is_undroppable": false,
+      "player_key": "422.p.8616",
+      "percent_owned": 37
+    },
+    {
+      "player_name": "Corbin Burnes",
+      "is_undroppable": true,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": "P",
+      "is_starting": "N/A",
+      "percent_owned": 97,
+      "ranks": {
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last14Days": 418,
+        "restOfSeason": 9,
+        "last4Weeks": -1,
+        "next7Days": 36,
+        "last30Days": 418
+      },
+      "is_editable": true,
+      "percent_started": 74,
+      "player_key": "422.p.10910"
+    },
+    {
+      "is_playing": true,
+      "player_key": "422.p.11103",
+      "is_starting": 1,
+      "injury_status": "Healthy",
+      "selected_position": "P",
+      "ranks": {
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 674,
+        "projectedWeek": -1,
+        "last30Days": 813,
+        "next7Days": 305,
+        "last14Days": 813
+      },
+      "is_undroppable": false,
+      "player_name": "Cole Irvin",
+      "percent_started": 1,
+      "eligible_positions": ["SP", "P"],
+      "percent_owned": 1,
+      "is_editable": true
+    },
+    {
+      "injury_status": "Healthy",
+      "is_playing": false,
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "ranks": {
+        "last4Weeks": -1,
+        "next7Days": 64,
+        "next4Weeks": -1,
+        "restOfSeason": 23,
+        "projectedWeek": -1,
+        "last30Days": 572,
+        "last14Days": 572
+      },
+      "selected_position": "BN",
+      "player_key": "422.p.10597",
+      "is_editable": true,
+      "eligible_positions": ["SP", "P"],
+      "percent_owned": 97,
+      "player_name": "Sandy Alcantara",
+      "percent_started": 51
+    },
+    {
+      "player_key": "422.p.12497",
+      "selected_position": "BN",
+      "player_name": "Hayden Wesneski",
+      "ranks": {
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last14Days": 804,
+        "last30Days": 804,
+        "restOfSeason": 117,
+        "next7Days": 117
+      },
+      "injury_status": "Healthy",
+      "percent_owned": 14,
+      "is_starting": "N/A",
+      "is_playing": false,
+      "eligible_positions": ["SP", "P"],
+      "is_editable": true,
+      "percent_started": 8,
+      "is_undroppable": false
+    },
+    {
+      "injury_status": "Healthy",
+      "player_name": "Bryce Elder",
+      "is_starting": "N/A",
+      "percent_owned": 43,
+      "selected_position": "BN",
+      "eligible_positions": ["SP", "P"],
+      "is_playing": false,
+      "is_undroppable": false,
+      "player_key": "422.p.12120",
+      "is_editable": true,
+      "percent_started": 13,
+      "ranks": {
+        "next4Weeks": -1,
+        "last30Days": 56,
+        "restOfSeason": 401,
+        "next7Days": 221,
+        "projectedWeek": -1,
+        "last14Days": 56,
+        "last4Weeks": -1
+      }
+    },
+    {
+      "is_editable": true,
+      "player_name": "Justin Steele",
+      "percent_started": 16,
+      "ranks": {
+        "projectedWeek": -1,
+        "last14Days": 93,
+        "last30Days": 93,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "next7Days": 841,
+        "restOfSeason": 392
+      },
+      "injury_status": "Healthy",
+      "eligible_positions": ["SP", "P"],
+      "player_key": "422.p.11202",
+      "selected_position": "BN",
+      "is_undroppable": false,
+      "percent_owned": 45,
+      "is_starting": "N/A",
+      "is_playing": false
+    },
+    {
+      "percent_started": 4,
+      "player_key": "422.p.9582",
+      "is_starting": "N/A",
+      "ranks": {
+        "next7Days": 191,
+        "last14Days": 368,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 265,
+        "last4Weeks": -1,
+        "last30Days": 368
+      },
+      "player_name": "Sean Manaea",
+      "is_editable": true,
+      "percent_owned": 10,
+      "is_playing": false,
+      "selected_position": "BN",
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "eligible_positions": ["SP", "P"]
+    },
+    {
+      "is_starting": "N/A",
+      "player_key": "422.p.9620",
+      "ranks": {
+        "projectedWeek": -1,
+        "last14Days": 377,
+        "restOfSeason": 26,
+        "last30Days": 377,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "next7Days": 2292
+      },
+      "is_playing": false,
+      "selected_position": "BN",
+      "injury_status": "15-Day Injured List",
+      "is_editable": true,
+      "percent_started": 2,
+      "eligible_positions": ["SP", "P", "IL"],
+      "percent_owned": 96,
+      "is_undroppable": false,
+      "player_name": "Max Fried"
+    },
+    {
+      "ranks": {
+        "last4Weeks": -1,
+        "last30Days": 94,
+        "restOfSeason": 77,
+        "next7Days": 1259,
+        "projectedWeek": -1,
+        "last14Days": 94,
+        "next4Weeks": -1
+      },
+      "percent_owned": 92,
+      "selected_position": "IL",
+      "eligible_positions": ["SS", "Util", "IL"],
+      "is_editable": true,
+      "is_playing": false,
+      "injury_status": "10-Day Injured List",
+      "is_undroppable": false,
+      "is_starting": "N/A",
+      "player_name": "Tim Anderson",
+      "player_key": "422.p.9897",
+      "percent_started": 6
+    },
+    {
+      "is_starting": "N/A",
+      "is_playing": true,
+      "injury_status": "15-Day Injured List",
+      "is_editable": true,
+      "percent_owned": 87,
+      "player_key": "422.p.9616",
+      "ranks": {
+        "last14Days": 1987,
+        "last30Days": 1987,
+        "projectedWeek": -1,
+        "next7Days": 2291,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 126
+      },
+      "selected_position": "IL",
+      "percent_started": 1,
+      "is_undroppable": false,
+      "eligible_positions": ["SP", "P", "IL"],
+      "player_name": "Tyler Glasnow"
+    },
+    {
+      "eligible_positions": ["SP", "P", "IL"],
+      "is_editable": true,
+      "is_playing": false,
+      "is_starting": "N/A",
+      "player_name": "Tony Gonsolin",
+      "selected_position": "IL",
+      "ranks": {
+        "last14Days": 2516,
+        "last30Days": 2516,
+        "last4Weeks": -1,
+        "next7Days": 2675,
+        "restOfSeason": 146,
+        "next4Weeks": -1,
+        "projectedWeek": -1
+      },
+      "player_key": "422.p.11331",
+      "is_undroppable": false,
+      "percent_owned": 69,
+      "injury_status": "15-Day Injured List",
+      "percent_started": 1
+    },
+    {
+      "ranks": {
+        "projectedWeek": -1,
+        "next7Days": 2286,
+        "next4Weeks": -1,
+        "last14Days": 1981,
+        "last30Days": 1981,
+        "restOfSeason": 219,
+        "last4Weeks": -1
+      },
+      "is_playing": false,
+      "injury_status": "15-Day Injured List",
+      "percent_owned": 23,
+      "player_key": "422.p.9575",
+      "is_undroppable": false,
+      "eligible_positions": ["SP", "P", "IL"],
+      "player_name": "Lance McCullers Jr.",
+      "is_starting": "N/A",
+      "selected_position": "IL",
+      "percent_started": null,
+      "is_editable": true
+    }
+  ]
+}

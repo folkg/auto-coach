@@ -1,0 +1,1095 @@
+[
+  {
+    "team_key": "422.l.139314.t.12",
+    "players": [
+      {
+        "player_key": "422.p.11221",
+        "player_name": "Luis Arraez",
+        "eligible_positions": ["1B", "2B", "Util"],
+        "selected_position": "1B",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 39,
+        "percent_owned": 78,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 71,
+          "last14Days": 125,
+          "next7Days": 300,
+          "restOfSeason": 220,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11912",
+        "player_name": "Chas McCormick",
+        "eligible_positions": ["OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Day-to-Day",
+        "percent_started": 3,
+        "percent_owned": 14,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 100,
+          "last14Days": 95,
+          "next7Days": 977,
+          "restOfSeason": 370,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11165",
+        "player_name": "Myles Straw",
+        "eligible_positions": ["OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 27,
+        "percent_owned": 39,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 94,
+          "last14Days": 74,
+          "next7Days": 834,
+          "restOfSeason": 731,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9876",
+        "player_name": "Brandon Nimmo",
+        "eligible_positions": ["OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 42,
+        "percent_owned": 50,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 153,
+          "last14Days": 194,
+          "next7Days": 116,
+          "restOfSeason": 179,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.12314",
+        "player_name": "Steven Kwan",
+        "eligible_positions": ["OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 77,
+        "percent_owned": 87,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 233,
+          "last14Days": 266,
+          "next7Days": 178,
+          "restOfSeason": 86,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9118",
+        "player_name": "Starling Marte",
+        "eligible_positions": ["OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 86,
+        "percent_owned": 94,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 132,
+          "last14Days": 243,
+          "next7Days": 25,
+          "restOfSeason": 49,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11284",
+        "player_name": "Nico Hoerner",
+        "eligible_positions": ["2B", "SS", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 61,
+        "percent_owned": 68,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 39,
+          "last14Days": 10,
+          "next7Days": 26,
+          "restOfSeason": 143,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.12024",
+        "player_name": "Jordan Walker",
+        "eligible_positions": ["3B", "OF", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 72,
+        "percent_owned": 85,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 256,
+          "last14Days": 327,
+          "next7Days": 191,
+          "restOfSeason": 110,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11596",
+        "player_name": "Tommy Edman",
+        "eligible_positions": ["2B", "SS", "Util"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 66,
+        "percent_owned": 84,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 540,
+          "last14Days": 553,
+          "next7Days": 303,
+          "restOfSeason": 101,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9718",
+        "player_name": "J.T. Realmuto",
+        "eligible_positions": ["C", "Util"],
+        "selected_position": "BN",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 86,
+        "percent_owned": 96,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 503,
+          "last14Days": 636,
+          "next7Days": 47,
+          "restOfSeason": 74,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.12120",
+        "player_name": "Bryce Elder",
+        "eligible_positions": ["SP", "P", "IL"],
+        "selected_position": "SP",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "IL",
+        "percent_started": 47,
+        "percent_owned": 59,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 79,
+          "last14Days": 45,
+          "next7Days": 163,
+          "restOfSeason": 413,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.10597",
+        "player_name": "Sandy Alcantara",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "SP",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 78,
+        "percent_owned": 97,
+        "is_starting": 1,
+        "ranks": {
+          "last30Days": 571,
+          "last14Days": 557,
+          "next7Days": 61,
+          "restOfSeason": 22,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.8622",
+        "player_name": "Craig Kimbrel",
+        "eligible_positions": ["RP", "P"],
+        "selected_position": "RP",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 29,
+        "percent_owned": 30,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 672,
+          "last14Days": 481,
+          "next7Days": 127,
+          "restOfSeason": 203,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.10794",
+        "player_name": "A.J. Minter",
+        "eligible_positions": ["RP", "P"],
+        "selected_position": "RP",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 69,
+        "percent_owned": 70,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 128,
+          "last14Days": 124,
+          "next7Days": 96,
+          "restOfSeason": 112,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.8180",
+        "player_name": "Clayton Kershaw",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "P",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 49,
+        "percent_owned": 97,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 143,
+          "last14Days": 469,
+          "next7Days": 33,
+          "restOfSeason": 29,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.8616",
+        "player_name": "Aroldis Chapman",
+        "eligible_positions": ["RP", "P", "IR+"],
+        "selected_position": "P",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "IL",
+        "percent_started": 38,
+        "percent_owned": 39,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 110,
+          "last14Days": 134,
+          "next7Days": 744,
+          "restOfSeason": 334,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.10910",
+        "player_name": "Corbin Burnes",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "P",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 56,
+        "percent_owned": 97,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 411,
+          "last14Days": 268,
+          "next7Days": 28,
+          "restOfSeason": 9,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": true
+      },
+      {
+        "player_key": "422.p.10355",
+        "player_name": "Matt Strahm",
+        "eligible_positions": ["SP", "RP", "P"],
+        "selected_position": "P",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 7,
+        "percent_owned": 9,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 107,
+          "last14Days": 104,
+          "next7Days": 55,
+          "restOfSeason": 377,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11202",
+        "player_name": "Justin Steele",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 31,
+        "percent_owned": 54,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 25,
+          "last14Days": 55,
+          "next7Days": 302,
+          "restOfSeason": 393,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9582",
+        "player_name": "Sean Manaea",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "BN",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 7,
+        "percent_owned": 12,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 429,
+          "last14Days": 451,
+          "next7Days": 231,
+          "restOfSeason": 282,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11121",
+        "player_name": "Jeffrey Springs",
+        "eligible_positions": ["SP", "RP", "P", "IL+"],
+        "selected_position": "BN",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "Day-to-Day",
+        "percent_started": 32,
+        "percent_owned": 80,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 2,
+          "last14Days": 1,
+          "next7Days": 2554,
+          "restOfSeason": 166,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.12497",
+        "player_name": "Hayden Wesneski",
+        "eligible_positions": ["SP", "P"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "Healthy",
+        "percent_started": 3,
+        "percent_owned": 9,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 816,
+          "last14Days": 826,
+          "next7Days": 121,
+          "restOfSeason": 109,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9620",
+        "player_name": "Max Fried",
+        "eligible_positions": ["SP", "P", "IL"],
+        "selected_position": "BN",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "15-Day Injured List",
+        "percent_started": 2,
+        "percent_owned": 96,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 407,
+          "last14Days": 2000,
+          "next7Days": 2297,
+          "restOfSeason": 31,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9897",
+        "player_name": "Tim Anderson",
+        "eligible_positions": ["SS", "Util", "IL"],
+        "selected_position": "IL",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "10-Day Injured List",
+        "percent_started": 3,
+        "percent_owned": 92,
+        "is_starting": 0,
+        "ranks": {
+          "last30Days": 147,
+          "last14Days": 317,
+          "next7Days": 1259,
+          "restOfSeason": 44,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9616",
+        "player_name": "Tyler Glasnow",
+        "eligible_positions": ["SP", "P", "IL"],
+        "selected_position": "IL",
+        "is_editable": false,
+        "is_playing": true,
+        "injury_status": "15-Day Injured List",
+        "percent_started": 1,
+        "percent_owned": 87,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 2000,
+          "last14Days": 1998,
+          "next7Days": 2296,
+          "restOfSeason": 122,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.11331",
+        "player_name": "Tony Gonsolin",
+        "eligible_positions": ["SP", "P", "IL"],
+        "selected_position": "IL",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "15-Day Injured List",
+        "percent_started": 1,
+        "percent_owned": 68,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 2525,
+          "last14Days": 2525,
+          "next7Days": 2678,
+          "restOfSeason": 137,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      },
+      {
+        "player_key": "422.p.9575",
+        "player_name": "Lance McCullers Jr.",
+        "eligible_positions": ["SP", "P", "IL"],
+        "selected_position": "IL",
+        "is_editable": true,
+        "is_playing": true,
+        "injury_status": "15-Day Injured List",
+        "percent_started": null,
+        "percent_owned": 24,
+        "is_starting": "N/A",
+        "ranks": {
+          "last30Days": 1994,
+          "last14Days": 1992,
+          "next7Days": 2291,
+          "restOfSeason": 215,
+          "last4Weeks": -1,
+          "projectedWeek": -1,
+          "next4Weeks": -1
+        },
+        "is_undroppable": false
+      }
+    ],
+    "coverage_type": "date",
+    "coverage_period": "2023-04-16",
+    "weekly_deadline": "intraday",
+    "edit_key": "2023-04-16",
+    "game_code": "mlb",
+    "num_teams": 12,
+    "roster_positions": {
+      "C": 1,
+      "1B": 1,
+      "2B": 1,
+      "3B": 1,
+      "SS": 1,
+      "OF": 3,
+      "Util": 2,
+      "SP": 2,
+      "RP": 2,
+      "P": 4,
+      "BN": 5,
+      "IL": 4
+    },
+    "scoring_type": null,
+    "current_weekly_adds": 6,
+    "current_season_adds": 12,
+    "max_weekly_adds": 6,
+    "max_season_adds": -1,
+    "start_date": 1681110000000,
+    "end_date": 1696229999999,
+    "faab_balance": 89,
+    "waiver_rule": "continuous",
+    "transactions": [
+      [
+        {
+          "transaction_key": "422.l.139314.w.c.12_9193_8616",
+          "type": "waiver",
+          "status": "pending",
+          "waiver_player_key": "422.p.9193",
+          "waiver_team_key": "422.l.139314.t.12",
+          "waiver_team_name": "KershawCrew20",
+          "waiver_date": "2023-04-17",
+          "waiver_roster_reflect_key": "2023-04-17",
+          "waiver_priority": 1,
+          "waiver_priority_options": { "0": { "option": 1 }, "count": 1 },
+          "faab_bid": "0"
+        },
+        {
+          "players": {
+            "0": {
+              "player": [
+                [
+                  { "player_key": "422.p.9193" },
+                  { "player_id": "9193" },
+                  {
+                    "name": {
+                      "full": "Will Smith",
+                      "first": "Will",
+                      "last": "Smith",
+                      "ascii_first": "Will",
+                      "ascii_last": "Smith"
+                    }
+                  },
+                  { "editorial_team_abbr": "TEX" },
+                  { "display_position": "RP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": {
+                    "type": "add",
+                    "source_type": "waivers",
+                    "destination_type": "team",
+                    "destination_team_key": "422.l.139314.t.12",
+                    "destination_team_name": "KershawCrew20"
+                  }
+                }
+              ]
+            },
+            "count": 1
+          }
+        }
+      ],
+      [
+        {
+          "transaction_key": "422.l.139314.pt.21",
+          "type": "pending_trade",
+          "status": "pending",
+          "trader_team_key": "422.l.139314.t.12",
+          "trader_team_name": "KershawCrew20",
+          "tradee_team_key": "422.l.139314.t.11",
+          "tradee_team_name": "Mike's Legit Team",
+          "trade_proposed_time": "1681542343",
+          "tradee_unused_roster_spots": -2,
+          "current_login_can_respond": 0,
+          "trade_roster_reflect_key": "2023-04-19",
+          "trade_note": "what do you say? Springs is legit, Elder looks INCREDIBLY GOOD... and Robbie Ray is hurt..."
+        },
+        {
+          "players": {
+            "0": {
+              "player": [
+                [
+                  { "player_key": "422.p.12120" },
+                  { "player_id": "12120" },
+                  {
+                    "name": {
+                      "full": "Bryce Elder",
+                      "first": "Bryce",
+                      "last": "Elder",
+                      "ascii_first": "Bryce",
+                      "ascii_last": "Elder"
+                    }
+                  },
+                  { "editorial_team_abbr": "ATL" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.12",
+                      "source_team_name": "KershawCrew20",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.11",
+                      "destination_team_name": "Mike's Legit Team"
+                    }
+                  ]
+                }
+              ]
+            },
+            "1": {
+              "player": [
+                [
+                  { "player_key": "422.p.11121" },
+                  { "player_id": "11121" },
+                  {
+                    "name": {
+                      "full": "Jeffrey Springs",
+                      "first": "Jeffrey",
+                      "last": "Springs",
+                      "ascii_first": "Jeffrey",
+                      "ascii_last": "Springs"
+                    }
+                  },
+                  { "editorial_team_abbr": "TB" },
+                  { "display_position": "SP,RP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.11",
+                      "source_team_name": "Mike's Legit Team",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.12",
+                      "destination_team_name": "KershawCrew20"
+                    }
+                  ]
+                }
+              ]
+            },
+            "2": {
+              "player": [
+                [
+                  { "player_key": "422.p.9691" },
+                  { "player_id": "9691" },
+                  {
+                    "name": {
+                      "full": "Robbie Ray",
+                      "first": "Robbie",
+                      "last": "Ray",
+                      "ascii_first": "Robbie",
+                      "ascii_last": "Ray"
+                    }
+                  },
+                  { "editorial_team_abbr": "SEA" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.11",
+                      "source_team_name": "Mike's Legit Team",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.12",
+                      "destination_team_name": "KershawCrew20"
+                    }
+                  ]
+                }
+              ]
+            },
+            "count": 3
+          }
+        }
+      ],
+      [
+        {
+          "transaction_key": "422.l.139314.pt.23",
+          "type": "pending_trade",
+          "status": "proposed",
+          "trader_team_key": "422.l.139314.t.12",
+          "trader_team_name": "KershawCrew20",
+          "tradee_team_key": "422.l.139314.t.9",
+          "tradee_team_name": "christopher's Best Team",
+          "trade_proposed_time": "1681542558",
+          "tradee_unused_roster_spots": -1,
+          "current_login_can_respond": 0,
+          "trade_roster_reflect_key": "2023-04-19",
+          "trade_note": "2 for 1... springs has been looking very good... And Elder looks INCREDIBLY GREAT!"
+        },
+        {
+          "players": {
+            "0": {
+              "player": [
+                [
+                  { "player_key": "422.p.12120" },
+                  { "player_id": "12120" },
+                  {
+                    "name": {
+                      "full": "Bryce Elder",
+                      "first": "Bryce",
+                      "last": "Elder",
+                      "ascii_first": "Bryce",
+                      "ascii_last": "Elder"
+                    }
+                  },
+                  { "editorial_team_abbr": "ATL" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.12",
+                      "source_team_name": "KershawCrew20",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.9",
+                      "destination_team_name": "christopher's Best Team"
+                    }
+                  ]
+                }
+              ]
+            },
+            "1": {
+              "player": [
+                [
+                  { "player_key": "422.p.11121" },
+                  { "player_id": "11121" },
+                  {
+                    "name": {
+                      "full": "Jeffrey Springs",
+                      "first": "Jeffrey",
+                      "last": "Springs",
+                      "ascii_first": "Jeffrey",
+                      "ascii_last": "Springs"
+                    }
+                  },
+                  { "editorial_team_abbr": "TB" },
+                  { "display_position": "SP,RP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.12",
+                      "source_team_name": "KershawCrew20",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.9",
+                      "destination_team_name": "christopher's Best Team"
+                    }
+                  ]
+                }
+              ]
+            },
+            "2": {
+              "player": [
+                [
+                  { "player_key": "422.p.11057" },
+                  { "player_id": "11057" },
+                  {
+                    "name": {
+                      "full": "Pablo López",
+                      "first": "Pablo",
+                      "last": "López",
+                      "ascii_first": "Pablo",
+                      "ascii_last": "López"
+                    }
+                  },
+                  { "editorial_team_abbr": "MIN" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.9",
+                      "source_team_name": "christopher's Best Team",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.12",
+                      "destination_team_name": "KershawCrew20"
+                    }
+                  ]
+                }
+              ]
+            },
+            "count": 3
+          }
+        }
+      ],
+      [
+        {
+          "transaction_key": "422.l.139314.pt.28",
+          "type": "pending_trade",
+          "status": "proposed",
+          "trader_team_key": "422.l.139314.t.12",
+          "trader_team_name": "KershawCrew20",
+          "tradee_team_key": "422.l.139314.t.5",
+          "tradee_team_name": "Thou Shalt Steal!",
+          "trade_proposed_time": "1681620019",
+          "tradee_unused_roster_spots": 0,
+          "current_login_can_respond": 0,
+          "trade_roster_reflect_key": "2023-04-19",
+          "trade_note": "this? What would you take for Springs?"
+        },
+        {
+          "players": {
+            "0": {
+              "player": [
+                [
+                  { "player_key": "422.p.11121" },
+                  { "player_id": "11121" },
+                  {
+                    "name": {
+                      "full": "Jeffrey Springs",
+                      "first": "Jeffrey",
+                      "last": "Springs",
+                      "ascii_first": "Jeffrey",
+                      "ascii_last": "Springs"
+                    }
+                  },
+                  { "editorial_team_abbr": "TB" },
+                  { "display_position": "SP,RP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.12",
+                      "source_team_name": "KershawCrew20",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.5",
+                      "destination_team_name": "Thou Shalt Steal!"
+                    }
+                  ]
+                }
+              ]
+            },
+            "1": {
+              "player": [
+                [
+                  { "player_key": "422.p.11381" },
+                  { "player_id": "11381" },
+                  {
+                    "name": {
+                      "full": "Logan Gilbert",
+                      "first": "Logan",
+                      "last": "Gilbert",
+                      "ascii_first": "Logan",
+                      "ascii_last": "Gilbert"
+                    }
+                  },
+                  { "editorial_team_abbr": "SEA" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.5",
+                      "source_team_name": "Thou Shalt Steal!",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.12",
+                      "destination_team_name": "KershawCrew20"
+                    }
+                  ]
+                }
+              ]
+            },
+            "count": 2
+          }
+        }
+      ],
+      [
+        {
+          "transaction_key": "422.l.139314.pt.30",
+          "type": "pending_trade",
+          "status": "proposed",
+          "trader_team_key": "422.l.139314.t.12",
+          "trader_team_name": "KershawCrew20",
+          "tradee_team_key": "422.l.139314.t.5",
+          "tradee_team_name": "Thou Shalt Steal!",
+          "trade_proposed_time": "1681623515",
+          "tradee_unused_roster_spots": 0,
+          "current_login_can_respond": 0,
+          "trade_roster_reflect_key": "2023-04-19",
+          "trade_note": "I know he is out for 2 months, but he is still VERY GOOD once he returns... What WOULD you take for Springs? I can do it for May or Grayson or Luzardo?"
+        },
+        {
+          "players": {
+            "0": {
+              "player": [
+                [
+                  { "player_key": "422.p.11121" },
+                  { "player_id": "11121" },
+                  {
+                    "name": {
+                      "full": "Jeffrey Springs",
+                      "first": "Jeffrey",
+                      "last": "Springs",
+                      "ascii_first": "Jeffrey",
+                      "ascii_last": "Springs"
+                    }
+                  },
+                  { "editorial_team_abbr": "TB" },
+                  { "display_position": "SP,RP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.12",
+                      "source_team_name": "KershawCrew20",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.5",
+                      "destination_team_name": "Thou Shalt Steal!"
+                    }
+                  ]
+                }
+              ]
+            },
+            "1": {
+              "player": [
+                [
+                  { "player_key": "422.p.10898" },
+                  { "player_id": "10898" },
+                  {
+                    "name": {
+                      "full": "Dustin May",
+                      "first": "Dustin",
+                      "last": "May",
+                      "ascii_first": "Dustin",
+                      "ascii_last": "May"
+                    }
+                  },
+                  { "editorial_team_abbr": "LAD" },
+                  { "display_position": "SP" },
+                  { "position_type": "P" }
+                ],
+                {
+                  "transaction_data": [
+                    {
+                      "type": "pending_trade",
+                      "source_type": "team",
+                      "source_team_key": "422.l.139314.t.5",
+                      "source_team_name": "Thou Shalt Steal!",
+                      "destination_type": "team",
+                      "destination_team_key": "422.l.139314.t.12",
+                      "destination_team_name": "KershawCrew20"
+                    }
+                  ]
+                }
+              ]
+            },
+            "count": 2
+          }
+        }
+      ]
+    ]
+  }
+]

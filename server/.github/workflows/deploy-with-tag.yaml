@@ -1,0 +1,47 @@
+name: Deploy with Tag
+
+on:
+  push:
+    tags:
+      - "*"
+
+defaults:
+  run:
+    working-directory: functions
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@master
+
+      - name: Setup Biome CLI
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+
+      - name: Run Biome
+        run: biome ci
+
+      - name: Setup Bun CLI
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run Tests
+        run: bun run test:ci
+
+      - name: Build
+        run: bun run build
+
+      - name: Deploy to Firebase
+        uses: w9jds/firebase-action@master
+        with:
+          args: deploy --only functions:lineup,functions:email,functions:transactions
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}

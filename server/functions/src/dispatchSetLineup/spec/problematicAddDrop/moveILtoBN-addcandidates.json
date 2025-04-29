@@ -1,0 +1,1354 @@
+{
+  "422.l.115494.t.4": [
+    {
+      "player_key": "422.p.9540",
+      "player_name": "José Abreu",
+      "eligible_positions": ["1B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 17,
+      "percent_owned": 20,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 107,
+        "last14Days": 236,
+        "next7Days": 198,
+        "restOfSeason": 369,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9583",
+      "player_name": "C.J. Cron",
+      "eligible_positions": ["1B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 13,
+      "percent_owned": 22,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 869,
+        "last14Days": 683,
+        "next7Days": 134,
+        "restOfSeason": 109,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-02",
+        "display_date": "2023-07-02"
+      }
+    },
+    {
+      "player_key": "422.p.11789",
+      "player_name": "Drew Rasmussen",
+      "eligible_positions": ["SP", "P", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "60-Day Injured List",
+      "percent_started": null,
+      "percent_owned": 25,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 2758,
+        "last14Days": 2731,
+        "next7Days": 2830,
+        "restOfSeason": 93,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10847",
+      "player_name": "Kyle Wright",
+      "eligible_positions": ["SP", "P", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "60-Day Injured List",
+      "percent_started": null,
+      "percent_owned": 22,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 2302,
+        "last14Days": 2254,
+        "next7Days": 2466,
+        "restOfSeason": 210,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11118",
+      "player_name": "Jeff McNeil",
+      "eligible_positions": ["2B", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 9,
+      "percent_owned": 14,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 781,
+        "last14Days": 782,
+        "next7Days": 309,
+        "restOfSeason": 242,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-03",
+        "display_date": "2023-07-03"
+      }
+    },
+    {
+      "player_key": "422.p.10891",
+      "player_name": "MJ Melendez",
+      "eligible_positions": ["C", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 16,
+      "percent_owned": 20,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 650,
+        "last14Days": 576,
+        "next7Days": 890,
+        "restOfSeason": 326,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-03",
+        "display_date": "2023-07-03"
+      }
+    },
+    {
+      "player_key": "422.p.12614",
+      "player_name": "Yennier Cano",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 19,
+      "percent_owned": 21,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 554,
+        "last14Days": 441,
+        "next7Days": 318,
+        "restOfSeason": 339,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-03",
+        "display_date": "2023-07-03"
+      }
+    },
+    {
+      "player_key": "422.p.11531",
+      "player_name": "Cal Raleigh",
+      "eligible_positions": ["C", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 10,
+      "percent_owned": 14,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 649,
+        "last14Days": 315,
+        "next7Days": 946,
+        "restOfSeason": 973,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9591",
+      "player_name": "Eddie Rosario",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 12,
+      "percent_owned": 26,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 22,
+        "last14Days": 33,
+        "next7Days": 379,
+        "restOfSeason": 585,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-03",
+        "display_date": "2023-07-03"
+      }
+    },
+    {
+      "player_key": "422.p.11102",
+      "player_name": "Joey Meneses",
+      "eligible_positions": ["1B", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 12,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 618,
+        "last14Days": 644,
+        "next7Days": 911,
+        "restOfSeason": 146,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12514",
+      "player_name": "Henry Davis",
+      "eligible_positions": ["C", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 19,
+      "percent_owned": 22,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 562,
+        "last14Days": 166,
+        "next7Days": 273,
+        "restOfSeason": 1570,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11750",
+      "player_name": "Nick Lodolo",
+      "eligible_positions": ["SP", "P", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "60-Day Injured List",
+      "percent_started": null,
+      "percent_owned": 13,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 2749,
+        "last14Days": 2722,
+        "next7Days": 2823,
+        "restOfSeason": 234,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12212",
+      "player_name": "Lars Nootbaar",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 6,
+      "percent_owned": 10,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 912,
+        "last14Days": 741,
+        "next7Days": 153,
+        "restOfSeason": 127,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10940",
+      "player_name": "MacKenzie Gore",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 17,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 544,
+        "last14Days": 480,
+        "next7Days": 272,
+        "restOfSeason": 417,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10233",
+      "player_name": "Amed Rosario",
+      "eligible_positions": ["SS", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 5,
+      "percent_owned": 6,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 494,
+        "last14Days": 369,
+        "next7Days": 182,
+        "restOfSeason": 196,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10566",
+      "player_name": "Ke'Bryan Hayes",
+      "eligible_positions": ["3B", "Util", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "10-Day Injured List",
+      "percent_started": 1,
+      "percent_owned": 7,
+      "is_starting": 0,
+      "ranks": {
+        "last30Days": 126,
+        "last14Days": 577,
+        "next7Days": 1185,
+        "restOfSeason": 381,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10620",
+      "player_name": "Rowdy Tellez",
+      "eligible_positions": ["1B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 6,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 999,
+        "last14Days": 816,
+        "next7Days": 810,
+        "restOfSeason": 241,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12236",
+      "player_name": "Bryan De La Cruz",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 14,
+      "percent_owned": 16,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 273,
+        "last14Days": 233,
+        "next7Days": 170,
+        "restOfSeason": 877,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10215",
+      "player_name": "Tyler O'Neill",
+      "eligible_positions": ["OF", "Util", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "60-Day Injured List",
+      "percent_started": null,
+      "percent_owned": 6,
+      "is_starting": 0,
+      "ranks": {
+        "last30Days": 1142,
+        "last14Days": 1022,
+        "next7Days": 1325,
+        "restOfSeason": 128,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.8949",
+      "player_name": "DJ LeMahieu",
+      "eligible_positions": ["1B", "2B", "3B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 6,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 866,
+        "last14Days": 764,
+        "next7Days": 971,
+        "restOfSeason": 239,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9701",
+      "player_name": "Jacob deGrom",
+      "eligible_positions": ["SP", "P", "IL"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "60-Day Injured List",
+      "percent_started": null,
+      "percent_owned": 7,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 2125,
+        "last14Days": 2061,
+        "next7Days": 2341,
+        "restOfSeason": 2563,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9875",
+      "player_name": "Michael Conforto",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Day-to-Day",
+      "percent_started": 4,
+      "percent_owned": 8,
+      "is_starting": 0,
+      "ranks": {
+        "last30Days": 631,
+        "last14Days": 658,
+        "next7Days": 408,
+        "restOfSeason": 311,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10894",
+      "player_name": "Griffin Canning",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 10,
+      "percent_owned": 14,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 79,
+        "last14Days": 71,
+        "next7Days": 846,
+        "restOfSeason": 1106,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11428",
+      "player_name": "Dean Kremer",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 8,
+      "percent_owned": 12,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 203,
+        "last14Days": 153,
+        "next7Days": 397,
+        "restOfSeason": 1022,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12401",
+      "player_name": "Gavin Williams",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 9,
+      "percent_owned": 19,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 251,
+        "last14Days": 182,
+        "next7Days": 293,
+        "restOfSeason": 435,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10328",
+      "player_name": "Jeimer Candelario",
+      "eligible_positions": ["3B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 2,
+      "percent_owned": 4,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 70,
+        "last14Days": 31,
+        "next7Days": 856,
+        "restOfSeason": 314,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9591",
+      "player_name": "Eddie Rosario",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 12,
+      "percent_owned": 26,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 22,
+        "last14Days": 33,
+        "next7Days": 379,
+        "restOfSeason": 585,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-03",
+        "display_date": "2023-07-03"
+      }
+    },
+    {
+      "player_key": "422.p.10464",
+      "player_name": "Will Benson",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": 1,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 100,
+        "last14Days": 42,
+        "next7Days": 930,
+        "restOfSeason": 903,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9842",
+      "player_name": "Tommy Pham",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 4,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 37,
+        "last14Days": 44,
+        "next7Days": 256,
+        "restOfSeason": 228,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.60584",
+      "player_name": "Bryan Woo",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 4,
+      "percent_owned": 12,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 297,
+        "last14Days": 58,
+        "next7Days": 758,
+        "restOfSeason": 753,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.60630",
+      "player_name": "Jesse Scholtens",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 151,
+        "last14Days": 62,
+        "next7Days": 767,
+        "restOfSeason": 639,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9727",
+      "player_name": "Kirby Yates",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 82,
+        "last14Days": 65,
+        "next7Days": 353,
+        "restOfSeason": 826,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12345",
+      "player_name": "Kyle Bradish",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 3,
+      "percent_owned": 11,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 121,
+        "last14Days": 66,
+        "next7Days": 203,
+        "restOfSeason": 221,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.8619",
+      "player_name": "Carlos Santana",
+      "eligible_positions": ["1B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 1,
+      "percent_owned": 1,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 101,
+        "last14Days": 69,
+        "next7Days": 928,
+        "restOfSeason": 528,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10894",
+      "player_name": "Griffin Canning",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 10,
+      "percent_owned": 14,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 79,
+        "last14Days": 71,
+        "next7Days": 846,
+        "restOfSeason": 1106,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12658",
+      "player_name": "Huascar Brazoban",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 160,
+        "last14Days": 72,
+        "next7Days": 884,
+        "restOfSeason": 618,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11900",
+      "player_name": "Jordan Weems",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 149,
+        "last14Days": 73,
+        "next7Days": 843,
+        "restOfSeason": 893,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10469",
+      "player_name": "Tyler Alexander",
+      "eligible_positions": ["SP", "RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 75,
+        "last14Days": 75,
+        "next7Days": 862,
+        "restOfSeason": 1134,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9096",
+      "player_name": "Travis d'Arnaud",
+      "eligible_positions": ["C", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 2,
+      "percent_owned": 4,
+      "is_starting": 0,
+      "ranks": {
+        "last30Days": 253,
+        "last14Days": 78,
+        "next7Days": 1085,
+        "restOfSeason": 579,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10683",
+      "player_name": "Nick Pivetta",
+      "eligible_positions": ["SP", "RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 179,
+        "last14Days": 80,
+        "next7Days": 389,
+        "restOfSeason": 952,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9375",
+      "player_name": "José Cisnero",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 122,
+        "last14Days": 84,
+        "next7Days": 282,
+        "restOfSeason": 288,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12690",
+      "player_name": "Fernando Cruz",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 189,
+        "last14Days": 85,
+        "next7Days": 755,
+        "restOfSeason": 572,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10846",
+      "player_name": "Bryse Wilson",
+      "eligible_positions": ["SP", "RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 202,
+        "last14Days": 86,
+        "next7Days": 973,
+        "restOfSeason": 1122,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11322",
+      "player_name": "Daniel Lynch",
+      "eligible_positions": ["SP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": 1,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 426,
+        "last14Days": 88,
+        "next7Days": 1031,
+        "restOfSeason": 1320,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11548",
+      "player_name": "Colin Poche",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 1,
+      "percent_owned": 1,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 73,
+        "last14Days": 94,
+        "next7Days": 804,
+        "restOfSeason": 282,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.11551",
+      "player_name": "Mason Englert",
+      "eligible_positions": ["SP", "RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 300,
+        "last14Days": 96,
+        "next7Days": 788,
+        "restOfSeason": 1145,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.12210",
+      "player_name": "Matt Vierling",
+      "eligible_positions": ["3B", "OF", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 1,
+      "percent_owned": 1,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 239,
+        "last14Days": 97,
+        "next7Days": 89,
+        "restOfSeason": 1176,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.10761",
+      "player_name": "Garrett Cooper",
+      "eligible_positions": ["1B", "Util"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 1,
+      "percent_owned": 1,
+      "is_starting": 1,
+      "ranks": {
+        "last30Days": 165,
+        "last14Days": 98,
+        "next7Days": 365,
+        "restOfSeason": 961,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.9653",
+      "player_name": "Tommy Kahnle",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": 1,
+      "percent_owned": 1,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 98,
+        "last14Days": 101,
+        "next7Days": 231,
+        "restOfSeason": 433,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    },
+    {
+      "player_key": "422.p.62451",
+      "player_name": "Ty Adcock",
+      "eligible_positions": ["RP", "P"],
+      "selected_position": null,
+      "is_editable": false,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "percent_started": null,
+      "percent_owned": null,
+      "is_starting": "N/A",
+      "ranks": {
+        "last30Days": 156,
+        "last14Days": 103,
+        "next7Days": 774,
+        "restOfSeason": 1184,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1
+      },
+      "is_undroppable": false,
+      "ownership": {
+        "ownership_type": "waivers",
+        "waiver_date": "2023-07-01",
+        "display_date": "2023-07-01"
+      }
+    }
+  ]
+}

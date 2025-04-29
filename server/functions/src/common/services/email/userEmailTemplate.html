@@ -1,0 +1,101 @@
+<!-- This is a sendgrid template, this is not actually used by the google cloud backend directly -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Template</title>
+    <style>
+      body {
+        background-color: #f2f2f2;
+        font-family: Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.4;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background-color: #673ab7;
+        color: #ffffff;
+        padding: 10px;
+        text-align: left;
+        border-radius: 10px 10px 0 0;
+        display: flex;
+        align-items: center;
+      }
+
+      .logo-container {
+        display: flex;
+        align-items: center;
+      }
+
+      .logo {
+        display: block;
+        margin-right: 10px;
+        width: 50px;
+        height: 50px;
+        background-image: url("http://cdn.mcauto-images-production.sendgrid.net/3706658aa1cdc37a/6948d02a-bf1c-4535-8568-9f8700519088/339x311.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+      }
+
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      h2 {
+        font-size: 18px;
+        margin: 20px 0;
+      }
+
+      p {
+        font-size: 16px;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <div class="logo-container">
+          <div class="logo"></div>
+          <h1>Fantasy AutoCoach</h1>
+        </div>
+      </div>
+      <h2>Dear {{displayName}},</h2>
+      {{#each body}}
+      <p>{{{this}}}</p>
+      {{/each}}
+      <p>Your Fantasy AutoCoach team</p>
+      {{#if buttonUrl}}
+      <a
+        href="{{buttonUrl}}"
+        style="
+          display: block;
+          text-align: center;
+          margin-top: 20px;
+          padding: 10px;
+          background-color: #673ab7;
+          color: #ffffff !important;
+          text-decoration: none;
+          font-size: 16px;
+          border-radius: 5px;
+        "
+        >{{buttonText}}</a
+      >
+      {{/if}}
+    </div>
+  </body>
+</html>

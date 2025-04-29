@@ -1,0 +1,1144 @@
+{
+  "allow_transactions": true,
+  "allow_adding": true,
+  "automated_transaction_processing": true,
+  "coverage_period": "2023-07-01",
+  "allow_dropping": true,
+  "current_season_adds": 17,
+  "coverage_type": "date",
+  "allow_add_drops": true,
+  "end_date": 1696229999999,
+  "roster_positions": {
+    "3B": 1,
+    "2B": 1,
+    "Util": 2,
+    "OF": 3,
+    "1B": 1,
+    "P": 4,
+    "RP": 2,
+    "BN": 5,
+    "SS": 1,
+    "IL": 4,
+    "SP": 2,
+    "C": 1
+  },
+  "games_played": [
+    {
+      "position": "C",
+      "games_played": {
+        "played": 72,
+        "projected": 151,
+        "max": 162
+      }
+    },
+    {
+      "games_played": {
+        "max": 162,
+        "played": 80,
+        "projected": 159
+      },
+      "position": "1B"
+    },
+    {
+      "position": "2B",
+      "games_played": {
+        "projected": 155,
+        "played": 76,
+        "max": 162
+      }
+    },
+    {
+      "games_played": {
+        "played": 73,
+        "projected": 152,
+        "max": 162
+      },
+      "position": "3B"
+    },
+    {
+      "games_played": {
+        "max": 162,
+        "projected": 162,
+        "played": 83
+      },
+      "position": "SS"
+    },
+    {
+      "games_played": {
+        "played": 215,
+        "projected": 453,
+        "max": 486
+      },
+      "position": "OF"
+    },
+    {
+      "position": "Util",
+      "games_played": {
+        "played": 156,
+        "projected": 315,
+        "max": 324
+      }
+    }
+  ],
+  "players": [
+    {
+      "ranks": {
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last14Days": 85,
+        "next7Days": 344,
+        "restOfSeason": 1226,
+        "last30Days": 114
+      },
+      "is_starting": 1,
+      "eligible_positions": ["C", "Util"],
+      "player_key": "422.p.11662",
+      "is_editable": false,
+      "player_name": "Jonah Heim",
+      "selected_position": "C",
+      "percent_started": 76,
+      "is_playing": true,
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "percent_owned": 82,
+      "percent_owned_delta": 0
+    },
+    {
+      "is_starting": 1,
+      "is_undroppable": true,
+      "selected_position": "1B",
+      "is_playing": true,
+      "player_key": "422.p.10621",
+      "percent_owned": 98,
+      "percent_owned_delta": 0,
+      "injury_status": "Healthy",
+      "percent_started": 97,
+      "ranks": {
+        "next7Days": 53,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "last30Days": 232,
+        "restOfSeason": 10,
+        "last14Days": 151,
+        "next4Weeks": -1
+      },
+      "player_name": "Vladimir Guerrero Jr.",
+      "is_editable": false,
+      "eligible_positions": ["1B", "Util"]
+    },
+    {
+      "is_playing": true,
+      "is_starting": 1,
+      "percent_started": 48,
+      "player_key": "422.p.10175",
+      "percent_owned": 62,
+      "percent_owned_delta": 0,
+      "eligible_positions": ["2B", "3B", "Util"],
+      "injury_status": "Healthy",
+      "selected_position": "2B",
+      "ranks": {
+        "last30Days": 146,
+        "next7Days": 857,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "restOfSeason": 194,
+        "next4Weeks": -1,
+        "last14Days": 464
+      },
+      "is_undroppable": false,
+      "is_editable": true,
+      "player_name": "Ryan McMahon"
+    },
+    {
+      "is_playing": true,
+      "selected_position": "3B",
+      "is_starting": 1,
+      "is_undroppable": false,
+      "player_name": "Gunnar Henderson",
+      "eligible_positions": ["3B", "SS", "Util"],
+      "player_key": "422.p.11731",
+      "ranks": {
+        "last4Weeks": -1,
+        "next7Days": 142,
+        "projectedWeek": -1,
+        "last14Days": 463,
+        "last30Days": 66,
+        "next4Weeks": -1,
+        "restOfSeason": 130
+      },
+      "percent_started": 57,
+      "injury_status": "Healthy",
+      "is_editable": false,
+      "percent_owned": 76
+    },
+    {
+      "percent_started": 97,
+      "injury_status": "Healthy",
+      "percent_owned": 98,
+      "percent_owned_delta": 0,
+      "selected_position": "SS",
+      "is_starting": 1,
+      "eligible_positions": ["2B", "SS", "Util"],
+      "is_playing": true,
+      "is_undroppable": false,
+      "is_editable": false,
+      "player_name": "Marcus Semien",
+      "player_key": "422.p.9517",
+      "ranks": {
+        "next7Days": 97,
+        "last14Days": 363,
+        "last4Weeks": -1,
+        "last30Days": 196,
+        "restOfSeason": 50,
+        "next4Weeks": -1,
+        "projectedWeek": -1
+      }
+    },
+    {
+      "is_starting": 1,
+      "player_name": "Ian Happ",
+      "is_playing": true,
+      "ranks": {
+        "restOfSeason": 176,
+        "last14Days": 504,
+        "last30Days": 352,
+        "next7Days": 153,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "projectedWeek": -1
+      },
+      "player_key": "422.p.10440",
+      "eligible_positions": ["OF", "Util"],
+      "selected_position": "OF",
+      "percent_started": 22,
+      "is_editable": true,
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "percent_owned": 27
+    },
+    {
+      "player_key": "422.p.11866",
+      "ranks": {
+        "last30Days": 271,
+        "last14Days": 107,
+        "next4Weeks": -1,
+        "restOfSeason": 143,
+        "last4Weeks": -1,
+        "next7Days": 147,
+        "projectedWeek": -1
+      },
+      "percent_started": 54,
+      "is_starting": 1,
+      "percent_owned": 59,
+      "percent_owned_delta": 0,
+      "eligible_positions": ["1B", "OF", "Util"],
+      "injury_status": "Healthy",
+      "is_undroppable": false,
+      "selected_position": "OF",
+      "player_name": "Andrew Vaughn",
+      "is_playing": true,
+      "is_editable": false
+    },
+    {
+      "is_undroppable": false,
+      "is_starting": "N/A",
+      "ranks": {
+        "last14Days": 170,
+        "next7Days": 201,
+        "last30Days": 137,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "restOfSeason": 197
+      },
+      "selected_position": "OF",
+      "percent_owned": 24,
+      "percent_owned_delta": 0,
+      "percent_started": 19,
+      "is_editable": true,
+      "player_name": "Jake McCarthy",
+      "player_key": "422.p.11265",
+      "is_playing": true,
+      "eligible_positions": ["OF", "Util"],
+      "injury_status": "Healthy"
+    },
+    {
+      "eligible_positions": ["SS", "Util"],
+      "is_starting": 1,
+      "percent_owned": 97,
+      "percent_owned_delta": 0,
+      "ranks": {
+        "next7Days": 60,
+        "restOfSeason": 21,
+        "next4Weeks": -1,
+        "last30Days": 374,
+        "last4Weeks": -1,
+        "last14Days": 422,
+        "projectedWeek": -1
+      },
+      "percent_started": 95,
+      "is_undroppable": true,
+      "is_editable": false,
+      "injury_status": "Healthy",
+      "selected_position": "Util",
+      "player_name": "Bo Bichette",
+      "player_key": "422.p.10766",
+      "is_playing": true
+    },
+    {
+      "is_playing": true,
+      "is_undroppable": false,
+      "ranks": {
+        "last30Days": 296,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 82,
+        "projectedWeek": -1,
+        "next7Days": 96,
+        "last14Days": 489
+      },
+      "player_name": "Carlos Correa",
+      "eligible_positions": ["SS", "Util"],
+      "is_editable": false,
+      "is_starting": 1,
+      "selected_position": "Util",
+      "player_key": "422.p.9573",
+      "percent_started": 19,
+      "injury_status": "Healthy",
+      "percent_owned": 35
+    },
+    {
+      "percent_started": 2,
+      "is_editable": false,
+      "injury_status": "Healthy",
+      "percent_owned": 5,
+      "percent_owned_delta": 0,
+      "is_undroppable": false,
+      "player_key": "422.p.11853",
+      "eligible_positions": ["C", "Util"],
+      "selected_position": "BN",
+      "ranks": {
+        "next4Weeks": -1,
+        "restOfSeason": 524,
+        "last30Days": 769,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "next7Days": 1051,
+        "last14Days": 782
+      },
+      "player_name": "Alejandro Kirk",
+      "is_playing": true,
+      "is_starting": 0
+    },
+    {
+      "is_playing": true,
+      "selected_position": "BN",
+      "eligible_positions": ["1B", "2B", "3B", "SS", "OF", "Util"],
+      "is_starting": 0,
+      "player_key": "422.p.12351",
+      "percent_started": 11,
+      "ranks": {
+        "restOfSeason": 363,
+        "last30Days": 225,
+        "last4Weeks": -1,
+        "last14Days": 93,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "next7Days": 867
+      },
+      "is_undroppable": false,
+      "is_editable": false,
+      "percent_owned": 22,
+      "percent_owned_delta": 0,
+      "player_name": "Brendan Donovan",
+      "injury_status": "Day-to-Day"
+    },
+    {
+      "is_playing": true,
+      "selected_position": "BN",
+      "player_key": "422.p.9889",
+      "player_name": "Hunter Renfroe",
+      "is_starting": "N/A",
+      "percent_started": 18,
+      "is_undroppable": false,
+      "is_editable": true,
+      "ranks": {
+        "restOfSeason": 236,
+        "next7Days": 278,
+        "projectedWeek": -1,
+        "last14Days": 204,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last30Days": 432
+      },
+      "injury_status": "Healthy",
+      "eligible_positions": ["OF", "Util"],
+      "percent_owned": 21
+    },
+    {
+      "selected_position": "SP",
+      "ranks": {
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "restOfSeason": 138,
+        "next7Days": 80,
+        "projectedWeek": -1,
+        "last14Days": 134,
+        "last30Days": 96
+      },
+      "player_key": "422.p.10438",
+      "is_editable": false,
+      "player_name": "Dylan Cease",
+      "is_undroppable": false,
+      "is_playing": true,
+      "eligible_positions": ["SP", "P"],
+      "percent_owned": 92,
+      "percent_owned_delta": 0,
+      "injury_status": "Healthy",
+      "percent_started": 72,
+      "is_starting": 1
+    },
+    {
+      "percent_owned": 34,
+      "percent_owned_delta": 0,
+      "injury_status": "Healthy",
+      "is_starting": "N/A",
+      "selected_position": "SP",
+      "player_name": "Brayan Bello",
+      "eligible_positions": ["SP", "P"],
+      "is_playing": true,
+      "is_editable": false,
+      "player_key": "422.p.12330",
+      "percent_started": 18,
+      "ranks": {
+        "last30Days": 48,
+        "next7Days": 333,
+        "restOfSeason": 438,
+        "next4Weeks": -1,
+        "last14Days": 20,
+        "last4Weeks": -1,
+        "projectedWeek": -1
+      },
+      "is_undroppable": false
+    },
+    {
+      "selected_position": "RP",
+      "player_name": "Alex Lange",
+      "is_starting": "N/A",
+      "eligible_positions": ["RP", "P"],
+      "is_playing": true,
+      "ranks": {
+        "next7Days": 102,
+        "last30Days": 806,
+        "next4Weeks": -1,
+        "restOfSeason": 156,
+        "projectedWeek": -1,
+        "last14Days": 656,
+        "last4Weeks": -1
+      },
+      "is_undroppable": false,
+      "is_editable": true,
+      "player_key": "422.p.10860",
+      "injury_status": "Healthy",
+      "percent_owned": 35,
+      "percent_owned_delta": 0,
+      "percent_started": 34
+    },
+    {
+      "injury_status": "Healthy",
+      "player_key": "422.p.11214",
+      "is_undroppable": false,
+      "ranks": {
+        "restOfSeason": 562,
+        "last14Days": 68,
+        "last4Weeks": -1,
+        "last30Days": 19,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "next7Days": 382
+      },
+      "selected_position": "RP",
+      "eligible_positions": ["RP", "P"],
+      "is_starting": "N/A",
+      "is_playing": true,
+      "player_name": "Josh Sborz",
+      "is_editable": false,
+      "percent_owned": 5,
+      "percent_owned_delta": 0,
+      "percent_started": 4
+    },
+    {
+      "ranks": {
+        "next4Weeks": -1,
+        "last30Days": 394,
+        "projectedWeek": -1,
+        "restOfSeason": 269,
+        "last14Days": 295,
+        "last4Weeks": -1,
+        "next7Days": 103
+      },
+      "is_starting": "N/A",
+      "injury_status": "Healthy",
+      "player_name": "Freddy Peralta",
+      "percent_owned": 59,
+      "percent_owned_delta": 0,
+      "is_editable": false,
+      "is_undroppable": false,
+      "percent_started": 45,
+      "is_playing": true,
+      "eligible_positions": ["SP", "P"],
+      "player_key": "422.p.11014",
+      "selected_position": "P"
+    },
+    {
+      "is_undroppable": false,
+      "is_editable": false,
+      "eligible_positions": ["SP", "P"],
+      "is_playing": true,
+      "percent_started": 46,
+      "ranks": {
+        "projectedWeek": -1,
+        "last30Days": 49,
+        "next4Weeks": -1,
+        "last4Weeks": -1,
+        "last14Days": 153,
+        "next7Days": 206,
+        "restOfSeason": 127
+      },
+      "player_key": "422.p.9640",
+      "injury_status": "Healthy",
+      "player_name": "Lucas Giolito",
+      "percent_owned": 88,
+      "percent_owned_delta": 0,
+      "selected_position": "P",
+      "is_starting": "N/A"
+    },
+    {
+      "percent_owned": 39,
+      "percent_owned_delta": 0,
+      "eligible_positions": ["SP", "P"],
+      "player_key": "422.p.10660",
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "selected_position": "P",
+      "ranks": {
+        "projectedWeek": -1,
+        "next7Days": 353,
+        "next4Weeks": -1,
+        "last30Days": 33,
+        "restOfSeason": 313,
+        "last14Days": 45,
+        "last4Weeks": -1
+      },
+      "is_playing": true,
+      "is_editable": false,
+      "player_name": "Jordan Montgomery",
+      "percent_started": 16,
+      "injury_status": "Healthy"
+    },
+    {
+      "percent_started": 76,
+      "percent_owned": 97,
+      "percent_owned_delta": 0,
+      "player_name": "Shane McClanahan",
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "eligible_positions": ["SP", "P", "IL"],
+      "is_playing": true,
+      "ranks": {
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "next4Weeks": -1,
+        "last30Days": 201,
+        "restOfSeason": 13,
+        "next7Days": 4,
+        "last14Days": 831
+      },
+      "player_key": "422.p.11398",
+      "selected_position": "P",
+      "is_editable": true,
+      "injury_status": "15-Day Injured List"
+    },
+    {
+      "eligible_positions": ["SP", "RP", "P", "IL"],
+      "is_starting": "N/A",
+      "percent_started": null,
+      "percent_owned": 2,
+      "percent_owned_delta": 0,
+      "ranks": {
+        "next4Weeks": -1,
+        "next7Days": 2348,
+        "last30Days": 776,
+        "last14Days": 506,
+        "projectedWeek": -1,
+        "last4Weeks": -1,
+        "restOfSeason": 384
+      },
+      "player_name": "Ben Lively",
+      "is_undroppable": false,
+      "is_playing": true,
+      "is_editable": false,
+      "injury_status": "15-Day Injured List",
+      "player_key": "422.p.9881",
+      "selected_position": "BN"
+    },
+    {
+      "injury_status": "Healthy",
+      "is_editable": true,
+      "player_name": "Drew Smyly",
+      "selected_position": "BN",
+      "ranks": {
+        "last14Days": 786,
+        "projectedWeek": -1,
+        "last30Days": 880,
+        "restOfSeason": 312,
+        "next4Weeks": -1,
+        "next7Days": 280,
+        "last4Weeks": -1
+      },
+      "is_playing": true,
+      "is_starting": "N/A",
+      "is_undroppable": false,
+      "percent_owned": 16,
+      "percent_owned_delta": 0,
+      "player_key": "422.p.9140",
+      "eligible_positions": ["SP", "P"],
+      "percent_started": 7
+    },
+    {
+      "is_undroppable": false,
+      "percent_started": 5,
+      "eligible_positions": ["OF", "Util"],
+      "is_playing": true,
+      "player_name": "Kris Bryant",
+      "player_key": "422.p.9558",
+      "is_editable": true,
+      "percent_owned": 26,
+      "percent_owned_delta": 0,
+      "selected_position": "IL",
+      "ranks": {
+        "next7Days": 277,
+        "next4Weeks": -1,
+        "projectedWeek": -1,
+        "last14Days": 791,
+        "restOfSeason": 102,
+        "last4Weeks": -1,
+        "last30Days": 970
+      },
+      "is_starting": 1,
+      "injury_status": "Healthy"
+    },
+    {
+      "eligible_positions": ["SS", "Util", "IL"],
+      "is_starting": 0,
+      "injury_status": "60-Day Injured List",
+      "player_key": "422.p.11370",
+      "player_name": "Oneil Cruz",
+      "is_playing": true,
+      "ranks": {
+        "next4Weeks": -1,
+        "next7Days": 1691,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "restOfSeason": 449,
+        "last30Days": 1508,
+        "last14Days": 1406
+      },
+      "is_editable": false,
+      "is_undroppable": false,
+      "percent_owned": 32,
+      "percent_owned_delta": 0,
+      "selected_position": "IL",
+      "percent_started": null
+    },
+    {
+      "eligible_positions": ["SP", "P"],
+      "player_key": "422.p.9585",
+      "percent_owned": 94,
+      "percent_owned_delta": 0,
+      "selected_position": "IL",
+      "injury_status": "Healthy",
+      "is_playing": true,
+      "is_undroppable": false,
+      "ranks": {
+        "last14Days": 2038,
+        "next7Days": 15,
+        "last4Weeks": -1,
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "restOfSeason": 43,
+        "last30Days": 2108
+      },
+      "is_editable": true,
+      "player_name": "Julio Urías",
+      "is_starting": 1,
+      "percent_started": 26
+    },
+    {
+      "is_undroppable": false,
+      "selected_position": "IL",
+      "injury_status": "Healthy",
+      "percent_owned": 41,
+      "percent_owned_delta": 0,
+      "percent_started": 20,
+      "is_editable": false,
+      "eligible_positions": ["SP", "P"],
+      "player_name": "Alex Cobb",
+      "is_playing": true,
+      "is_starting": "N/A",
+      "player_key": "422.p.8918",
+      "ranks": {
+        "projectedWeek": -1,
+        "next4Weeks": -1,
+        "next7Days": 758,
+        "last30Days": 306,
+        "restOfSeason": 307,
+        "last4Weeks": -1,
+        "last14Days": 433
+      }
+    }
+  ],
+  "max_season_adds": -1,
+  "max_weekly_adds": -1,
+  "weekly_deadline": "intraday",
+  "start_date": 1680159600000,
+  "num_teams": 12,
+  "scoring_type": null,
+  "innings_pitched": {
+    "pitched": "641.1",
+    "projected": "1328.1",
+    "max": "1400"
+  },
+  "faab_balance": 90,
+  "edit_key": "2023-07-01",
+  "allow_waiver_adds": true,
+  "team_key": "422.l.115494.t.4",
+  "transactions": [
+    [
+      {
+        "waiver_priority": 2,
+        "waiver_team_key": "422.l.115494.t.4",
+        "status": "pending",
+        "faab_bid": "0",
+        "waiver_roster_reflect_key": "2023-07-03",
+        "type": "waiver",
+        "waiver_team_name": "Jeff's Quality Team",
+        "waiver_priority_options": {
+          "0": {
+            "option": 2
+          },
+          "1": {
+            "option": 3
+          },
+          "count": 2
+        },
+        "waiver_player_key": "422.p.9591",
+        "transaction_key": "422.l.115494.w.c.4_9591_9889",
+        "waiver_date": "2023-07-03"
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9591"
+                },
+                {
+                  "player_id": "9591"
+                },
+                {
+                  "name": {
+                    "first": "Eddie",
+                    "full": "Eddie Rosario",
+                    "last": "Rosario",
+                    "ascii_last": "Rosario",
+                    "ascii_first": "Eddie"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "ATL"
+                },
+                {
+                  "display_position": "OF"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "destination_team_key": "422.l.115494.t.4",
+                  "source_type": "waivers",
+                  "destination_type": "team",
+                  "type": "add",
+                  "destination_team_name": "Jeff's Quality Team"
+                }
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9889"
+                },
+                {
+                  "player_id": "9889"
+                },
+                {
+                  "name": {
+                    "first": "Hunter",
+                    "ascii_first": "Hunter",
+                    "ascii_last": "Renfroe",
+                    "full": "Hunter Renfroe",
+                    "last": "Renfroe"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "LAA"
+                },
+                {
+                  "display_position": "OF"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "source_type": "team",
+                  "type": "drop",
+                  "destination_type": "waivers",
+                  "source_team_name": "Jeff's Quality Team",
+                  "source_team_key": "422.l.115494.t.4"
+                }
+              }
+            ]
+          },
+          "count": 2
+        }
+      }
+    ],
+    [
+      {
+        "waiver_priority_options": {
+          "0": {
+            "option": 2
+          },
+          "1": {
+            "option": 3
+          },
+          "count": 2
+        },
+        "waiver_team_name": "Jeff's Quality Team",
+        "transaction_key": "422.l.115494.w.c.4_12614_9881",
+        "waiver_priority": 3,
+        "status": "pending",
+        "faab_bid": "0",
+        "type": "waiver",
+        "waiver_roster_reflect_key": "2023-07-03",
+        "waiver_player_key": "422.p.12614",
+        "waiver_team_key": "422.l.115494.t.4",
+        "waiver_date": "2023-07-03"
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.12614"
+                },
+                {
+                  "player_id": "12614"
+                },
+                {
+                  "name": {
+                    "ascii_last": "Cano",
+                    "ascii_first": "Yennier",
+                    "full": "Yennier Cano",
+                    "last": "Cano",
+                    "first": "Yennier"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "BAL"
+                },
+                {
+                  "display_position": "RP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "destination_team_name": "Jeff's Quality Team",
+                  "type": "add",
+                  "destination_type": "team",
+                  "source_type": "waivers",
+                  "destination_team_key": "422.l.115494.t.4"
+                }
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9881"
+                },
+                {
+                  "player_id": "9881"
+                },
+                {
+                  "name": {
+                    "full": "Ben Lively",
+                    "ascii_last": "Lively",
+                    "first": "Ben",
+                    "ascii_first": "Ben",
+                    "last": "Lively"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "CIN"
+                },
+                {
+                  "display_position": "SP,RP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "source_type": "team",
+                  "source_team_name": "Jeff's Quality Team",
+                  "type": "drop",
+                  "destination_type": "waivers",
+                  "source_team_key": "422.l.115494.t.4"
+                }
+              }
+            ]
+          },
+          "count": 2
+        }
+      }
+    ],
+    [
+      {
+        "waiver_priority": 1,
+        "waiver_date": "2023-07-02",
+        "waiver_player_key": "422.p.9583",
+        "transaction_key": "422.l.115494.w.c.4_9583_9140",
+        "status": "pending",
+        "type": "waiver",
+        "waiver_team_key": "422.l.115494.t.4",
+        "waiver_roster_reflect_key": "2023-07-02",
+        "faab_bid": "0",
+        "waiver_priority_options": {
+          "0": {
+            "option": 1
+          },
+          "count": 1
+        },
+        "waiver_team_name": "Jeff's Quality Team"
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9583"
+                },
+                {
+                  "player_id": "9583"
+                },
+                {
+                  "name": {
+                    "full": "C.J. Cron",
+                    "first": "C.J.",
+                    "ascii_first": "C.J.",
+                    "ascii_last": "Cron",
+                    "last": "Cron"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "COL"
+                },
+                {
+                  "display_position": "1B"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "destination_type": "team",
+                  "destination_team_key": "422.l.115494.t.4",
+                  "destination_team_name": "Jeff's Quality Team",
+                  "type": "add",
+                  "source_type": "waivers"
+                }
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.9140"
+                },
+                {
+                  "player_id": "9140"
+                },
+                {
+                  "name": {
+                    "ascii_first": "Drew",
+                    "ascii_last": "Smyly",
+                    "full": "Drew Smyly",
+                    "first": "Drew",
+                    "last": "Smyly"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "CHC"
+                },
+                {
+                  "display_position": "SP"
+                },
+                {
+                  "position_type": "P"
+                }
+              ],
+              {
+                "transaction_data": {
+                  "destination_type": "waivers",
+                  "source_type": "team",
+                  "source_team_name": "Jeff's Quality Team",
+                  "type": "drop",
+                  "source_team_key": "422.l.115494.t.4"
+                }
+              }
+            ]
+          },
+          "count": 2
+        }
+      }
+    ],
+    [
+      {
+        "transaction_key": "422.l.115494.pt.25",
+        "status": "proposed",
+        "trader_team_name": "Jason's Magnificent Roto Team",
+        "tradee_team_name": "Jeff's Quality Team",
+        "type": "pending_trade",
+        "tradee_team_key": "422.l.115494.t.4",
+        "tradee_unused_roster_spots": 0,
+        "trade_proposed_time": "1687481827",
+        "trader_team_key": "422.l.115494.t.5",
+        "trade_roster_reflect_key": "2023-07-04",
+        "current_login_can_respond": 1,
+        "trade_note": ""
+      },
+      {
+        "players": {
+          "0": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.10929"
+                },
+                {
+                  "player_id": "10929"
+                },
+                {
+                  "name": {
+                    "ascii_first": "Sean",
+                    "full": "Sean Murphy",
+                    "ascii_last": "Murphy",
+                    "last": "Murphy",
+                    "first": "Sean"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "ATL"
+                },
+                {
+                  "display_position": "C"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "destination_team_name": "Jeff's Quality Team",
+                    "type": "pending_trade",
+                    "destination_type": "team",
+                    "destination_team_key": "422.l.115494.t.4",
+                    "source_team_key": "422.l.115494.t.5",
+                    "source_team_name": "Jason's Magnificent Roto Team",
+                    "source_type": "team"
+                  }
+                ]
+              }
+            ]
+          },
+          "1": {
+            "player": [
+              [
+                {
+                  "player_key": "422.p.11662"
+                },
+                {
+                  "player_id": "11662"
+                },
+                {
+                  "name": {
+                    "last": "Heim",
+                    "full": "Jonah Heim",
+                    "ascii_first": "Jonah",
+                    "ascii_last": "Heim",
+                    "first": "Jonah"
+                  }
+                },
+                {
+                  "editorial_team_abbr": "TEX"
+                },
+                {
+                  "display_position": "C"
+                },
+                {
+                  "position_type": "B"
+                }
+              ],
+              {
+                "transaction_data": [
+                  {
+                    "type": "pending_trade",
+                    "destination_team_key": "422.l.115494.t.5",
+                    "destination_type": "team",
+                    "source_type": "team",
+                    "source_team_key": "422.l.115494.t.4",
+                    "source_team_name": "Jeff's Quality Team",
+                    "destination_team_name": "Jason's Magnificent Roto Team"
+                  }
+                ]
+              }
+            ]
+          },
+          "count": 2
+        }
+      }
+    ]
+  ],
+  "current_weekly_adds": 8,
+  "waiver_rule": "continuous",
+  "game_code": "mlb"
+}

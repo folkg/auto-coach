@@ -1,0 +1,39 @@
+name: Main Branch Checks
+
+on:
+  pull_request:
+    branches: [main]
+
+defaults:
+  run:
+    working-directory: functions
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@master
+
+      - name: Setup Biome CLI
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+
+      - name: Run Biome
+        run: biome ci
+
+      - name: Setup Bun CLI
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Check Types
+        run: bun run types
+
+      - name: Run Tests
+        run: bun run test:ci

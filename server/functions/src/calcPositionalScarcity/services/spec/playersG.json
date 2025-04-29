@@ -1,0 +1,4803 @@
+{
+  "fantasy_content": {
+    "xml:lang": "en-US",
+    "yahoo:uri": "/fantasy/v2/games;game_keys=nhl/players;status=A;position=G;sort=R_PO;sort_type=biweekly;out=ownership,percent_started,percent_owned,ranks,opponent,starting_status;ranks=last30days,last14days,projected_next7days,projected_season_remaining,last4weeks,projected_week,projected_next4weeks;percent_started.cut_types=diamond;percent_owned.cut_types=diamond",
+    "games": {
+      "0": {
+        "game": [
+          {
+            "game_key": "427",
+            "game_id": "427",
+            "name": "Hockey",
+            "code": "nhl",
+            "type": "full",
+            "url": "https://hockey.fantasysports.yahoo.com/hockey",
+            "season": "2023",
+            "is_registration_over": 0,
+            "is_game_over": 0,
+            "is_offseason": 0,
+            "is_live_draft_lobby_active": 1
+          },
+          {
+            "players": {
+              "0": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6447"
+                    },
+                    {
+                      "player_id": "6447"
+                    },
+                    {
+                      "name": {
+                        "full": "Ilya Sorokin",
+                        "first": "Ilya",
+                        "last": "Sorokin",
+                        "ascii_first": "Ilya",
+                        "ascii_last": "Sorokin"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6447"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6447"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.12"
+                    },
+                    {
+                      "editorial_team_full_name": "New York Islanders"
+                    },
+                    {
+                      "editorial_team_abbr": "NYI"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/ny-islanders/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "30"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/uIEs83fTh5DizwR4F7bhMA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/6447.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/uIEs83fTh5DizwR4F7bhMA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/6447.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 94
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 91
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 100
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 99
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "19"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "19"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "19"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "8"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "1": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6486"
+                    },
+                    {
+                      "player_id": "6486"
+                    },
+                    {
+                      "name": {
+                        "full": "Igor Shesterkin",
+                        "first": "Igor",
+                        "last": "Shesterkin",
+                        "ascii_first": "Igor",
+                        "ascii_last": "Shesterkin"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6486"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6486"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.13"
+                    },
+                    {
+                      "editorial_team_full_name": "New York Rangers"
+                    },
+                    {
+                      "editorial_team_abbr": "NYR"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/ny-rangers/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "31"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/aghbPC92h5Ma1hJiAeI6Gg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/6486.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/aghbPC92h5Ma1hJiAeI6Gg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/6486.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 94
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 92
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 100
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 99
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "18"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "18"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "18"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "12"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "2": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7541"
+                    },
+                    {
+                      "player_id": "7541"
+                    },
+                    {
+                      "name": {
+                        "full": "Jake Oettinger",
+                        "first": "Jake",
+                        "last": "Oettinger",
+                        "ascii_first": "Jake",
+                        "ascii_last": "Oettinger"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7541"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7541"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.9"
+                    },
+                    {
+                      "editorial_team_full_name": "Dallas Stars"
+                    },
+                    {
+                      "editorial_team_abbr": "DAL"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/dallas/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "29"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/RwJTcLeSYgFPtJC3TDDfOg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7541.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/RwJTcLeSYgFPtJC3TDDfOg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7541.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 94
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 92
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 100
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "22"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "22"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "22"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "14"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "3": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5820"
+                    },
+                    {
+                      "player_id": "5820"
+                    },
+                    {
+                      "name": {
+                        "full": "Connor Hellebuyck",
+                        "first": "Connor",
+                        "last": "Hellebuyck",
+                        "ascii_first": "Connor",
+                        "ascii_last": "Hellebuyck"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5820"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5820"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.28"
+                    },
+                    {
+                      "editorial_team_full_name": "Winnipeg Jets"
+                    },
+                    {
+                      "editorial_team_abbr": "WPG"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/winnipeg/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "37"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/VahoIhMwfgB3iVg2I4JJoQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10212022/5820.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/VahoIhMwfgB3iVg2I4JJoQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10212022/5820.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 92
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 90
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 99
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "32"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "32"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "32"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "24"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "4": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7736"
+                    },
+                    {
+                      "player_id": "7736"
+                    },
+                    {
+                      "name": {
+                        "full": "Alexandar Georgiev",
+                        "first": "Alexandar",
+                        "last": "Georgiev",
+                        "ascii_first": "Alexandar",
+                        "ascii_last": "Georgiev"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7736"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7736"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.17"
+                    },
+                    {
+                      "editorial_team_full_name": "Colorado Avalanche"
+                    },
+                    {
+                      "editorial_team_abbr": "COL"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/colorado/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "40"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/jayF7tWIZtvN1rQVTyi8ow--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10122022/7736.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/jayF7tWIZtvN1rQVTyi8ow--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10122022/7736.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 93
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 93
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 99
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "29"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "29"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "29"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "21"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "5": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5699"
+                    },
+                    {
+                      "player_id": "5699"
+                    },
+                    {
+                      "name": {
+                        "full": "Andrei Vasilevskiy",
+                        "first": "Andrei",
+                        "last": "Vasilevskiy",
+                        "ascii_first": "Andrei",
+                        "ascii_last": "Vasilevskiy"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5699"
+                    },
+                    {
+                      "status": "O",
+                      "status_full": "Out"
+                    },
+                    {
+                      "injury_note": "Back"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5699"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.20"
+                    },
+                    {
+                      "editorial_team_full_name": "Tampa Bay Lightning"
+                    },
+                    {
+                      "editorial_team_abbr": "TB"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/tampa-bay/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "88"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/rGJDTRT0kSEcoYlbK0ADLQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5699.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/rGJDTRT0kSEcoYlbK0ADLQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5699.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    {
+                      "has_player_notes": 1
+                    },
+                    [],
+                    {
+                      "player_notes_last_timestamp": 1695900557
+                    }
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 66
+                      },
+                      {
+                        "delta": -2
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 56
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 99
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "20"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "20"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "20"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "50"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "6": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5853"
+                    },
+                    {
+                      "player_id": "5853"
+                    },
+                    {
+                      "name": {
+                        "full": "Linus Ullmark",
+                        "first": "Linus",
+                        "last": "Ullmark",
+                        "ascii_first": "Linus",
+                        "ascii_last": "Ullmark"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5853"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5853"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.1"
+                    },
+                    {
+                      "editorial_team_full_name": "Boston Bruins"
+                    },
+                    {
+                      "editorial_team_abbr": "BOS"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/boston/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/.SjtCIDCItR3PvNjh4gMgA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/5853.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/.SjtCIDCItR3PvNjh4gMgA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/5853.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 92
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 91
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 99
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "38"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "38"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "38"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "16"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "7": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6078"
+                    },
+                    {
+                      "player_id": "6078"
+                    },
+                    {
+                      "name": {
+                        "full": "Juuse Saros",
+                        "first": "Juuse",
+                        "last": "Saros",
+                        "ascii_first": "Juuse",
+                        "ascii_last": "Saros"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6078"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6078"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.27"
+                    },
+                    {
+                      "editorial_team_full_name": "Nashville Predators"
+                    },
+                    {
+                      "editorial_team_abbr": "NSH"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/nashville/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "74"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/OVTIwMmGsFmpeo026AfEFw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10282022/6078.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/OVTIwMmGsFmpeo026AfEFw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10282022/6078.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 88
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 89
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 98
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 98
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "85"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "85"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "85"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "36"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "8": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7163"
+                    },
+                    {
+                      "player_id": "7163"
+                    },
+                    {
+                      "name": {
+                        "full": "Filip Gustavsson",
+                        "first": "Filip",
+                        "last": "Gustavsson",
+                        "ascii_first": "Filip",
+                        "ascii_last": "Gustavsson"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7163"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7163"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.30"
+                    },
+                    {
+                      "editorial_team_full_name": "Minnesota Wild"
+                    },
+                    {
+                      "editorial_team_abbr": "MIN"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/minnesota/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "32"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/gUf2BeXOTTMZGfQ8h_Xmkw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/7163.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/gUf2BeXOTTMZGfQ8h_Xmkw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/7163.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 82
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 83
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 95
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 94
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "84"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "84"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "84"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "41"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "9": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7626"
+                    },
+                    {
+                      "player_id": "7626"
+                    },
+                    {
+                      "name": {
+                        "full": "Jeremy Swayman",
+                        "first": "Jeremy",
+                        "last": "Swayman",
+                        "ascii_first": "Jeremy",
+                        "ascii_last": "Swayman"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7626"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7626"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.1"
+                    },
+                    {
+                      "editorial_team_full_name": "Boston Bruins"
+                    },
+                    {
+                      "editorial_team_abbr": "BOS"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/boston/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "1"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/pb.wtINqips8cbwD8UK6Og--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/7626.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/pb.wtINqips8cbwD8UK6Og--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/7626.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 83
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 74
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 95
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 90
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "53"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "53"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "53"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "40"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "10": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.4901"
+                    },
+                    {
+                      "player_id": "4901"
+                    },
+                    {
+                      "name": {
+                        "full": "Sergei Bobrovsky",
+                        "first": "Sergei",
+                        "last": "Bobrovsky",
+                        "ascii_first": "Sergei",
+                        "ascii_last": "Bobrovsky"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/4901"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.4901"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.26"
+                    },
+                    {
+                      "editorial_team_full_name": "Florida Panthers"
+                    },
+                    {
+                      "editorial_team_abbr": "FLA"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/florida/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "72"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/9TQH.BLqFqkXIrvw7w8TTw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/4901.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/9TQH.BLqFqkXIrvw7w8TTw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10272022/4901.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 82
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 74
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 95
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 88
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "92"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "92"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "92"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "211"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "11": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5161"
+                    },
+                    {
+                      "player_id": "5161"
+                    },
+                    {
+                      "name": {
+                        "full": "Frederik Andersen",
+                        "first": "Frederik",
+                        "last": "Andersen",
+                        "ascii_first": "Frederik",
+                        "ascii_last": "Andersen"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5161"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5161"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.7"
+                    },
+                    {
+                      "editorial_team_full_name": "Carolina Hurricanes"
+                    },
+                    {
+                      "editorial_team_abbr": "CAR"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/carolina/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "31"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/rLo1Z5O2La40yMsJ0hFFPA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5161.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/rLo1Z5O2La40yMsJ0hFFPA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5161.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 78
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 75
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 93
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 92
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "103"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "103"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "103"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "95"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "12": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6764"
+                    },
+                    {
+                      "player_id": "6764"
+                    },
+                    {
+                      "name": {
+                        "full": "Ilya Samsonov",
+                        "first": "Ilya",
+                        "last": "Samsonov",
+                        "ascii_first": "Ilya",
+                        "ascii_last": "Samsonov"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6764"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6764"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.21"
+                    },
+                    {
+                      "editorial_team_full_name": "Toronto Maple Leafs"
+                    },
+                    {
+                      "editorial_team_abbr": "TOR"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/toronto/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/e6Q6gUJKl.fDV.koMMeELQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/6764.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/e6Q6gUJKl.fDV.koMMeELQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/6764.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    {
+                      "has_player_notes": 1
+                    },
+                    [],
+                    {
+                      "player_notes_last_timestamp": 1695287715
+                    }
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 72
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 74
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 90
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 93
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "113"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "113"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "113"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "55"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "13": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6408"
+                    },
+                    {
+                      "player_id": "6408"
+                    },
+                    {
+                      "name": {
+                        "full": "Vitek Vanecek",
+                        "first": "Vitek",
+                        "last": "Vanecek",
+                        "ascii_first": "Vitek",
+                        "ascii_last": "Vanecek"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6408"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6408"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.11"
+                    },
+                    {
+                      "editorial_team_full_name": "New Jersey Devils"
+                    },
+                    {
+                      "editorial_team_abbr": "NJ"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/new-jersey/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "41"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/q9zpI5gbg0vLNFnVFQRuuQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10062022/6408.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/q9zpI5gbg0vLNFnVFQRuuQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10062022/6408.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 68
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 70
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 87
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 90
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "132"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "132"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "132"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "48"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "14": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6405"
+                    },
+                    {
+                      "player_id": "6405"
+                    },
+                    {
+                      "name": {
+                        "full": "Thatcher Demko",
+                        "first": "Thatcher",
+                        "last": "Demko",
+                        "ascii_first": "Thatcher",
+                        "ascii_last": "Demko"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6405"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6405"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.22"
+                    },
+                    {
+                      "editorial_team_full_name": "Vancouver Canucks"
+                    },
+                    {
+                      "editorial_team_abbr": "VAN"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/vancouver/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/3iGTmPx6GFGgiaIw3zCQ_Q--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/6405.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/3iGTmPx6GFGgiaIw3zCQ_Q--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/6405.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 67
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 65
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 87
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 84
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "114"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "114"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "114"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "246"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "15": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5753"
+                    },
+                    {
+                      "player_id": "5753"
+                    },
+                    {
+                      "name": {
+                        "full": "Joonas Korpisalo",
+                        "first": "Joonas",
+                        "last": "Korpisalo",
+                        "ascii_first": "Joonas",
+                        "ascii_last": "Korpisalo"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5753"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5753"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.14"
+                    },
+                    {
+                      "editorial_team_full_name": "Ottawa Senators"
+                    },
+                    {
+                      "editorial_team_abbr": "OTT"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/ottawa/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "70"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/MNpZTg7qJdn17prHnsdvgQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5753.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/MNpZTg7qJdn17prHnsdvgQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10252022/5753.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 70
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 60
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 87
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 77
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "105"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "105"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "105"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "126"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "16": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.30111"
+                    },
+                    {
+                      "player_id": "30111"
+                    },
+                    {
+                      "name": {
+                        "full": "Devon Levi",
+                        "first": "Devon",
+                        "last": "Levi",
+                        "ascii_first": "Devon",
+                        "ascii_last": "Levi"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/30111"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.30111"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.2"
+                    },
+                    {
+                      "editorial_team_full_name": "Buffalo Sabres"
+                    },
+                    {
+                      "editorial_team_abbr": "BUF"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/buffalo/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "27"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/TcM85WhJ.fAOHWf2QKLjIw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMDA7Y3I9MTtjdz0xNTM7ZHg9NzQ7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/dh/ap/default/140828/silhouette@2x.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/TcM85WhJ.fAOHWf2QKLjIw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMDA7Y3I9MTtjdz0xNTM7ZHg9NzQ7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/dh/ap/default/140828/silhouette@2x.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 67
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 53
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 86
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 74
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "111"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "111"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "111"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "155"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "17": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6024"
+                    },
+                    {
+                      "player_id": "6024"
+                    },
+                    {
+                      "name": {
+                        "full": "Tristan Jarry",
+                        "first": "Tristan",
+                        "last": "Jarry",
+                        "ascii_first": "Tristan",
+                        "ascii_last": "Jarry"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6024"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6024"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.16"
+                    },
+                    {
+                      "editorial_team_full_name": "Pittsburgh Penguins"
+                    },
+                    {
+                      "editorial_team_abbr": "PIT"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/pittsburgh/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/VRW6SbSQph0sI5CMr45vKQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/6024.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/VRW6SbSQph0sI5CMr45vKQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/6024.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 62
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 64
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 86
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 88
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "129"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "129"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "129"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "71"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "18": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7593"
+                    },
+                    {
+                      "player_id": "7593"
+                    },
+                    {
+                      "name": {
+                        "full": "Stuart Skinner",
+                        "first": "Stuart",
+                        "last": "Skinner",
+                        "ascii_first": "Stuart",
+                        "ascii_last": "Skinner"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7593"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7593"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.6"
+                    },
+                    {
+                      "editorial_team_full_name": "Edmonton Oilers"
+                    },
+                    {
+                      "editorial_team_abbr": "EDM"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/edmonton/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "74"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/9mbjW.DczD.LGi2jPfo25A--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7593.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/9mbjW.DczD.LGi2jPfo25A--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7593.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 65
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 61
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 86
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 84
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "127"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "127"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "127"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "83"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "19": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.5336"
+                    },
+                    {
+                      "player_id": "5336"
+                    },
+                    {
+                      "name": {
+                        "full": "Darcy Kuemper",
+                        "first": "Darcy",
+                        "last": "Kuemper",
+                        "ascii_first": "Darcy",
+                        "ascii_last": "Kuemper"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/5336"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.5336"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.23"
+                    },
+                    {
+                      "editorial_team_full_name": "Washington Capitals"
+                    },
+                    {
+                      "editorial_team_abbr": "WSH"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/washington/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/OQDTjuHOrOKAKw4EE0eCJA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10052022/5336.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/OQDTjuHOrOKAKw4EE0eCJA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10052022/5336.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 61
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 56
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 85
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 82
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "124"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "124"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "124"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "67"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "20": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.3341"
+                    },
+                    {
+                      "player_id": "3341"
+                    },
+                    {
+                      "name": {
+                        "full": "Marc-Andre Fleury",
+                        "first": "Marc-Andre",
+                        "last": "Fleury",
+                        "ascii_first": "Marc-Andre",
+                        "ascii_last": "Fleury"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/3341"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.3341"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.30"
+                    },
+                    {
+                      "editorial_team_full_name": "Minnesota Wild"
+                    },
+                    {
+                      "editorial_team_abbr": "MIN"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/minnesota/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "29"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/japwtUC8KUFLRGcwqO_UVg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/3341.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/japwtUC8KUFLRGcwqO_UVg--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/3341.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 60
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 38
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 81
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 56
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "112"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "112"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "112"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "149"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "21": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.4947"
+                    },
+                    {
+                      "player_id": "4947"
+                    },
+                    {
+                      "name": {
+                        "full": "Jacob Markstrom",
+                        "first": "Jacob",
+                        "last": "Markstrom",
+                        "ascii_first": "Jacob",
+                        "ascii_last": "Markstrom"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/4947"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.4947"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.3"
+                    },
+                    {
+                      "editorial_team_full_name": "Calgary Flames"
+                    },
+                    {
+                      "editorial_team_abbr": "CGY"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/calgary/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "25"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/empCl8mdWPKiCa9kj49vvw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/4947.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/empCl8mdWPKiCa9kj49vvw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10242022/4947.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    {
+                      "has_player_notes": 1
+                    },
+                    [],
+                    {
+                      "player_notes_last_timestamp": 1695544210
+                    }
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 43
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 37
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 76
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 76
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "204"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "204"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "204"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "130"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "22": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.7156"
+                    },
+                    {
+                      "player_id": "7156"
+                    },
+                    {
+                      "name": {
+                        "full": "Carter Hart",
+                        "first": "Carter",
+                        "last": "Hart",
+                        "ascii_first": "Carter",
+                        "ascii_last": "Hart"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/7156"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.7156"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.15"
+                    },
+                    {
+                      "editorial_team_full_name": "Philadelphia Flyers"
+                    },
+                    {
+                      "editorial_team_abbr": "PHI"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/philadelphia/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "79"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/qw6HGpjzQx3SPbHxRG7mrA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7156.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/qw6HGpjzQx3SPbHxRG7mrA--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10262022/7156.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 39
+                      },
+                      {
+                        "delta": 1
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 24
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 71
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 49
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "130"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "130"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "130"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "193"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "23": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.6462"
+                    },
+                    {
+                      "player_id": "6462"
+                    },
+                    {
+                      "name": {
+                        "full": "Ville Husso",
+                        "first": "Ville",
+                        "last": "Husso",
+                        "ascii_first": "Ville",
+                        "ascii_last": "Husso"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/6462"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.6462"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.5"
+                    },
+                    {
+                      "editorial_team_full_name": "Detroit Red Wings"
+                    },
+                    {
+                      "editorial_team_abbr": "DET"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/detroit/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "35"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/tw8FQLj_e5hbX53NzWuwaQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/6462.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/tw8FQLj_e5hbX53NzWuwaQ--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10112022/6462.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    {
+                      "has_player_notes": 1
+                    },
+                    [],
+                    {
+                      "player_notes_last_timestamp": 1695574987
+                    }
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 35
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 23
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 70
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 600
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "163"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "163"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "163"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "202"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "24": {
+                "player": [
+                  [
+                    {
+                      "player_key": "427.p.8155"
+                    },
+                    {
+                      "player_id": "8155"
+                    },
+                    {
+                      "name": {
+                        "full": "Logan Thompson",
+                        "first": "Logan",
+                        "last": "Thompson",
+                        "ascii_first": "Logan",
+                        "ascii_last": "Thompson"
+                      }
+                    },
+                    {
+                      "url": "https://sports.yahoo.com/nhl/players/8155"
+                    },
+                    {
+                      "editorial_player_key": "nhl.p.8155"
+                    },
+                    {
+                      "editorial_team_key": "nhl.t.58"
+                    },
+                    {
+                      "editorial_team_full_name": "Vegas Golden Knights"
+                    },
+                    {
+                      "editorial_team_abbr": "VGK"
+                    },
+                    {
+                      "editorial_team_url": "https://sports.yahoo.com/nhl/teams/vegas/"
+                    },
+                    {
+                      "is_keeper": {
+                        "status": false,
+                        "cost": false
+                      }
+                    },
+                    {
+                      "uniform_number": "36"
+                    },
+                    {
+                      "display_position": "G"
+                    },
+                    {
+                      "headshot": {
+                        "url": "https://s.yimg.com/iu/api/res/1.2/CcPK.LvId0H3jtkwxDf9zw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10072022/8155.png",
+                        "size": "small"
+                      },
+                      "image_url": "https://s.yimg.com/iu/api/res/1.2/CcPK.LvId0H3jtkwxDf9zw--~C/YXBwaWQ9eXNwb3J0cztjaD0yMzM2O2NyPTE7Y3c9MTc5MDtkeD04NTc7ZHk9MDtmaT11bGNyb3A7aD02MDtxPTEwMDt3PTQ2/https://s.yimg.com/xe/i/us/sp/v/nhl_cutout/players_l/10072022/8155.png"
+                    },
+                    {
+                      "is_undroppable": "0"
+                    },
+                    {
+                      "position_type": "G"
+                    },
+                    [],
+                    {
+                      "eligible_positions": [
+                        {
+                          "position": "G"
+                        }
+                      ]
+                    },
+                    [],
+                    [],
+                    []
+                  ],
+                  {
+                    "ownership": []
+                  },
+                  {
+                    "percent_started": [
+                      {
+                        "coverage_type": "date",
+                        "date": "2023-09-30"
+                      },
+                      {
+                        "value": 24
+                      },
+                      {
+                        "percent_started_cut_types": [
+                          {
+                            "percent_started_cut_type": [
+                              {
+                                "coverage_type": "date",
+                                "date": "2023-09-30"
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 20
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "percent_owned": [
+                      {
+                        "coverage_type": "week",
+                        "week": 1
+                      },
+                      {
+                        "value": 64
+                      },
+                      {
+                        "delta": "0"
+                      },
+                      {
+                        "percent_owned_cut_types": [
+                          {
+                            "percent_owned_cut_type": [
+                              {
+                                "coverage_type": "week",
+                                "week": 1
+                              },
+                              {
+                                "cut_type": "diamond"
+                              },
+                              {
+                                "value": 56
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "player_ranks": [
+                      {
+                        "player_rank": {
+                          "rank_type": "L30",
+                          "rank_value": "230"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L14",
+                          "rank_value": "230"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PS7",
+                          "rank_value": "230"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PSR",
+                          "rank_value": "112"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "L4W",
+                          "rank_value": "-"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PW",
+                          "rank_value": "-",
+                          "rank_week": "2023"
+                        }
+                      },
+                      {
+                        "player_rank": {
+                          "rank_type": "PN4W",
+                          "rank_value": "-"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "opponent": null
+                  }
+                ]
+              },
+              "count": 25
+            }
+          }
+        ]
+      },
+      "count": 1
+    },
+    "time": "49.957036972046ms",
+    "copyright": "Certain Data by Sportradar, Stats Perform and Rotowire",
+    "refresh_rate": "60"
+  }
+}
