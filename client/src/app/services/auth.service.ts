@@ -15,7 +15,7 @@ import {
 import { BehaviorSubject, Observable, firstValueFrom } from "rxjs";
 
 import { AUTH } from "../shared/firebase-tokens";
-import { ensure } from "../shared/utils/checks";
+import { assertDefined, ensure } from "../shared/utils/checks";
 import { getErrorMessage } from "../shared/utils/error";
 
 @Injectable({
@@ -77,7 +77,8 @@ export class AuthService {
 
   async sendVerificationEmail(): Promise<void> {
     try {
-      await sendEmailVerification(this.auth.currentUser as User);
+      assertDefined(this.auth.currentUser);
+      await sendEmailVerification(this.auth.currentUser);
       //TODO: Dialog to tell user to check email
     } catch (err) {
       throw new Error(
@@ -88,7 +89,8 @@ export class AuthService {
 
   async updateUserEmail(email: string): Promise<void> {
     try {
-      await updateEmail(this.auth.currentUser as User, email);
+      assertDefined(this.auth.currentUser);
+      await updateEmail(this.auth.currentUser, email);
       await this.sendVerificationEmail();
     } catch (err) {
       if (err instanceof Error) {
@@ -99,6 +101,8 @@ export class AuthService {
           } catch (err) {
             throw new Error(`Couldn't reauthenticate: ${getErrorMessage(err)}`);
           }
+        } else {
+          throw new Error(`Couldn't update email: ${getErrorMessage(err)}`);
         }
       }
     }
