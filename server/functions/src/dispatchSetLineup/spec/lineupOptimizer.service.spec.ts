@@ -1,5 +1,5 @@
 import spacetime from "spacetime";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
 import type {
   FirestoreTeam,
@@ -76,7 +76,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_dropping: false,
         allow_transactions: false,
         allow_waiver_adds: false,
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
         automated_transaction_processing: false,
         last_updated: undefined,
       }),
@@ -368,7 +368,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_dropping: false,
         allow_transactions: false,
         allow_waiver_adds: false,
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
       }),
       createMock<FirestoreTeam>({
         team_key: "test2",
@@ -378,7 +378,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_dropping: false,
         allow_transactions: false,
         allow_waiver_adds: false,
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
       }),
     ];
 
@@ -756,7 +756,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_add_drops: true,
         allow_waiver_adds: true,
         game_code: "mlb",
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
         automated_transaction_processing: true,
         allow_transactions: true,
         last_updated: undefined,
@@ -853,7 +853,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_waiver_adds: true,
         allow_transactions: true,
         game_code: "mlb",
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
         automated_transaction_processing: true,
         last_updated: undefined,
       }),
@@ -928,7 +928,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
         allow_add_drops: false,
         allow_waiver_adds: true,
         game_code: "mlb",
-        lineup_paused_at: undefined,
+        lineup_paused_at: -1,
         automated_transaction_processing: true,
         last_updated: undefined,
       }),
@@ -1533,6 +1533,17 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
 });
 
 describe("Paused teams", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(
+      spacetime.now("Canada/Pacific").hour(11).minute(0).second(0).epoch,
+    );
+
+    return () => {
+      vi.useRealTimers();
+    };
+  });
+
   it("sets the lineup if paused is off", async () => {
     const uid = "testUID";
     const teams = [
@@ -1731,6 +1742,6 @@ function mapFirestoreTeams(team: {
     allow_waiver_adds: false,
     roster_positions: {},
     num_teams: 0,
-    lineup_paused_at: team.lineup_paused_at,
+    lineup_paused_at: team.lineup_paused_at ?? -1,
   };
 }

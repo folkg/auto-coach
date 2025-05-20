@@ -124,7 +124,7 @@ export class TeamComponent {
   }
 
   private getNextLineupUpdate(
-    lineupPausedAt: number | undefined,
+    lineupPausedAt: number,
     now = spacetimeNow(),
   ): string {
     const tomorrowMorning = this.datePipe.transform(
@@ -186,10 +186,7 @@ export class TeamComponent {
     return this.datePipe.transform(updateTime.epoch);
   }
 
-  private isToday(
-    timestamp: number | undefined,
-    now = spacetimeNow(),
-  ): boolean {
+  private isToday(timestamp: number, now = spacetimeNow()): boolean {
     if (timestamp === undefined || timestamp === -1) {
       return false;
     }

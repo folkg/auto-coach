@@ -63,7 +63,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   allow_waiver_adds?: boolean | undefined;
   automated_transaction_processing?: boolean | undefined;
   last_updated?: number | undefined;
-  lineup_paused_at?: number | undefined;
+  lineup_paused_at: number;
 
   private _editablePlayers: Player[];
   private _submittedAddDropDifferential = 0;
@@ -110,7 +110,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     this.automated_transaction_processing =
       teamCopy.automated_transaction_processing;
     this.last_updated = teamCopy.last_updated;
-    this.lineup_paused_at = teamCopy.lineup_paused_at;
+    this.lineup_paused_at = teamCopy.lineup_paused_at ?? -1;
 
     this._editablePlayers = this.players.filter((player) => player.is_editable);
 

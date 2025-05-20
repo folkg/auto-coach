@@ -17,7 +17,7 @@ export const TeamFirestore = type({
   allow_waiver_adds: "boolean",
   automated_transaction_processing: "boolean?",
   last_updated: "number",
-  lineup_paused_at: "number?",
+  lineup_paused_at: "number = -1",
   is_subscribed: "boolean",
   is_setting_lineups: "boolean",
 });
