@@ -14,7 +14,11 @@
     "verbatimModuleSyntax": true,
 
     "experimentalDecorators": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@api/*": ["../server/api/*"],
+      "@common/*": ["../common/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
@@ -22,6 +26,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "include": ["src/**/*.d.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
 }

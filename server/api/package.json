@@ -1,0 +1,17 @@
+{
+  "name": "@auto-coach/server",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "build": "tsc --outDir dist",
+    "checks": "bunx biome check",
+    "fix": "bunx biome check --fix",
+    "types": "tsc --noEmit",
+    "all-checks": "bun run fix && bun run types && echo 'All Server checks passed!'",
+    "deploy:dry": "bun run all-checks && echo 'Server dry run complete!'"
+  },
+  "dependencies": {
+    "@hono/arktype-validator": "2.0.1"
+  }
+}

@@ -8,8 +8,13 @@
     "noUnusedParameters": true,
 
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+
+    "paths": {
+      "@common/*": ["../../common/*"]
+    }
   },
   "exclude": ["node_modules", "lib"],
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.json"],
+  "references": [{ "path": "../../common/tsconfig.json" }]
 }
