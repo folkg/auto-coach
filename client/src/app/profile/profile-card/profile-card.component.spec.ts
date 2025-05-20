@@ -2,7 +2,7 @@ import type { User } from "@firebase/auth";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
 import { BehaviorSubject } from "rxjs";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMock } from "../../../__mocks__/utils/createMock";
 import { AppStatusService } from "../../services/app-status.service";
 import { AuthService } from "../../services/auth.service";
