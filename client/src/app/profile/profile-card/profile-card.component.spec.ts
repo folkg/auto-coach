@@ -13,7 +13,7 @@ describe("ProfileCardComponent", () => {
     displayName: "Test User",
     uid: "test-uid",
     email: "test@example.com",
-    emailVerified: false,
+    emailVerified: true,
     photoURL: "https://example.com/photo.jpg",
   });
 
@@ -55,6 +55,8 @@ describe("ProfileCardComponent", () => {
   });
 
   it("displays email verification warning if email is not verified", async () => {
+    user$.next({ ...mockUser, emailVerified: false });
+
     await render(ProfileCardComponent, { providers: defaultProviders });
     expect(
       screen.getByText(
@@ -146,6 +148,8 @@ describe("ProfileCardComponent", () => {
       },
     });
 
+    user$.next({ ...mockUser, emailVerified: true });
+
     const editButton = screen.getByText("Edit");
     await user.click(editButton);
 
@@ -153,7 +157,7 @@ describe("ProfileCardComponent", () => {
     await user.clear(emailInput);
     await user.type(emailInput, "new@example.com");
 
-    expect(isDirty).toHaveBeenCalledTimes(1);
+    expect(isDirty).toHaveBeenCalledTimes(2);
     expect(isDirty).toHaveBeenCalledWith(true);
 
     isDirty.mockClear();
@@ -161,7 +165,7 @@ describe("ProfileCardComponent", () => {
     const cancelButton = screen.getByText("Cancel");
     await user.click(cancelButton);
 
-    expect(isDirty).toHaveBeenCalledTimes(1);
+    expect(isDirty).toHaveBeenCalledTimes(2);
     expect(isDirty).toHaveBeenCalledWith(false);
   });
 
@@ -185,6 +189,8 @@ describe("ProfileCardComponent", () => {
   });
 
   it("calls sendVerificationEmail when clicking resend verification email button", async () => {
+    user$.next({ ...mockUser, emailVerified: false });
+
     const user = userEvent.setup();
     await render(ProfileCardComponent, { providers: defaultProviders });
 
