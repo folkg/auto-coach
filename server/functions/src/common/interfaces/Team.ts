@@ -21,7 +21,7 @@ const OptionsTeam = type({
   allow_waiver_adds: "boolean",
   automated_transaction_processing: "boolean?",
   last_updated: "number",
-  lineup_paused_at: "number?",
+  lineup_paused_at: "number",
 });
 
 const YahooTeam = CommonTeam.and(
@@ -138,7 +138,7 @@ export function yahooToFirestore(
     allow_waiver_adds: false,
     automated_transaction_processing: false,
     last_updated: -1,
-    lineup_paused_at: undefined,
+    lineup_paused_at: -1,
   };
 
   return {

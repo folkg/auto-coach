@@ -64,6 +64,7 @@ describe("clientToFirestore", () => {
     is_subscribed: true,
     is_setting_lineups: false,
     last_updated: -1,
+    lineup_paused_at: -1,
     num_teams: 12,
     roster_positions: {
       LW: 2,
