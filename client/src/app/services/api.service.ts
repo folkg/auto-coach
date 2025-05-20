@@ -10,6 +10,7 @@ import {
 } from "@firebase/firestore";
 import { httpsCallable, httpsCallableFromURL } from "@firebase/functions";
 import { type } from "arktype";
+import { HONO_CLIENT } from "../hono-client-config";
 import { FIRESTORE, FUNCTIONS } from "../shared/firebase-tokens";
 import { assertType, isType } from "../shared/utils/checks";
 import { Schedule } from "../teams/interfaces/schedules";
@@ -25,6 +26,7 @@ import { Team, TeamFirestore } from "./interfaces/team";
   providedIn: "root",
 })
 export class APIService {
+  private readonly client = inject(HONO_CLIENT);
   private readonly functions = inject(FUNCTIONS);
   private readonly firestore = inject(FIRESTORE);
 
@@ -35,6 +37,15 @@ export class APIService {
       this.functions,
       "https://fantasyautocoach.com/api/fetchuserteams",
     );
+
+    const aaa = await this.client.author.$post({
+      json: { name: "me", age: 20 },
+    });
+
+    if (aaa.ok) {
+      const result = await aaa.json();
+      console.log("aaa", { result });
+    }
 
     const result = await fetchTeamsFromServer();
     return Team.array().assert(result.data);

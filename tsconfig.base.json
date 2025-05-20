@@ -17,7 +17,6 @@
     "resolveJsonModule": true,
 
     "sourceMap": true,
-    "declaration": false,
     "importHelpers": true,
 
     "allowJs": false,

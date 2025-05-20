@@ -1,7 +1,5 @@
 {
-  "name": "auto-gm",
-  "packageManager": "bun@1.2.2",
-  "version": "0.0.0",
+  "name": "@auto-coach/client",
   "scripts": {
     "ng": "ng",
     "start": "ng serve -o",
