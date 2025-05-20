@@ -1,10 +1,9 @@
 import { Component } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import { RouterLink } from "@angular/router";
-
-import { toSignal } from "@angular/core/rxjs-interop";
 import { LoadingComponent } from "../loading/loading.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";

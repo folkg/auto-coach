@@ -16,6 +16,7 @@ import type {
 } from "../../interfaces/credential.js";
 import { RevokedRefreshTokenError } from "../firebase/errors.js";
 import { updateFirestoreTimestamp } from "../firebase/firestore.service.js";
+import type { YahooAccessTokenResponse } from "./interfaces/YahooAccessTokenResponse.js";
 import {
   type YahooAPILeagueResponse,
   YahooAPILeagueResponseSchema,
@@ -24,7 +25,6 @@ import {
   type YahooAPIUserResponse,
   YahooAPIUserResponseSchema,
 } from "./interfaces/YahooAPIResponse.js";
-import type { YahooAccessTokenResponse } from "./interfaces/YahooAccessTokenResponse.js";
 import {
   httpGetAxios,
   httpPostAxiosAuth,

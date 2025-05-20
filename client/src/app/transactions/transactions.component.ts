@@ -10,10 +10,9 @@ import {
 } from "@angular/material/card";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
-import { lastValueFrom } from "rxjs";
-
 // biome-ignore lint/style/useImportType: This is an injection token
 import { ActivatedRoute, Router } from "@angular/router";
+import { lastValueFrom } from "rxjs";
 import { LoadingComponent } from "../loading/loading.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";

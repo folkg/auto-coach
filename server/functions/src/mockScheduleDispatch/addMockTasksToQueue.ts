@@ -1,5 +1,5 @@
 import { getApps, initializeApp } from "firebase-admin/app";
-import { type TaskQueue, getFunctions } from "firebase-admin/functions";
+import { getFunctions, type TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
 import { onRequest } from "firebase-functions/v2/https";
 import { getFunctionUrl } from "../common/services/utilities.service.js";

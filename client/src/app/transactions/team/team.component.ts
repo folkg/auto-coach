@@ -1,11 +1,11 @@
 import { DecimalPipe } from "@angular/common";
 import {
   Component,
+  computed,
   EventEmitter,
   Input,
-  Output,
-  computed,
   input,
+  Output,
 } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import {
@@ -20,9 +20,8 @@ import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
 import type { Team } from "../../services/interfaces/team";
-import { SCORING_TYPES } from "../../shared/utils/constants";
-
 import { NthPipe } from "../../shared/pipes/nth.pipe";
+import { SCORING_TYPES } from "../../shared/utils/constants";
 import type { PlayerTransactionClient } from "../interfaces/TransactionsData";
 import { TransactionComponent } from "../transaction/transaction.component";
 

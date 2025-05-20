@@ -1,6 +1,6 @@
 import { getApps, initializeApp } from "firebase-admin/app";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { type TaskQueue, getFunctions } from "firebase-admin/functions";
+import { getFunctions, type TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
 import { getTomorrowsActiveWeeklyTeams } from "../../common/services/firebase/firestore.service.js";
 import { getFunctionUrl } from "../../common/services/utilities.service.js";

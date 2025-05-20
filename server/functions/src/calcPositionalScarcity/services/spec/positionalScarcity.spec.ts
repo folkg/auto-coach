@@ -1,11 +1,11 @@
 import {
-  type MockInstance,
   afterEach,
   beforeAll,
   beforeEach,
   describe,
   expect,
   it,
+  type MockInstance,
   vi,
 } from "vitest";
 import * as constants from "../../../common/helpers/constants";
@@ -15,18 +15,18 @@ import { YahooAPIPlayerResponseSchema } from "../../../common/services/yahooAPI/
 import * as yahooAPI from "../../../common/services/yahooAPI/yahooAPI.service";
 import { createMock } from "../../../common/spec/createMock";
 import {
-  type ReplacementLevels,
   clearScarcityOffsets,
   generateFetchPlayerPromises,
   getLeagueSpecificScarcityOffsets,
   getReplacementLevels,
   getScarcityOffsetsForGame,
   getScarcityOffsetsForTeam,
+  type ReplacementLevels,
   recalculateScarcityOffsetsForAll,
 } from "../positionalScarcity.service";
-import playersDJSON from "./playersD.json" assert { type: "json" };
-import playersFJSON from "./playersF.json" assert { type: "json" };
-import playersGJSON from "./playersG.json" assert { type: "json" };
+import playersDJSON from "./playersD.json";
+import playersFJSON from "./playersF.json";
+import playersGJSON from "./playersG.json";
 
 const playersD = YahooAPIPlayerResponseSchema.assert(playersDJSON);
 const playersF = YahooAPIPlayerResponseSchema.assert(playersFJSON);

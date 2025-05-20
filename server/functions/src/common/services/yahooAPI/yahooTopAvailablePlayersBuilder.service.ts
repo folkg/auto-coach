@@ -3,8 +3,8 @@ import type { IPlayer } from "../../interfaces/Player.js";
 import { YahooAPIPlayersSchema } from "./interfaces/YahooAPIResponse.js";
 import {
   type AvailabilityStatus,
-  type PlayerSort,
   getTopAvailablePlayers,
+  type PlayerSort,
 } from "./yahooAPI.service.js";
 import buildPlayers from "./yahooPlayerProcessing.service.js";
 

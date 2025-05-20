@@ -53,7 +53,7 @@ export async function fetchStartingPlayers(league: string): Promise<void> {
     mlb: MLB_STARTING_PITCHERS,
   };
 
-  if (Object.prototype.hasOwnProperty.call(startersGlobalArray, league)) {
+  if (Object.hasOwn(startersGlobalArray, league)) {
     startersGlobalArray[league] = startingPlayers;
     await storeStartingPlayersInFirestore(startingPlayers, league);
   }

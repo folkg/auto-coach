@@ -1,16 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.0.0-beta.5/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "node_modules/**/*",
-      "**/node_modules/**/*",
-      "client/.angular/**/*",
-      "client/dist/**/*",
-      "server/dist/**/*",
-      "server/functions/lib/**/*",
-      "server/coverage/**/*"
+    "includes": [
+      "**",
+      "!**/node_modules/**/*",
+      "!**/node_modules/**/*",
+      "!**/client/.angular/**/*",
+      "!**/client/dist/**/*",
+      "!**/server/dist/**/*",
+      "!**/server/functions/lib/**/*",
+      "!**/server/coverage/**/*"
     ],
     "maxSize": 3145278
   },
@@ -24,7 +25,7 @@
     "attributePosition": "auto",
     "bracketSpacing": true
   },
-  "organizeImports": { "enabled": true },
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
   "linter": {
     "enabled": true,
     "rules": {
@@ -33,19 +34,29 @@
         "noRestrictedGlobals": {
           "level": "error",
           "options": {
-            "deniedGlobals": [
-              "event",
-              "length",
-              "stop",
-              "toString",
-              "alert",
-              "origin"
-            ]
+            "deniedGlobals": {
+              "event": "TODO: Add a custom message here.",
+              "length": "TODO: Add a custom message here.",
+              "stop": "TODO: Add a custom message here.",
+              "toString": "TODO: Add a custom message here.",
+              "alert": "TODO: Add a custom message here.",
+              "origin": "TODO: Add a custom message here."
+            }
           }
         },
         "useBlockStatements": "error",
         "useCollapsedElseIf": "error",
-        "useForOf": "error"
+        "useForOf": "error",
+        "noParameterAssign": "error",
+        "useAsConstAssertion": "error",
+        "useDefaultParameterLast": "error",
+        "useEnumInitializers": "error",
+        "useSelfClosingElements": "error",
+        "useSingleVarDeclarator": "error",
+        "noUnusedTemplateLiteral": "error",
+        "useNumberNamespace": "error",
+        "noInferrableTypes": "error",
+        "noUselessElse": "error"
       },
       "complexity": {
         "useSimplifiedLogicExpression": "error"
@@ -61,13 +72,17 @@
         "noSkippedTests": "error",
         "useAwait": "error",
         "noEmptyBlockStatements": "error"
+      },
+      "nursery": {
+        "noFloatingPromises": "error"
       }
     },
-    "ignore": [
-      "node_modules/**/*",
-      "**/node_modules/**/*",
-      "client/vitest.config.ts",
-      "server/functions/vite.config.ts"
+    "includes": [
+      "**",
+      "!**/node_modules/**/*",
+      "!**/node_modules/**/*",
+      "!**/client/vitest.config.ts",
+      "!**/server/functions/vite.config.ts"
     ]
   },
   "javascript": {
