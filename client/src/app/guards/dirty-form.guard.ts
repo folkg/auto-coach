@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import type { UrlTree } from "@angular/router";
-import { type Observable, lastValueFrom } from "rxjs";
+import { lastValueFrom, type Observable } from "rxjs";
 
 import {
   ConfirmDialogComponent,

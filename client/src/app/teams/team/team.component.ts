@@ -1,10 +1,10 @@
 import { AsyncPipe, DecimalPipe, NgIf } from "@angular/common";
 import {
   Component,
-  EventEmitter,
-  Output,
   computed,
+  EventEmitter,
   input,
+  Output,
   signal,
 } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -30,11 +30,10 @@ import { Subscription } from "rxjs";
 import spacetime, { type Spacetime } from "spacetime";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../../services/app-status.service";
-import { SCORING_TYPES } from "../../shared/utils/constants";
-import { spacetimeNow } from "../../shared/utils/now";
-
 import type { Team } from "../../services/interfaces/team";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
+import { SCORING_TYPES } from "../../shared/utils/constants";
+import { spacetimeNow } from "../../shared/utils/now";
 import type {
   PauseLineupEvent,
   SetLineupEvent,

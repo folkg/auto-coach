@@ -3,19 +3,19 @@ import { getApps, initializeApp } from "firebase-admin/app";
 import {
   type DocumentData,
   type DocumentSnapshot,
-  type QuerySnapshot,
   getFirestore,
+  type QuerySnapshot,
 } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import { assertType } from "../../helpers/checks.js";
+import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 import {
   type AngularTeam,
   type ClientTeam,
   FirestoreTeam,
   yahooToFirestore,
 } from "../../interfaces/Team.js";
-import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 import { sendUserEmail } from "../email/email.service.js";
 import {
   getCurrentPacificNumDay,

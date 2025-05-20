@@ -1,7 +1,7 @@
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import { getApps, initializeApp } from "firebase-admin/app";
-import { type UserRecord, getAuth } from "firebase-admin/auth";
+import { getAuth, type UserRecord } from "firebase-admin/auth";
 import { logger } from "firebase-functions";
 
 dotenv.config();

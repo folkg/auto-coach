@@ -1,10 +1,15 @@
 import assert from "node:assert";
 import { logger } from "firebase-functions";
+import { getScarcityOffsetsForTeam } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
+import type { Player } from "../../common/classes/Player.js";
 import type { IPlayer } from "../../common/interfaces/Player.js";
 import type {
   FirestoreTeam,
   TeamOptimizer,
 } from "../../common/interfaces/Team.js";
+import { sendUserEmail } from "../../common/services/email/email.service.js";
+import { getActiveTeamsForUser } from "../../common/services/firebase/firestore.service.js";
+import { enrichTeamsWithFirestoreSettings } from "../../common/services/firebase/firestoreUtils.service.js";
 import {
   getCurrentPacificNumDay,
   getPacificTimeDateString,
@@ -13,16 +18,10 @@ import {
   postRosterAddDropTransaction,
   putLineupChanges,
 } from "../../common/services/yahooAPI/yahooAPI.service.js";
-
-import { getScarcityOffsetsForTeam } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
-import type { Player } from "../../common/classes/Player.js";
-import { sendUserEmail } from "../../common/services/email/email.service.js";
-import { getActiveTeamsForUser } from "../../common/services/firebase/firestore.service.js";
-import { enrichTeamsWithFirestoreSettings } from "../../common/services/firebase/firestoreUtils.service.js";
 import { fetchRostersFromYahoo } from "../../common/services/yahooAPI/yahooLineupBuilder.service.js";
 import {
-  type TopAvailablePlayers,
   fetchTopAvailablePlayersFromYahoo,
+  type TopAvailablePlayers,
 } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 import { LineupOptimizer } from "../../dispatchSetLineup/classes/LineupOptimizer.js";
 import type { LineupChanges } from "../../dispatchSetLineup/interfaces/LineupChanges.js";

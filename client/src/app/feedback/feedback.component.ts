@@ -1,6 +1,6 @@
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { AsyncPipe } from "@angular/common";
-import { Component, ViewChild, signal } from "@angular/core";
+import { Component, signal, ViewChild } from "@angular/core";
 import { FormsModule, type NgForm, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatChipListbox, MatChipOption } from "@angular/material/chips";

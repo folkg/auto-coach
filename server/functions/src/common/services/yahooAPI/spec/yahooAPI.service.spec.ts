@@ -1,14 +1,13 @@
-import { parse } from "js2xmlparser";
-import { postRosterAddDropTransaction } from "../yahooAPI.service.js";
-import * as yahooHttpService from "../yahooHttp.service.js";
-
 import type { AxiosError, AxiosResponse } from "axios";
+import { parse } from "js2xmlparser";
 import { describe, expect, it, vi } from "vitest";
 import type {
   PlayerTransaction,
   TPlayer,
 } from "../../../../dispatchSetLineup/interfaces/PlayerTransaction.js";
 import { createMock } from "../../../spec/createMock.js";
+import { postRosterAddDropTransaction } from "../yahooAPI.service.js";
+import * as yahooHttpService from "../yahooHttp.service.js";
 
 vi.mock("firebase-admin/firestore", () => ({
   getFirestore: vi.fn(() => ({ settings: vi.fn() })),

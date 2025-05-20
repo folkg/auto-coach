@@ -5,8 +5,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { FirebaseError } from "@firebase/app";
 import {
   BehaviorSubject,
-  type Observable,
-  Subject,
   catchError,
   combineLatest,
   concat,
@@ -14,7 +12,9 @@ import {
   from,
   lastValueFrom,
   map,
+  type Observable,
   of,
+  Subject,
   startWith,
   switchMap,
 } from "rxjs";

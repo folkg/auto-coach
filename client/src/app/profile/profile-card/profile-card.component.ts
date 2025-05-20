@@ -28,7 +28,7 @@ import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import type { User } from "@firebase/auth";
-import { Subscription, distinctUntilChanged, map } from "rxjs";
+import { distinctUntilChanged, map, Subscription } from "rxjs";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../../services/app-status.service";
 // biome-ignore lint/style/useImportType: This is an injection token

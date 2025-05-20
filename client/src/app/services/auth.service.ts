@@ -4,15 +4,15 @@ import { Router } from "@angular/router";
 import {
   type Auth,
   OAuthProvider,
-  type User,
   onAuthStateChanged,
   reauthenticateWithPopup,
   sendEmailVerification,
   signInWithPopup,
   signOut,
+  type User,
   updateEmail,
 } from "@firebase/auth";
-import { BehaviorSubject, Observable, firstValueFrom } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 
 import { AUTH } from "../shared/firebase-tokens";
 import { assertDefined, ensure } from "../shared/utils/checks";

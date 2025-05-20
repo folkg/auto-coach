@@ -4,8 +4,8 @@ import type {
   FirestoreTeam,
   TeamOptimizer,
 } from "../../common/interfaces/Team";
-import * as yahooTopAvailablePlayersBuilder from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
 import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
+import * as yahooTopAvailablePlayersBuilder from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
 import {
   createPlayersTransactions,
   generateTopAvailablePlayerPromises,

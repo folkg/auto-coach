@@ -7,11 +7,11 @@ import {
   provideExperimentalZonelessChangeDetection,
 } from "@angular/core";
 import { getTestBed } from "@angular/core/testing";
+import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
-import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import {
   mockAuth,
   mockFirestore,
