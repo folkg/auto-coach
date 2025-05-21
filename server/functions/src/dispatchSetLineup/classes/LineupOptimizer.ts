@@ -1,8 +1,8 @@
 import assert from "node:assert";
+import { isDefined } from "@common/src/utilities/checks";
 import { logger } from "firebase-functions";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import { Player } from "../../common/classes/Player.js";
-import { isDefined } from "../../common/helpers/checks.js";
 import type { IPlayer } from "../../common/interfaces/Player.js";
 import type { TeamOptimizer } from "../../common/interfaces/Team.js";
 import type { LineupChanges } from "../interfaces/LineupChanges.js";

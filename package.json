@@ -2,7 +2,12 @@
   "name": "auto-coach-monorepo",
   "private": true,
   "type": "module",
-  "workspaces": ["client", "server/server", "server/functions", "common"],
+  "workspaces": [
+    "client",
+    "server/api",
+    "server/functions",
+    "common"
+  ],
   "scripts": {
     "test": "bun --filter '*' test",
     "test:ci": "bun --filter '*' test:ci",
@@ -23,6 +28,7 @@
     "@biomejs/biome": "2.0.0-beta.5",
     "@vitest/coverage-v8": "3.1.2",
     "typescript": "5.8.3",
-    "vitest": "3.1.2"
+    "vitest": "3.1.2",
+    "vite-tsconfig-paths": "5.1.4"
   }
 }

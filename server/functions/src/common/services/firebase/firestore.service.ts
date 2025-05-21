@@ -1,3 +1,4 @@
+import { assertType } from "@common/src/utilities/checks.js";
 import { isAxiosError } from "axios";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {
@@ -8,7 +9,6 @@ import {
 } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
-import { assertType } from "../../helpers/checks.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 import {
   type AngularTeam,

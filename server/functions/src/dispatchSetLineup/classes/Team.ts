@@ -1,8 +1,8 @@
 import assert from "node:assert";
+import { isDefined } from "@common/src/utilities/checks.js";
 import { type } from "arktype";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../common/classes/Player.js";
-import { isDefined } from "../../common/helpers/checks.js";
 import {
   COMPOUND_POSITION_COMPOSITIONS,
   INACTIVE_POSITION_LIST,

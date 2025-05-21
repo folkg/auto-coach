@@ -1,5 +1,5 @@
+import { deepEqual } from "@common/src/utilities/checks.js";
 import { logger } from "firebase-functions";
-import { deepEqual } from "../../helpers/checks.js";
 import type { FirestoreTeam, TeamOptimizer } from "../../interfaces/Team.js";
 import { updateTeamFirestore } from "./firestore.service.js";
 

@@ -1,6 +1,6 @@
+import { isDefined } from "@common/src/utilities/checks.js";
 import { logger } from "firebase-functions";
 import { HttpsError, onCall } from "firebase-functions/v2/https";
-import { isDefined } from "../common/helpers/checks.js";
 import type { ClientTeam } from "../common/interfaces/Team.js";
 import {
   fetchTeamsFirestore,

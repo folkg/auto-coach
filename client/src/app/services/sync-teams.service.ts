@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
+import { isDefined, isType } from "@common/src/utilities/checks";
 import { FirebaseError } from "@firebase/app";
 import {
   BehaviorSubject,
@@ -24,8 +25,6 @@ import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
-
-import { isDefined, isType } from "../shared/utils/checks";
 import { getErrorMessage } from "../shared/utils/error";
 import { shareLatest } from "../shared/utils/shareLatest";
 // biome-ignore lint/style/useImportType: This is an injection token

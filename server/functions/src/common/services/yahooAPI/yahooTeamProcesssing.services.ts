@@ -1,5 +1,5 @@
+import { assertTrue } from "@common/src/utilities/checks.js";
 import { type } from "arktype";
-import { assertTrue } from "../../helpers/checks.js";
 import { SportLeagueSchema } from "../../interfaces/SportLeague.js";
 import type { GamesPlayed, InningsPitched } from "../../interfaces/Team.js";
 import { flattenArray, parseToInt } from "../utilities.service.js";

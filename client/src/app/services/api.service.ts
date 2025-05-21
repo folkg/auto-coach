@@ -1,4 +1,5 @@
 import { Injectable, inject } from "@angular/core";
+import { assertType, isType } from "@common/src/utilities/checks";
 import {
   collection,
   doc,
@@ -12,7 +13,6 @@ import { httpsCallable, httpsCallableFromURL } from "@firebase/functions";
 import { type } from "arktype";
 import { HONO_CLIENT } from "../hono-client-config";
 import { FIRESTORE, FUNCTIONS } from "../shared/firebase-tokens";
-import { assertType, isType } from "../shared/utils/checks";
 import { Schedule } from "../teams/interfaces/schedules";
 import {
   PostTransactionsResult,

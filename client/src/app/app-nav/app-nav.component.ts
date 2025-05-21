@@ -14,6 +14,7 @@ import {
 import { MatToolbar } from "@angular/material/toolbar";
 import { MatTooltip } from "@angular/material/tooltip";
 import { RouterLink, RouterOutlet } from "@angular/router";
+import { isDefined } from "@common/src/utilities/checks";
 import type { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -22,7 +23,6 @@ import { AuthService } from "../services/auth.service";
 import { SyncTeamsService } from "../services/sync-teams.service";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { ThemingService } from "../services/theming.service";
-import { isDefined } from "../shared/utils/checks";
 import { shareLatest } from "../shared/utils/shareLatest";
 
 @Component({

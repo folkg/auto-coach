@@ -27,6 +27,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { assertDefined } from "@common/src/utilities/checks";
 import type { User } from "@firebase/auth";
 import { distinctUntilChanged, map, Subscription } from "rxjs";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -37,7 +38,6 @@ import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../../shared/confirm-dialog/confirm-dialog.component";
-import { assertDefined } from "../../shared/utils/checks";
 import { getErrorMessage } from "../../shared/utils/error";
 
 @Component({

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { Router } from "@angular/router";
+import { assertDefined, ensure } from "@common/src/utilities/checks";
 import {
   type Auth,
   OAuthProvider,
@@ -13,9 +14,7 @@ import {
   updateEmail,
 } from "@firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
-
 import { AUTH } from "../shared/firebase-tokens";
-import { assertDefined, ensure } from "../shared/utils/checks";
 import { getErrorMessage } from "../shared/utils/error";
 
 @Injectable({

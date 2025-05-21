@@ -11,6 +11,5 @@
     }
   },
   "include": ["./src/**/*.ts"],
-  "exclude": ["./node_modules", "./dist"],
-  "references": [{ "path": "../../common/tsconfig.json" }]
+  "exclude": ["./node_modules", "./dist"]
 }
