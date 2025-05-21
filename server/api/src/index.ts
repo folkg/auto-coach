@@ -4,27 +4,12 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware.js";
 
-// TODO: Other routes, possibly in their own files
-const indexApp = new Hono<AuthContext>();
+// Import routers for each domain
+import teamsRouter from "../teams/teams.js";
+import schedulesRouter from "../schedules/schedules.js";
+import feedbackRouter from "../feedback/feedback.js";
+import transactionsRouter from "../transactions/transactions.js";
 
-const postSchema = type({
-  name: "string",
-  age: "number",
-});
-
-const indexRoute = indexApp
-  .get("/", (c) => {
-    return c.text("Hello AutoCoach!");
-  })
-  .post("/author", arktypeValidator("json", postSchema), (c) => {
-    const { name, age } = c.req.valid("json");
-    return c.json({
-      success: true,
-      message: `${name} is ${age}`,
-    });
-  });
-
-// The main app
 export type AuthContext = {
   Variables: {
     uid?: string;
@@ -33,7 +18,6 @@ export type AuthContext = {
 
 const app = new Hono<AuthContext>();
 
-// set middleware
 // biome-ignore lint/complexity/useLiteralKeys: Angular build complains about this since it doesn't know about the server side env types
 const allowedOrigins = (process.env["ALLOWED_ORIGINS"] ?? "")
   .split(",")
@@ -44,7 +28,7 @@ app.use(
   "*",
   cors({
     origin: (origin) => (allowedOrigins.includes(origin) ? origin : null),
-    allowMethods: ["GET", "POST"],
+    allowMethods: ["GET", "POST", "PUT"],
     allowHeaders: ["Content-Type", "Authorization"],
     maxAge: 600,
     credentials: true,
@@ -52,8 +36,15 @@ app.use(
 );
 app.use("*", firebaseAuthMiddleware);
 
-const routes = app.route("/", indexRoute);
+// Root route for health check
+app.get("/", (c) => c.text("Hello AutoCoach!"));
 
-export type HonoAppType = typeof routes;
+// Wire up domain routers
+app.route("/api/teams", teamsRouter);
+app.route("/api/schedules", schedulesRouter);
+app.route("/api/feedback", feedbackRouter);
+app.route("/api/transactions", transactionsRouter);
+
+export type HonoAppType = typeof app;
 
 export default app;
