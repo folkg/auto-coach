@@ -1,14 +1,10 @@
-import { arktypeValidator } from "@hono/arktype-validator";
-import { type } from "arktype";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import feedbackRouter from "./feedback/feedback";
 import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware.js";
-
-// Import routers for each domain
-import teamsRouter from "../teams/teams.js";
-import schedulesRouter from "../schedules/schedules.js";
-import feedbackRouter from "../feedback/feedback.js";
-import transactionsRouter from "../transactions/transactions.js";
+import schedulesRouter from "./schedules/schedules";
+import teamsRouter from "./teams/teams";
+import transactionsRouter from "./transactions/transactions";
 
 export type AuthContext = {
   Variables: {
@@ -36,15 +32,11 @@ app.use(
 );
 app.use("*", firebaseAuthMiddleware);
 
-// Root route for health check
-app.get("/", (c) => c.text("Hello AutoCoach!"));
+const routes = app
+  .get("/", (c) => c.text("Hello!"))
+  .route("/api/teams", teamsRouter)
+  .route("/api/schedules", schedulesRouter)
+  .route("/api/feedback", feedbackRouter)
+  .route("/api/transactions", transactionsRouter);
 
-// Wire up domain routers
-app.route("/api/teams", teamsRouter);
-app.route("/api/schedules", schedulesRouter);
-app.route("/api/feedback", feedbackRouter);
-app.route("/api/transactions", transactionsRouter);
-
-export type HonoAppType = typeof app;
-
-export default app;
+export type HonoAppType = typeof routes;

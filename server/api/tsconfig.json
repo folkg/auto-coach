@@ -5,11 +5,13 @@
     "strict": true,
     "composite": true,
     "declaration": true,
+    "rootDir": "../..",
 
     "paths": {
-      "@common/*": ["../../common/*"]
+      "@common/*": ["../../common/*"],
+      "@core/*": ["../core/*"]
     }
   },
-  "include": ["./src/**/*.ts"],
+  "include": ["./src/**/*.ts", "../core/src/**/*.ts"],
   "exclude": ["./node_modules", "./dist"]
 }
