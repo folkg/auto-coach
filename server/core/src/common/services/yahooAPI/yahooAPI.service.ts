@@ -57,6 +57,7 @@ export async function refreshYahooAccessToken(
   refreshToken: string,
 ): Promise<Token> {
   const url = "https://api.login.yahoo.com/oauth2/get_token";
+  // TODO: Don't type-cast process.env variables
   const requestBody: YahooRefreshRequestBody = {
     client_id: process.env.YAHOO_CLIENT_ID as string,
     client_secret: process.env.YAHOO_CLIENT_SECRET as string,

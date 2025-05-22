@@ -5,7 +5,7 @@ import type {
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { createMock } from "../../../spec/createMock.js";
 import * as firestoreService from "../../firebase/firestore.service.js";
-import * as yahooAPI from "../../yahooAPI/yahooAPI.service.js";
+import * as yahooAPI from "../yahooAPI.service.js";
 import { fetchStartingPlayers } from "../yahooStartingPlayer.service.js";
 
 // mock firebase-admin

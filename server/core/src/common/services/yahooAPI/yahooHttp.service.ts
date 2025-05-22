@@ -30,7 +30,7 @@ export async function httpGetAxios<T>(url: string, uid?: string) {
   const credential = await loadYahooAccessToken(uid);
   const accessToken = credential.accessToken;
 
-  return axios.get(API_URL + url, {
+  return axios.get<T>(API_URL + url, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
