@@ -1,4 +1,3 @@
-import { Schedule as ScheduleSchema } from "@common/src/schemas/shared";
 import { Hono } from "hono";
 import type { AuthContext } from "../index";
 
@@ -15,14 +14,15 @@ const schedulesRouter = new Hono<AuthContext>()
       return c.json({ error: "Unauthorized" }, 401);
     }
     try {
-      const schedule = // TODO: Get from src/core
-        // Validate with ArkType schema at runtime
-        ScheduleSchema.assert(schedule);
+      const { getSchedule } = await import(
+        "@core/src/scheduleSetLineup/services/getSchedule.service.js"
+      );
+      const schedule = await getSchedule(uid);
       return c.json(schedule);
     } catch (error) {
       return c.json(
         { error: error instanceof Error ? error.message : String(error) },
-        500,
+        500
       );
     }
   });
