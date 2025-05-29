@@ -10,7 +10,7 @@
     "common"
   ],
   "scripts": {
-    "dev": "concurrently \"bun --filter @auto-coach/server dev\" \"bun --filter @auto-coach/client start\"",
+    "dev": "concurrently \"bun run dev:api\" \"bun run dev:client\"",
     "dev:api": "bun --filter @auto-coach/server dev",
     "dev:client": "bun --filter @auto-coach/client start",
     "dev:emulators": "firebase emulators:start",
