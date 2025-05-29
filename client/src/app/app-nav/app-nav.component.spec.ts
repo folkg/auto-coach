@@ -1,4 +1,5 @@
 import { BreakpointObserver } from "@angular/cdk/layout";
+import type { Team } from "@common/types/team";
 import type { User } from "@firebase/auth";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
@@ -7,7 +8,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { mockRoutes } from "../../__mocks__/routes/routes";
 import { createMock } from "../../__mocks__/utils/createMock";
 import { AuthService } from "../services/auth.service";
-import type { Team } from "../services/interfaces/team";
 import { SyncTeamsService } from "../services/sync-teams.service";
 import { ThemingService } from "../services/theming.service";
 import { AppNavComponent } from "./app-nav.component";

@@ -9,8 +9,8 @@ import {
 } from "@angular/material/card";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
+import type { Schedule } from "@common/types/Schedule";
 import { lastValueFrom } from "rxjs";
-
 import { ProfileCardComponent } from "../profile/profile-card/profile-card.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
@@ -30,7 +30,6 @@ import type {
   PauseLineupEvent,
   SetLineupEvent,
 } from "./interfaces/outputEvents";
-import type { Schedule } from "./interfaces/schedules";
 import { RelativeDatePipe } from "./pipes/relative-date.pipe";
 import { TeamComponent } from "./team/team.component";
 

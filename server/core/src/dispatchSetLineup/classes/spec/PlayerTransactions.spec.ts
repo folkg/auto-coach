@@ -1,9 +1,6 @@
+import type { PlayerTransaction, TPlayer } from "@common/types/transactions";
 import { beforeAll, describe, expect, it } from "vitest";
 import { createMock } from "../../../common/spec/createMock";
-import type {
-  PlayerTransaction,
-  TPlayer,
-} from "../../interfaces/PlayerTransaction";
 import { PlayerTransactions } from "../PlayerTransactions";
 
 describe("PlayerTransactions", () => {

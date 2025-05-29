@@ -26,11 +26,11 @@ import {
   type MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
+import type { Team } from "@common/types/team";
 import { Subscription } from "rxjs";
 import spacetime, { type Spacetime } from "spacetime";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../../services/app-status.service";
-import type { Team } from "../../services/interfaces/team";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";
 import { spacetimeNow } from "../../shared/utils/now";

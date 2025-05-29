@@ -1,3 +1,4 @@
+import type { LineupChanges } from "@common/types/transactions";
 import spacetime from "spacetime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
@@ -12,7 +13,6 @@ import * as TopAvailablePlayersService from "../../common/services/yahooAPI/yaho
 import { createMock } from "../../common/spec/createMock";
 import * as ScheduleSetLineupService from "../../scheduleSetLineup/services/scheduleSetLineup.service.js";
 import * as processTransactionsService from "../../transactions/services/processTransactions.service";
-import type { LineupChanges } from "../interfaces/LineupChanges.js";
 import {
   performWeeklyLeagueTransactions,
   setUsersLineup,

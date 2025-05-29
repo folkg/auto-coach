@@ -1,5 +1,5 @@
-import type { SportLeague } from "../../common/interfaces/SportLeague";
+import type { Leagues } from "../../../../../common/src/types/Leagues";
 
 export type GameStartTimes = {
-  [key in SportLeague]?: number[];
+  [key in Leagues]: number[];
 };

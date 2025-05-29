@@ -1,7 +1,7 @@
 import { Inject, Injectable } from "@angular/core";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { Router } from "@angular/router";
-import { assertDefined, ensure } from "@common/src/utilities/checks";
+import { assertDefined, ensure } from "@common/utilities/checks";
 import {
   type Auth,
   OAuthProvider,
@@ -11,7 +11,7 @@ import {
   signInWithPopup,
   signOut,
   type User,
-  updateEmail,
+  verifyBeforeUpdateEmail,
 } from "@firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { AUTH } from "../shared/firebase-tokens";
@@ -89,21 +89,22 @@ export class AuthService {
   async updateUserEmail(email: string): Promise<void> {
     try {
       assertDefined(this.auth.currentUser);
-      await updateEmail(this.auth.currentUser, email);
-      await this.sendVerificationEmail();
+      await verifyBeforeUpdateEmail(this.auth.currentUser, email);
+      // await updateEmail(this.auth.currentUser, email);
+      // await this.sendVerificationEmail();
     } catch (err) {
       if (err instanceof Error) {
         if (err.message === "Firebase: Error (auth/requires-recent-login).") {
           try {
             await this.reauthenticateYahoo();
             await this.updateUserEmail(email);
+            return;
           } catch (err) {
             throw new Error(`Couldn't reauthenticate: ${getErrorMessage(err)}`);
           }
-        } else {
-          throw new Error(`Couldn't update email: ${getErrorMessage(err)}`);
         }
       }
+      throw new Error(`Couldn't update email: ${getErrorMessage(err)}`);
     }
   }
 }

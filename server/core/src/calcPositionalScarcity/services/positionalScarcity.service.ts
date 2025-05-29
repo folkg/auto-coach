@@ -1,10 +1,10 @@
+import type { IPlayer } from "@common/types/Player.js";
 import { logger } from "firebase-functions";
 import {
   COMPOUND_POSITION_COMPOSITIONS,
   INACTIVE_POSITION_LIST,
   POSITIONAL_MAX_EXTRA_PLAYERS,
 } from "../../common/helpers/constants.js";
-import type { IPlayer } from "../../common/interfaces/Player.js";
 import type { CommonTeam } from "../../common/interfaces/Team.js";
 import * as Firestore from "../../common/services/firebase/firestore.service.js";
 import type { YahooAPIPlayerResponse } from "../../common/services/yahooAPI/interfaces/YahooAPIResponse.js";

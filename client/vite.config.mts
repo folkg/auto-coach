@@ -14,7 +14,7 @@ export default defineConfig(({ mode }) => {
       reporters: ["default"],
       browser: {
         enabled: true,
-        headless: false, // set to true in CI
+        headless: true,
         provider: "playwright",
         instances: [{ browser: "chromium" }],
       },

@@ -1,23 +1,22 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "baseUrl": "./",
     "lib": ["ES2022", "dom"],
-    "types": [],
-
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noPropertyAccessFromIndexSignature": true,
-    "exactOptionalPropertyTypes": true,
-
+    "exactOptionalPropertyTypes": false,
     "moduleDetection": "force",
-    "verbatimModuleSyntax": true,
-
+    "verbatimModuleSyntax": false,
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
+    "outDir": "./dist",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
     "paths": {
-      "@api/*": ["../server/api/*"],
-      "@common/*": ["../common/*"]
+      "@common/*": ["../common/src/*"],
+      "@server/api/*": ["../server/api/*"]
     }
   },
   "angularCompilerOptions": {
@@ -26,6 +25,6 @@
     "strictInputAccessModifiers": true,
     "strictTemplates": true
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/env.types.ts", "env.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

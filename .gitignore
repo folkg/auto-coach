@@ -64,51 +64,28 @@ Thumbs.db
 .env.production.local
 .env.local
 
-# --- Root Specific ---
-/node_modules/
+# --- Node Modules ---
+node_modules/
 
-# --- Client Specific (client/) ---
-/client/dist
-/client/tmp
-/client/out-tsc
-/client/bazel-out
-/client/node_modules/
-/client/.idea/
-/client/.project
-/client/.classpath
-/client/.c9/
-/client/*.launch
-/client/.settings/
-/client/*.sublime-workspace
-/client/.vscode/*
-!/client/.vscode/settings.json
-!/client/.vscode/tasks.json
-!/client/.vscode/launch.json
-!/client/.vscode/extensions.json
-/client/.history/*
-/client/.angular/cache
-/client/.sass-cache/
-/client/connect.lock
-/client/libpeerconnection.log
-/client/testem.log
-/client/typings
-/client/.firebase
-/client/*-debug.log
-/client/.runtimeconfig.json
-/client/src/environments/
-/client/.env
+# --- TypeScript Build Outputs ---
+# TypeScript build info files
+*.tsbuildinfo
+tsconfig.tsbuildinfo
 
-# --- Server Specific (server/) ---
-/server/node_modules/
-/server/firebase-debug.log*
-/server/firebase-debug.*.log*
-/server/.firebase/
-/server/auto-gm-372620-dd1695cac1a6.json
-/server/.vscode/settings.json
-/server/.env
+# Package build outputs
+dist/
+lib/
+.angular/
 
-# --- Server Functions Specific (server/functions/) ---
-/server/functions/lib/
-/server/functions/typings/
-/server/functions/node_modules/
-/server/functions/src/integrationTests/firebaseConfig.json
+# TypeScript compiled files in source directories (should not be committed)
+**/*.d.ts
+**/*.d.ts.map
+**/*.js
+**/*.js.map
+# But keep config files and other intentional JS files
+!*.config.js
+!*.config.mjs
+!vite.config.*
+!vitest.config.*
+!angular.json
+!package.json

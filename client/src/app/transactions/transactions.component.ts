@@ -12,6 +12,10 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { ActivatedRoute, Router } from "@angular/router";
+import type {
+  TransactionResults,
+  TransactionsData,
+} from "@common/types/transactions";
 import { lastValueFrom } from "rxjs";
 import { LoadingComponent } from "../loading/loading.component";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -23,14 +27,12 @@ import {
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { logError } from "../shared/utils/error";
-import type {
-  PlayerTransactionClient,
-  TransactionResults,
-  TransactionsData,
-  TransactionsDataClient,
-} from "./interfaces/TransactionsData";
 import { SortTeamsByTransactionsPipe } from "./sort-teams-by-transactions.pipe";
 import { TeamComponent } from "./team/team.component";
+import type {
+  PlayerTransactionClient,
+  TransactionsDataClient,
+} from "./types/client-types";
 
 @Component({
   selector: "app-transactions",

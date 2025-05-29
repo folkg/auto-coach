@@ -1,15 +1,15 @@
-import { assertType, ensureType } from "@common/src/utilities/checks.js";
+import type {
+  LineupChanges,
+  PlayerTransaction,
+  TransactionType,
+} from "@common/types/transactions.js";
+import { assertType, ensureType } from "@common/utilities/checks.js";
 import { AxiosError, isAxiosError } from "axios";
 import dotenv from "dotenv";
 import { XMLParser } from "fast-xml-parser";
 import { logger } from "firebase-functions";
 import js2xmlparser from "js2xmlparser";
 import pLimit from "p-limit";
-import type { LineupChanges } from "../../../dispatchSetLineup/interfaces/LineupChanges.js";
-import type {
-  PlayerTransaction,
-  TransactionType,
-} from "../../../dispatchSetLineup/interfaces/PlayerTransaction.js";
 import type {
   Token,
   YahooRefreshRequestBody,

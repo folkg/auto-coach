@@ -14,7 +14,7 @@ import {
 import { MatToolbar } from "@angular/material/toolbar";
 import { MatTooltip } from "@angular/material/tooltip";
 import { RouterLink, RouterOutlet } from "@angular/router";
-import { isDefined } from "@common/src/utilities/checks";
+import { isDefined } from "@common/utilities/checks";
 import type { Observable } from "rxjs";
 import { map } from "rxjs/operators";
 // biome-ignore lint/style/useImportType: This is an injection token

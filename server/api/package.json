@@ -4,11 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "build": "tsc --outDir dist",
+    "build": "tsc -b",
     "checks": "bunx biome check",
     "fix": "bunx biome check --fix",
-    "types": "tsc --noEmit",
-    "all-checks": "bun run fix && bun run types && echo 'All Server checks passed!'",
+    "all-checks": "bun run fix && echo 'All Server checks passed!'",
     "deploy:dry": "bun run all-checks && echo 'Server dry run complete!'"
   },
   "dependencies": {

@@ -1,11 +1,10 @@
 import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatCardModule } from "@angular/material/card";
+import type { Team } from "@common/types/team";
 import type { Spacetime } from "spacetime";
-
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../services/app-status.service";
-import type { Team } from "../services/interfaces/team";
 import { RobotsComponent } from "../shared/robots/robots.component";
 import { spacetimeNow } from "../shared/utils/now";
 import type {

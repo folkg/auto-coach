@@ -1,14 +1,14 @@
-import { isDefined } from "@common/src/utilities/checks.js";
+import { isDefined } from "@common/utilities/checks.js";
+import type {
+  IPlayer,
+  PlayerOwnership,
+  PlayerRanks,
+} from "../../../../../common/src/types/Player.js";
 import {
   HEALTHY_STATUS_LIST,
   INACTIVE_POSITION_LIST,
   LONG_TERM_IL_POSITIONS_LIST,
 } from "../helpers/constants.js";
-import type {
-  IPlayer,
-  PlayerOwnership,
-  PlayerRanks,
-} from "../interfaces/Player.js";
 
 /**
  * A class that extends the Player interface to add useful methods for

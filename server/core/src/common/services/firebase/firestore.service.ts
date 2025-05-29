@@ -1,4 +1,4 @@
-import { assertType } from "@common/src/utilities/checks.js";
+import { assertType } from "@common/utilities/checks.js";
 import { isAxiosError } from "axios";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {

@@ -1,8 +1,12 @@
 import assert from "node:assert";
+import type { IPlayer } from "@common/types/Player.js";
+import type {
+  LineupChanges,
+  PlayerTransaction,
+  TransactionType,
+} from "@common/types/transactions.js";
 import { logger } from "firebase-functions";
 import { getScarcityOffsetsForTeam } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
-import type { Player } from "../../common/classes/Player.js";
-import type { IPlayer } from "../../common/interfaces/Player.js";
 import type {
   FirestoreTeam,
   TeamOptimizer,
@@ -24,11 +28,6 @@ import {
   type TopAvailablePlayers,
 } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 import { LineupOptimizer } from "../../dispatchSetLineup/classes/LineupOptimizer.js";
-import type { LineupChanges } from "../../dispatchSetLineup/interfaces/LineupChanges.js";
-import type {
-  PlayerTransaction,
-  TransactionType,
-} from "../../dispatchSetLineup/interfaces/PlayerTransaction.js";
 
 type TransactionsData = {
   dropPlayerTransactions: PlayerTransaction[][] | null;
@@ -52,7 +51,7 @@ type PlayetsAtPositionsList = {
   };
 };
 type AssignedPlayersList = {
-  [teamKey: string]: Player[];
+  [teamKey: string]: IPlayer[];
 };
 
 /**
@@ -344,13 +343,15 @@ export async function createPlayersTransactions(
     const { baseDropCandidates, baseAddCandidates } =
       lo.getBaseAddDropCandidates();
 
-    topAddCandidatesList[team.team_key] = baseAddCandidates.concat(
-      getPlayersFromTransactions("add", addSwapPlayerTransactions),
-    );
-    topDropCandidatesList[team.team_key] = baseDropCandidates.concat(
-      getPlayersFromTransactions("drop", dropPlayerTransactions),
-      getPlayersFromTransactions("drop", addSwapPlayerTransactions),
-    );
+    topAddCandidatesList[team.team_key] = [
+      ...baseAddCandidates,
+      ...getPlayersFromTransactions("add", addSwapPlayerTransactions),
+    ];
+    topDropCandidatesList[team.team_key] = [
+      ...baseDropCandidates,
+      ...getPlayersFromTransactions("drop", dropPlayerTransactions),
+      ...getPlayersFromTransactions("drop", addSwapPlayerTransactions),
+    ];
 
     playersAtPositionList[team.team_key] = lo.teamObject.positionCounts;
   }
@@ -370,7 +371,7 @@ export async function createPlayersTransactions(
 function getPlayersFromTransactions(
   transactionType: TransactionType,
   playerTransactions: PlayerTransaction[][],
-): Player[] {
+): IPlayer[] {
   return playerTransactions.flatMap((transactions) =>
     transactions.flatMap((transaction) =>
       transaction.players

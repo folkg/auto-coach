@@ -1,5 +1,10 @@
-import { type } from "arktype";
+import { getUserTeams } from "@core/fetchUsersTeams/services/getUserTeams.service.js";
+import {
+  updateTeamLineupPaused,
+  updateTeamLineupSetting,
+} from "@core/fetchUsersTeams/services/updateTeam.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
+import { type } from "arktype";
 import { Hono } from "hono";
 import type { AuthContext } from "../index";
 
@@ -18,15 +23,7 @@ const teamsRouter = new Hono<AuthContext>()
    */
   .get("/", async (c) => {
     const uid = c.get("uid");
-    if (!uid) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
-
     try {
-      // Get user teams from core logic
-      const { getUserTeams } = await import(
-        "@core/src/fetchUsersTeams/services/getUserTeams.service.js"
-      );
       const teams = await getUserTeams(uid);
       return c.json(teams);
     } catch (error) {
@@ -46,21 +43,14 @@ const teamsRouter = new Hono<AuthContext>()
     async (c) => {
       const uid = c.get("uid");
       const teamKey = c.req.param("teamKey");
-      if (!uid) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
       const { value } = c.req.valid("json");
       try {
-        // Get updateTeamLineupSetting from core logic
-        const { updateTeamLineupSetting } = await import(
-          "@core/src/fetchUsersTeams/services/updateTeam.service.js"
-        );
         const success = await updateTeamLineupSetting(uid, teamKey, value);
         return c.json({ success });
       } catch (error) {
         return c.json({ error: (error as Error).message }, 500);
       }
-    }
+    },
   )
 
   /**
@@ -75,21 +65,14 @@ const teamsRouter = new Hono<AuthContext>()
     async (c) => {
       const uid = c.get("uid");
       const teamKey = c.req.param("teamKey");
-      if (!uid) {
-        return c.json({ error: "Unauthorized" }, 401);
-      }
       const { value } = c.req.valid("json");
       try {
-        // Get updateTeamLineupPaused from core logic
-        const { updateTeamLineupPaused } = await import(
-          "@core/src/fetchUsersTeams/services/updateTeam.service.js"
-        );
         const success = await updateTeamLineupPaused(uid, teamKey, value);
         return c.json({ success });
       } catch (error) {
         return c.json({ error: (error as Error).message }, 500);
       }
-    }
+    },
   );
 
 export default teamsRouter;

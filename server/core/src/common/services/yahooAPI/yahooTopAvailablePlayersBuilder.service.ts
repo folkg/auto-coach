@@ -1,5 +1,5 @@
+import type { IPlayer } from "@common/types/Player.js";
 import { type } from "arktype";
-import type { IPlayer } from "../../interfaces/Player.js";
 import { YahooAPIPlayersSchema } from "./interfaces/YahooAPIResponse.js";
 import {
   type AvailabilityStatus,

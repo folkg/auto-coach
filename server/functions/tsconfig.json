@@ -1,19 +1,20 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "lib": ["es2023"],
+    "lib": ["ES2022"],
     "outDir": "./lib",
-    "types": ["node"],
+    "rootDir": "./",
+    "types": ["vitest/globals", "node"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-
-    "declaration": true,
-    "declarationMap": true,
+    "verbatimModuleSyntax": false,
 
     "paths": {
-      "@common/*": ["../../common/*"]
+      "@common/*": ["../../common/src/*"],
+      "@core/*": ["../core/src/*"]
     }
   },
   "exclude": ["node_modules", "lib"],
-  "include": ["src/**/*.ts", "src/**/*.json"]
+  "include": ["*.ts"],
+  "references": [{ "path": "../../common" }, { "path": "../core" }]
 }

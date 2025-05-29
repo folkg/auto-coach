@@ -1,4 +1,5 @@
-import { FeedbackData } from "@common/src/schemas/shared";
+import { FeedbackData } from "@common/types/feedback";
+import { sendUserFeedbackEmail } from "@core/common/services/email/feedbackEmail.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
 import { Hono } from "hono";
 import type { AuthContext } from "../index";
@@ -13,20 +14,14 @@ export const feedbackRouter = new Hono<AuthContext>()
    */
   .post("/", arktypeValidator("json", FeedbackData), async (c) => {
     const uid = c.get("uid");
-    if (!uid) {
-      return c.json({ error: "Unauthorized" }, 401);
-    }
     const data = c.req.valid("json");
     try {
-      const { sendUserFeedbackEmail } = await import(
-        "@core/src/common/services/email/feedbackEmail.service.js"
-      );
-      const success = await sendUserFeedbackEmail(data, uid);
-      return c.json({ success });
+      const success: boolean = await sendUserFeedbackEmail(data, uid);
+      return c.json<{ success: boolean }>({ success });
     } catch (error) {
       return c.json(
         { error: error instanceof Error ? error.message : "Unknown error" },
-        500
+        500,
       );
     }
   });

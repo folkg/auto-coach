@@ -1,6 +1,8 @@
 {
   "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist/auto-gm"
+  },
   "files": ["src/main.ts"],
-  "exclude": ["**/*.spec.ts"],
-  "references": [{ "path": "../server/server/tsconfig.json" }]
+  "exclude": ["**/*.spec.ts"]
 }

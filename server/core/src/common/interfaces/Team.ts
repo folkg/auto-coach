@@ -1,11 +1,11 @@
+import { Leagues } from "@common/types/Leagues.js";
+import { PlayerSchema } from "@common/types/Player.js";
 import { type } from "arktype";
 import { TransactionDetailsSchema } from "../services/yahooAPI/yahooTeamProcesssing.services.js";
-import { PlayerSchema } from "./Player.js";
-import { SportLeagueSchema } from "./SportLeague.js";
 
 const CommonTeam = type({
   team_key: "string",
-  game_code: SportLeagueSchema,
+  game_code: Leagues,
   start_date: "number",
   end_date: "number",
   weekly_deadline: "string",

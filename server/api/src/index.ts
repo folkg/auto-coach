@@ -8,7 +8,7 @@ import transactionsRouter from "./transactions/transactions";
 
 export type AuthContext = {
   Variables: {
-    uid?: string;
+    uid: string;
   };
 };
 

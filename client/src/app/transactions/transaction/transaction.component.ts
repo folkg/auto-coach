@@ -7,11 +7,9 @@ import {
 } from "@angular/material/checkbox";
 import { MatIcon } from "@angular/material/icon";
 
-import type {
-  PlayerTransactionClient,
-  TPlayer,
-} from "../interfaces/TransactionsData";
+import type { TPlayer } from "@common/types/transactions";
 import { PlayerComponent } from "../player/player.component";
+import type { PlayerTransactionClient } from "../types/client-types";
 
 @Component({
   selector: "app-transaction[transaction]",

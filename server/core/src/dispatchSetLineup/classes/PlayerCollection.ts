@@ -1,6 +1,6 @@
 import assert from "node:assert";
+import type { IPlayer } from "@common/types/Player.js";
 import { Player } from "../../common/classes/Player.js";
-import type { IPlayer } from "../../common/interfaces/Player.js";
 
 export class PlayerCollection {
   players: Player[];

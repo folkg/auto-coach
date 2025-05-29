@@ -1,4 +1,4 @@
-import { assertType } from "@common/src/utilities/checks.js";
+import { assertType } from "@common/utilities/checks.js";
 import { type } from "arktype";
 import { GoogleAuth } from "google-auth-library";
 import spacetime from "spacetime";

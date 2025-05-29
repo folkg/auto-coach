@@ -1,6 +1,6 @@
-import { assertTrue } from "@common/src/utilities/checks.js";
+import { Leagues } from "@common/types/Leagues.js";
+import { assertTrue } from "@common/utilities/checks.js";
 import { type } from "arktype";
-import { SportLeagueSchema } from "../../interfaces/SportLeague.js";
 import type { GamesPlayed, InningsPitched } from "../../interfaces/Team.js";
 import { flattenArray, parseToInt } from "../utilities.service.js";
 import type { LeagueDetails } from "./interfaces/YahooAPIResponse.js";
@@ -196,7 +196,7 @@ export const FlatLeagueSettingsSchema = type({
 
 export const FlatGameDetailsSchema = type({
   name: "string",
-  code: SportLeagueSchema,
+  code: Leagues,
   season: "string",
   is_game_over: "number",
 });

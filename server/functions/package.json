@@ -1,8 +1,8 @@
 {
   "name": "@auto-coach/functions",
   "scripts": {
-    "build": "tsc --outDir lib",
-    "build:watch": "tsc --watch",
+    "build": "tsc -b",
+    "build:watch": "tsc -b --watch",
     "serve": "bun run build:watch & firebase emulators:start --only functions",
     "shell": "bun run build:watch & firebase functions:shell",
     "start": "bun run shell",
@@ -16,14 +16,9 @@
     "deploy:dry": "bun run pp && firebase deploy --only functions --dry-run && echo 'Functions dry run complete!'",
     "pp": "bun run all-checks && bun run build",
     "logs": "firebase functions:log",
-    "test:debug": "vitest --test-timeout=999999999 --silent",
-    "test": "bun run vitest",
-    "test:ci": "bun run vitest run --silent",
     "checks": "bunx biome check",
     "fix": "bunx biome check --fix",
-    "types": "tsc --noEmit",
-    "all-checks": "bun run fix && bun run types && bun run test:ci && echo 'All Functions checks passed!'",
-    "coverage": "vitest --coverage --silent"
+    "all-checks": "bun run fix && echo 'All Functions checks passed!'"
   },
   "engines": {
     "node": "22"

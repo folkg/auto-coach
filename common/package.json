@@ -3,11 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc --outDir dist",
+    "build": "tsc -b",
     "checks": "bunx biome check",
     "fix": "bunx biome check --fix",
-    "types": "tsc --noEmit",
-    "all-checks": "bun run fix && bun run types && echo 'All Common checks passed!'",
+    "all-checks": "bun run fix && echo 'All Common checks passed!'",
     "deploy:dry": "bun run all-checks && echo 'Common dry run complete!'"
   }
 }

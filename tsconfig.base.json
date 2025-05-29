@@ -15,15 +15,20 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "verbatimModuleSyntax": true,
 
     "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
     "importHelpers": true,
 
     "allowJs": false,
 
     "target": "ES2022",
+    "lib": ["ES2022"],
 
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "composite": true
   }
 }

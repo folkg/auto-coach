@@ -1,7 +1,7 @@
 import { Pipe, type PipeTransform } from "@angular/core";
 
-import type { Team } from "../services/interfaces/team";
-import type { PlayerTransaction } from "./interfaces/TransactionsData";
+import type { Team } from "@common/types/team";
+import type { PlayerTransaction } from "@common/types/transactions";
 
 @Pipe({
   name: "sortTeamsByTransactions",

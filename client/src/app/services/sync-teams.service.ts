@@ -2,8 +2,9 @@ import { Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
-import { isDefined, isType } from "@common/src/utilities/checks";
-import { FirebaseError } from "@firebase/app";
+import { Team } from "@common/types/team";
+import { isDefined, isType } from "@common/utilities/checks";
+// Removed FirebaseError import as we're now using Hono client
 import {
   BehaviorSubject,
   catchError,
@@ -29,7 +30,6 @@ import { getErrorMessage } from "../shared/utils/error";
 import { shareLatest } from "../shared/utils/shareLatest";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "./api.service";
-import { Team } from "./interfaces/team";
 
 @Injectable({
   providedIn: "root",
@@ -156,27 +156,30 @@ export class SyncTeamsService {
     try {
       return this.api.fetchTeamsYahoo();
     } catch (err) {
-      if (err instanceof FirebaseError && err.code === "functions/data-loss") {
-        // if the error is data-loss, it means the user's access token has expired
+      // Check for specific error messages that might indicate token expiry
+      const errorMsg = getErrorMessage(err);
+      if (errorMsg.includes("token") || errorMsg.includes("auth")) {
         throw new Error("Refresh Token Error");
       }
 
-      throw new Error(
-        `Error fetching teams from Yahoo: ${getErrorMessage(err)}`,
-      );
+      throw new Error(`Error fetching teams from Yahoo: ${errorMsg}`);
     }
   }
 
   private async patchTeamPropertiesFromFirestore(
     teamsToPatch: Team[],
   ): Promise<Team[]> {
-    const firestoreTeams = await this.api.fetchTeamsFirestore();
+    // Since fetchTeamsYahoo now returns combined data from Yahoo + Firestore,
+    // we can get the complete teams data and use it for patching
+    const completeTeams = await this.api.fetchTeamsYahoo();
 
     for (const teamToPatch of teamsToPatch) {
-      const firestoreTeam = firestoreTeams.find(
-        (firestoreTeam) => firestoreTeam.team_key === teamToPatch.team_key,
+      const completeTeam = completeTeams.find(
+        (team) => team.team_key === teamToPatch.team_key,
       );
-      Object.assign(teamToPatch, firestoreTeam);
+      if (completeTeam) {
+        Object.assign(teamToPatch, completeTeam);
+      }
     }
 
     return teamsToPatch;

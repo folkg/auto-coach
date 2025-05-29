@@ -1,8 +1,5 @@
+import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
 import { beforeAll, describe, expect, it } from "vitest";
-import type {
-  PlayerTransaction,
-  TPlayer,
-} from "../../../../dispatchSetLineup/interfaces/PlayerTransaction.js";
 import { createMock } from "../../../spec/createMock.js";
 import {
   getRostersByTeamID,

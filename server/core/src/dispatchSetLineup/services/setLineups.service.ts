@@ -1,4 +1,8 @@
 import assert from "node:assert";
+import type {
+  LineupChanges,
+  PlayerTransaction,
+} from "@common/types/transactions.js";
 import { logger } from "firebase-functions";
 import type {
   FirestoreTeam,
@@ -29,8 +33,6 @@ import {
   sendPotentialTransactionEmail,
 } from "../../transactions/services/processTransactions.service.js";
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
-import type { LineupChanges } from "../interfaces/LineupChanges.js";
-import type { PlayerTransaction } from "../interfaces/PlayerTransaction.js";
 
 /**
  * Will optimize the starting lineup for a specific users teams

@@ -1,4 +1,4 @@
-import { isDefined } from "@common/src/utilities/checks.js";
+import { isDefined } from "@common/utilities/checks.js";
 import type { ClientTeam } from "../../common/interfaces/Team.js";
 import {
   fetchTeamsFirestore,
@@ -8,7 +8,7 @@ import { fetchTeamsYahoo } from "./fetchUsersTeams.service.js";
 
 /**
  * Get user's teams by combining data from Yahoo API and Firestore
- * 
+ *
  * @param uid - The user ID
  * @returns An array of ClientTeam objects
  */

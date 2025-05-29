@@ -1,17 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.0.0-beta.5/schema.json",
-  "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
     "ignoreUnknown": false,
     "includes": [
       "**",
       "!**/node_modules/**/*",
-      "!**/node_modules/**/*",
       "!**/client/.angular/**/*",
-      "!**/client/dist/**/*",
-      "!**/server/dist/**/*",
-      "!**/server/functions/lib/**/*",
-      "!**/server/coverage/**/*"
+      "!**/dist/**/*",
+      "!**/lib/**/*"
     ],
     "maxSize": 3145278
   },

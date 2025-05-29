@@ -1,11 +1,11 @@
 import { OverlayContainer } from "@angular/cdk/overlay";
+import type { Team } from "@common/types/team";
 import type { User } from "@firebase/auth";
 import { render } from "@testing-library/angular";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, it } from "vitest";
 import { AppComponent } from "./app.component";
 import { AuthService } from "./services/auth.service";
-import type { Team } from "./services/interfaces/team";
 import { SyncTeamsService } from "./services/sync-teams.service";
 import { ThemingService } from "./services/theming.service";
 

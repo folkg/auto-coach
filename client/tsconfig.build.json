@@ -1,0 +1,23 @@
+{
+  "extends": "../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist/build",
+    "rootDir": "./src",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "lib": ["ES2022", "dom"],
+    "verbatimModuleSyntax": false,
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false,
+    "skipLibCheck": true,
+    "paths": {
+      "@common/*": ["../common/src/*"],
+      "@server/api/*": ["../server/api/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/env.types.ts", "env.d.ts"],
+  "exclude": ["node_modules", "dist", "**/*.spec.ts", "**/*.test.ts", "src/test-setup.ts"],
+  "references": [{ "path": "../common" }, { "path": "../server/api" }]
+}

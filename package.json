@@ -5,18 +5,27 @@
   "workspaces": [
     "client",
     "server/api",
+    "server/core",
     "server/functions",
     "common"
   ],
   "scripts": {
-    "test": "bun --filter '*' test",
-    "test:ci": "bun --filter '*' test:ci",
-    "checks": "bun --filter '*' checks",
-    "fix": "bun --filter '*' fix",
-    "types": "bun --filter '*' types",
-    "all-checks": "bun --filter '*' all-checks && echo 'All checks passed!'",
-    "build": "bun --filter '*' build && echo 'All builds complete!'",
-    "deploy:dry": "bun --filter '*' deploy:dry && echo 'Dry run complete!'"
+    "dev": "concurrently \"firebase emulators:start\" \"bun --filter @auto-coach/server dev\" \"bun --filter @auto-coach/client start\"",
+    "dev:api": "bun --filter @auto-coach/server dev",
+    "dev:client": "bun --filter @auto-coach/client start",
+    "dev:emulators": "firebase emulators:start",
+    "test": "bunx vitest",
+    "test:ci": "bunx vitest run",
+    "test:unit": "bunx vitest run --project=server-core --project=server-functions",
+    "test:browser": "bunx vitest run --project=client",
+    "test:server": "bunx vitest run --project=server-core --project=server-functions",
+    "test:client": "bunx vitest run --project=client",
+    "checks": "bunx biome check",
+    "fix": "bunx biome check --fix",
+    "all-checks": "bun --filter '*' all-checks && bun run build && echo 'All checks passed!'",
+    "build": "tsc -b && echo 'All builds complete!'",
+    "deploy:dry": "bun --filter '*' deploy:dry && echo 'Dry run complete!'",
+    "clean": "tsc -b --clean"
   },
   "dependencies": {
     "arktype": "2.1.20",
@@ -25,10 +34,15 @@
     "spacetime": "7.10.0"
   },
   "devDependencies": {
+    "@analogjs/vite-plugin-angular": "1.17.0",
+    "@analogjs/vitest-angular": "1.17.0",
     "@biomejs/biome": "2.0.0-beta.5",
+    "@vitest/browser": "3.1.2",
     "@vitest/coverage-v8": "3.1.2",
+    "concurrently": "9.1.0",
+    "playwright": "1.52.0",
     "typescript": "5.8.3",
-    "vitest": "3.1.2",
-    "vite-tsconfig-paths": "5.1.4"
+    "vite-tsconfig-paths": "5.1.4",
+    "vitest": "3.1.2"
   }
 }

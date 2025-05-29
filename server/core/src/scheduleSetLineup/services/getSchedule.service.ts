@@ -1,3 +1,4 @@
+import type { Schedule } from "@common/types/schedule.js";
 import { db } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString } from "../../common/services/utilities.service.js";
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
@@ -9,7 +10,7 @@ import { getTodaysGames } from "./scheduling.service.js";
  * @param uid - The user ID (not used but included for consistency)
  * @returns The schedule data
  */
-export async function getSchedule(uid: string) {
+export async function getSchedule(_uid: string): Promise<Schedule> {
   const todayDate: string = getPacificTimeDateString(new Date());
 
   // Fetch schedule data from Firestore

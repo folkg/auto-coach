@@ -1,5 +1,5 @@
+import type { IPlayer } from "@common/types/Player.js";
 import { type } from "arktype";
-import type { IPlayer } from "../../interfaces/Player.js";
 import type { TeamOptimizer } from "../../interfaces/Team.js";
 import {
   flattenArray,

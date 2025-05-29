@@ -1,6 +1,7 @@
 import assert from "node:assert";
-import { isDefined } from "@common/src/utilities/checks.js";
+import { isDefined } from "@common/utilities/checks.js";
 import { type } from "arktype";
+import type { Leagues } from "../../../../../common/src/types/Leagues.js";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../common/classes/Player.js";
 import {
@@ -8,7 +9,6 @@ import {
   INACTIVE_POSITION_LIST,
   POSITIONAL_MAX_EXTRA_PLAYERS,
 } from "../../common/helpers/constants.js";
-import type { SportLeague } from "../../common/interfaces/SportLeague.js";
 import type {
   GamesPlayed,
   InningsPitched,
@@ -50,7 +50,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   max_season_adds: number;
   waiver_rule: string;
   team_key: string;
-  game_code: SportLeague;
+  game_code: Leagues;
   start_date: number;
   end_date: number;
   weekly_deadline: string;

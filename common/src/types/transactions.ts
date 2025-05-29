@@ -1,17 +1,22 @@
 import { type } from "arktype";
-import { Player } from "./Player";
+import { PlayerSchema } from "./Player";
 
-const TransactionType = type("'add'|'drop'|'add/drop'");
+/**
+ * TransactionsData and related types
+ */
+export const TransactionType = type("'add'|'drop'|'add/drop'");
+export type TransactionType = typeof TransactionType.infer;
 
-const TPlayer = type({
+export const TPlayer = type({
   playerKey: "string",
   transactionType: TransactionType,
   isInactiveList: "boolean",
-  player: Player,
+  player: PlayerSchema,
   isFromWaivers: "boolean?",
 });
+export type TPlayer = typeof TPlayer.infer;
 
-const PlayerTransaction = type({
+export const PlayerTransaction = type({
   teamName: "string",
   leagueName: "string",
   teamKey: "string",
@@ -21,44 +26,31 @@ const PlayerTransaction = type({
   "isFaabRequired?": "boolean",
   players: TPlayer.array(),
 });
+export type PlayerTransaction = typeof PlayerTransaction.infer;
 
-const LineupChanges = type({
+export const LineupChanges = type({
   teamKey: "string",
   coverageType: "string",
   coveragePeriod: "string",
   newPlayerPositions: "Record<string,string>",
 });
+export type LineupChanges = typeof LineupChanges.infer;
 
-const TransactionResults = type({
+export const TransactionResults = type({
   postedTransactions: PlayerTransaction.array(),
   failedReasons: "string[]",
 });
+export type TransactionResults = typeof TransactionResults.infer;
 
 export const PostTransactionsResult = type({
   success: "boolean",
   transactionResults: TransactionResults,
 });
+export type PostTransactionsResult = typeof PostTransactionsResult.infer;
 
 export const TransactionsData = type({
   dropPlayerTransactions: PlayerTransaction.array().array().or("null"),
   lineupChanges: LineupChanges.array().or("null"),
   addSwapTransactions: PlayerTransaction.array().array().or("null"),
 });
-
-export type PlayerTransaction = typeof PlayerTransaction.infer;
 export type TransactionsData = typeof TransactionsData.infer;
-export type PostTransactionsResult = typeof PostTransactionsResult.infer;
-export type TransactionResults = typeof TransactionResults.infer;
-export type LineupChanges = typeof LineupChanges.infer;
-export type TPlayer = typeof TPlayer.infer;
-
-export type PlayerTransactionClient = PlayerTransaction & {
-  selected: boolean;
-  id: string;
-};
-
-export type TransactionsDataClient = {
-  dropPlayerTransactions: PlayerTransactionClient[][] | null;
-  lineupChanges: LineupChanges[] | null;
-  addSwapTransactions: PlayerTransactionClient[][] | null;
-};

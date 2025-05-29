@@ -3,7 +3,7 @@ import { Component, Input, signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 
-import type { Player } from "../interfaces/Player";
+import type { IPlayer } from "@common/types/Player";
 
 @Component({
   selector: "app-player[player]",
@@ -12,7 +12,7 @@ import type { Player } from "../interfaces/Player";
   imports: [NgClass, MatIconButton, MatIcon, DecimalPipe],
 })
 export class PlayerComponent {
-  @Input() player!: Player;
+  @Input() player!: IPlayer;
   @Input() isAdding = false;
   public readonly expanded = signal(false);
 

@@ -1,6 +1,9 @@
 import { type } from "arktype";
-import { Leagues } from "../../shared/interfaces/Leagues";
+import { Leagues } from "./Leagues";
 
+/**
+ * TeamFirestore type
+ */
 export const TeamFirestore = type({
   uid: "string",
   team_key: "string",
@@ -21,7 +24,11 @@ export const TeamFirestore = type({
   is_subscribed: "boolean",
   is_setting_lineups: "boolean",
 });
+export type TeamFirestore = typeof TeamFirestore.infer;
 
+/**
+ * Team type
+ */
 export const Team = TeamFirestore.and(
   type({
     edit_key: "string",
@@ -53,6 +60,4 @@ export const Team = TeamFirestore.and(
     }).or("null"),
   }),
 );
-
-export type TeamFirestore = typeof TeamFirestore.infer;
 export type Team = typeof Team.infer;
