@@ -10,21 +10,18 @@
     "common"
   ],
   "scripts": {
-    "dev": "concurrently \"firebase emulators:start\" \"bun --filter @auto-coach/server dev\" \"bun --filter @auto-coach/client start\"",
+    "dev": "concurrently \"bun --filter @auto-coach/server dev\" \"bun --filter @auto-coach/client start\"",
     "dev:api": "bun --filter @auto-coach/server dev",
     "dev:client": "bun --filter @auto-coach/client start",
     "dev:emulators": "firebase emulators:start",
     "test": "bunx vitest",
     "test:ci": "bunx vitest run",
-    "test:unit": "bunx vitest run --project=server-core --project=server-functions",
-    "test:browser": "bunx vitest run --project=client",
     "test:server": "bunx vitest run --project=server-core --project=server-functions",
     "test:client": "bunx vitest run --project=client",
     "checks": "bunx biome check",
     "fix": "bunx biome check --fix",
-    "all-checks": "bun --filter '*' all-checks && bun run build && echo 'All checks passed!'",
+    "all-checks": "bun run fix && bun run test:ci && bun run build && echo 'All checks passed!'",
     "build": "tsc -b && echo 'All builds complete!'",
-    "deploy:dry": "bun --filter '*' deploy:dry && echo 'Dry run complete!'",
     "clean": "tsc -b --clean"
   },
   "dependencies": {

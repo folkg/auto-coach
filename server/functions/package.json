@@ -15,10 +15,7 @@
     "deploy:notblock": "bun run pp && firebase deploy --only functions:lineup,functions:email,functions:transactions",
     "deploy:dry": "bun run pp && firebase deploy --only functions --dry-run && echo 'Functions dry run complete!'",
     "pp": "bun run all-checks && bun run build",
-    "logs": "firebase functions:log",
-    "checks": "bunx biome check",
-    "fix": "bunx biome check --fix",
-    "all-checks": "bun run fix && echo 'All Functions checks passed!'"
+    "logs": "firebase functions:log"
   },
   "engines": {
     "node": "22"

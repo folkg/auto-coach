@@ -1,14 +1,5 @@
 {
   "name": "@auto-coach/core",
   "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc -b",
-    "build:watch": "tsc -b --watch",
-    "test": "vitest",
-    "test:ci": "vitest run --silent",
-    "checks": "bunx biome check",
-    "fix": "bunx biome check --fix",
-    "all-checks": "bun run fix && bun run test:ci && echo 'All Core checks passed!'"
-  }
+  "type": "module"
 }

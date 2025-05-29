@@ -1,10 +1,12 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import feedbackRouter from "./feedback/feedback";
-import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware.js";
+import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware";
 import schedulesRouter from "./schedules/schedules";
 import teamsRouter from "./teams/teams";
 import transactionsRouter from "./transactions/transactions";
+
+console.log("Starting server...");
 
 export type AuthContext = {
   Variables: {
@@ -40,3 +42,5 @@ const routes = app
   .route("/api/transactions", transactionsRouter);
 
 export type HonoAppType = typeof routes;
+
+export default app;

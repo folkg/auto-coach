@@ -3,12 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
-    "build": "tsc -b",
-    "checks": "bunx biome check",
-    "fix": "bunx biome check --fix",
-    "all-checks": "bun run fix && echo 'All Server checks passed!'",
-    "deploy:dry": "bun run all-checks && echo 'Server dry run complete!'"
+    "dev": "bun run --hot src/index.ts"
   },
   "dependencies": {
     "@hono/arktype-validator": "2.0.1"

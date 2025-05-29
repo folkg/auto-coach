@@ -7,10 +7,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "bun run vitest",
     "test:ci": "bun run vitest run --browser.headless",
-    "checks": "bunx biome check",
-    "fix": "bunx biome check --fix",
     "all-checks": "bun run fix && bun run test:ci && echo 'All Client checks passed!'",
-    "pp": "bun run all-checks && bun run build",
     "deploy:dev": "firebase use dev && ng build --aot && firebase deploy --only hosting",
     "deploy:prod": "firebase use prod && ng build --prod && firebase deploy --only hosting",
     "deploy:dry": "bun run all-checks && ng build && firebase deploy --only hosting --dry-run && echo 'Client dry run complete!'"
