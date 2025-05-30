@@ -12,6 +12,7 @@
     { "path": "./server/core" },
     { "path": "./server/api" },
     { "path": "./server/functions" },
-    { "path": "./client/tsconfig.build.json" }
+    { "path": "./client/tsconfig.build.json" },
+    { "path": "./infrastructure/pulumi" }
   ]
 }

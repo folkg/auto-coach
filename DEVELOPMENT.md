@@ -140,7 +140,7 @@ bun run test:server
 ### Run All Checks
 
 ```bash
-bun run all-checks
+bun run checks
 ```
 
 This runs:

@@ -3,9 +3,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot --inspect src/index.ts",
+    "build": "bun build src/index.ts --target=bun-linux-x64 --outfile=dist/server --compile --minify --sourcemap --bytecode",
+    "start": "./dist/server",
+    "test": "bun test",
+    "test:watch": "bun test --watch",
+    "container:build": "docker build -f Dockerfile -t auto-coach-api ../../",
+    "container:run": "docker run -p 3000:3000 auto-coach-api",
+
+    "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@hono/arktype-validator": "2.0.1"
+    "@hono/arktype-validator": "2.0.1",
+    "arktype": "2.1.20",
+    "firebase-admin": "13.4.0",
+    "hono": "4.7.8",
+    "spacetime": "7.10.0"
   }
 }

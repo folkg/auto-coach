@@ -57,6 +57,10 @@ Thumbs.db
 # Aider
 .aider*
 
+# Ignore all Firebase service account keys
+firebase-adminsdk-*.json
+*-firebase-adminsdk-*.json
+
 # Environment Variables
 .env
 .env.development.local

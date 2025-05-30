@@ -1,0 +1,31 @@
+{
+  "name": "@auto-coach/infrastructure",
+  "private": true,
+  "type": "module",
+  "description": "Infrastructure as Code for Auto Coach API server using Pulumi TypeScript",
+  "scripts": {
+    "build": "tsc",
+    "deploy:dry": "pulumi preview",
+    "deploy": "pulumi up",
+    "deploy:prod": "pulumi up --stack prod",
+    "deploy:dev": "pulumi up --stack dev",
+    "preview:prod": "pulumi preview --stack prod",
+    "preview:dev": "pulumi preview --stack dev",
+    "destroy": "pulumi destroy",
+    "refresh": "pulumi refresh",
+    "stack:init:dev": "pulumi stack init dev",
+    "stack:init:prod": "pulumi stack init prod",
+    "stack:select:dev": "pulumi stack select dev",
+    "stack:select:prod": "pulumi stack select prod",
+    "config:set": "pulumi config set",
+    "config:get": "pulumi config get",
+    "logs": "pulumi logs",
+    "clean": "rm -rf node_modules dist",
+    "test": "echo 'No tests configured for infrastructure'",
+    "lint": "echo 'No linting configured for infrastructure'"
+  },
+  "devDependencies": {
+    "@pulumi/gcp": "8.32.1",
+    "@pulumi/pulumi": "3.173.0"
+  }
+}
