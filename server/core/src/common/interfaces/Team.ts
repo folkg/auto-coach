@@ -21,7 +21,7 @@ const OptionsTeam = type({
   allow_waiver_adds: "boolean",
   automated_transaction_processing: "boolean?",
   last_updated: "number",
-  lineup_paused_at: "number",
+  lineup_paused_at: "number = -1",
 });
 
 const YahooTeam = CommonTeam.and(

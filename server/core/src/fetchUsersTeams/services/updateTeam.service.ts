@@ -15,14 +15,11 @@ export async function updateTeamLineupSetting(
   value: boolean,
 ): Promise<boolean> {
   try {
-    // Prepare the data to update
     const data: Partial<FirestoreTeam> = {
       is_setting_lineups: value,
     };
 
-    // Update the team in Firestore
     await updateTeamFirestore(uid, teamKey, data);
-
     return true;
   } catch (error) {
     console.error("Error updating team lineup setting:", error);
@@ -44,14 +41,11 @@ export async function updateTeamLineupPaused(
   value: boolean,
 ): Promise<boolean> {
   try {
-    // Prepare the data to update
     const data: Partial<FirestoreTeam> = {
-      lineup_paused_at: value ? Date.now() : undefined,
+      lineup_paused_at: value ? Date.now() : -1,
     };
 
-    // Update the team in Firestore
     await updateTeamFirestore(uid, teamKey, data);
-
     return true;
   } catch (error) {
     console.error("Error updating team lineup paused status:", error);

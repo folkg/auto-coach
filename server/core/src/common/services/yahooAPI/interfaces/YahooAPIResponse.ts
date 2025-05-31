@@ -49,9 +49,10 @@ const LeagueInfoSchema = "Record<string, unknown>";
 const RequestedLeagueInfoSchema = "Record<string, unknown>[]";
 
 const LeagueDetails = type({
-  "[string]": {
+  "[string]": type({
+    // the key is an index, ie. "0"
     league: [LeagueInfoSchema, "...", RequestedLeagueInfoSchema],
-  }, // the key is an index, ie. "0"
+  }).or("number"), // TODO: Better way to handle the count: "number" in each union? count always reduces to string.
 });
 export type LeagueDetails = typeof LeagueDetails.infer;
 
@@ -67,7 +68,9 @@ export const YahooAPIUserResponseSchema = type({
           { guid: "string" },
           {
             games: {
-              "[string]": { game: [GameDetailsSchema, LeagueDetailsSchema] },
+              "[string]": type({
+                game: [GameDetailsSchema, LeagueDetailsSchema],
+              }).or("number"), // TODO: Better way to handle the count: "number" in each union? count always reduces to string.
             },
           },
         ],
