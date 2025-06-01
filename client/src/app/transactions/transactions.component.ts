@@ -16,6 +16,7 @@ import type {
   TransactionResults,
   TransactionsData,
 } from "@common/types/transactions";
+import { logError } from "@common/utilities/error";
 import { lastValueFrom } from "rxjs";
 import { LoadingComponent } from "../loading/loading.component";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -26,7 +27,6 @@ import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
-import { logError } from "../shared/utils/error";
 import { SortTeamsByTransactionsPipe } from "./sort-teams-by-transactions.pipe";
 import { TeamComponent } from "./team/team.component";
 import type {

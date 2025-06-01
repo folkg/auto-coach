@@ -1,10 +1,10 @@
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 
 export type SetLineupEvent = {
-  team: Team;
+  team: ClientTeam;
   isSettingLineups: boolean;
 };
 
 export type PauseLineupEvent = {
-  team: Team;
+  team: ClientTeam;
 };

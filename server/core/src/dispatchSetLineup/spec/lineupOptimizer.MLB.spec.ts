@@ -1,5 +1,5 @@
+import type { TeamOptimizer } from "@common/types/team.js";
 import { describe, expect, it, test, vi } from "vitest";
-import type { TeamOptimizer } from "../../common/interfaces/Team.js";
 import * as yahooStartingPlayerService from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 

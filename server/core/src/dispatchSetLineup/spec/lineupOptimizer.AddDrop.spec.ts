@@ -1,7 +1,7 @@
+import type { TeamOptimizer } from "@common/types/team.js";
 import type { PlayerTransaction } from "@common/types/transactions.js";
 import spacetime from "spacetime";
 import { assert, describe, expect, it, test, vi } from "vitest";
-import type { TeamOptimizer } from "../../common/interfaces/Team.js";
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 import type { PlayerCollection } from "../classes/PlayerCollection.js";
 

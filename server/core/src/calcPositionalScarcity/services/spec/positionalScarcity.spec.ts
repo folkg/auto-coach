@@ -1,3 +1,4 @@
+import type { FirestoreTeam } from "@common/types/team";
 import {
   afterEach,
   beforeAll,
@@ -9,7 +10,6 @@ import {
   vi,
 } from "vitest";
 import * as constants from "../../../common/helpers/constants";
-import type { FirestoreTeam } from "../../../common/interfaces/Team";
 import * as firestoreService from "../../../common/services/firebase/firestore.service";
 import { YahooAPIPlayerResponseSchema } from "../../../common/services/yahooAPI/interfaces/YahooAPIResponse";
 import * as yahooAPI from "../../../common/services/yahooAPI/yahooAPI.service";

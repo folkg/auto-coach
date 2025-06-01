@@ -1,7 +1,7 @@
 import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatCardModule } from "@angular/material/card";
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import type { Spacetime } from "spacetime";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../services/app-status.service";
@@ -49,7 +49,7 @@ function getSampleTeam(
   isSettingLineups: boolean,
   lineupPausedAt: number,
   now = spacetimeNow(),
-): Team {
+): ClientTeam {
   return {
     game_name: "Baseball",
     game_code: "mlb",
@@ -62,9 +62,6 @@ function getSampleTeam(
     league_name: "Dyanasty League",
     num_teams: 12,
     rank: 1,
-    points_for: null,
-    points_against: null,
-    points_back: null,
     outcome_totals: {
       wins: "107",
       losses: "58",

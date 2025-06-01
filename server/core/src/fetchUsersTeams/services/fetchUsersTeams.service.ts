@@ -1,5 +1,6 @@
+import type { InfoTeam } from "@common/types/team.js";
+import { assertTrue } from "@common/utilities/checks.js";
 import { type } from "arktype";
-import type { AngularTeam } from "../../common/interfaces/Team.js";
 import {
   flattenArray,
   getPacificEndOfDay,
@@ -30,8 +31,8 @@ const TeamStandingsSchema = type({
   },
 });
 
-export async function fetchTeamsYahoo(uid: string): Promise<AngularTeam[]> {
-  const result: AngularTeam[] = [];
+export async function fetchTeamsYahoo(uid: string): Promise<InfoTeam[]> {
+  const result: InfoTeam[] = [];
 
   const yahooJSON = await getUsersTeams(uid);
   const gamesJSON = yahooJSON.fantasy_content.users[0].user[1].games;
@@ -42,6 +43,7 @@ export async function fetchTeamsYahoo(uid: string): Promise<AngularTeam[]> {
       continue;
     }
 
+    assertTrue(typeof gamesJSON[gameKey] !== "number");
     const gameJSON = gamesJSON[gameKey].game;
 
     const flatGameDetails = FlatGameDetailsSchema.assert(gameJSON[0]);
@@ -65,7 +67,7 @@ export async function fetchTeamsYahoo(uid: string): Promise<AngularTeam[]> {
         leagueSettings.roster_positions,
       );
 
-      const teamObj: AngularTeam = {
+      const teamObj: InfoTeam = {
         game_name: flatGameDetails.name,
         game_code: flatGameDetails.code,
         game_season: flatGameDetails.season,

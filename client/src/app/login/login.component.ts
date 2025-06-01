@@ -4,6 +4,7 @@ import { MatButton } from "@angular/material/button";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import { RouterLink } from "@angular/router";
+import { getErrorMessage } from "@common/utilities/error";
 import { LoadingComponent } from "../loading/loading.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";
@@ -12,7 +13,6 @@ import {
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { RobotsComponent } from "../shared/robots/robots.component";
-import { getErrorMessage } from "../shared/utils/error";
 
 @Component({
   selector: "app-login",

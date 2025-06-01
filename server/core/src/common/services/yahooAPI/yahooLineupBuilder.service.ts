@@ -1,6 +1,7 @@
 import type { IPlayer } from "@common/types/Player.js";
+import type { TeamOptimizer } from "@common/types/team";
+import { assertTrue } from "@common/utilities/checks.js";
 import { type } from "arktype";
-import type { TeamOptimizer } from "../../interfaces/Team.js";
 import {
   flattenArray,
   getPacificEndOfDay,
@@ -67,6 +68,7 @@ export async function fetchRostersFromYahoo(
     if (gameKey === "count") {
       continue;
     }
+    assertTrue(typeof gamesJSON[gameKey] !== "number");
     const gameJSON = gamesJSON[gameKey].game;
     const flatGameDetails = FlatGameDetailsSchema.assert(gameJSON[0]);
     const leaguesJSON = gameJSON[1].leagues;

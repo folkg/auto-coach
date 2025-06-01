@@ -19,7 +19,7 @@ import {
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";
 import { TransactionComponent } from "../transaction/transaction.component";
@@ -46,7 +46,7 @@ import type { PlayerTransactionClient } from "../types/client-types";
   ],
 })
 export class TeamComponent {
-  @Input({ required: true }) team!: Team;
+  @Input({ required: true }) team!: ClientTeam;
   allTransactions = input.required<PlayerTransactionClient[]>();
   @Output() transactionSelected = new EventEmitter<{
     isSelected: boolean;

@@ -14,8 +14,8 @@ import {
   verifyBeforeUpdateEmail,
 } from "@firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
+import { getErrorMessage } from "../../../../common/src/utilities/error";
 import { AUTH } from "../shared/firebase-tokens";
-import { getErrorMessage } from "../shared/utils/error";
 
 @Injectable({
   providedIn: "root",

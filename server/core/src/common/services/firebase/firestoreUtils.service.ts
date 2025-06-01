@@ -1,6 +1,6 @@
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team";
 import { deepEqual } from "@common/utilities/checks.js";
 import { logger } from "firebase-functions";
-import type { FirestoreTeam, TeamOptimizer } from "../../interfaces/Team.js";
 import { updateTeamFirestore } from "./firestore.service.js";
 
 export function enrichTeamsWithFirestoreSettings(

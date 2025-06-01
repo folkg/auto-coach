@@ -1,7 +1,16 @@
 import assert from "node:assert";
+import type { Leagues } from "@common/types/Leagues.js";
+import type {
+  GamesPlayed,
+  InningsPitched,
+  TeamOptimizer,
+} from "@common/types/team.js";
+import type {
+  TransactionDetails,
+  TransactionPlayer,
+} from "@common/types/transactions";
 import { isDefined } from "@common/utilities/checks.js";
 import { type } from "arktype";
-import type { Leagues } from "../../../../../common/src/types/Leagues.js";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../common/classes/Player.js";
 import {
@@ -9,11 +18,6 @@ import {
   INACTIVE_POSITION_LIST,
   POSITIONAL_MAX_EXTRA_PLAYERS,
 } from "../../common/helpers/constants.js";
-import type {
-  GamesPlayed,
-  InningsPitched,
-  TeamOptimizer,
-} from "../../common/interfaces/Team.js";
 import { ownershipScoreFunctionFactory } from "../../common/services/playerScoreFunctions/playerOwnershipScoreFunctions.service.js";
 import { playerStartScoreFunctionFactory } from "../../common/services/playerScoreFunctions/playerStartScoreFunctions.service.js";
 import {
@@ -22,10 +26,6 @@ import {
   getProgressBetween,
   getWeeklyProgressPacific,
 } from "../../common/services/utilities.service.js";
-import type {
-  TransactionDetails,
-  TransactionPlayer,
-} from "../../common/services/yahooAPI/yahooTeamProcesssing.services.js";
 import { PlayerCollection } from "./PlayerCollection.js";
 
 const TransactionPlayerInfoSchema = type({
@@ -274,7 +274,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
    */
   public toPlainTeamObject(): TeamOptimizer {
     const { _editablePlayers, _ownershipScoreFunction, ...team } = this;
-    return structuredClone(team) as TeamOptimizer;
+    return structuredClone(team);
   }
 
   public get positionCounts(): { [position: string]: number } {

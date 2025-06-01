@@ -1,3 +1,9 @@
+import {
+  type ClientTeam,
+  FirestoreTeam,
+  type InfoTeam,
+  yahooToFirestore,
+} from "@common/types/team.js";
 import { assertType } from "@common/utilities/checks.js";
 import { isAxiosError } from "axios";
 import { getApps, initializeApp } from "firebase-admin/app";
@@ -10,12 +16,6 @@ import {
 import { logger } from "firebase-functions";
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
-import {
-  type AngularTeam,
-  type ClientTeam,
-  FirestoreTeam,
-  yahooToFirestore,
-} from "../../interfaces/Team.js";
 import { sendUserEmail } from "../email/email.service.js";
 import {
   getCurrentPacificNumDay,
@@ -240,13 +240,13 @@ export async function getTomorrowsActiveWeeklyTeams() {
  *
  * @export
  * @async
- * @param {AngularTeam[]} missingTeams - Teams that are in Yahoo but not in Firestore
+ * @param {InfoTeam[]} missingTeams - Teams that are in Yahoo but not in Firestore
  * @param {FirestoreTeam[]} extraTeams - Teams that are in Firestore but not in Yahoo
  * @param {string} uid - The user id
  * @return {Promise<ClientTeam[]>} - The teams that were synced
  */
 export async function syncTeamsInFirestore(
-  missingTeams: AngularTeam[],
+  missingTeams: InfoTeam[],
   extraTeams: FirestoreTeam[],
   uid: string,
 ): Promise<ClientTeam[]> {

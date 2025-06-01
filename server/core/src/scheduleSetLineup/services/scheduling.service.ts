@@ -1,8 +1,8 @@
+import type { Leagues } from "@common/types/Leagues.js";
 import axios, { isAxiosError } from "axios";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import type { TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
-import type { Leagues } from "../../../../../common/src/types/Leagues.js";
 import {
   db,
   storeTodaysPostponedTeams,

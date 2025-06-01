@@ -1,6 +1,6 @@
 import { Pipe, type PipeTransform } from "@angular/core";
 
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import type { PlayerTransaction } from "@common/types/transactions";
 
 @Pipe({
@@ -8,7 +8,10 @@ import type { PlayerTransaction } from "@common/types/transactions";
   standalone: true,
 })
 export class SortTeamsByTransactionsPipe implements PipeTransform {
-  transform(teams: Team[], allTransactions: PlayerTransaction[]): Team[] {
+  transform(
+    teams: ClientTeam[],
+    allTransactions: PlayerTransaction[],
+  ): ClientTeam[] {
     return teams.sort((a, b) => {
       const aHasTransactions =
         allTransactions.filter((t) => t.teamKey === a.team_key).length > 0;

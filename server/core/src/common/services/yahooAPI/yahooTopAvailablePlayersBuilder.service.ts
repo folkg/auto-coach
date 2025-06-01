@@ -1,4 +1,5 @@
 import type { IPlayer } from "@common/types/Player.js";
+import { assertTrue } from "@common/utilities/checks.js";
 import { type } from "arktype";
 import { YahooAPIPlayersSchema } from "./interfaces/YahooAPIResponse.js";
 import {
@@ -61,6 +62,7 @@ export async function fetchTopAvailablePlayersFromYahoo(
       continue;
     }
 
+    assertTrue(typeof gamesJSON[gameKey] !== "number");
     const gameJSON = gamesJSON[gameKey].game;
     const leaguesJSON = gameJSON[1].leagues;
 
@@ -70,6 +72,7 @@ export async function fetchTopAvailablePlayersFromYahoo(
         continue;
       }
 
+      assertTrue(typeof leaguesJSON[index] !== "number");
       const league = leaguesJSON[index].league;
       const [baseLeague, ...extendedLeague] = league;
 

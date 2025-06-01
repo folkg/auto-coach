@@ -1,13 +1,10 @@
 import assert from "node:assert";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type {
   LineupChanges,
   PlayerTransaction,
 } from "@common/types/transactions.js";
 import { logger } from "firebase-functions";
-import type {
-  FirestoreTeam,
-  TeamOptimizer,
-} from "../../common/interfaces/Team.js";
 import { getTodaysPostponedTeams } from "../../common/services/firebase/firestore.service.js";
 import {
   enrichTeamsWithFirestoreSettings,

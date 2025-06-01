@@ -2,9 +2,9 @@ import { Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
-import { Team } from "@common/types/team";
+import { ClientTeam } from "@common/types/team";
 import { isDefined, isType } from "@common/utilities/checks";
-// Removed FirebaseError import as we're now using Hono client
+import { getErrorMessage } from "@common/utilities/error";
 import {
   BehaviorSubject,
   catchError,
@@ -26,7 +26,6 @@ import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
-import { getErrorMessage } from "../shared/utils/error";
 import { shareLatest } from "../shared/utils/shareLatest";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "./api.service";
@@ -36,7 +35,7 @@ import { APIService } from "./api.service";
 })
 export class SyncTeamsService {
   private readonly refetch$ = new Subject<void>();
-  private readonly teamsSubject = new BehaviorSubject<Team[]>([]);
+  private readonly teamsSubject = new BehaviorSubject<ClientTeam[]>([]);
 
   readonly teams$ = this.teamsSubject.asObservable();
   readonly loading$: Observable<boolean>;
@@ -54,7 +53,7 @@ export class SyncTeamsService {
       switchMap(() => {
         const sessionStorageTeams = this.loadSessionStorageTeams();
         const hasValidSessionStorageTeams =
-          isType(sessionStorageTeams, Team.array()) &&
+          isType(sessionStorageTeams, ClientTeam.array()) &&
           sessionStorageTeams.length > 0;
 
         if (hasValidSessionStorageTeams) {
@@ -69,13 +68,13 @@ export class SyncTeamsService {
         const localStorageTeams = this.loadLocalStorageTeams();
         const hasValidLocalStorageTeams = isType(
           localStorageTeams,
-          Team.array(),
+          ClientTeam.array(),
         );
 
         if (hasValidLocalStorageTeams) {
           return concat(
             of({ loading: true, teams: localStorageTeams }),
-            from(this.getFreshTeams()).pipe(
+            from(this.fetchTeams()).pipe(
               map((teams) => ({ loading: false, teams })),
             ),
           );
@@ -83,7 +82,7 @@ export class SyncTeamsService {
 
         return concat(
           of({ loading: true, teams: [] }),
-          from(this.getFreshTeams()).pipe(
+          from(this.fetchTeams()).pipe(
             map((teams) => ({ loading: false, teams })),
           ),
         );
@@ -117,10 +116,10 @@ export class SyncTeamsService {
     });
   }
 
-  optimisticallyUpdateTeam<K extends keyof Team>(
+  optimisticallyUpdateTeam<K extends keyof ClientTeam>(
     teamKey: string,
     property: K,
-    value: Team[K],
+    value: ClientTeam[K],
   ): void {
     const currentTeams = this.teamsSubject.value;
     const updatedTeams = currentTeams.map((team) =>
@@ -147,12 +146,7 @@ export class SyncTeamsService {
     return JSON.parse(localStorage.getItem("yahooTeams") ?? "[]");
   }
 
-  private async getFreshTeams(): Promise<Team[]> {
-    const fetchedTeams = await this.fetchTeamsFromYahoo();
-    return this.patchTeamPropertiesFromFirestore(fetchedTeams);
-  }
-
-  private fetchTeamsFromYahoo(): Promise<Team[]> {
+  fetchTeams(): Promise<ClientTeam[]> {
     try {
       return this.api.fetchTeamsYahoo();
     } catch (err) {
@@ -167,22 +161,16 @@ export class SyncTeamsService {
   }
 
   private async patchTeamPropertiesFromFirestore(
-    teamsToPatch: Team[],
-  ): Promise<Team[]> {
-    // Since fetchTeamsYahoo now returns combined data from Yahoo + Firestore,
-    // we can get the complete teams data and use it for patching
-    const completeTeams = await this.api.fetchTeamsYahoo();
+    teamsToPatch: ClientTeam[],
+  ): Promise<ClientTeam[]> {
+    const partialTeams = await this.api.fetchTeamsPartial();
 
-    for (const teamToPatch of teamsToPatch) {
-      const completeTeam = completeTeams.find(
+    return teamsToPatch.map((teamToPatch) => {
+      const completeTeam = partialTeams.find(
         (team) => team.team_key === teamToPatch.team_key,
       );
-      if (completeTeam) {
-        Object.assign(teamToPatch, completeTeam);
-      }
-    }
-
-    return teamsToPatch;
+      return completeTeam ? { ...teamToPatch, ...completeTeam } : teamToPatch;
+    });
   }
 
   private handleFetchTeamsError(err: unknown): void {

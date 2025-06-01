@@ -1,8 +1,5 @@
+import { type InfoTeam, yahooToFirestore } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
-import {
-  type AngularTeam,
-  yahooToFirestore,
-} from "../../../interfaces/Team.js";
 
 vi.mock("firebase-admin/firestore", () => {
   return {
@@ -17,7 +14,7 @@ vi.mock("firebase-admin/app", () => {
 });
 
 describe("clientToFirestore", () => {
-  const mockTeam: AngularTeam = {
+  const mockTeam: InfoTeam = {
     uid: "test_uid",
     game_name: "game name",
     game_code: "nhl",

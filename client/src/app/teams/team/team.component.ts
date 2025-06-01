@@ -26,7 +26,7 @@ import {
   type MatSlideToggleChange,
 } from "@angular/material/slide-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import { Subscription } from "rxjs";
 import spacetime, { type Spacetime } from "spacetime";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -72,7 +72,7 @@ const FIRST_SERVER_UPDATE_HOUR = 1;
   ],
 })
 export class TeamComponent {
-  readonly team = input.required<Readonly<Team>>();
+  readonly team = input.required<Readonly<ClientTeam>>();
   readonly gameTimeStamps = input.required<number[] | null>();
   @Output() toggleSetLineupEvent = new EventEmitter<SetLineupEvent>();
   @Output() togglePauseLineupEvent = new EventEmitter<PauseLineupEvent>();

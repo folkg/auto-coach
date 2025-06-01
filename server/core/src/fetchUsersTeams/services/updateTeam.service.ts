@@ -1,4 +1,4 @@
-import type { FirestoreTeam } from "../../common/interfaces/Team.js";
+import type { FirestoreTeam } from "@common/types/team.js";
 import { updateTeamFirestore } from "../../common/services/firebase/firestore.service.js";
 
 /**

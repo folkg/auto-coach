@@ -10,6 +10,7 @@ import {
 // biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import type { Schedule } from "@common/types/Schedule";
+import { getErrorMessage, logError } from "@common/utilities/error";
 import { lastValueFrom } from "rxjs";
 import { ProfileCardComponent } from "../profile/profile-card/profile-card.component";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -25,7 +26,6 @@ import {
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
-import { getErrorMessage, logError } from "../shared/utils/error";
 import type {
   PauseLineupEvent,
   SetLineupEvent,

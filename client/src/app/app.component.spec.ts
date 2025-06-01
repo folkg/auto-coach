@@ -1,5 +1,5 @@
 import { OverlayContainer } from "@angular/cdk/overlay";
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import type { User } from "@firebase/auth";
 import { render } from "@testing-library/angular";
 import { BehaviorSubject } from "rxjs";
@@ -11,7 +11,7 @@ import { ThemingService } from "./services/theming.service";
 
 describe("AppComponent", () => {
   const user$ = new BehaviorSubject<User | null>(null);
-  const teams$ = new BehaviorSubject<Team[]>([]);
+  const teams$ = new BehaviorSubject<ClientTeam[]>([]);
   const theme$ = new BehaviorSubject<string>("light-theme");
 
   const mockAuthService = {

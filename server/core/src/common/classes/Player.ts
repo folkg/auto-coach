@@ -1,9 +1,9 @@
-import { isDefined } from "@common/utilities/checks.js";
 import type {
   IPlayer,
   PlayerOwnership,
   PlayerRanks,
-} from "../../../../../common/src/types/Player.js";
+} from "@common/types/Player.js";
+import { isDefined } from "@common/utilities/checks.js";
 import {
   HEALTHY_STATUS_LIST,
   INACTIVE_POSITION_LIST,

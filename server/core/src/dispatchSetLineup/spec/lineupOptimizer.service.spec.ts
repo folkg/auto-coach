@@ -1,11 +1,8 @@
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges } from "@common/types/transactions";
 import spacetime from "spacetime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
-import type {
-  FirestoreTeam,
-  TeamOptimizer,
-} from "../../common/interfaces/Team.js";
 import * as firestoreService from "../../common/services/firebase/firestore.service.js";
 import * as yahooAPI from "../../common/services/yahooAPI/yahooAPI.service.js";
 import * as LineupBuilderService from "../../common/services/yahooAPI/yahooLineupBuilder.service.js";

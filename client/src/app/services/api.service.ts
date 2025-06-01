@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import type { FeedbackData } from "@common/types/feedback";
 import { Schedule } from "@common/types/Schedule";
-import type { Team } from "@common/types/team";
+import type { ClientTeam, FirestoreTeam } from "@common/types/team";
 import type {
   PostTransactionsResult,
   TransactionsData,
@@ -15,16 +15,28 @@ import { HONO_CLIENT } from "../hono-client-config";
 export class APIService {
   private readonly client = inject(HONO_CLIENT);
 
-  async fetchTeamsYahoo(): Promise<Team[]> {
+  async fetchTeamsYahoo(): Promise<ClientTeam[]> {
     try {
       const response = await this.client.api.teams.$get();
       if (!response.ok) {
         throw new Error(`Failed to fetch teams: ${response.statusText}`);
       }
-      const teams = (await response.json()) as Team[];
-      return teams;
+      return response.json();
     } catch (error) {
       console.error("Error fetching Yahoo teams:", error);
+      throw error;
+    }
+  }
+
+  async fetchTeamsPartial(): Promise<FirestoreTeam[]> {
+    try {
+      const response = await this.client.api.teams.partial.$get();
+      if (!response.ok) {
+        throw new Error(`Failed to fetch teams: ${response.statusText}`);
+      }
+      return response.json();
+    } catch (error) {
+      console.error("Error fetching partial teams:", error);
       throw error;
     }
   }
@@ -79,8 +91,7 @@ export class APIService {
       if (!response.ok) {
         throw new Error(`Failed to post transactions: ${response.statusText}`);
       }
-      const result = (await response.json()) as PostTransactionsResult;
-      return result;
+      return response.json();
     } catch (error) {
       console.error("Error posting transactions:", error);
       throw error;
@@ -95,7 +106,7 @@ export class APIService {
       if (!response.ok) {
         throw new Error(`Failed to send feedback: ${response.statusText}`);
       }
-      const result = (await response.json()) as { success: boolean };
+      const result = await response.json();
       return result.success;
     } catch (error) {
       console.error("Error sending feedback:", error);

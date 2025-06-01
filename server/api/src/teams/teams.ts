@@ -1,4 +1,8 @@
-import { getUserTeams } from "@core/fetchUsersTeams/services/getUserTeams.service.js";
+import { getErrorMessage } from "@common/utilities/error";
+import {
+  getUserTeams,
+  getUserTeamsPartial,
+} from "@core/fetchUsersTeams/services/getUserTeams.service.js";
 import {
   updateTeamLineupPaused,
   updateTeamLineupSetting,
@@ -27,7 +31,22 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeams(uid);
       return c.json(teams);
     } catch (error) {
-      return c.json({ error: (error as Error).message }, 500);
+      return c.json({ error: getErrorMessage(error) }, 500);
+    }
+  })
+
+  /**
+   * GET /api/teams/partial
+   * Fetch authenticated user's teams, returning just the Firestore settings
+   * Response: FirestoreTeam[]
+   */
+  .get("/partial", async (c) => {
+    const uid = c.get("uid");
+    try {
+      const teams = await getUserTeamsPartial(uid);
+      return c.json(teams);
+    } catch (error) {
+      return c.json({ error: getErrorMessage(error) }, 500);
     }
   })
 
@@ -48,7 +67,7 @@ const teamsRouter = new Hono<AuthContext>()
         const success = await updateTeamLineupSetting(uid, teamKey, value);
         return c.json({ success });
       } catch (error) {
-        return c.json({ error: (error as Error).message }, 500);
+        return c.json({ error: getErrorMessage(error) }, 500);
       }
     },
   )
@@ -70,7 +89,7 @@ const teamsRouter = new Hono<AuthContext>()
         const success = await updateTeamLineupPaused(uid, teamKey, value);
         return c.json({ success });
       } catch (error) {
-        return c.json({ error: (error as Error).message }, 500);
+        return c.json({ error: getErrorMessage(error) }, 500);
       }
     },
   );

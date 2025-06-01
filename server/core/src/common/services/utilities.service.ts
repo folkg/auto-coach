@@ -44,7 +44,8 @@ export function parseToInt(
     return value;
   }
 
-  return Number.parseInt(value) ?? defaultValue;
+  const parsed = Number.parseInt(value);
+  return Number.isNaN(parsed) ? defaultValue : parsed;
 }
 
 const GoogleAuthResponse = type({

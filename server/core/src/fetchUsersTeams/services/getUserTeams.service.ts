@@ -1,5 +1,5 @@
+import type { ClientTeam, FirestoreTeam } from "@common/types/team.js";
 import { isDefined } from "@common/utilities/checks.js";
-import type { ClientTeam } from "../../common/interfaces/Team.js";
 import {
   fetchTeamsFirestore,
   syncTeamsInFirestore,
@@ -50,4 +50,10 @@ export async function getUserTeams(uid: string): Promise<ClientTeam[]> {
   }
 
   return existingPatchedTeams.concat(newPatchedTeams);
+}
+
+// TODO: Consolidate the Teams types better. Store everything as a "Team" in Firebae so we don't need all of these different bespoke Team shapes.
+// The when we call this, it will just get the cached team and we don't have to merge them on the Client.
+export function getUserTeamsPartial(uid: string): Promise<FirestoreTeam[]> {
+  return fetchTeamsFirestore(uid);
 }

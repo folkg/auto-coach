@@ -1,5 +1,5 @@
 import { BreakpointObserver } from "@angular/cdk/layout";
-import type { Team } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import type { User } from "@firebase/auth";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
@@ -14,7 +14,7 @@ import { AppNavComponent } from "./app-nav.component";
 
 describe("AppNavComponent", () => {
   const user$ = new BehaviorSubject<User | null>(null);
-  const teams$ = new BehaviorSubject<Team[]>([]);
+  const teams$ = new BehaviorSubject<ClientTeam[]>([]);
   const isHandset$ = new BehaviorSubject(false);
 
   const mockAuthService = {
@@ -91,7 +91,7 @@ describe("AppNavComponent", () => {
 
     it("shows transactions link when user has transactions enabled", async () => {
       user$.next(createMock<User>({ uid: "123" }));
-      teams$.next([createMock<Team>({ allow_transactions: true })]);
+      teams$.next([createMock<ClientTeam>({ allow_transactions: true })]);
 
       await render(AppNavComponent, {
         providers: defaultProviders,
@@ -102,7 +102,7 @@ describe("AppNavComponent", () => {
 
     it("hides transactions link when user does not have transactions enabled", async () => {
       user$.next(createMock<User>({ uid: "123" }));
-      teams$.next([createMock<Team>({ allow_transactions: false })]);
+      teams$.next([createMock<ClientTeam>({ allow_transactions: false })]);
 
       await render(AppNavComponent, {
         providers: defaultProviders,
@@ -135,7 +135,7 @@ describe("AppNavComponent", () => {
 
     it("navigates to authenticated routes when logged in", async () => {
       user$.next(createMock<User>({ uid: "123" }));
-      teams$.next([createMock<Team>({ allow_transactions: true })]);
+      teams$.next([createMock<ClientTeam>({ allow_transactions: true })]);
 
       await render(AppNavComponent, {
         providers: defaultProviders,

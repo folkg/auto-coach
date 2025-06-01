@@ -1,4 +1,5 @@
 import { TransactionsData } from "@common/types/transactions";
+import { getErrorMessage } from "@common/utilities/error";
 import {
   getTransactionSuggestions,
   processSelectedTransactions,
@@ -20,7 +21,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const data = await getTransactionSuggestions(uid);
       return c.json(data);
     } catch (error) {
-      return c.json({ error: (error as Error).message }, 500);
+      return c.json({ error: getErrorMessage(error) }, 500);
     }
   })
 
@@ -37,7 +38,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const result = await processSelectedTransactions(transactions, uid);
       return c.json(result);
     } catch (error) {
-      return c.json({ error: (error as Error).message }, 500);
+      return c.json({ error: getErrorMessage(error) }, 500);
     }
   });
 
