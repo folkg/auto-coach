@@ -1,0 +1,15 @@
+# Example Terraform variables file for Auto Coach Infrastructure
+# Copy this file to terraform.tfvars and update with your actual values
+
+# Required variables
+project_id           = "your-gcp-project-id"
+firebase_project_id  = "your-firebase-project-id"
+yahoo_app_id         = "your-yahoo-app-id"
+yahoo_client_id      = "your-yahoo-client-id"
+
+# Optional variables with defaults
+region              = "us-central1"
+environment         = "dev"
+allowed_origins     = "http://localhost:4200"
+container_image_tag = "latest"
+yahoo_redirect_uri  = "http://localhost:4200/auth/callback"

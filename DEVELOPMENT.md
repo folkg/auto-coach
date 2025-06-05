@@ -11,12 +11,15 @@ The application is structured as a monorepo with the following packages:
 - **`server/functions/`** - Firebase Functions for scheduled/triggered tasks
 - **`server/core/`** - Shared business logic and services
 - **`common/`** - Shared types, schemas, and utilities
+- **`infrastructure/opentofu/`** - Infrastructure as Code (OpenTofu/Terraform)
 
 ## Prerequisites
 
 - [Bun](https://bun.sh/) - JavaScript runtime and package manager
 - [Firebase CLI](https://firebase.google.com/docs/cli) - For emulators and deployment
 - [Node.js 22+](https://nodejs.org/) - Required for Firebase Functions
+- [Google Cloud CLI](https://cloud.google.com/sdk/docs/install) - For infrastructure and Cloud Run
+- [OpenTofu](https://opentofu.org/docs/intro/install/) - For infrastructure as code
 
 ## Installation
 
@@ -39,6 +42,7 @@ The application is structured as a monorepo with the following packages:
      - `FIRESTORE_EMULATOR_HOST` - Firestore emulator host (default: `localhost:6001`)
      - `GOOGLE_APPLICATION_CREDENTIALS` - Path to service account key file (for production)
      - `NG_APP_API_BASE_URL` - API base URL for the client (e.g., `http://localhost:3000`)
+   - For infrastructure, copy `infrastructure/opentofu/terraform.tfvars.example` to `infrastructure/opentofu/terraform.tfvars` and fill in your project details.
 
 ## Development Setup
 
@@ -57,6 +61,16 @@ For Firebase emulators, run separately:
 ```bash
 # Start Firebase emulators (Auth, Firestore, Functions)
 bun run dev:emulators
+```
+
+### Infrastructure (Local/Dev)
+
+To preview or apply infrastructure changes locally (requires OpenTofu and gcloud auth):
+
+```bash
+cd infrastructure/opentofu
+tofu plan -var-file="environments/dev.tfvars" -var="project_id=YOUR_PROJECT_ID" -var="firebase_project_id=YOUR_FIREBASE_PROJECT_ID"
+tofu apply -var-file="environments/dev.tfvars" -var="project_id=YOUR_PROJECT_ID" -var="firebase_project_id=YOUR_FIREBASE_PROJECT_ID"
 ```
 
 ### Individual Services
@@ -135,6 +149,30 @@ bun run test:client
 bun run test:server
 ```
 
+## CI/CD & Deployment
+
+### Automated Workflows
+
+All testing and deployment is handled by GitHub Actions. The workflows are defined in `.github/workflows/` and include:
+
+- **Pull Request Workflow**: Runs all tests, security checks, and deploys client preview if the client changes. Posts status updates to the PR.
+- **Main Branch Deployment**: On merge to `main`, only the affected components are deployed:
+  - **Infrastructure**: If `infrastructure/` changes, OpenTofu applies changes to GCP.
+  - **API & Functions**: If `server/`, `common/`, or infrastructure changes, builds and deploys the API to Cloud Run and Functions to Firebase.
+  - **Client**: If `client/`, `common/`, or infrastructure changes, builds and deploys the client to Firebase Hosting.
+
+### Manual Infrastructure Deployment
+
+You can also trigger infrastructure deployments manually via the GitHub Actions UI using the workflow_dispatch event.
+
+### Deployment Records
+
+Each production deployment automatically commits a deployment record to the repository for traceability.
+
+### Commit Conventions
+
+All commits must follow the Conventional Commits format, and JIRA tags are extracted from branch names for traceability.
+
 ## Code Quality
 
 ### Run All Checks
@@ -176,8 +214,8 @@ This compiles all TypeScript projects using the workspace TypeScript build.
 # Client
 cd client && bun run build
 
-# Server API (built via workspace tsc)
-# No individual build script (yet)
+# Server API
+cd server/api && bun run build
 
 # Functions
 cd server/functions && bun run build
@@ -234,6 +272,7 @@ This will build functions in watch mode and start the Firebase emulators.
 2. **Firebase emulator issues**: Run `firebase emulators:kill` then restart
 3. **TypeScript errors**: Run `bun run build` to check for compilation issues. If issues persist, try `bun run clean` to remove build artifacts, then try building again.
 4. **Hot-reload not working**: Restart the specific service
+5. **CI/CD pipeline failures**: Check GitHub Actions logs for details. Only changed components are deployed; ensure your changes are in the correct directory.
 
 ### Reset Development Environment
 
