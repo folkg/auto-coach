@@ -18,7 +18,8 @@ import type {
 } from "@common/types/transactions";
 import { logError } from "@common/utilities/error";
 import { lastValueFrom } from "rxjs";
-import { LoadingComponent } from "../loading/loading.component";
+import { LoaderComponent } from "../loader/loader.component";
+import { LoaderOverlayComponent } from "../loader-overlay/loader-overlay.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
 // biome-ignore lint/style/useImportType: This is an injection token
@@ -47,7 +48,8 @@ import type {
     MatButton,
     JsonPipe,
     SortTeamsByTransactionsPipe,
-    LoadingComponent,
+    LoaderOverlayComponent,
+    LoaderComponent,
   ],
 })
 export class TransactionsComponent {

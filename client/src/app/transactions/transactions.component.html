@@ -86,16 +86,10 @@
                         />
                     }
                 } @else {
-                    <mat-card class="card">
-                        <mat-card-header>
-                            <mat-card-title
-                                >Loading Transactions...</mat-card-title
-                            >
-                        </mat-card-header>
-                        <mat-card-content>
-                            <p>Please wait</p>
-                        </mat-card-content>
-                    </mat-card>
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                        <app-loader />
+                        <p style="margin-top: 1rem;">Loading...</p>
+                    </div>
                 }
             } @else {
                 <mat-card class="card">
@@ -124,4 +118,4 @@
     }
 </div>
 
-<app-loading [loading]="isProcessing()"></app-loading>
+<app-loader-overlay [loading]="isProcessing()"></app-loader-overlay>

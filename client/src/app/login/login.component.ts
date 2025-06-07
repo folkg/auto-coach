@@ -5,7 +5,7 @@ import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
 import { RouterLink } from "@angular/router";
 import { getErrorMessage } from "@common/utilities/error";
-import { LoadingComponent } from "../loading/loading.component";
+import { LoaderOverlayComponent } from "../loader-overlay/loader-overlay.component";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";
 import {
@@ -18,7 +18,7 @@ import { RobotsComponent } from "../shared/robots/robots.component";
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
-  imports: [MatButton, RouterLink, RobotsComponent, LoadingComponent],
+  imports: [MatButton, RouterLink, RobotsComponent, LoaderOverlayComponent],
 })
 export class LoginComponent {
   loading = toSignal(this.auth.loading$, { initialValue: false });

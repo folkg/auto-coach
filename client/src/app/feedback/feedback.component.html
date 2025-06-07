@@ -112,7 +112,10 @@
                     </p>
                 }
                 @default {
-                    <h2>Submitting Feedback...</h2>
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem;">
+                        <app-loader />
+                        <h2 style="margin-top: 1rem;">Submitting Feedback...</h2>
+                    </div>
                 }
             }
         </div>
