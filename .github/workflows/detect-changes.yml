@@ -1,0 +1,66 @@
+name: Detect Changes
+
+on:
+  workflow_call:
+    inputs:
+      diff-base:
+        description: 'Base ref for git diff (e.g., main, HEAD~1)'
+        required: true
+        type: string
+      diff-head:
+        description: 'Head ref for git diff (e.g., HEAD)'
+        required: true
+        type: string
+    outputs:
+      api-functions-changed:
+        description: "Whether API/Functions (server, common, infrastructure) changed"
+        value: ${{ jobs.detect-changes.outputs.api-functions-changed }}
+      client-changed:
+        description: "Whether client (client, common, infrastructure) changed"
+        value: ${{ jobs.detect-changes.outputs.client-changed }}
+      infrastructure-changed:
+        description: "Whether infrastructure changed"
+        value: ${{ jobs.detect-changes.outputs.infrastructure-changed }}
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api-functions-changed: ${{ steps.set-outputs.outputs.api-functions-changed }}
+      client-changed: ${{ steps.set-outputs.outputs.client-changed }}
+      infrastructure-changed: ${{ steps.set-outputs.outputs.infrastructure-changed }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get changed files
+        id: changed
+        run: |
+          CHANGED_FILES=$(git diff --name-only "${{ inputs.diff-base }}" "${{ inputs.diff-head }}")
+          echo "$CHANGED_FILES" > changed-files.txt
+
+      - name: Set outputs
+        id: set-outputs
+        run: |
+          CHANGED_FILES="$(cat changed-files.txt)"
+
+          API_FUNCTIONS_CHANGED="false"
+          CLIENT_CHANGED="false"
+          INFRASTRUCTURE_CHANGED="false"
+
+          if echo "$CHANGED_FILES" | grep -qE "^(server/|common/|infrastructure/)"; then
+            API_FUNCTIONS_CHANGED="true"
+          fi
+          if echo "$CHANGED_FILES" | grep -qE "^(client/|common/|infrastructure/)"; then
+            CLIENT_CHANGED="true"
+          fi
+          if echo "$CHANGED_FILES" | grep -qE "^infrastructure/"; then
+            INFRASTRUCTURE_CHANGED="true"
+          fi
+
+          echo "api-functions-changed=$API_FUNCTIONS_CHANGED" >> $GITHUB_OUTPUT
+          echo "client-changed=$CLIENT_CHANGED" >> $GITHUB_OUTPUT
+          echo "infrastructure-changed=$INFRASTRUCTURE_CHANGED" >> $GITHUB_OUTPUT

@@ -1,0 +1,251 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+jobs:
+  detect-changes:
+    uses: ./.github/workflows/detect-changes.yml
+    with:
+      diff-base: HEAD~1
+      diff-head: HEAD
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.infrastructure-changed == 'true'
+    environment: production
+    outputs:
+      api-url: ${{ steps.deploy.outputs.api-url }}
+      container-registry-url: ${{ steps.deploy.outputs.container-registry-url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Infrastructure
+        id: deploy
+        working-directory: infrastructure/opentofu
+        run: |
+          tofu init
+          tofu plan \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="firebase_project_id=${{ secrets.FIREBASE_PROJECT_ID }}" \
+            -var="yahoo_app_id=${{ secrets.YAHOO_APP_ID }}" \
+            -var="yahoo_client_id=${{ secrets.YAHOO_CLIENT_ID }}" \
+            -var="environment=prod"
+          tofu apply -auto-approve \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="firebase_project_id=${{ secrets.FIREBASE_PROJECT_ID }}" \
+            -var="yahoo_app_id=${{ secrets.YAHOO_APP_ID }}" \
+            -var="yahoo_client_id=${{ secrets.YAHOO_CLIENT_ID }}" \
+            -var="environment=prod"
+
+          # Get API URL and Container Registry URL for other jobs
+          API_URL=$(tofu output -raw api_url 2>/dev/null || echo "")
+          CONTAINER_REGISTRY_URL=$(tofu output -raw container_registry_url 2>/dev/null || echo "")
+          echo "api-url=$API_URL" >> $GITHUB_OUTPUT
+          echo "container-registry-url=$CONTAINER_REGISTRY_URL" >> $GITHUB_OUTPUT
+
+  test-and-build:
+    uses: ./.github/workflows/test-build-upload.yml
+    needs: detect-changes
+    with:
+      client-changed: ${{ needs.detect-changes.outputs.client-changed == 'true' }}
+      api-functions-changed: ${{ needs.detect-changes.outputs.api-functions-changed == 'true' }}
+      biome-version: "1.5.3"
+      bun-version: "1.1.0"
+
+  deploy-api-functions:
+    name: Deploy API and Functions
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build, deploy-infrastructure]
+    if: |
+      always() &&
+      needs.detect-changes.outputs.api-functions-changed == 'true' &&
+      needs.test-and-build.result == 'success' &&
+      (needs.deploy-infrastructure.result == 'success' || needs.deploy-infrastructure.result == 'skipped')
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download API build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: api-build
+          path: server/api/dist/
+
+      - name: Download functions build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: functions-build
+          path: server/functions/lib/
+
+      - name: Setup Bun CLI
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build and Push API Container
+        run: |
+          # Make the binary executable
+          chmod +x server/api/dist/server
+
+          # Build container
+          bun run container:build
+
+          # Get registry URL from infrastructure (fallback to project-based URL)
+          REGISTRY_URL="${{ needs.deploy-infrastructure.outputs.container-registry-url }}"
+          if [ -z "$REGISTRY_URL" ]; then
+            REGISTRY_URL="${{ secrets.GCP_PROJECT_ID }}/auto-coach/auto-coach-api"
+          fi
+
+          # Tag and push
+          docker tag auto-coach-api us-central1-docker.pkg.dev/$REGISTRY_URL:${{ github.sha }}
+          docker tag auto-coach-api us-central1-docker.pkg.dev/$REGISTRY_URL:latest
+          docker push us-central1-docker.pkg.dev/$REGISTRY_URL:${{ github.sha }}
+          docker push us-central1-docker.pkg.dev/$REGISTRY_URL:latest
+
+      - name: Deploy Cloud Run Service
+        run: |
+          gcloud run deploy auto-coach-api \
+            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/auto-coach/auto-coach-api:${{ github.sha }} \
+            --region us-central1 \
+            --platform managed \
+            --allow-unauthenticated \
+            --project ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Deploy Firebase Functions
+        run: |
+          # Install Firebase CLI
+          npm install -g firebase-tools
+
+          # Deploy functions using the downloaded build artifact
+          cd server/functions
+          firebase deploy --only functions:lineup,functions:email,functions:transactions \
+            --project ${{ secrets.FIREBASE_PROJECT_ID }} \
+            --token ${{ secrets.FIREBASE_TOKEN }}
+
+  deploy-client:
+    name: Deploy Client
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: |
+      always() &&
+      needs.detect-changes.outputs.client-changed == 'true' &&
+      needs.test-and-build.result == 'success'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download client build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_AUTO_GM_372620 }}
+          channelId: live
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+  commit-deployment:
+    name: Commit Deployment Record
+    runs-on: ubuntu-latest
+    needs: [detect-changes, deploy-api-functions, deploy-client, deploy-infrastructure]
+    if: |
+      always() &&
+      (needs.deploy-api-functions.result == 'success' ||
+       needs.deploy-client.result == 'success' ||
+       needs.deploy-infrastructure.result == 'success')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get current branch name
+        id: branch
+        run: echo "name=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Extract JIRA tag from branch name
+        id: jira
+        run: |
+          BRANCH_NAME="${{ steps.branch.outputs.name }}"
+          if [[ $BRANCH_NAME =~ (XM-[0-9]+) ]]; then
+            echo "tag=[${BASH_REMATCH[1]}]" >> $GITHUB_OUTPUT
+          else
+            echo "tag=" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create deployment record
+        run: |
+          # Determine what was deployed
+          DEPLOYED_COMPONENTS=""
+          if [[ "${{ needs.deploy-infrastructure.result }}" == "success" ]]; then
+            DEPLOYED_COMPONENTS="${DEPLOYED_COMPONENTS} infrastructure"
+          fi
+          if [[ "${{ needs.deploy-api-functions.result }}" == "success" ]]; then
+            DEPLOYED_COMPONENTS="${DEPLOYED_COMPONENTS} api functions"
+          fi
+          if [[ "${{ needs.deploy-client.result }}" == "success" ]]; then
+            DEPLOYED_COMPONENTS="${DEPLOYED_COMPONENTS} client"
+          fi
+
+          # Create deployment record file
+          echo "# Deployment Record" > deployment-record.md
+          echo "**Date**: $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> deployment-record.md
+          echo "**Commit**: ${{ github.sha }}" >> deployment-record.md
+          echo "**Components**:${DEPLOYED_COMPONENTS}" >> deployment-record.md
+          echo "**Triggered by**: ${{ github.actor }}" >> deployment-record.md
+
+      - name: Commit deployment record
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add deployment-record.md
+
+          # Create commit message with JIRA tag if present
+          JIRA_TAG="${{ steps.jira.outputs.tag }}"
+          if [[ -n "$JIRA_TAG" ]]; then
+            git commit -m "chore: ${JIRA_TAG} Record production deployment of updated components"
+          else
+            git commit -m "chore: Record production deployment of updated components"
+          fi
+
+          git push

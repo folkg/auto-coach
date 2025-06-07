@@ -1,0 +1,91 @@
+name: Setup Environment
+
+on:
+  workflow_call:
+    inputs:
+      install-playwright:
+        description: 'Whether to install Playwright browsers'
+        required: false
+        type: boolean
+        default: false
+      run-biome:
+        description: 'Whether to run Biome checks'
+        required: false
+        type: boolean
+        default: true
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '22'
+      bun-version:
+        description: 'Bun version to use'
+        required: false
+        type: string
+        default: 'latest'
+    outputs:
+      cache-hit:
+        description: 'Whether dependencies were restored from cache'
+        value: ${{ jobs.setup.outputs.cache-hit }}
+
+jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    outputs:
+      cache-hit: ${{ steps.cache.outputs.cache-hit }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Setup Bun CLI
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version || '1.1.0' }}
+
+      - name: Cache dependencies
+        id: cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.bun/install/cache
+            node_modules
+            */node_modules
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: bun install
+
+      - name: Setup Biome CLI
+        if: inputs.run-biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: 1.5.3
+
+      - name: Run Biome checks
+        if: inputs.run-biome
+        run: biome ci
+
+      - name: Install Playwright browsers
+        if: inputs.install-playwright
+        run: bunx playwright install chromium
+
+      - name: Verify setup
+        run: |
+          echo "✅ Node.js version: $(node --version)"
+          echo "✅ Bun version: $(bun --version)"
+          echo "✅ Dependencies installed"
+          if [[ "${{ inputs.install-playwright }}" == "true" ]]; then
+            echo "✅ Playwright browsers installed"
+          fi
+          if [[ "${{ inputs.run-biome }}" == "true" ]]; then
+            echo "✅ Biome checks passed"
+          fi
