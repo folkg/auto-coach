@@ -90,8 +90,6 @@ export class AuthService {
     try {
       assertDefined(this.auth.currentUser);
       await verifyBeforeUpdateEmail(this.auth.currentUser, email);
-      // await updateEmail(this.auth.currentUser, email);
-      // await this.sendVerificationEmail();
     } catch (err) {
       if (err instanceof Error) {
         if (err.message === "Firebase: Error (auth/requires-recent-login).") {

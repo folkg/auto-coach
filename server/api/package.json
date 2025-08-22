@@ -9,9 +9,7 @@
     "test": "bun test",
     "test:watch": "bun test --watch",
     "container:build": "docker build -f Dockerfile -t auto-coach-api ../../",
-    "container:run": "docker run -p 3000:3000 auto-coach-api",
-
-    "clean": "rm -rf dist"
+    "container:run": "docker run -p 3000:3000 auto-coach-api"
   },
   "dependencies": {
     "@hono/arktype-validator": "2.0.1",

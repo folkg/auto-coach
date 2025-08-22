@@ -1,5 +1,13 @@
 {
-  "language_servers": ["typescript-language-server", "!vtsls", "biome", "..."],
+  "language_servers": ["...", "biome"],
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["angular", "...", "biome"]
+    },
+    "HTML": {
+      "language_servers": ["angular", "..."]
+    }
+  },
   "formatter": {
     "language_server": {
       "name": "biome"

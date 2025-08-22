@@ -35,7 +35,7 @@ app.use(
 app.use("*", firebaseAuthMiddleware);
 
 const routes = app
-  .get("/", (c) => c.text("Hello!"))
+  .get("/", (c) => c.body(null, 200))
   .route("/api/teams", teamsRouter)
   .route("/api/schedules", schedulesRouter)
   .route("/api/feedback", feedbackRouter)
