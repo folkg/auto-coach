@@ -33,7 +33,7 @@
     "p-limit": "6.2.0"
   },
   "devDependencies": {
-    "@types/nodemailer": "6.4.17",
+    "@types/nodemailer": "6.4.20",
     "firebase-functions-test": "3.4.1"
   },
   "private": true
