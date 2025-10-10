@@ -39,9 +39,16 @@ export async function fetchStartingPlayers(league: string): Promise<void> {
     );
   }
 
-  const teamKey = teamsSnapshot.docs[0].id;
+  const firstDoc = teamsSnapshot.docs[0];
+  if (!firstDoc) {
+    throw new Error(`No team found for league ${league}`);
+  }
+  const teamKey = firstDoc.id;
   const leagueKey = teamKey.split(".t")[0];
-  const uid = teamsSnapshot.docs[0].data().uid;
+  if (!leagueKey) {
+    throw new Error(`Invalid team key format: ${teamKey}`);
+  }
+  const uid = firstDoc.data().uid;
   const startingPlayers: string[] = await parseStartingPlayersFromYahoo(
     league,
     uid,
@@ -87,7 +94,7 @@ async function parseStartingPlayersFromYahoo(
 
       for (const index in players) {
         const player = players[index];
-        if (typeof player === "number") {
+        if (typeof player === "number" || !player) {
           continue;
         }
 

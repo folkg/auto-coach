@@ -105,7 +105,7 @@ describe("Unit Test LineupOptimizer Simple Drop Players", () => {
       pt.players.filter((p) => p.transactionType === "drop"),
     );
     expect(droppedPlayers?.length).toEqual(1);
-    expect(droppedPlayers?.[0].player.eligible_positions).not.toContain("G");
+    expect(droppedPlayers?.[0]?.player.eligible_positions).not.toContain("G");
 
     const addedPlayerCount = playerTransactions?.flatMap((pt) =>
       pt.players.filter((p) => p.transactionType === "add"),
@@ -165,8 +165,12 @@ describe("Unit Test LineupOptimizer Simple Drop Players", () => {
     lo.generateDropPlayerTransactions();
     const playerTransactions = lo.playerTransactions;
 
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("418.p.5864");
-    expect(playerTransactions?.[0].players[0].transactionType).toEqual("drop");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "418.p.5864",
+    );
+    expect(playerTransactions?.[0]?.players?.[0]?.transactionType).toEqual(
+      "drop",
+    );
   });
 
   test("Drop player with lowest score - same as above but roster is now daily change - NBA", () => {
@@ -175,10 +179,12 @@ describe("Unit Test LineupOptimizer Simple Drop Players", () => {
     lo.generateDropPlayerTransactions();
     const playerTransactions = lo.playerTransactions;
 
-    expect(playerTransactions?.[0].players[0].playerKey).not.toEqual(
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).not.toEqual(
       "418.p.5864",
     );
-    expect(playerTransactions?.[0].players[0].transactionType).toEqual("drop");
+    expect(playerTransactions?.[0]?.players?.[0]?.transactionType).toEqual(
+      "drop",
+    );
   });
 
   test("Drop player with lowest score for 'Game Time Decision' player NBA", () => {
@@ -283,8 +289,12 @@ describe("Add players", () => {
     const playerTransactions = lo.playerTransactions;
 
     expect(playerTransactions?.length).toEqual(2);
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.10666");
-    expect(playerTransactions?.[1].players[0].playerKey).toEqual("422.p.12024");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10666",
+    );
+    expect(playerTransactions?.[1]?.players?.[0]?.playerKey).toEqual(
+      "422.p.12024",
+    );
   });
 
   it("should not add top player (422.p.10234) because they are already in a current pending claim", () => {
@@ -295,8 +305,12 @@ describe("Add players", () => {
     const playerTransactions = lo.playerTransactions;
 
     expect(playerTransactions?.length).toEqual(2);
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.10666");
-    expect(playerTransactions?.[1].players[0].playerKey).toEqual("422.p.12024");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10666",
+    );
+    expect(playerTransactions?.[1]?.players?.[0]?.playerKey).toEqual(
+      "422.p.12024",
+    );
   });
 
   it("should only add one player, since pending waiver claim will fill extra spot", () => {
@@ -341,10 +355,10 @@ describe("Add players", () => {
 
     expect(playerTransactions?.length).toEqual(2);
     expect(
-      playerTransactions?.[0].players[0].player.eligible_positions,
+      playerTransactions?.[0]?.players?.[0]?.player.eligible_positions,
     ).includes("1B");
     expect(
-      playerTransactions?.[1].players[0].player.eligible_positions,
+      playerTransactions?.[1]?.players?.[0]?.player.eligible_positions,
     ).includes("C");
   });
 
@@ -357,9 +371,11 @@ describe("Add players", () => {
 
     expect(playerTransactions?.length).toEqual(2);
     expect(
-      playerTransactions?.[0].players[0].player.eligible_positions,
+      playerTransactions?.[0]?.players?.[0]?.player.eligible_positions,
     ).includes("1B");
-    expect(playerTransactions?.[1].players[0].playerKey).toEqual("422.p.10234"); // best player
+    expect(playerTransactions?.[1]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10234",
+    ); // best player
   });
 
   it("should add worse, boosted player (422.p.12024, 3B) because they have critical position (1B, 3B, RP) eligibility", () => {
@@ -370,8 +386,12 @@ describe("Add players", () => {
     const playerTransactions = lo.playerTransactions;
 
     expect(playerTransactions?.length).toEqual(2);
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.12024");
-    expect(playerTransactions?.[1].players[0].playerKey).toEqual("422.p.10666"); // best player
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.12024",
+    );
+    expect(playerTransactions?.[1]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10666",
+    ); // best player
   });
 
   it("should add best player (422.p.10666) because 3B is not a critical position, so no one has enough boost", () => {
@@ -382,7 +402,9 @@ describe("Add players", () => {
     const playerTransactions = lo.playerTransactions;
 
     expect(playerTransactions?.length).toEqual(2);
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.10666");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10666",
+    );
   });
 
   it("should add no one because we have an illegal lineup (healthy on IR)", () => {
@@ -436,8 +458,12 @@ describe("Add players", () => {
     const playerTransactions = lo.playerTransactions;
 
     expect(playerTransactions?.length).toEqual(2);
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.10234");
-    expect(playerTransactions?.[1].players[0].playerKey).toEqual("422.p.10666");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10234",
+    );
+    expect(playerTransactions?.[1]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10666",
+    );
   });
 
   it("Should add two players because there are no max transactions limits", () => {
@@ -531,17 +557,17 @@ describe("Swap players", () => {
     const playerTransactions = lo.playerTransactions;
     assert(playerTransactions);
 
-    const firstAddedPositions = playerTransactions[0].players
-      .filter((p) => p.transactionType === "add")
+    const firstAddedPositions = playerTransactions[0]?.players
+      ?.filter((p) => p.transactionType === "add")
       .flatMap((p) => p.player.eligible_positions);
-    const secondAddedPositions = playerTransactions[1].players
-      .filter((p) => p.transactionType === "add")
+    const secondAddedPositions = playerTransactions[1]?.players
+      ?.filter((p) => p.transactionType === "add")
       .flatMap((p) => p.player.eligible_positions);
 
-    expect(firstAddedPositions.some((pos) => ["C", "1B"].includes(pos))).toBe(
+    expect(firstAddedPositions?.some((pos) => ["C", "1B"].includes(pos))).toBe(
       true,
     );
-    expect(secondAddedPositions.some((pos) => ["C", "1B"].includes(pos))).toBe(
+    expect(secondAddedPositions?.some((pos) => ["C", "1B"].includes(pos))).toBe(
       true,
     );
   });
@@ -714,7 +740,7 @@ describe("Combination Drops or Adds", () => {
     const playerTransactions = lo.playerTransactions;
     const lineupChanges = lo.lineupChanges;
 
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual(
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
       "422.p.106602",
     );
     expect(lineupChanges).toEqual(null);
@@ -745,7 +771,9 @@ describe("Combination Drops or Adds", () => {
     // expect that the add function would move an IL+ to the IL+
     expect(lineupChanges?.newPlayerPositions["422.p.11014"]).toEqual("IL+");
 
-    expect(playerTransactions?.[0].players[0].playerKey).toEqual("422.p.10234");
+    expect(playerTransactions?.[0]?.players?.[0]?.playerKey).toEqual(
+      "422.p.10234",
+    );
   });
 
   it("should drop worst player for healthy on IL, then swap next-worst players for best players", () => {

@@ -1557,7 +1557,7 @@ describe("Paused teams", () => {
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[0].team_key, teams[1].team_key],
+      [teams[0]?.team_key, teams[1]?.team_key],
       uid,
       "",
       new Set(),
@@ -1603,7 +1603,7 @@ describe("Paused teams", () => {
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[1].team_key],
+      [teams[1]?.team_key],
       uid,
       "",
       new Set(),
@@ -1628,7 +1628,7 @@ describe("Paused teams", () => {
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[0].team_key],
+      [teams[0]?.team_key],
       uid,
       "",
       new Set(),
@@ -1675,7 +1675,7 @@ describe("Paused teams", () => {
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[0].team_key],
+      [teams[0]?.team_key],
       uid,
       "",
       new Set(),
@@ -1708,7 +1708,7 @@ describe("Paused teams", () => {
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[1].team_key],
+      [teams[1]?.team_key],
       uid,
       "",
       new Set(),

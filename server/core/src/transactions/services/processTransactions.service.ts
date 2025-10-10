@@ -255,11 +255,20 @@ export async function getTopAvailablePlayers(
 
   // TODO: Check pace before fetching add candidates? Could check each team inside the following function
 
-  const [
-    topAvailablePlayersPromise,
-    nflTopAvailablePlayersPromise,
-    restTopAvailablePlayersPromise,
-  ] = generateTopAvailablePlayerPromises(firestoreTeams, uid);
+  const promises = generateTopAvailablePlayerPromises(firestoreTeams, uid);
+  const topAvailablePlayersPromise = promises[0];
+  const nflTopAvailablePlayersPromise = promises[1];
+  const restTopAvailablePlayersPromise = promises[2];
+
+  if (
+    !(
+      topAvailablePlayersPromise &&
+      nflTopAvailablePlayersPromise &&
+      restTopAvailablePlayersPromise
+    )
+  ) {
+    return {};
+  }
 
   const topAvailablePlayerCandidates: TopAvailablePlayers =
     await mergeTopAvailabePlayers(
@@ -302,7 +311,7 @@ export async function createPlayersTransactions(
       }
     }
 
-    const addCandidates: IPlayer[] = allAddCandidates[team.team_key];
+    const addCandidates = allAddCandidates[team.team_key] ?? [];
 
     if (addCandidates?.length > 0) {
       lo.addCandidates = addCandidates;
@@ -452,8 +461,15 @@ function stringifyTransactions(transactions: PlayerTransaction[]): string[] {
 
   for (const teamKey of Object.keys(groupedTransactions)) {
     const teamTransactions = groupedTransactions[teamKey];
+    if (!teamTransactions || teamTransactions.length === 0) {
+      continue;
+    }
+    const firstTransaction = teamTransactions[0];
+    if (!firstTransaction) {
+      continue;
+    }
     result.push(
-      `<strong>${teamTransactions[0].teamName} (${teamTransactions[0].leagueName}):</strong>`,
+      `<strong>${firstTransaction.teamName} (${firstTransaction.leagueName}):</strong>`,
     );
     for (const transaction of teamTransactions) {
       result.push(transaction.description);
@@ -467,8 +483,9 @@ function groupTransactionsByTeam(transactions: PlayerTransaction[]) {
   const result: { [key: string]: PlayerTransaction[] } = {};
 
   for (const transaction of transactions) {
-    if (result[transaction.teamKey]) {
-      result[transaction.teamKey].push(transaction);
+    const existingTransactions = result[transaction.teamKey];
+    if (existingTransactions) {
+      existingTransactions.push(transaction);
     } else {
       result[transaction.teamKey] = [transaction];
     }
@@ -561,10 +578,12 @@ export async function mergeTopAvailabePlayers(
 
   for (const resolvedPromise of resolvedPlayers) {
     for (const teamKey in resolvedPromise) {
-      if (Array.isArray(result[teamKey])) {
-        result[teamKey].push(...resolvedPromise[teamKey]);
-      } else {
-        result[teamKey] = resolvedPromise[teamKey];
+      const existingTeamPlayers = result[teamKey];
+      const newTeamPlayers = resolvedPromise[teamKey];
+      if (Array.isArray(existingTeamPlayers) && newTeamPlayers) {
+        existingTeamPlayers.push(...newTeamPlayers);
+      } else if (newTeamPlayers) {
+        result[teamKey] = newTeamPlayers;
       }
     }
   }

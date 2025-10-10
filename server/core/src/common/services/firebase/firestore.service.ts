@@ -523,5 +523,8 @@ export async function getRandomUID(): Promise<string> {
     .limit(1)
     .get();
   const randomUser = randomUserSnapshot.docs[0];
+  if (!randomUser) {
+    throw new Error("No users found in Firestore");
+  }
   return randomUser.id;
 }

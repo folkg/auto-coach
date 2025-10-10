@@ -86,7 +86,7 @@ describe("getReplacementLevel", () => {
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -113,14 +113,14 @@ describe("getReplacementLevel", () => {
       G: 24,
     };
     expectedOutput.Util =
-      expectedOutput.C +
-      expectedOutput.LW +
-      expectedOutput.RW +
-      expectedOutput.D;
+      (expectedOutput.C ?? 0) +
+      (expectedOutput.LW ?? 0) +
+      (expectedOutput.RW ?? 0) +
+      (expectedOutput.D ?? 0);
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -148,14 +148,14 @@ describe("getReplacementLevel", () => {
       G: 34,
     };
     expectedOutput.Util =
-      expectedOutput.C +
-      expectedOutput.LW +
-      expectedOutput.RW +
-      expectedOutput.D;
+      (expectedOutput.C ?? 0) +
+      (expectedOutput.LW ?? 0) +
+      (expectedOutput.RW ?? 0) +
+      (expectedOutput.D ?? 0);
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -188,16 +188,18 @@ describe("getReplacementLevel", () => {
       DEF: 12,
     };
     expectedOutput["W/R/T"] =
-      expectedOutput.RB + expectedOutput.WR + expectedOutput.TE;
+      (expectedOutput.RB ?? 0) +
+      (expectedOutput.WR ?? 0) +
+      (expectedOutput.TE ?? 0);
     expectedOutput["Q/W/R/T"] =
-      expectedOutput.QB +
-      expectedOutput.RB +
-      expectedOutput.WR +
-      expectedOutput.TE;
+      (expectedOutput.QB ?? 0) +
+      (expectedOutput.RB ?? 0) +
+      (expectedOutput.WR ?? 0) +
+      (expectedOutput.TE ?? 0);
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -222,7 +224,7 @@ describe("getReplacementLevel", () => {
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -250,11 +252,11 @@ describe("getReplacementLevel", () => {
       G: 36, // 24 + (72 - 9.6) * (2/8) = 39.6 ! Too much. Should cap at 36, then allocate elsewhere.
       F: 144, // 72 + 21.6 (from Util) = 93.6 + the rest = 144
     };
-    expectedOutput.Util = expectedOutput.F + expectedOutput.D;
+    expectedOutput.Util = (expectedOutput.F ?? 0) + (expectedOutput.D ?? 0);
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -295,7 +297,7 @@ describe("getReplacementLevel", () => {
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -336,16 +338,16 @@ describe("getReplacementLevel", () => {
         2 * (2 / 10) * NUM_TEAMS +
         1 * (2 / 4) * NUM_TEAMS,
     };
-    expectedOutput.W = expectedOutput.LW + expectedOutput.RW;
+    expectedOutput.W = (expectedOutput.LW ?? 0) + (expectedOutput.RW ?? 0);
     expectedOutput.Util =
-      expectedOutput.C +
-      expectedOutput.D +
-      expectedOutput.LW +
-      expectedOutput.RW;
+      (expectedOutput.C ?? 0) +
+      (expectedOutput.D ?? 0) +
+      (expectedOutput.LW ?? 0) +
+      (expectedOutput.RW ?? 0);
 
     const result = getReplacementLevels(team);
     for (const position in expectedOutput) {
-      expect(result[position]).toBeCloseTo(expectedOutput[position], 2);
+      expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
     expect(Object.keys(result).length).toEqual(
       Object.keys(expectedOutput).length,
@@ -641,7 +643,10 @@ describe("getScarcityOffsetsForLeague", () => {
     const scarcityOffsetArray = getScarcityOffsetsForGame(league);
     for (const position in scarcityOffsetArray) {
       const pOffsets = scarcityOffsetArray[position];
-      expect(pOffsets[0]).toBeGreaterThan(pOffsets[pOffsets.length - 1]);
+      if (!pOffsets || pOffsets.length === 0) {
+        continue;
+      }
+      expect(pOffsets[0]).toBeGreaterThan(pOffsets[pOffsets.length - 1] ?? 0);
     }
   });
 });

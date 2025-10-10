@@ -203,9 +203,9 @@ export function partitionArray<T>(
   return arr.reduce(
     (acc, item) => {
       if (predicate(item)) {
-        acc[0].push(item);
+        acc[0]?.push(item);
       } else {
-        acc[1].push(item);
+        acc[1]?.push(item);
       }
       return acc;
     },

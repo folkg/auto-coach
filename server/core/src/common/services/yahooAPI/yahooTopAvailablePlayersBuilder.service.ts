@@ -1,5 +1,5 @@
 import type { IPlayer } from "@common/types/Player.js";
-import { assertTrue } from "@common/utilities/checks.js";
+
 import { type } from "arktype";
 import { YahooAPIPlayersSchema } from "./interfaces/YahooAPIResponse.js";
 import {
@@ -44,7 +44,9 @@ export async function fetchTopAvailablePlayersFromYahoo(
   const mapLeagueToTeam: { [key: string]: string } = {};
   for (const teamKey of teamKeys) {
     const leagueKey = teamKey.split(".t")[0];
-    mapLeagueToTeam[leagueKey] = teamKey;
+    if (leagueKey) {
+      mapLeagueToTeam[leagueKey] = teamKey;
+    }
   }
 
   const yahooJSON = await getTopAvailablePlayers(
@@ -62,9 +64,16 @@ export async function fetchTopAvailablePlayersFromYahoo(
       continue;
     }
 
-    assertTrue(typeof gamesJSON[gameKey] !== "number");
-    const gameJSON = gamesJSON[gameKey].game;
-    const leaguesJSON = gameJSON[1].leagues;
+    const gameData = gamesJSON[gameKey];
+    if (!gameData || typeof gameData === "number") {
+      continue;
+    }
+    const gameJSON = gameData.game;
+    const leagueData = gameJSON[1];
+    if (!leagueData) {
+      continue;
+    }
+    const leaguesJSON = leagueData.leagues;
 
     // Loop through each league within the game
     for (const index in leaguesJSON) {
@@ -72,13 +81,19 @@ export async function fetchTopAvailablePlayersFromYahoo(
         continue;
       }
 
-      assertTrue(typeof leaguesJSON[index] !== "number");
-      const league = leaguesJSON[index].league;
+      const leagueData = leaguesJSON[index];
+      if (!leagueData || typeof leagueData === "number") {
+        continue;
+      }
+      const league = leagueData.league;
       const [baseLeague, ...extendedLeague] = league;
 
       const leagueDetails = LeagueDetailsSchema.assert(baseLeague);
       const leagueKey = leagueDetails.league_key;
       const teamKey = mapLeagueToTeam[leagueKey];
+      if (!teamKey) {
+        continue;
+      }
 
       const players = YahooAPIPlayersSchema.assert(extendedLeague[0]).players;
 

@@ -55,7 +55,8 @@ export function calculatePositionalScarcityOffset(
 
   const eligibleOffsets = player.eligible_positions
     .filter((pos) => pos in positionalScarcityOffsets)
-    .map((pos) => positionalScarcityOffsets[pos]);
+    .map((pos) => positionalScarcityOffsets[pos])
+    .filter((offset): offset is number => offset !== undefined);
 
   return eligibleOffsets.length === 0 ? 0 : Math.min(...eligibleOffsets);
 }

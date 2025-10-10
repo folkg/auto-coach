@@ -30,8 +30,13 @@ export async function patchTeamChangesInFirestore(
   yahooTeams: readonly TeamOptimizer[],
   firestoreTeams: readonly FirestoreTeam[],
 ): Promise<void> {
-  const sharedKeys = Object.keys(firestoreTeams[0]).filter(
-    (key) => key in yahooTeams[0],
+  const firstFirestoreTeam = firestoreTeams[0];
+  const firstYahooTeam = yahooTeams[0];
+  if (!(firstFirestoreTeam && firstYahooTeam)) {
+    return;
+  }
+  const sharedKeys = Object.keys(firstFirestoreTeam).filter(
+    (key) => key in firstYahooTeam,
   );
 
   for (const firestoreTeam of firestoreTeams) {

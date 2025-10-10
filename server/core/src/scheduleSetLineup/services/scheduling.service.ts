@@ -242,8 +242,14 @@ async function getPostponedTeamsYahoo(
   for (const game of gamesJSON) {
     if (game.game.game_status.type === "status.type.postponed") {
       logger.info(`Postponed game found for ${league}`, game.game);
-      postponedTeams.push(game.game.team_ids[0].away_team_id);
-      postponedTeams.push(game.game.team_ids[1].home_team_id);
+      const awayTeamId = game.game.team_ids[0]?.away_team_id;
+      const homeTeamId = game.game.team_ids[1]?.home_team_id;
+      if (awayTeamId) {
+        postponedTeams.push(awayTeamId);
+      }
+      if (homeTeamId) {
+        postponedTeams.push(homeTeamId);
+      }
     }
   }
 

@@ -112,7 +112,10 @@ export async function getRostersByTeamID(
 ): Promise<YahooAPIUserResponse> {
   const leagueKeysArray: string[] = [];
   for (const teamKey of teamKeys) {
-    leagueKeysArray.push(teamKey.split(".t")[0]);
+    const leagueKey = teamKey.split(".t")[0];
+    if (leagueKey) {
+      leagueKeysArray.push(leagueKey);
+    }
   }
   const leagueKeys = leagueKeysArray.join(",");
 
@@ -148,7 +151,10 @@ export async function getTopAvailablePlayers(
 ): Promise<YahooAPIUserResponse> {
   const leagueKeysArray: string[] = [];
   for (const teamKey of teamKeys) {
-    leagueKeysArray.push(teamKey.split(".t")[0]);
+    const leagueKey = teamKey.split(".t")[0];
+    if (leagueKey) {
+      leagueKeysArray.push(leagueKey);
+    }
   }
 
   const leagueKeys = leagueKeysArray.join(",");
@@ -358,8 +364,11 @@ export async function postRosterAddDropTransaction(
     a.transaction_data.type > b.transaction_data.type ? 1 : -1,
   ); // sorts "add' before "drop" alphabetically, as required by Yahoo
 
+  const firstPlayer = XMLPlayers[0];
   const transactionType: TransactionType =
-    XMLPlayers.length === 1 ? XMLPlayers[0].transaction_data.type : "add/drop";
+    XMLPlayers.length === 1 && firstPlayer
+      ? firstPlayer.transaction_data.type
+      : "add/drop";
 
   const data: TransactionBody = {
     transaction: {

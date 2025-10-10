@@ -1,5 +1,5 @@
 import type { InfoTeam } from "@common/types/team.js";
-import { assertTrue } from "@common/utilities/checks.js";
+
 import { type } from "arktype";
 import {
   flattenArray,
@@ -43,11 +43,18 @@ export async function fetchTeamsYahoo(uid: string): Promise<InfoTeam[]> {
       continue;
     }
 
-    assertTrue(typeof gamesJSON[gameKey] !== "number");
-    const gameJSON = gamesJSON[gameKey].game;
+    const gameData = gamesJSON[gameKey];
+    if (!gameData || typeof gameData === "number") {
+      continue;
+    }
+    const gameJSON = gameData.game;
 
     const flatGameDetails = FlatGameDetailsSchema.assert(gameJSON[0]);
-    const leaguesJSON = gameJSON[1].leagues;
+    const leagueData = gameJSON[1];
+    if (!leagueData) {
+      continue;
+    }
+    const leaguesJSON = leagueData.leagues;
 
     // Loop through each league within the game
     for (const leagueKey in leaguesJSON) {
@@ -75,7 +82,7 @@ export async function fetchTeamsYahoo(uid: string): Promise<InfoTeam[]> {
         team_key: flatTeam.team_key,
         team_name: flatTeam.name,
         team_url: flatTeam.url,
-        team_logo: flatTeam.team_logos[0].team_logo.url,
+        team_logo: flatTeam.team_logos[0]?.team_logo.url ?? "",
         league_name: leagueDetails.name,
         num_teams: leagueDetails.num_teams,
         rank: teamStandings.rank,

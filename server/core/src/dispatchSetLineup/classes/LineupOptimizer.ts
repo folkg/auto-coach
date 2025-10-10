@@ -78,10 +78,10 @@ export class LineupOptimizer {
     ) {
       const result: { [playerKey: string]: string } = {};
       for (const playerKey in originalPlayerPositions) {
-        if (
-          originalPlayerPositions[playerKey] !== finalPlayerPositions[playerKey]
-        ) {
-          result[playerKey] = finalPlayerPositions[playerKey];
+        const originalPosition = originalPlayerPositions[playerKey];
+        const finalPosition = finalPlayerPositions[playerKey];
+        if (originalPosition !== finalPosition && finalPosition) {
+          result[playerKey] = finalPosition;
         }
       }
       return result;
@@ -118,6 +118,9 @@ export class LineupOptimizer {
         const worstPlayerAtPosition = Team.sortAscendingByStartScore(
           this.team.getPlayersAt(position),
         )[0];
+        if (!worstPlayerAtPosition) {
+          break;
+        }
         this.movePlayerToPosition(worstPlayerAtPosition, "BN");
       }
     }
@@ -248,7 +251,7 @@ export class LineupOptimizer {
       this._addCandidates.allPlayers,
     );
 
-    const playerToAdd: Player = currentCandidates[0];
+    const playerToAdd = currentCandidates[0];
     if (!playerToAdd) {
       return false;
     }
@@ -335,7 +338,11 @@ export class LineupOptimizer {
       return { baseDropCandidates: [], baseAddCandidates: [] };
     }
 
-    const bestAddCandidate: Player = this._addCandidates.allPlayers[0];
+    const bestAddCandidate = this._addCandidates.allPlayers[0];
+    if (!bestAddCandidate) {
+      return { baseDropCandidates: [], baseAddCandidates: [] };
+    }
+
     let baseDropCandidates: Player[] =
       PlayerCollection.sortAscendingByOwnershipScore(
         this.team.droppablePlayersInclIL,

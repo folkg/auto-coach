@@ -79,7 +79,7 @@ export default function buildPlayers(
   const players = playersJSON.players;
   for (const index in players) {
     const player = players[index];
-    if (typeof player === "number") {
+    if (typeof player === "number" || !player) {
       continue;
     }
 
@@ -219,7 +219,7 @@ function getPlayerRanks(
 
     if (rankType in rankTypeMap) {
       const key = rankTypeMap[rankType];
-      if (player_rank.rank_value !== "-") {
+      if (key && player_rank.rank_value !== "-") {
         result[key] = parseToInt(player_rank.rank_value);
       }
     }

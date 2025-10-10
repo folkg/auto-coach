@@ -4,7 +4,7 @@ import {
   type TransactionDetails,
   TransactionDetailsSchema,
 } from "@common/types/transactions.js";
-import { assertTrue } from "@common/utilities/checks.js";
+
 import { type } from "arktype";
 import { flattenArray, parseToInt } from "../utilities.service.js";
 import type { LeagueDetails } from "./interfaces/YahooAPIResponse.js";
@@ -30,8 +30,11 @@ export function getLeagueSettingsAnduserTeam(
   leaguesJSON: LeagueDetails,
   leagueKey: string,
 ) {
-  assertTrue(typeof leaguesJSON[leagueKey] !== "number");
-  const league = leaguesJSON[leagueKey].league;
+  const leagueData = leaguesJSON[leagueKey];
+  if (!leagueData || typeof leagueData === "number") {
+    throw new Error(`Invalid league data for key: ${leagueKey}`);
+  }
+  const league = leagueData.league;
   const [baseLeague, ...extendedLeague] = league;
   const leagueDetails = LeagueDetailsSchema.assert(baseLeague);
   const extendedLeagueDetails = ExtendedLeagueSchema.assert(
@@ -43,7 +46,9 @@ export function getLeagueSettingsAnduserTeam(
   );
 
   const team = extendedLeagueDetails.teams[0];
-  assertTrue(typeof team !== "number");
+  if (!team || typeof team === "number") {
+    throw new Error("No team found in league data");
+  }
   const usersTeam = team.team;
 
   return { leagueDetails, leagueSettings, usersTeam };

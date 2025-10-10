@@ -170,10 +170,13 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       !INACTIVE_POSITION_LIST.includes(position) &&
       this.roster_positions[position] !== undefined
     ) {
-      const reduction = Math.min(quantity, this.roster_positions[position]);
-      this.roster_positions[position] -= reduction;
-      this.roster_positions.BN += reduction;
-      return true;
+      const positionCount = this.roster_positions[position];
+      if (positionCount !== undefined) {
+        const reduction = Math.min(quantity, positionCount);
+        this.roster_positions[position] = positionCount - reduction;
+        this.roster_positions.BN = (this.roster_positions.BN ?? 0) + reduction;
+        return true;
+      }
     }
     return false;
   }
@@ -185,7 +188,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
       for (const key in playersObject) {
         const player = playersObject[key];
-        if (typeof player !== "number") {
+        if (typeof player !== "number" && player) {
           const playerInTransaction = player.player;
           this.makeTransactionPlayerInelligible(playerInTransaction);
           this.changePendingAddDrops(isPendingTransaction, playerInTransaction);
@@ -367,11 +370,11 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   public get unfilledPositionCounter(): { [key: string]: number } {
     const result = { ...this.roster_positions };
     for (const player of this.players) {
-      if (
-        isDefined(player.selected_position) &&
-        result[player.selected_position] !== undefined
-      ) {
-        result[player.selected_position]--;
+      if (isDefined(player.selected_position)) {
+        const positionCount = result[player.selected_position];
+        if (positionCount !== undefined) {
+          result[player.selected_position] = positionCount - 1;
+        }
       }
     }
     return result;
@@ -379,7 +382,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
   public get unfilledAllPositions(): string[] {
     return Object.keys(this.unfilledPositionCounter).filter(
-      (position) => this.unfilledPositionCounter[position] > 0,
+      (position) => (this.unfilledPositionCounter[position] ?? 0) > 0,
     );
   }
 
@@ -388,7 +391,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       (position) =>
         position !== "BN" &&
         !INACTIVE_POSITION_LIST.includes(position) &&
-        this.unfilledPositionCounter[position] > 0,
+        (this.unfilledPositionCounter[position] ?? 0) > 0,
     );
   }
 
@@ -396,14 +399,14 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     return Object.keys(this.unfilledPositionCounter).filter(
       (position) =>
         INACTIVE_POSITION_LIST.includes(position) &&
-        this.unfilledPositionCounter[position] > 0,
+        (this.unfilledPositionCounter[position] ?? 0) > 0,
     );
   }
 
   public get overfilledPositions(): string[] {
     return Object.keys(this.unfilledPositionCounter).filter(
       (position) =>
-        position !== "BN" && this.unfilledPositionCounter[position] < 0,
+        position !== "BN" && (this.unfilledPositionCounter[position] ?? 0) < 0,
     );
   }
 
@@ -420,7 +423,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     return Object.keys(unfilledPositions).reduce(
       (acc, position) =>
         !INACTIVE_POSITION_LIST.includes(position)
-          ? acc + unfilledPositions[position]
+          ? acc + (unfilledPositions[position] ?? 0)
           : acc,
       0,
     );
@@ -430,7 +433,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     return Object.keys(this.roster_positions).reduce(
       (acc, position) =>
         !INACTIVE_POSITION_LIST.includes(position)
-          ? acc + this.roster_positions[position]
+          ? acc + (this.roster_positions[position] ?? 0)
           : acc,
       0,
     );
@@ -477,11 +480,13 @@ export class Team extends PlayerCollection implements TeamOptimizer {
    * @type {string[]} positions that are at or over max capacity
    */
   public get atMaxCapPositions(): string[] {
-    return this.getPositionsHelper(
-      (count, capacity, position) =>
-        count >=
-        capacity + POSITIONAL_MAX_EXTRA_PLAYERS[this.game_code][position],
-    );
+    return this.getPositionsHelper((count, capacity, position) => {
+      const maxExtra = POSITIONAL_MAX_EXTRA_PLAYERS[this.game_code]?.[position];
+      if (maxExtra === undefined) {
+        return false;
+      }
+      return count >= capacity + maxExtra;
+    });
   }
 
   private getPositionsHelper(
@@ -501,12 +506,10 @@ export class Team extends PlayerCollection implements TeamOptimizer {
         const playerKeysAtPosition = validPlayerKeysWithPositions.filter(
           (eligiblePositions) => eligiblePositions.includes(position),
         );
+        const positionCapacity = positionPlayerCapacity[position];
         if (
-          compareFn(
-            playerKeysAtPosition.length,
-            positionPlayerCapacity[position],
-            position,
-          )
+          positionCapacity !== undefined &&
+          compareFn(playerKeysAtPosition.length, positionCapacity, position)
         ) {
           result.push(position);
         }
@@ -534,6 +537,9 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
   private getPlayerCapacityAtPosition() {
     const compoundPositions = COMPOUND_POSITION_COMPOSITIONS[this.game_code];
+    if (!compoundPositions) {
+      return {};
+    }
 
     const positions = Object.keys(this.roster_positions).filter(
       (position) => !INACTIVE_POSITION_LIST.includes(position),
@@ -541,13 +547,17 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
     const result = positions.reduce(
       (acc: { [position: string]: number }, position: string) => {
-        acc[position] = this.roster_positions[position];
+        acc[position] = this.roster_positions[position] ?? 0;
         const isCompoundPosition =
           Object.keys(compoundPositions).includes(position);
         if (isCompoundPosition) {
-          const childPositions: string[] = compoundPositions[position];
-          for (const childPosition of childPositions) {
-            acc[position] += this.roster_positions[childPosition] ?? 0;
+          const childPositions = compoundPositions[position];
+          if (childPositions) {
+            for (const childPosition of childPositions) {
+              acc[position] =
+                (acc[position] ?? 0) +
+                (this.roster_positions[childPosition] ?? 0);
+            }
           }
         }
         return acc;
@@ -555,18 +565,21 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       {},
     );
 
-    // Limit the capacity of specific sub-positions to the max capacity of the parent compound positions
-    // even if they don't explicitly exist in the league settings
-    // Example: A league with one QB/WR/RB/TE spot but zero QB spots, we still want to limit the number of QBs
-    // as defined by the POSITIONAL_MAX_EXTRA_PLAYERS["QB"] value
-    const extraPositionsToCheck = Object.keys(
-      POSITIONAL_MAX_EXTRA_PLAYERS[this.game_code],
-    ).filter((position) => !Object.keys(result).includes(position));
+    const maxExtraPlayers = POSITIONAL_MAX_EXTRA_PLAYERS[this.game_code];
+    if (!maxExtraPlayers) {
+      return result;
+    }
+
+    const extraPositionsToCheck = Object.keys(maxExtraPlayers).filter(
+      (position) => !Object.keys(result).includes(position),
+    );
 
     for (const extraPosition of extraPositionsToCheck) {
       const parentPositions = Object.keys(compoundPositions).filter(
-        (parentPosition) =>
-          compoundPositions[parentPosition].includes(extraPosition),
+        (parentPosition) => {
+          const composition = compoundPositions[parentPosition];
+          return composition?.includes(extraPosition) ?? false;
+        },
       );
 
       if (parentPositions.length === 0) {

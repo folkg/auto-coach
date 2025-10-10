@@ -60,7 +60,7 @@ export async function getLeagueSpecificScarcityOffsets(
   for (const position in replacementLevels) {
     if (Object.hasOwn(replacementLevels, position)) {
       const replacementIndex = Math.max(
-        Math.floor(replacementLevels[position] - 1),
+        Math.floor((replacementLevels[position] ?? 0) - 1),
         0,
       );
 
@@ -107,13 +107,19 @@ export async function recalculateScarcityOffsetsForAll() {
   for (const league in SCARCITY_OFFSETS) {
     if (Object.hasOwn(SCARCITY_OFFSETS, league)) {
       const leagueScarcityOffsets = SCARCITY_OFFSETS[league];
+      if (!leagueScarcityOffsets) {
+        continue;
+      }
       for (const position in leagueScarcityOffsets) {
         if (Object.hasOwn(leagueScarcityOffsets, position)) {
-          // Don't await this, just let it run in the background
+          const positionData = leagueScarcityOffsets[position];
+          if (!positionData) {
+            continue;
+          }
           const calcPromise = calculateOffsetForPosition(
             position,
             league,
-            leagueScarcityOffsets[position].length,
+            positionData.length,
             uid,
           );
           promises.push(calcPromise);
@@ -216,6 +222,10 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
   const compoundPositionCompositions = COMPOUND_POSITION_COMPOSITIONS[gameCode];
   const maxExtraPlayers = POSITIONAL_MAX_EXTRA_PLAYERS[gameCode];
 
+  if (!(compoundPositionCompositions && maxExtraPlayers)) {
+    return {};
+  }
+
   const result: Record<string, number> = {};
 
   const positionsList = Object.keys(rosterPositions).filter(
@@ -240,20 +250,30 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
 
   function assignStandardPositions() {
     for (const position of standardPositions) {
-      result[position] = rosterPositions[position] * numTeams;
+      result[position] = (rosterPositions[position] ?? 0) * numTeams;
     }
   }
 
   function distributeCompoundPositions() {
-    for (const compoundPosition of compoundPositions) {
-      const numPlayersAtCompoundPosition = rosterPositions[compoundPosition];
+    if (!compoundPositionCompositions) {
+      return;
+    }
 
-      const subPositions: string[] = compoundPositionCompositions[
-        compoundPosition
-      ].filter((subPosition) => standardPositions.includes(subPosition));
+    for (const compoundPosition of compoundPositions) {
+      const numPlayersAtCompoundPosition =
+        rosterPositions[compoundPosition] ?? 0;
+
+      const compositions = compoundPositionCompositions[compoundPosition];
+      if (!compositions) {
+        continue;
+      }
+
+      const subPositions: string[] = compositions.filter((subPosition) =>
+        standardPositions.includes(subPosition),
+      );
 
       const numStarters = subPositions.reduce(
-        (acc, subPosition) => acc + rosterPositions[subPosition],
+        (acc, subPosition) => acc + (rosterPositions[subPosition] ?? 0),
         0,
       );
 
@@ -268,10 +288,10 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
   function distributeBenchPositions() {
     const numBenchPositions = rosterPositions.BN;
 
-    if (numBenchPositions > 0) {
+    if (numBenchPositions && numBenchPositions > 0) {
       const numBenchPlayers = numBenchPositions;
       const numStarters = Object.keys(result).reduce(
-        (acc, position) => acc + rosterPositions[position],
+        (acc, position) => acc + (rosterPositions[position] ?? 0),
         0,
       );
 
@@ -281,15 +301,22 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
   }
 
   function assignCompoundPositions() {
-    // assign to the compound position itself as a fallback for cases where not all sub-positions are accounted for
-    // ex. QBs in leagues with only Q/W/R/T flex positions (no explicit QB  replacement level will exist for QB players)
+    if (!compoundPositionCompositions) {
+      return;
+    }
+
     for (const compoundPosition of compoundPositions) {
-      const subPositions: string[] = compoundPositionCompositions[
-        compoundPosition
-      ].filter((subPosition) => standardPositions.includes(subPosition));
+      const compositions = compoundPositionCompositions[compoundPosition];
+      if (!compositions) {
+        continue;
+      }
+
+      const subPositions: string[] = compositions.filter((subPosition) =>
+        standardPositions.includes(subPosition),
+      );
 
       result[compoundPosition] = subPositions.reduce(
-        (acc, subPosition) => acc + result[subPosition],
+        (acc, subPosition) => acc + (result[subPosition] ?? 0),
         0,
       );
     }
@@ -300,6 +327,10 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
     numTotalStartingSpots: number,
     numSpotsToDistribute: number,
   ) {
+    if (!maxExtraPlayers) {
+      return;
+    }
+
     let numPlayersToDistribute = numSpotsToDistribute * numTeams;
 
     const sortedPositionList = [...positionList].sort(
@@ -311,7 +342,7 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
     let remainingStartingSpots = numTotalStartingSpots;
 
     for (const position of sortedPositionList) {
-      const numStartersAtPosition = rosterPositions[position];
+      const numStartersAtPosition = rosterPositions[position] ?? 0;
       const newShare =
         (numStartersAtPosition / remainingStartingSpots) *
         numPlayersToDistribute;
@@ -322,11 +353,14 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
           ? (numStartersAtPosition + extraAllowed) * numTeams
           : Number.POSITIVE_INFINITY;
 
-      const newTotal = Math.min(newShare + result[position], totalAllowed);
-      const numAdded = newTotal - result[position];
+      const newTotal = Math.min(
+        newShare + (result[position] ?? 0),
+        totalAllowed,
+      );
+      const numAdded = newTotal - (result[position] ?? 0);
 
       numPlayersToDistribute -= numAdded;
-      remainingStartingSpots -= rosterPositions[position];
+      remainingStartingSpots -= rosterPositions[position] ?? 0;
 
       result[position] = newTotal;
     }

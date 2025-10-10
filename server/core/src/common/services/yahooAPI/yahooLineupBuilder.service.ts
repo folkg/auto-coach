@@ -1,6 +1,6 @@
 import type { IPlayer } from "@common/types/Player.js";
 import type { TeamOptimizer } from "@common/types/team";
-import { assertTrue } from "@common/utilities/checks.js";
+
 import { type } from "arktype";
 import {
   flattenArray,
@@ -68,10 +68,17 @@ export async function fetchRostersFromYahoo(
     if (gameKey === "count") {
       continue;
     }
-    assertTrue(typeof gamesJSON[gameKey] !== "number");
-    const gameJSON = gamesJSON[gameKey].game;
+    const gameData = gamesJSON[gameKey];
+    if (!gameData || typeof gameData === "number") {
+      continue;
+    }
+    const gameJSON = gameData.game;
     const flatGameDetails = FlatGameDetailsSchema.assert(gameJSON[0]);
-    const leaguesJSON = gameJSON[1].leagues;
+    const leagueData = gameJSON[1];
+    if (!leagueData) {
+      continue;
+    }
+    const leaguesJSON = leagueData.leagues;
 
     // Loop through each league within the game
     for (const leagueKey in leaguesJSON) {
