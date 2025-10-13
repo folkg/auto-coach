@@ -1,0 +1,103 @@
+{
+  "team_key": "419.l.28340.t.1",
+  "start_date": 1617220000,
+  "end_date": 1817220000,
+  "coverage_type": "date",
+  "coverage_period": "2023-02-28",
+  "weekly_deadline": "",
+  "edit_key": "2023-02-28",
+  "game_code": "nhl",
+  "num_teams": 12,
+  "scoring_type": "head",
+  "team_name": "Test Team",
+  "league_name": "Test League",
+  "current_weekly_adds": 0,
+  "current_season_adds": 5,
+  "max_weekly_adds": -1,
+  "max_season_adds": -1,
+  "faab_balance": -1,
+  "waiver_rule": "gametime",
+  "transactions": [],
+  "roster_positions": {
+    "C": 1,
+    "LW": 1,
+    "BN": 1
+  },
+  "players": [
+    {
+      "player_key": "419.p.3737",
+      "player_name": "Sidney Crosby",
+      "eligible_positions": ["C", "LW", "BN"],
+      "display_positions": ["C"],
+      "selected_position": "LW",
+      "is_editable": true,
+      "is_playing": false,
+      "injury_status": "Healthy",
+      "percent_started": 89,
+      "percent_owned": 98,
+      "percent_owned_delta": 2,
+      "is_starting": 0,
+      "is_undroppable": false,
+      "ownership": null,
+      "ranks": {
+        "last30Days": 1,
+        "last14Days": 1,
+        "next7Days": 1,
+        "restOfSeason": 1,
+        "last4Weeks": 1,
+        "projectedWeek": 1,
+        "next4Weeks": 1
+      }
+    },
+    {
+      "player_key": "419.p.7528",
+      "player_name": "Nick Suzuki",
+      "eligible_positions": ["C", "LW", "BN"],
+      "display_positions": ["C"],
+      "selected_position": "C",
+      "is_editable": true,
+      "is_playing": false,
+      "injury_status": "Healthy",
+      "percent_started": 13,
+      "percent_owned": 16,
+      "percent_owned_delta": 45,
+      "is_starting": 0,
+      "is_undroppable": false,
+      "ownership": null,
+      "ranks": {
+        "last30Days": 45,
+        "last14Days": 50,
+        "next7Days": 76,
+        "restOfSeason": 55,
+        "last4Weeks": 48,
+        "projectedWeek": 52,
+        "next4Weeks": 54
+      }
+    },
+    {
+      "player_key": "419.p.5555",
+      "player_name": "Bench Player",
+      "eligible_positions": ["C", "LW", "BN"],
+      "display_positions": ["C"],
+      "selected_position": "BN",
+      "is_editable": true,
+      "is_playing": false,
+      "injury_status": "Healthy",
+      "percent_started": 5,
+      "percent_owned": 8,
+      "percent_owned_delta": 1,
+      "is_starting": 0,
+      "is_undroppable": false,
+      "ownership": null,
+      "ranks": {
+        "last30Days": 120,
+        "last14Days": 125,
+        "next7Days": 130,
+        "restOfSeason": 128,
+        "last4Weeks": 122,
+        "projectedWeek": 126,
+        "next4Weeks": 127
+      }
+    }
+  ]
+}

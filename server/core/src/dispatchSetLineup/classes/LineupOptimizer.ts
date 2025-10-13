@@ -9,6 +9,7 @@ import { isDefined } from "@common/utilities/checks";
 import { logger } from "firebase-functions";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import { Player } from "../../common/classes/Player.js";
+import { INACTIVE_POSITION_LIST } from "../../common/helpers/constants.js";
 import { PlayerCollection } from "./PlayerCollection.js";
 import { PlayerTransactions } from "./PlayerTransactions.js";
 import { Team } from "./Team.js";
@@ -108,6 +109,51 @@ export class LineupOptimizer {
       };
     }
     return null;
+  }
+
+  public shouldPostLineupChanges(): boolean {
+    if (Object.keys(this.deltaPlayerPositions).length === 0) {
+      return false;
+    }
+
+    for (const playerKey in this.deltaPlayerPositions) {
+      const player = this.team.editablePlayers.find(
+        (p) => p.player_key === playerKey,
+      );
+      if (!player) {
+        continue;
+      }
+
+      const originalPosition = this.originalPlayerPositions[playerKey];
+      const newPosition = this.deltaPlayerPositions[playerKey];
+
+      if (!(originalPosition && newPosition)) {
+        continue;
+      }
+
+      const wasStarting =
+        originalPosition !== "BN" &&
+        !INACTIVE_POSITION_LIST.includes(originalPosition);
+      const isStarting =
+        newPosition !== "BN" && !INACTIVE_POSITION_LIST.includes(newPosition);
+
+      const involvesInactiveList =
+        INACTIVE_POSITION_LIST.includes(originalPosition) ||
+        INACTIVE_POSITION_LIST.includes(newPosition);
+      if (involvesInactiveList) {
+        return true;
+      }
+
+      if (
+        wasStarting === false &&
+        isStarting === true &&
+        player.is_playing === true
+      ) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   private resolveOverfilledPositions(): void {

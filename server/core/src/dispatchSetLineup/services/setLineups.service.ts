@@ -5,7 +5,10 @@ import type {
   PlayerTransaction,
 } from "@common/types/transactions.js";
 import { logger } from "firebase-functions";
-import { getTodaysPostponedTeams } from "../../common/services/firebase/firestore.service.js";
+import {
+  getTodaysPostponedTeams,
+  updateFirestoreTimestamp,
+} from "../../common/services/firebase/firestore.service.js";
 import {
   enrichTeamsWithFirestoreSettings,
   patchTeamChangesInFirestore,
@@ -132,13 +135,22 @@ async function processLineupChanges(
   const result: TeamOptimizer[] = [];
 
   const allLineupChanges: LineupChanges[] = [];
+  const teamsToUpdateTimestamp: string[] = [];
+
   for (const team of teams) {
     const lo = new LineupOptimizer(team);
     lo.optimizeStartingLineup();
 
     const lineupChanges = lo.lineupChanges;
-    if (lineupChanges) {
+    if (lineupChanges && lo.shouldPostLineupChanges()) {
       allLineupChanges.push(lineupChanges);
+    } else if (lineupChanges && !lo.shouldPostLineupChanges()) {
+      logger.log(
+        `Skipping meaningless lineup changes for team ${team.team_key}. Players moved: ${Object.keys(lineupChanges.newPlayerPositions).join(", ")}`,
+      );
+      teamsToUpdateTimestamp.push(team.team_key);
+    } else if (!lineupChanges) {
+      teamsToUpdateTimestamp.push(team.team_key);
     }
 
     result.push(lo.getCurrentTeamState());
@@ -162,6 +174,10 @@ async function processLineupChanges(
       logger.error("Original teams object: ", { teams });
       throw error;
     }
+  }
+
+  for (const teamKey of teamsToUpdateTimestamp) {
+    await updateFirestoreTimestamp(uid, teamKey);
   }
 
   return result;

@@ -283,27 +283,24 @@ export async function putLineupChanges(
 
   for (const lineupChange of lineupChanges) {
     const { newPlayerPositions, teamKey } = lineupChange;
-    if (Object.keys(newPlayerPositions).length === 0) {
-      await updateFirestoreTimestamp(uid, teamKey);
-    } else {
-      const players = [];
-      for (const [playerKey, position] of Object.entries(newPlayerPositions)) {
-        players.push({ player_key: playerKey, position });
-      }
 
-      const { coverageType, coveragePeriod } = lineupChange;
-      const data = {
-        roster: {
-          coverage_type: coverageType,
-          [coverageType]: coveragePeriod,
-          players: { player: players },
-        },
-      };
-
-      const XML_NAMESPACE = "fantasy_content";
-      const xmlBody = js2xmlparser.parse(XML_NAMESPACE, data);
-      promises.push(limit(() => putRosterChangePromise(uid, teamKey, xmlBody)));
+    const players = [];
+    for (const [playerKey, position] of Object.entries(newPlayerPositions)) {
+      players.push({ player_key: playerKey, position });
     }
+
+    const { coverageType, coveragePeriod } = lineupChange;
+    const data = {
+      roster: {
+        coverage_type: coverageType,
+        [coverageType]: coveragePeriod,
+        players: { player: players },
+      },
+    };
+
+    const XML_NAMESPACE = "fantasy_content";
+    const xmlBody = js2xmlparser.parse(XML_NAMESPACE, data);
+    promises.push(limit(() => putRosterChangePromise(uid, teamKey, xmlBody)));
   }
 
   const results = await Promise.allSettled(promises);

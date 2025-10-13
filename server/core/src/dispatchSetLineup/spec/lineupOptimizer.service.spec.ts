@@ -38,6 +38,8 @@ const spyUpdateTeamFirestore = vi
   .spyOn(firestoreService, "updateTeamFirestore")
   .mockResolvedValue();
 
+vi.spyOn(firestoreService, "updateFirestoreTimestamp").mockResolvedValue();
+
 vi.spyOn(firestoreService, "getPositionalScarcityOffsets").mockResolvedValue(
   {},
 );
@@ -1713,6 +1715,104 @@ describe("Paused teams", () => {
       "",
       new Set(),
     );
+  });
+});
+
+describe("Skipping meaningless lineup changes", () => {
+  it("skips posting when starters shuffle positions with no games today", async () => {
+    const uid = "testUID";
+    const teams = [{ team_key: "419.l.28340.t.1" }].map(mapFirestoreTeams);
+
+    const rosters: TeamOptimizer[] = [
+      require("./testRosters/NHL/Daily/startersShuffleNoGames.json"),
+    ];
+
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
+      rosters,
+    );
+    const spyPutLineupChanges = vi
+      .spyOn(yahooAPI, "putLineupChanges")
+      .mockResolvedValue();
+    vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
+      createMock({}),
+    );
+
+    await setUsersLineup(uid, teams);
+
+    expect(spyPutLineupChanges).not.toHaveBeenCalled();
+  });
+
+  it("skips posting when starters shuffle even with games (no bench movement)", async () => {
+    const uid = "testUID";
+    const teams = [{ team_key: "419.l.28340.t.1" }].map(mapFirestoreTeams);
+
+    const rosters: TeamOptimizer[] = [
+      require("./testRosters/NHL/Daily/startersShuffleWithGames.json"),
+    ];
+
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
+      rosters,
+    );
+    const spyPutLineupChanges = vi
+      .spyOn(yahooAPI, "putLineupChanges")
+      .mockResolvedValue();
+    vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
+      createMock({}),
+    );
+
+    await setUsersLineup(uid, teams);
+
+    expect(spyPutLineupChanges).not.toHaveBeenCalled();
+  });
+
+  it("skips posting when bench player moves to starting with no games", async () => {
+    const uid = "testUID";
+    const teams = [{ team_key: "419.l.28340.t.1" }].map(mapFirestoreTeams);
+
+    const rosters: TeamOptimizer[] = [
+      require("./testRosters/NHL/Daily/benchToStartingNoGames.json"),
+    ];
+
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
+      rosters,
+    );
+    const spyPutLineupChanges = vi
+      .spyOn(yahooAPI, "putLineupChanges")
+      .mockResolvedValue();
+    vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
+      createMock({}),
+    );
+
+    await setUsersLineup(uid, teams);
+
+    expect(spyPutLineupChanges).not.toHaveBeenCalled();
+  });
+
+  it("posts when bench player moves to starting with a game", async () => {
+    const uid = "testUID";
+    const teams = [{ team_key: "419.l.28340.t.1" }].map(mapFirestoreTeams);
+
+    const rosters: TeamOptimizer[] = [
+      require("./testRosters/NHL/Daily/benchToStartingWithGames.json"),
+    ];
+
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
+      rosters,
+    );
+    const spyPutLineupChanges = vi
+      .spyOn(yahooAPI, "putLineupChanges")
+      .mockResolvedValue();
+    vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
+      createMock({}),
+    );
+
+    await setUsersLineup(uid, teams);
+
+    expect(spyPutLineupChanges).toHaveBeenCalled();
   });
 });
 
