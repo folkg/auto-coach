@@ -12,3 +12,7 @@ container_image_tag = "latest"
 
 # Yahoo Fantasy API configuration for development
 yahoo_redirect_uri = "http://localhost:4200/auth/callback"
+
+# Secret values (set via CI/CD or -var flags)
+# sendgrid_api_key     = "SG.xxx..."
+# yahoo_client_secret  = "xxx..."

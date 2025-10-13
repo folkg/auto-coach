@@ -34,6 +34,7 @@ app.use(
 );
 
 const routes = app
+  .get("/", (c) => c.json({ status: "ok" }))
   .get("/health", (c) => c.body(null, 200))
   .use("/api/*", firebaseAuthMiddleware)
   .route("/api/teams", teamsRouter)
@@ -43,4 +44,7 @@ const routes = app
 
 export type HonoAppType = typeof routes;
 
-export default app;
+export default {
+  fetch: app.fetch,
+  port: Number(process.env.PORT || 3000),
+};

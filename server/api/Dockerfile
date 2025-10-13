@@ -1,45 +1,48 @@
-# Multi-stage build for Bun compiled binary with distroless container
-# Optimized for Google Cloud Run cold start performance
+# Multi-stage build for Bun
 
-# Build stage with Bun
-FROM oven/bun:1-alpine AS builder
+# Base stage
+FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-# Copy workspace root files for monorepo support
-COPY ../../bun.lockb* ./
+# Build stage - install and build everything
+FROM base AS builder
+
+# Copy workspace configuration
 COPY ../../tsconfig.base.json ./
+COPY ../../package.json ./root-package.json
 
-# Copy common workspace for shared types
+# Copy all workspace sources
 COPY ../../common ./common/
-
-# Copy server workspaces
 COPY ../../server ./server/
 
-# Create minimal package.json for container build with only necessary workspaces
-RUN printf '{\n  "name": "auto-coach-container",\n  "private": true,\n  "type": "module",\n  "workspaces": [\n    "server/api",\n    "server/core",\n    "server/functions",\n    "common"\n  ]\n}' > package.json
+# Create minimal package.json with only necessary workspaces and catalog section
+RUN apk add --no-cache jq && \
+    jq '{name: "auto-coach-container", private: true, type: "module", workspaces: ["server/api", "server/core", "common"]} + {catalog: .catalog}' root-package.json > package.json
 
-# Install only the dependencies we need
-RUN bun install --frozen-lockfile --production
+# Install dependencies
+RUN bun install --production
 
-# Build from the API directory with linux target and production flags for compatibility and performance
+# Build the API
 WORKDIR /app/server/api
-RUN bun build src/index.ts --target=bun-linux-x64 --outfile=server --compile --minify --sourcemap --bytecode
+RUN bun build src/index.ts --target=bun --outfile=dist/index.js
 
-# Production stage with distroless for minimal attack surface
-FROM gcr.io/distroless/base-debian12:latest
+# Release stage - minimal runtime image
+FROM base AS release
 WORKDIR /app
 
-# Create non-root user for security
-USER 1001:1001
+# Copy production dependencies and built application
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/server/api/dist ./dist
 
-# Copy only the compiled binary from builder stage
-COPY --from=builder --chown=1001:1001 /app/server /app/server
+# Create non-root user and switch to it
+RUN adduser -D -u 1001 appuser
+USER appuser
 
-# Expose the port that the application listens on
+# Expose the port
 EXPOSE 3000
 
 # Set environment variable for production
 ENV NODE_ENV=production
 
-# Run the compiled binary directly
-ENTRYPOINT ["/app/server"]
+# Run the application
+ENTRYPOINT ["bun", "run", "dist/index.js"]

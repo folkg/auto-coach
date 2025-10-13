@@ -119,32 +119,57 @@ jobs:
 
       - name: Build and Push API Container
         run: |
-          # Make the binary executable
           chmod +x server/api/dist/server
-
-          # Build container
           bun run container:build
+          
+          # Tag and push with commit SHA and latest
+          REGISTRY="us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/auto-coach/auto-coach-api"
+          docker tag auto-coach-api ${REGISTRY}:${{ github.sha }}
+          docker tag auto-coach-api ${REGISTRY}:latest
+          docker push ${REGISTRY}:${{ github.sha }}
+          docker push ${REGISTRY}:latest
 
-          # Get registry URL from infrastructure (fallback to project-based URL)
-          REGISTRY_URL="${{ needs.deploy-infrastructure.outputs.container-registry-url }}"
-          if [ -z "$REGISTRY_URL" ]; then
-            REGISTRY_URL="${{ secrets.GCP_PROJECT_ID }}/auto-coach/auto-coach-api"
-          fi
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
 
-          # Tag and push
-          docker tag auto-coach-api us-central1-docker.pkg.dev/$REGISTRY_URL:${{ github.sha }}
-          docker tag auto-coach-api us-central1-docker.pkg.dev/$REGISTRY_URL:latest
-          docker push us-central1-docker.pkg.dev/$REGISTRY_URL:${{ github.sha }}
-          docker push us-central1-docker.pkg.dev/$REGISTRY_URL:latest
-
-      - name: Deploy Cloud Run Service
+      - name: Deploy Cloud Run via Terraform
+        working-directory: infrastructure/opentofu
         run: |
-          gcloud run deploy auto-coach-api \
-            --image us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/auto-coach/auto-coach-api:${{ github.sha }} \
-            --region us-central1 \
-            --platform managed \
-            --allow-unauthenticated \
-            --project ${{ secrets.GCP_PROJECT_ID }}
+          tofu init
+          tofu apply -auto-approve \
+            -var="project_id=${{ secrets.GCP_PROJECT_ID }}" \
+            -var="firebase_project_id=${{ secrets.FIREBASE_PROJECT_ID }}" \
+            -var="yahoo_app_id=${{ secrets.YAHOO_APP_ID }}" \
+            -var="yahoo_client_id=${{ secrets.YAHOO_CLIENT_ID }}" \
+            -var="sendgrid_api_key=${{ secrets.SENDGRID_API_KEY }}" \
+            -var="yahoo_client_secret=${{ secrets.YAHOO_CLIENT_SECRET }}" \
+            -var="allowed_origins=https://auto-gm-372620.web.app,https://fantasyautocoach.com" \
+            -var="container_image_tag=${{ github.sha }}" \
+            -var="environment=prod"
+          
+          # Get the deployed service URL
+          API_URL=$(tofu output -raw api_url)
+          echo "Deployed to: $API_URL"
+
+      - name: Verify API Deployment
+        run: |
+          API_URL=$(cd infrastructure/opentofu && tofu output -raw api_url)
+          echo "Testing API health endpoint: $API_URL/health"
+          
+          # Wait for service to be ready (up to 60 seconds)
+          for i in {1..12}; do
+            if curl -sf "$API_URL/health" > /dev/null 2>&1; then
+              echo "✅ API is healthy!"
+              exit 0
+            fi
+            echo "Waiting for API to be ready... ($i/12)"
+            sleep 5
+          done
+          
+          echo "⚠️ API health check timed out"
+          exit 1
 
       - name: Deploy Firebase Functions
         run: |
@@ -175,6 +200,23 @@ jobs:
         with:
           name: client-build
           path: client/dist/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Rebuild client with production API URL
+        run: |
+          # Get the API URL from the infrastructure
+          API_URL="https://auto-coach-api-prod-XXXXXXX-uc.a.run.app"
+          
+          # For now, use a placeholder - this will be dynamic once Cloud Run is deployed
+          # TODO: Extract from Terraform outputs after first deploy
+          echo "Building client with API_URL: $API_URL"
+          
+          # Rebuild client with environment variable
+          NG_APP_API_BASE_URL="$API_URL" bun run build:client
 
       - name: Deploy to Firebase Hosting
         uses: FirebaseExtended/action-hosting-deploy@v0

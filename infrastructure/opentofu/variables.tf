@@ -89,3 +89,25 @@ variable "yahoo_redirect_uri" {
     error_message = "Yahoo redirect URI must be a valid URL starting with http:// or https://."
   }
 }
+
+variable "sendgrid_api_key" {
+  description = "SendGrid API key for email delivery"
+  type        = string
+  sensitive   = true
+  default     = ""
+  validation {
+    condition     = length(var.sendgrid_api_key) > 0
+    error_message = "SendGrid API key cannot be empty."
+  }
+}
+
+variable "yahoo_client_secret" {
+  description = "Yahoo Fantasy API client secret"
+  type        = string
+  sensitive   = true
+  default     = ""
+  validation {
+    condition     = length(var.yahoo_client_secret) > 0
+    error_message = "Yahoo client secret cannot be empty."
+  }
+}

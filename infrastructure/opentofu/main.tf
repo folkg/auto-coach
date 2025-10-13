@@ -2,26 +2,15 @@
 # Optimized for Bun compiled binary on Google Cloud Run using OpenTofu
 
 terraform {
-  required_version = ">= 1.0"
-
-  required_providers {
-    google = {
-      source  = "hashicorp/google"
-      version = "~> 5.0"
-    }
-  }
-
   backend "gcs" {
     bucket = "auto-coach-terraform-state"
     prefix = "infrastructure/opentofu"
   }
 }
 
-
-
 # Local values for environment-specific settings
 locals {
-  max_instances = var.environment == "prod" ? 100 : 10
+  max_instances         = var.environment == "prod" ? 100 : 10
   allow_unauthenticated = var.environment == "dev"
 
   common_labels = {
@@ -136,6 +125,25 @@ resource "google_secret_manager_secret" "yahoo_client_secret" {
   depends_on = [google_project_service.secret_manager_api]
 }
 
+# Secret versions with actual values
+resource "google_secret_manager_secret_version" "sendgrid_api_key_version" {
+  secret      = google_secret_manager_secret.sendgrid_api_key.id
+  secret_data = var.sendgrid_api_key
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
+resource "google_secret_manager_secret_version" "yahoo_client_secret_version" {
+  secret      = google_secret_manager_secret.yahoo_client_secret.id
+  secret_data = var.yahoo_client_secret
+
+  lifecycle {
+    ignore_changes = [secret_data]
+  }
+}
+
 # IAM binding for service account to access Firebase
 resource "google_project_iam_member" "cloud_run_sa_firebase_viewer" {
   project = var.firebase_project_id
@@ -170,7 +178,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
     }
 
     containers {
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.auto_coach_repo.repository_id}/auto-coach-api:latest"
+      image = "${var.region}-docker.pkg.dev/${var.project_id}/${google_artifact_registry_repository.auto_coach_repo.repository_id}/auto-coach-api:${var.container_image_tag}"
 
       resources {
         limits = {
@@ -182,7 +190,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
 
       ports {
         container_port = 3000
-        name          = "http1"
+        name           = "http1"
       }
 
       env {
@@ -200,10 +208,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
         value = var.environment == "prod" ? "production" : "development"
       }
 
-      env {
-        name  = "PORT"
-        value = "3000"
-      }
+
 
       env {
         name  = "YAHOO_APP_ID"
@@ -251,9 +256,9 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           }
         }
         initial_delay_seconds = 1
-        timeout_seconds      = 3
-        period_seconds       = 2
-        failure_threshold    = 3
+        timeout_seconds       = 3
+        period_seconds        = 2
+        failure_threshold     = 3
       }
 
       liveness_probe {
@@ -266,9 +271,9 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           }
         }
         initial_delay_seconds = 10
-        timeout_seconds      = 5
-        period_seconds       = 30
-        failure_threshold    = 3
+        timeout_seconds       = 5
+        period_seconds        = 30
+        failure_threshold     = 3
       }
     }
   }

@@ -131,6 +131,18 @@ jobs:
           name: client-build
           path: client/dist/
 
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Rebuild client for preview with dev API URL
+        run: |
+          # Use development API URL for previews
+          API_URL="https://auto-coach-api-dev-XXXXXXX-uc.a.run.app"
+          echo "Building preview with API_URL: $API_URL"
+          NG_APP_API_BASE_URL="$API_URL" bun run build:client
+
       - name: Deploy Preview to Firebase Hosting
         id: deploy
         uses: FirebaseExtended/action-hosting-deploy@v0

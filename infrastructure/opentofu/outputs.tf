@@ -29,3 +29,8 @@ output "state_bucket" {
   description = "The GCS bucket used for OpenTofu state storage"
   value       = "auto-coach-terraform-state"
 }
+
+output "api_url" {
+  description = "The URL of the deployed Cloud Run service (alias for service_url)"
+  value       = google_cloud_run_v2_service.auto_coach_api.uri
+}

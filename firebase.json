@@ -4,30 +4,9 @@
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
-        "source": "/api/fetchuserteams",
+        "source": "/api/**",
         "run": {
-          "serviceId": "lineup-fetchuserteams",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "/api/gettransactions",
-        "run": {
-          "serviceId": "transactions-gettransactions",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "/api/posttransactions",
-        "run": {
-          "serviceId": "transactions-posttransactions",
-          "region": "us-central1"
-        }
-      },
-      {
-        "source": "/api/sendfeedbackemail",
-        "run": {
-          "serviceId": "email-sendfeedbackemail",
+          "serviceId": "auto-coach-api-prod",
           "region": "us-central1"
         }
       },
