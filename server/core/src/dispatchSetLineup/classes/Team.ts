@@ -609,8 +609,8 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       max_weekly_adds: maxWeeklyAdds,
       current_season_adds: currentSeasonAdds,
       max_season_adds: maxSeasonAdds,
-      _numNewAdds: newAdds,
     } = this;
+    const newAdds = this._numNewAdds;
 
     let weeklyPaceExceeded = false;
     let seasonPaceExceeded = false;

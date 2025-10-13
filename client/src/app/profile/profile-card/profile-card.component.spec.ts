@@ -1,6 +1,6 @@
-import type { User } from "@firebase/auth";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
+import type { User } from "firebase/auth";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMock } from "../../../__mocks__/utils/createMock";

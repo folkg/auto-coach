@@ -32,10 +32,10 @@ app.use(
     credentials: true,
   }),
 );
-app.use("*", firebaseAuthMiddleware);
 
 const routes = app
   .get("/health", (c) => c.body(null, 200))
+  .use("/api/*", firebaseAuthMiddleware)
   .route("/api/teams", teamsRouter)
   .route("/api/schedules", schedulesRouter)
   .route("/api/feedback", feedbackRouter)

@@ -1,8 +1,8 @@
 import { BreakpointObserver } from "@angular/cdk/layout";
 import type { ClientTeam } from "@common/types/team";
-import type { User } from "@firebase/auth";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
+import type { User } from "firebase/auth";
 import { BehaviorSubject, Observable } from "rxjs";
 import { beforeEach, describe, expect, it } from "vitest";
 import { mockRoutes } from "../../__mocks__/routes/routes";

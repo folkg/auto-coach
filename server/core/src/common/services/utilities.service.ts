@@ -44,7 +44,7 @@ export function parseToInt(
     return value;
   }
 
-  const parsed = Number.parseInt(value);
+  const parsed = Number.parseInt(value, 10);
   return Number.isNaN(parsed) ? defaultValue : parsed;
 }
 

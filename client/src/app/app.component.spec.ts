@@ -1,7 +1,7 @@
 import { OverlayContainer } from "@angular/cdk/overlay";
 import type { ClientTeam } from "@common/types/team";
-import type { User } from "@firebase/auth";
 import { render } from "@testing-library/angular";
+import type { User } from "firebase/auth";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, it } from "vitest";
 import { AppComponent } from "./app.component";

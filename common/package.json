@@ -1,5 +1,8 @@
 {
   "name": "@auto-coach/common",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "arktype": "catalog:"
+  }
 }

@@ -29,7 +29,7 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { assertDefined } from "@common/utilities/checks";
 import { getErrorMessage } from "@common/utilities/error";
-import type { User } from "@firebase/auth";
+import type { User } from "firebase/auth";
 import { distinctUntilChanged, map, Subscription } from "rxjs";
 // biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../../services/app-status.service";

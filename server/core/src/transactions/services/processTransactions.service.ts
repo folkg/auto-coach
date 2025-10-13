@@ -435,7 +435,7 @@ export function sendSuccessfulTransactionEmail(
     uid,
     "Transactions were Automatically Processed for your Teams",
     body,
-  );
+  ).catch(console.error);
 }
 
 export function sendPotentialTransactionEmail(
@@ -451,7 +451,7 @@ export function sendPotentialTransactionEmail(
     body,
     "Go to Transactions",
     "https://fantasyautocoach.com/transactions",
-  );
+  ).catch(console.error);
 }
 
 function stringifyTransactions(transactions: PlayerTransaction[]): string[] {

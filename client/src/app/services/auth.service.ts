@@ -12,7 +12,7 @@ import {
   signOut,
   type User,
   verifyBeforeUpdateEmail,
-} from "@firebase/auth";
+} from "firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { getErrorMessage } from "../../../../common/src/utilities/error";
 import { AUTH } from "../shared/firebase-tokens";

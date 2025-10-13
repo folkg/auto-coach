@@ -4,6 +4,7 @@
     "lib": ["ES2022", "dom"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
+    "esModuleInterop": true,
     "noPropertyAccessFromIndexSignature": true,
     "exactOptionalPropertyTypes": false,
     "moduleDetection": "force",

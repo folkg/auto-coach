@@ -209,7 +209,9 @@ function updateOffsetArray(
     SCARCITY_OFFSETS[league] = {};
   }
   SCARCITY_OFFSETS[league][position] = array;
-  Firestore.updatePositionalScarcityOffset(league, position, array);
+  Firestore.updatePositionalScarcityOffset(league, position, array).catch(
+    console.error,
+  );
 }
 
 export function getReplacementLevels(team: CommonTeam): ReplacementLevels {

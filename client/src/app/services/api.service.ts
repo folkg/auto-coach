@@ -17,7 +17,7 @@ export class APIService {
 
   async fetchTeamsYahoo(): Promise<ClientTeam[]> {
     try {
-      const response = await this.client.api.teams.$get();
+      const response = await this.client.api.teams.$get({});
       if (!response.ok) {
         throw new Error(`Failed to fetch teams: ${response.statusText}`);
       }
@@ -30,7 +30,7 @@ export class APIService {
 
   async fetchTeamsPartial(): Promise<FirestoreTeam[]> {
     try {
-      const response = await this.client.api.teams.partial.$get();
+      const response = await this.client.api.teams.partial.$get({});
       if (!response.ok) {
         throw new Error(`Failed to fetch teams: ${response.statusText}`);
       }
@@ -53,7 +53,7 @@ export class APIService {
 
     // Fetch from API if not in cache
     try {
-      const response = await this.client.api.schedules.$get();
+      const response = await this.client.api.schedules.$get({});
       if (!response.ok) {
         throw new Error(`Failed to fetch schedules: ${response.statusText}`);
       }
@@ -70,7 +70,7 @@ export class APIService {
 
   async fetchTransactions(): Promise<TransactionsData> {
     try {
-      const response = await this.client.api.transactions.$get();
+      const response = await this.client.api.transactions.$get({});
       if (!response.ok) {
         throw new Error(`Failed to fetch transactions: ${response.statusText}`);
       }

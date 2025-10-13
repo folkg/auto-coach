@@ -20,7 +20,7 @@ export const addmocktaskstoqueue = onRequest(async (req, res) => {
   }
 
   // Start enqueuing mock tasks
-  const numTasks = Number.parseInt(req.query.numTasks as string) || 10;
+  const numTasks = Number.parseInt(req.query.numTasks as string, 10) || 10;
   const mockEnqueues: unknown[] = [];
   for (let i = 0; i < numTasks; i++) {
     const uid = `user_${i}`;
