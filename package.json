@@ -20,6 +20,7 @@
     "test:client": "bunx vitest run --project=client",
     "fix": "bunx biome check --fix",
     "checks": "bun run fix && bun run test:ci && bun run build && bun run build:client && echo 'All checks passed!'",
+    "checks:ci": "bunx biome check && bun run test:ci && bun run build && echo 'All checks passed!'",
     "build": "tsc -b && echo 'All builds complete!'",
     "build:client": "bun run --cwd client build",
     "build:api": "bun run --cwd server/api build",

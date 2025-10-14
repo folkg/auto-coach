@@ -6,12 +6,12 @@ import {
   buildContainer,
   pushContainer,
   tagContainer,
-} from "./lib/docker";
-import { loadEnvironment } from "./lib/environment";
-import { buildClient, deployFunctions, deployHosting } from "./lib/firebase";
-import { log, logError, logStep, logSuccess, logWarning } from "./lib/log";
-import { applyInfrastructure, getAPIURL } from "./lib/tofu";
-import { determineContainerTags, getPrimaryTag } from "./lib/versioning";
+} from "./tools/docker";
+import { loadEnvironment } from "./tools/environment";
+import { buildClient, deployFunctions, deployHosting } from "./tools/firebase";
+import { log, logError, logStep, logSuccess, logWarning } from "./tools/log";
+import { applyInfrastructure, getAPIURL } from "./tools/tofu";
+import { determineContainerTags, getPrimaryTag } from "./tools/versioning";
 
 interface DeployArgs {
   component: "api" | "client" | "functions" | "firestore" | "full";
@@ -142,7 +142,7 @@ async function deployFunctionsComponent(
   }
 
   logStep("Build", "Building TypeScript...");
-  const { resolve } = await import("path");
+  const { resolve } = await import("node:path");
   const projectRoot = resolve(import.meta.dir, "..");
   await $`cd ${projectRoot} && bun run build`;
 

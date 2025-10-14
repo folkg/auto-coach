@@ -77,9 +77,9 @@
     "includes": [
       "**",
       "!**/node_modules/**/*",
-      "!**/node_modules/**/*",
       "!**/client/vitest.config.ts",
-      "!**/server/functions/vite.config.ts"
+      "!**/server/functions/vite.config.js",
+      "!**/server/core/vite.config.js"
     ]
   },
   "javascript": {
