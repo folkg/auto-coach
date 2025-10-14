@@ -1,0 +1,10 @@
+name: prod
+firebaseProject: auto-gm-372620
+hostingSite: auto-gm-372620
+cloudRunService: auto-coach-api-prod
+region: us-central1
+containerRepo: us-central1-docker.pkg.dev
+allowedOrigins:
+  - https://fantasyautocoach.com
+  - https://auto-gm-372620.web.app
+  - https://auto-gm-372620.firebaseapp.com

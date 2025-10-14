@@ -1,0 +1,10 @@
+name: dev
+firebaseProject: auto-gm-372620
+hostingSite: auto-gm-372620
+cloudRunService: auto-coach-api-dev
+region: us-central1
+containerRepo: us-central1-docker.pkg.dev
+allowedOrigins:
+  - https://auto-gm-372620--dev-hn30jm92.web.app
+  - https://auto-gm-372620.web.app
+  - http://localhost:4200

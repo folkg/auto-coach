@@ -93,3 +93,4 @@ lib/
 !vitest.config.*
 !angular.json
 !package.json
+.env.deployment

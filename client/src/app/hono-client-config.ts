@@ -3,7 +3,7 @@ import type { HonoAppType } from "@server/api/dist/types/hono-app-type";
 import { getAuth, getIdToken } from "firebase/auth";
 import { hc } from "hono/client";
 
-const API_BASE_URL = import.meta.env.NG_APP_API_BASE_URL;
+const API_BASE_URL = "";
 
 const customFetch = async (
   input: RequestInfo | URL,

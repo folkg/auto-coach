@@ -158,6 +158,13 @@ resource "google_project_iam_member" "cloud_run_sa_secret_accessor" {
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
 }
 
+# IAM binding for service account to access Firestore
+resource "google_project_iam_member" "cloud_run_sa_datastore_user" {
+  project = var.firebase_project_id
+  role    = "roles/datastore.user"
+  member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
+}
+
 # Cloud Run service configuration optimized for Bun binary
 resource "google_cloud_run_v2_service" "auto_coach_api" {
   name     = "auto-coach-api-${var.environment}"
@@ -289,6 +296,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
     google_project_service.cloud_build_api,
     google_project_iam_member.cloud_run_sa_firebase_viewer,
     google_project_iam_member.cloud_run_sa_secret_accessor,
+    google_project_iam_member.cloud_run_sa_datastore_user,
     google_secret_manager_secret.sendgrid_api_key,
     google_secret_manager_secret.yahoo_client_secret,
   ]

@@ -1,3 +1,11 @@
+# Installing Libraries
+
+Always install the latest version of libraries via bun command line. This means that instead of picking a version manually (via updating the `package.json` file), you shall use command line to install the latest version of a library at the exact version.
+The command should be run at the workspace root.
+
+```bash
+bun add @tanstack/query-core
+```
 
 # Automated Testing
 

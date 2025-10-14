@@ -1,0 +1,248 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      api-changed: ${{ steps.filter.outputs.api }}
+      client-changed: ${{ steps.filter.outputs.client }}
+      functions-changed: ${{ steps.filter.outputs.functions }}
+      firestore-changed: ${{ steps.filter.outputs.firestore }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            api:
+              - 'server/api/**'
+              - 'server/core/**'
+              - 'common/**'
+              - 'infrastructure/opentofu/**'
+            client:
+              - 'client/**'
+            functions:
+              - 'server/functions/**'
+              - 'server/core/**'
+              - 'common/**'
+            firestore:
+              - 'firestore.rules'
+              - 'firestore.indexes.json'
+
+  test-and-build:
+    name: Test & Build
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run checks
+        run: bun run checks
+
+      - name: Upload API build
+        if: needs.detect-changes.outputs.api-changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-build
+          path: server/api/dist/
+
+      - name: Upload functions build
+        if: needs.detect-changes.outputs.functions-changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: functions-build
+          path: server/functions/lib/
+
+      - name: Upload client build
+        if: needs.detect-changes.outputs.client-changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+
+  deploy-api-prod:
+    name: Deploy API (Production)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.api-changed == 'true'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download API build
+        uses: actions/download-artifact@v4
+        with:
+          name: api-build
+          path: server/api/dist/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: Deploy API
+        env:
+          GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          chmod +x server/api/dist/server
+          bun run deploy api --env prod --version v${{ github.run_number }}
+
+  deploy-functions-prod:
+    name: Deploy Functions (Production)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.functions-changed == 'true'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download functions build
+        uses: actions/download-artifact@v4
+        with:
+          name: functions-build
+          path: server/functions/lib/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Deploy Functions
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: bun run deploy functions --env prod
+
+  deploy-client-prod:
+    name: Deploy Client (Production)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.client-changed == 'true'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download client build
+        uses: actions/download-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Deploy Client
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: bun run deploy client --env prod
+
+  deploy-firestore-prod:
+    name: Deploy Firestore (Production)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && needs.detect-changes.outputs.firestore-changed == 'true'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Deploy Firestore
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: bun run deploy firestore --env prod
+
+  deploy-client-preview:
+    name: Deploy Client Preview (PR)
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: github.event_name == 'pull_request' && needs.detect-changes.outputs.client-changed == 'true'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download client build
+        uses: actions/download-artifact@v4
+        with:
+          name: client-build
+          path: client/dist/
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Deploy Preview
+        env:
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          bun run deploy client --env dev --channel pr-${{ github.event.pull_request.number }}
+
+  summary:
+    name: Deployment Summary
+    runs-on: ubuntu-latest
+    needs: [deploy-api-prod, deploy-functions-prod, deploy-client-prod, deploy-firestore-prod]
+    if: always() && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - name: Create Summary
+        run: |
+          echo "# Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by**: ${{ github.actor }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Component Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- API: ${{ needs.deploy-api-prod.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Functions: ${{ needs.deploy-functions-prod.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Client: ${{ needs.deploy-client-prod.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Firestore: ${{ needs.deploy-firestore-prod.result || 'skipped' }}" >> $GITHUB_STEP_SUMMARY
