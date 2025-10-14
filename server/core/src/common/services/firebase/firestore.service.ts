@@ -27,11 +27,24 @@ import { fetchStartingPlayers } from "../yahooAPI/yahooStartingPlayer.service.js
 import { RevokedRefreshTokenError } from "./errors.js";
 import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
 
-if (getApps().length === 0) {
-  initializeApp();
+const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
+
+const firebaseApp =
+  getApps().length === 0
+    ? initializeApp({
+        projectId: FIREBASE_PROJECT_ID,
+      })
+    : getApps()[0];
+
+if (!firebaseApp) {
+  throw new Error("Failed to initialize Firebase app");
 }
-export const db = getFirestore();
-db.settings({ ignoreUndefinedProperties: true });
+
+export const db = getFirestore(firebaseApp);
+db.settings({
+  ignoreUndefinedProperties: true,
+  preferRest: true,
+});
 
 /**
  * Load the access token from DB, or refresh from Yahoo if expired
