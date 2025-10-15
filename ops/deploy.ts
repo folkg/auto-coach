@@ -147,9 +147,6 @@ async function deployFunctionsComponent(
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
-    log("Would build TypeScript");
-    log(`Would deploy functions to ${firebaseProjectId}`);
-    return;
   }
 
   if (!args.skipBuild) {
@@ -161,9 +158,13 @@ async function deployFunctionsComponent(
     logStep("Functions", "Skipping build (using existing build artifact)");
   }
 
-  await deployFunctions(firebaseProjectId);
+  await deployFunctions(firebaseProjectId, args.dryRun);
 
-  logSuccess("Functions deployed successfully!");
+  if (args.dryRun) {
+    logSuccess("Functions validation completed successfully!");
+  } else {
+    logSuccess("Functions deployed successfully!");
+  }
 }
 
 async function deployFullStack(

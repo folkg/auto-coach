@@ -94,3 +94,6 @@ lib/
 !angular.json
 !package.json
 .env.deployment
+
+# Secrets
+*github-actions-key.json
