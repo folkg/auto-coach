@@ -19,6 +19,7 @@ interface DeployArgs {
   version?: string;
   channel?: string;
   dryRun: boolean;
+  skipBuild: boolean;
 }
 
 function parseArguments(): DeployArgs {
@@ -29,6 +30,7 @@ function parseArguments(): DeployArgs {
       version: { type: "string", short: "v" },
       channel: { type: "string", short: "c" },
       "dry-run": { type: "boolean", default: false },
+      "skip-build": { type: "boolean", default: false },
     },
     allowPositionals: true,
   });
@@ -56,6 +58,7 @@ function parseArguments(): DeployArgs {
     version: values.version as string | undefined,
     channel: values.channel as string | undefined,
     dryRun: values["dry-run"] as boolean,
+    skipBuild: values["skip-build"] as boolean,
   };
 }
 
@@ -80,7 +83,11 @@ async function deployAPI(
     return;
   }
 
-  await buildAPI();
+  if (!args.skipBuild) {
+    await buildAPI();
+  } else {
+    logStep("API", "Skipping build (using existing build artifact)");
+  }
   await buildContainer();
   await tagContainer(projectId, envConfig.containerRepo, tags);
   await pushContainer(projectId, envConfig.containerRepo, tags);
@@ -116,7 +123,11 @@ async function deployClient(args: DeployArgs): Promise<void> {
     return;
   }
 
-  await buildClient();
+  if (!args.skipBuild) {
+    await buildClient();
+  } else {
+    logStep("Client", "Skipping build (using existing build artifact)");
+  }
   const result = await deployHosting(envConfig, args.channel);
 
   logSuccess("Client deployed successfully!");
@@ -141,10 +152,14 @@ async function deployFunctionsComponent(
     return;
   }
 
-  logStep("Build", "Building TypeScript...");
-  const { resolve } = await import("node:path");
-  const projectRoot = resolve(import.meta.dir, "..");
-  await $`cd ${projectRoot} && bun run build`;
+  if (!args.skipBuild) {
+    logStep("Build", "Building TypeScript...");
+    const { resolve } = await import("node:path");
+    const projectRoot = resolve(import.meta.dir, "..");
+    await $`cd ${projectRoot} && bun run build`;
+  } else {
+    logStep("Functions", "Skipping build (using existing build artifact)");
+  }
 
   await deployFunctions(firebaseProjectId);
 

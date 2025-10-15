@@ -124,13 +124,16 @@ jobs:
         with:
           tofu_version: 1.6.0
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
       - name: Deploy API
         env:
           GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
           chmod +x server/api/dist/server
-          bun run deploy api --env prod --version v${{ github.run_number }}
+          bun run deploy api --env prod --version v${{ github.run_number }} --skip-build
 
   deploy-functions-prod:
     name: Deploy Functions (Production)
@@ -153,10 +156,13 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
       - name: Deploy Functions
         env:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: bun run deploy functions --env prod
+        run: bun run deploy functions --env prod --skip-build
 
   deploy-client-prod:
     name: Deploy Client (Production)
@@ -179,10 +185,13 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
       - name: Deploy Client
         env:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: bun run deploy client --env prod
+        run: bun run deploy client --env prod --skip-build
 
   deploy-firestore-prod:
     name: Deploy Firestore (Production)
@@ -225,13 +234,13 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
 
       - name: Deploy Preview to Dev
         env:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
-          bun run deploy client --env dev --channel pr-${{ github.event.pull_request.number }}
+          bun run deploy client --env dev --channel pr-${{ github.event.pull_request.number }} --skip-build
 
   summary:
     name: Deployment Summary
