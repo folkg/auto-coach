@@ -86,7 +86,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: api-build
-          path: server/api/dist/
+          path: server/api/dist
 
       - name: Upload functions build
         if: needs.detect-changes.outputs.functions-changed == 'true'
@@ -118,7 +118,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: api-build
-          path: server/api/dist/
+          path: server/api/dist
+
+      - name: Verify API build
+        run: |
+          echo "Checking server/api/dist structure:"
+          ls -la server/api/dist/ || echo "server/api/dist/ not found"
+          test -f server/api/dist/server && echo "✓ server binary found" || echo "✗ server binary NOT found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -163,7 +169,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: functions-build
-          path: .
+
+      - name: Verify functions build
+        run: |
+          echo "Checking functions build structure:"
+          ls -la server/functions/lib/ || echo "server/functions/lib/ not found"
+          ls -la server/core/dist/ || echo "server/core/dist/ not found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -198,6 +209,13 @@ jobs:
         with:
           name: client-build
           path: client/dist/
+
+      - name: Verify client build
+        run: |
+          echo "Checking client/dist structure:"
+          ls -la client/dist/ || echo "client/dist/ not found"
+          ls -la client/dist/auto-gm/ || echo "client/dist/auto-gm/ not found"
+          ls -la client/dist/auto-gm/browser/ || echo "client/dist/auto-gm/browser/ not found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
