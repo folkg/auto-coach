@@ -158,6 +158,43 @@ async function deployFunctionsComponent(
     logStep("Functions", "Skipping build (using existing build artifact)");
   }
 
+  logStep("Functions", "Copying dependencies...");
+  const { resolve } = await import("node:path");
+  const { cpSync, mkdirSync, writeFileSync } = await import("node:fs");
+  const projectRoot = resolve(import.meta.dir, "..");
+
+  // Copy core dist so relative imports work
+  cpSync(
+    resolve(projectRoot, "server/core/dist"),
+    resolve(projectRoot, "server/functions/core/dist"),
+    { recursive: true },
+  );
+
+  // Copy common to node_modules/@common so package imports from core work
+  const commonModuleDir = resolve(
+    projectRoot,
+    "server/functions/node_modules/@common",
+  );
+  mkdirSync(commonModuleDir, { recursive: true });
+
+  cpSync(
+    resolve(projectRoot, "common/dist/types"),
+    resolve(commonModuleDir, "types"),
+    { recursive: true },
+  );
+
+  cpSync(
+    resolve(projectRoot, "common/dist/utilities"),
+    resolve(commonModuleDir, "utilities"),
+    { recursive: true },
+  );
+
+  // Create package.json for @common module
+  writeFileSync(
+    resolve(commonModuleDir, "package.json"),
+    JSON.stringify({ name: "@common", type: "module" }, null, 2),
+  );
+
   await deployFunctions(firebaseProjectId, args.dryRun);
 
   if (args.dryRun) {

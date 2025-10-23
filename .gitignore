@@ -95,5 +95,8 @@ lib/
 !package.json
 .env.deployment
 
+# Copied core dist for functions deployment
+server/functions/core/
+
 # Secrets
 *github-actions-key.json
