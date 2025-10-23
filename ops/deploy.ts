@@ -6,12 +6,12 @@ import {
   buildContainer,
   pushContainer,
   tagContainer,
-} from "./lib/docker";
-import { loadEnvironment } from "./lib/environment";
-import { buildClient, deployFunctions, deployHosting } from "./lib/firebase";
-import { log, logError, logStep, logSuccess, logWarning } from "./lib/log";
-import { applyInfrastructure, getAPIURL } from "./lib/tofu";
-import { determineContainerTags, getPrimaryTag } from "./lib/versioning";
+} from "./tools/docker";
+import { loadEnvironment } from "./tools/environment";
+import { buildClient, deployFunctions, deployHosting } from "./tools/firebase";
+import { log, logError, logStep, logSuccess, logWarning } from "./tools/log";
+import { applyInfrastructure, getAPIURL } from "./tools/tofu";
+import { determineContainerTags, getPrimaryTag } from "./tools/versioning";
 
 interface DeployArgs {
   component: "api" | "client" | "functions" | "firestore" | "full";
@@ -19,6 +19,7 @@ interface DeployArgs {
   version?: string;
   channel?: string;
   dryRun: boolean;
+  skipBuild: boolean;
 }
 
 function parseArguments(): DeployArgs {
@@ -29,6 +30,7 @@ function parseArguments(): DeployArgs {
       version: { type: "string", short: "v" },
       channel: { type: "string", short: "c" },
       "dry-run": { type: "boolean", default: false },
+      "skip-build": { type: "boolean", default: false },
     },
     allowPositionals: true,
   });
@@ -56,6 +58,7 @@ function parseArguments(): DeployArgs {
     version: values.version as string | undefined,
     channel: values.channel as string | undefined,
     dryRun: values["dry-run"] as boolean,
+    skipBuild: values["skip-build"] as boolean,
   };
 }
 
@@ -80,7 +83,11 @@ async function deployAPI(
     return;
   }
 
-  await buildAPI();
+  if (!args.skipBuild) {
+    await buildAPI();
+  } else {
+    logStep("API", "Skipping build (using existing build artifact)");
+  }
   await buildContainer();
   await tagContainer(projectId, envConfig.containerRepo, tags);
   await pushContainer(projectId, envConfig.containerRepo, tags);
@@ -116,7 +123,11 @@ async function deployClient(args: DeployArgs): Promise<void> {
     return;
   }
 
-  await buildClient();
+  if (!args.skipBuild) {
+    await buildClient();
+  } else {
+    logStep("Client", "Skipping build (using existing build artifact)");
+  }
   const result = await deployHosting(envConfig, args.channel);
 
   logSuccess("Client deployed successfully!");
@@ -136,19 +147,61 @@ async function deployFunctionsComponent(
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
-    log("Would build TypeScript");
-    log(`Would deploy functions to ${firebaseProjectId}`);
-    return;
   }
 
-  logStep("Build", "Building TypeScript...");
-  const { resolve } = await import("path");
+  if (!args.skipBuild) {
+    logStep("Build", "Building TypeScript...");
+    const { resolve } = await import("node:path");
+    const projectRoot = resolve(import.meta.dir, "..");
+    await $`cd ${projectRoot} && bun run build`;
+  } else {
+    logStep("Functions", "Skipping build (using existing build artifact)");
+  }
+
+  logStep("Functions", "Copying dependencies...");
+  const { resolve } = await import("node:path");
+  const { cpSync, mkdirSync, writeFileSync } = await import("node:fs");
   const projectRoot = resolve(import.meta.dir, "..");
-  await $`cd ${projectRoot} && bun run build`;
 
-  await deployFunctions(firebaseProjectId);
+  // Copy core dist so relative imports work
+  cpSync(
+    resolve(projectRoot, "server/core/dist"),
+    resolve(projectRoot, "server/functions/core/dist"),
+    { recursive: true },
+  );
 
-  logSuccess("Functions deployed successfully!");
+  // Copy common to node_modules/@common so package imports from core work
+  const commonModuleDir = resolve(
+    projectRoot,
+    "server/functions/node_modules/@common",
+  );
+  mkdirSync(commonModuleDir, { recursive: true });
+
+  cpSync(
+    resolve(projectRoot, "common/dist/types"),
+    resolve(commonModuleDir, "types"),
+    { recursive: true },
+  );
+
+  cpSync(
+    resolve(projectRoot, "common/dist/utilities"),
+    resolve(commonModuleDir, "utilities"),
+    { recursive: true },
+  );
+
+  // Create package.json for @common module
+  writeFileSync(
+    resolve(commonModuleDir, "package.json"),
+    JSON.stringify({ name: "@common", type: "module" }, null, 2),
+  );
+
+  await deployFunctions(firebaseProjectId, args.dryRun);
+
+  if (args.dryRun) {
+    logSuccess("Functions validation completed successfully!");
+  } else {
+    logSuccess("Functions deployed successfully!");
+  }
 }
 
 async function deployFullStack(

@@ -1,5 +1,5 @@
 import { Leagues } from "@common/types/Leagues.js";
-import type { GamesPlayed, InningsPitched } from "@common/types/team";
+import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
 import {
   type TransactionDetails,
   TransactionDetailsSchema,

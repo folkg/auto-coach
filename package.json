@@ -20,6 +20,7 @@
     "test:client": "bunx vitest run --project=client",
     "fix": "bunx biome check --fix",
     "checks": "bun run fix && bun run test:ci && bun run build && bun run build:client && echo 'All checks passed!'",
+    "checks:ci": "bunx biome check && bun run test:ci && bun run build && echo 'All checks passed!'",
     "build": "tsc -b && echo 'All builds complete!'",
     "build:client": "bun run --cwd client build",
     "build:api": "bun run --cwd server/api build",
@@ -56,6 +57,7 @@
     "concurrently": "9.2.1",
     "playwright": "1.56.0",
     "typescript": "catalog:",
+    "vite": "7.1.9",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
   },

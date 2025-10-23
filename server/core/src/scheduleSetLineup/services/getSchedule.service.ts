@@ -1,4 +1,4 @@
-import type { Schedule } from "@common/types/schedule.js";
+import type { Schedule } from "@common/types/Schedule.js";
 import { db } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString } from "../../common/services/utilities.service.js";
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";

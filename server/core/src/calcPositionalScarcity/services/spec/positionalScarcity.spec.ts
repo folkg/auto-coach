@@ -1,4 +1,4 @@
-import type { FirestoreTeam } from "@common/types/team";
+import type { FirestoreTeam } from "@common/types/team.js";
 import {
   afterEach,
   beforeAll,
