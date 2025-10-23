@@ -147,7 +147,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: client-build
-          path: client/dist/
+          path: client/dist/auto-gm/browser/
 
   deploy-api-prod:
     name: Deploy API (Production)
@@ -274,13 +274,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: client-build
-          path: client/dist/
+          path: client/dist/auto-gm/browser/
 
       - name: Verify client build
         run: |
-          echo "Checking client/dist structure:"
-          ls -la client/dist/ || echo "client/dist/ not found"
-          test -f client/dist/index.html && echo "✓ index.html found" || echo "✗ index.html NOT found"
+          echo "Checking client build structure:"
+          ls -la client/dist/auto-gm/browser/ || echo "client/dist/auto-gm/browser/ not found"
+          test -f client/dist/auto-gm/browser/index.html && echo "✓ index.html found" || echo "✗ index.html NOT found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
