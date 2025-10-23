@@ -96,14 +96,14 @@ jobs:
         run: bun run deploy functions --env dev --dry-run --skip-build
 
       - name: Upload API build
-        if: needs.detect-changes.outputs.api-changed == 'true'
+        if: needs.detect-changes.outputs.api-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: api-build
           path: server/api/dist
 
       - name: Upload functions build
-        if: needs.detect-changes.outputs.functions-changed == 'true'
+        if: needs.detect-changes.outputs.functions-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: functions-build
@@ -112,7 +112,7 @@ jobs:
             server/core/dist/
 
       - name: Upload client build
-        if: needs.detect-changes.outputs.client-changed == 'true'
+        if: needs.detect-changes.outputs.client-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: client-build
