@@ -198,6 +198,10 @@ jobs:
         env:
           PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
+          YAHOO_CLIENT_ID: ${{ secrets.YAHOO_CLIENT_ID }}
+          YAHOO_CLIENT_SECRET: ${{ secrets.YAHOO_CLIENT_SECRET }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: |
           chmod +x server/api/dist/server
           bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build
