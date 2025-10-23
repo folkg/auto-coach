@@ -173,6 +173,13 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build --skip-infra
 
+      - name: Deploy API to Cloud Run
+        run: |
+          gcloud run services update auto-coach-api-prod \
+            --image us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-api:v0.0.${{ github.run_number }} \
+            --region us-central1 \
+            --project ${{ env.GOOGLE_CLOUD_PROJECT }}
+
   deploy-functions-prod:
     name: Deploy Functions (Production)
     runs-on: ubuntu-latest
