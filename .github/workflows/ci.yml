@@ -83,6 +83,25 @@ jobs:
       - name: Run checks
         run: bun run checks:ci
 
+      - name: Build API binary
+        if: needs.detect-changes.outputs.api-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
+        run: bun run build:api
+
+      - name: Build client production bundle
+        if: needs.detect-changes.outputs.client-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
+        run: bun run build:client
+
+      - name: Verify builds before artifact upload
+        if: always()
+        run: |
+          echo "API build:"
+          ls -la server/api/dist/ || echo "API dist not found"
+          echo "Functions build:"
+          ls -la server/functions/lib/ || echo "functions lib not found"
+          ls -la server/core/dist/ || echo "core dist not found"
+          echo "Client build:"
+          ls -la client/dist/auto-gm/browser/ || echo "client browser dist not found"
+
       - name: Authenticate to Google Cloud
         if: github.event_name == 'pull_request' && needs.detect-changes.outputs.functions-changed == 'true'
         uses: google-github-actions/auth@v2
@@ -189,6 +208,12 @@ jobs:
 
       - name: Verify functions build
         run: |
+          echo "Checking what was downloaded:"
+          ls -la || echo "ls failed"
+          echo "Looking for server directory:"
+          find . -maxdepth 3 -type d -name server || echo "no server dir"
+          echo "All files downloaded:"
+          find . -type f | head -50 || echo "no files found"
           echo "Checking functions build structure:"
           ls -la server/functions/lib/ || echo "server/functions/lib/ not found"
           ls -la server/core/dist/ || echo "server/core/dist/ not found"
