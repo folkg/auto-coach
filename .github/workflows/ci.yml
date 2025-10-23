@@ -32,6 +32,7 @@ jobs:
         uses: dorny/paths-filter@v3
         id: filter
         with:
+          base: ${{ github.event_name == 'push' && 'HEAD~1' || github.base_ref }}
           filters: |
             api:
               - 'server/api/**'
