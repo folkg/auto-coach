@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import type { GamesPlayed, InningsPitched } from "@common/types/team";
+import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
 import type { Player } from "../../classes/Player.js";
 import { HEALTHY_STATUS_LIST } from "../../helpers/constants.js";
 import {

@@ -8,7 +8,7 @@ import type {
 import type {
   TransactionDetails,
   TransactionPlayer,
-} from "@common/types/transactions";
+} from "@common/types/transactions.js";
 import { isDefined } from "@common/utilities/checks.js";
 import { type } from "arktype";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";

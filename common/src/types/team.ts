@@ -1,7 +1,7 @@
 import { type } from "arktype";
-import { Leagues } from "./Leagues";
-import { PlayerSchema } from "./Player";
-import { TransactionDetailsSchema } from "./transactions";
+import { Leagues } from "./Leagues.js";
+import { PlayerSchema } from "./Player.js";
+import { TransactionDetailsSchema } from "./transactions.js";
 
 const CommonTeam = type({
   team_key: "string",

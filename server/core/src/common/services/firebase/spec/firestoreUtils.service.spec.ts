@@ -1,4 +1,4 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
 import { createMock } from "../../../spec/createMock";
 import * as firestoreService from "../firestore.service";

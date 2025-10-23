@@ -1,4 +1,4 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { afterEach, describe, expect, it, test, vi } from "vitest";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
 import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";

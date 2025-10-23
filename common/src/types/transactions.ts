@@ -1,5 +1,5 @@
 import { type } from "arktype";
-import { PlayerSchema } from "./Player";
+import { PlayerSchema } from "./Player.js";
 
 /**
  * TransactionsData and related types

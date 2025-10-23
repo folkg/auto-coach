@@ -1,5 +1,5 @@
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
-import type { LineupChanges } from "@common/types/transactions";
+import type { LineupChanges } from "@common/types/transactions.js";
 import spacetime from "spacetime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";

@@ -1,1 +1,1 @@
-export { schedulecalcpositionalscarcity } from "../core/src/scheduleCalcPositionalScarcity/scheduleCalcPositionalScarcity.js";
+export { schedulecalcpositionalscarcity } from "../core/dist/scheduleCalcPositionalScarcity/scheduleCalcPositionalScarcity.js";
