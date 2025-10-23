@@ -200,7 +200,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
           chmod +x server/api/dist/server
-          bun run deploy api --env prod --version v${{ github.run_number }} --skip-build
+          bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build
 
   deploy-functions-prod:
     name: Deploy Functions (Production)
