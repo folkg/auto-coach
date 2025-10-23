@@ -28,11 +28,16 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Get previous commit SHA
+        id: prev-commit
+        if: github.event_name == 'push'
+        run: echo "sha=$(git rev-parse HEAD^)" >> $GITHUB_OUTPUT
+
       - name: Check changed paths
         uses: dorny/paths-filter@v3
         id: filter
         with:
-          base: ${{ github.event_name == 'push' && 'HEAD~1' || github.base_ref }}
+          base: ${{ github.event_name == 'push' && steps.prev-commit.outputs.sha || github.base_ref }}
           filters: |
             api:
               - 'server/api/**'
@@ -54,6 +59,7 @@ jobs:
               - 'package.json'
               - 'tsconfig.base.json'
               - 'bunfig.toml'
+              - '.github/workflows/**'
 
   test-and-build:
     name: Test & Build
