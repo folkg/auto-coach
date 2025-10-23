@@ -136,6 +136,8 @@ jobs:
 
       - name: Verify API build
         run: |
+          echo "Checking artifact download structure:"
+          find server/api -type f || echo "nothing found in server/api"
           echo "Checking server/api/dist structure:"
           ls -la server/api/dist/ || echo "server/api/dist/ not found"
           test -f server/api/dist/server && echo "✓ server binary found" || echo "✗ server binary NOT found"
@@ -183,6 +185,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: functions-build
+          path: .
 
       - name: Verify functions build
         run: |
@@ -226,6 +229,8 @@ jobs:
 
       - name: Verify client build
         run: |
+          echo "Checking artifact download structure:"
+          find client -type f -o -type d | head -20 || echo "nothing found in client"
           echo "Checking client/dist structure:"
           ls -la client/dist/ || echo "client/dist/ not found"
           ls -la client/dist/auto-gm/ || echo "client/dist/auto-gm/ not found"
