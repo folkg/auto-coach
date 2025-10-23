@@ -57,7 +57,7 @@
     "concurrently": "9.2.1",
     "playwright": "1.56.0",
     "typescript": "catalog:",
-    "vite": "7.1.9",
+    "vite": "7.1.11",
     "vite-tsconfig-paths": "5.1.4",
     "vitest": "3.2.4"
   },
