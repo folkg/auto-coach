@@ -135,12 +135,19 @@ jobs:
           name: core-dist-build
           path: server/core/dist/
 
+      - name: Upload common dist build
+        if: needs.detect-changes.outputs.functions-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: common-dist-build
+          path: common/dist/
+
       - name: Upload client build
         if: needs.detect-changes.outputs.client-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: client-build
-          path: client/dist/
+          path: client/dist/auto-gm/browser/
 
   deploy-api-prod:
     name: Deploy API (Production)
@@ -193,7 +200,7 @@ jobs:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: |
           chmod +x server/api/dist/server
-          bun run deploy api --env prod --version v${{ github.run_number }} --skip-build
+          bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build
 
   deploy-functions-prod:
     name: Deploy Functions (Production)
@@ -216,6 +223,12 @@ jobs:
         with:
           name: core-dist-build
           path: server/core/dist/
+
+      - name: Download common dist build
+        uses: actions/download-artifact@v4
+        with:
+          name: common-dist-build
+          path: common/dist/
 
       - name: Verify functions build
         run: |
@@ -261,13 +274,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: client-build
-          path: client/dist/
+          path: client/dist/auto-gm/browser/
 
       - name: Verify client build
         run: |
-          echo "Checking client/dist structure:"
-          ls -la client/dist/ || echo "client/dist/ not found"
-          test -f client/dist/index.html && echo "✓ index.html found" || echo "✗ index.html NOT found"
+          echo "Checking client build structure:"
+          ls -la client/dist/auto-gm/browser/ || echo "client/dist/auto-gm/browser/ not found"
+          test -f client/dist/auto-gm/browser/index.html && echo "✓ index.html found" || echo "✗ index.html NOT found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
