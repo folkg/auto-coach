@@ -121,14 +121,19 @@ jobs:
           name: api-build
           path: server/api/dist
 
-      - name: Upload functions build
+      - name: Upload functions lib build
         if: needs.detect-changes.outputs.functions-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: functions-build
-          path: |
-            server/functions/lib/
-            server/core/dist/
+          name: functions-lib-build
+          path: server/functions/lib/
+
+      - name: Upload core dist build
+        if: needs.detect-changes.outputs.functions-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: core-dist-build
+          path: server/core/dist/
 
       - name: Upload client build
         if: needs.detect-changes.outputs.client-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
@@ -200,11 +205,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download functions build
+      - name: Download functions lib build
         uses: actions/download-artifact@v4
         with:
-          name: functions-build
-          path: .
+          name: functions-lib-build
+          path: server/functions/lib/
+
+      - name: Download core dist build
+        uses: actions/download-artifact@v4
+        with:
+          name: core-dist-build
+          path: server/core/dist/
 
       - name: Verify functions build
         run: |
@@ -254,12 +265,9 @@ jobs:
 
       - name: Verify client build
         run: |
-          echo "Checking artifact download structure:"
-          find client -type f -o -type d | head -20 || echo "nothing found in client"
           echo "Checking client/dist structure:"
           ls -la client/dist/ || echo "client/dist/ not found"
-          ls -la client/dist/auto-gm/ || echo "client/dist/auto-gm/ not found"
-          ls -la client/dist/auto-gm/browser/ || echo "client/dist/auto-gm/browser/ not found"
+          test -f client/dist/index.html && echo "✓ index.html found" || echo "✗ index.html NOT found"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
