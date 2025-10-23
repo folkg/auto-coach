@@ -83,10 +83,6 @@ jobs:
       - name: Run checks
         run: bun run checks:ci
 
-      - name: Build API binary
-        if: needs.detect-changes.outputs.api-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
-        run: bun run build:api
-
       - name: Build client production bundle
         if: needs.detect-changes.outputs.client-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
         run: bun run build:client
@@ -94,8 +90,6 @@ jobs:
       - name: Verify builds before artifact upload
         if: always()
         run: |
-          echo "API build:"
-          ls -la server/api/dist/ || echo "API dist not found"
           echo "Functions build:"
           ls -la server/functions/lib/ || echo "functions lib not found"
           ls -la server/core/dist/ || echo "core dist not found"
@@ -113,13 +107,6 @@ jobs:
         env:
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
         run: bun run deploy functions --env dev --dry-run --skip-build
-
-      - name: Upload API build
-        if: needs.detect-changes.outputs.api-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-build
-          path: server/api/dist
 
       - name: Upload functions lib build
         if: needs.detect-changes.outputs.functions-changed == 'true' || needs.detect-changes.outputs.general-critical == 'true'
@@ -159,20 +146,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Download API build
-        uses: actions/download-artifact@v4
-        with:
-          name: api-build
-          path: server/api/dist
-
-      - name: Verify API build
-        run: |
-          echo "Checking artifact download structure:"
-          find server/api -type f || echo "nothing found in server/api"
-          echo "Checking server/api/dist structure:"
-          ls -la server/api/dist/ || echo "server/api/dist/ not found"
-          test -f server/api/dist/server && echo "✓ server binary found" || echo "✗ server binary NOT found"
-
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
@@ -194,17 +167,15 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Deploy API
+      - name: Build and push API container
         env:
           PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: |
-          chmod +x server/api/dist/server
-          bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build --skip-infra
+        run: bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build --skip-infra
 
       - name: Deploy API to Cloud Run
         run: |
-          gcloud run deploy auto-coach-api-prod \
+          gcloud run services update auto-coach-api-prod \
             --image us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-api:v0.0.${{ github.run_number }} \
             --region us-central1 \
             --project ${{ env.GOOGLE_CLOUD_PROJECT }}
