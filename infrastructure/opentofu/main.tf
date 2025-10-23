@@ -69,6 +69,70 @@ resource "google_project_service" "firestore_api" {
   disable_on_destroy         = false
 }
 
+resource "google_project_service" "cloud_functions_api" {
+  service = "cloudfunctions.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "cloud_billing_api" {
+  service = "cloudbilling.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "cloud_scheduler_api" {
+  service = "cloudscheduler.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "cloud_tasks_api" {
+  service = "cloudtasks.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "identity_toolkit_api" {
+  service = "identitytoolkit.googleapis.com"
+  project = var.firebase_project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "eventarc_api" {
+  service = "eventarc.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "pubsub_api" {
+  service = "pubsub.googleapis.com"
+  project = var.project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
+resource "google_project_service" "firebase_extensions_api" {
+  service = "firebaseextensions.googleapis.com"
+  project = var.firebase_project_id
+
+  disable_dependent_services = false
+  disable_on_destroy         = false
+}
+
 # Create Artifact Registry repository for container images
 resource "google_artifact_registry_repository" "auto_coach_repo" {
   repository_id = "auto-coach"
@@ -88,6 +152,65 @@ resource "google_service_account" "cloud_run_sa" {
   display_name = "Auto Coach API Service Account (${var.environment})"
   description  = "Service account for Auto Coach API Cloud Run service"
   project      = var.project_id
+}
+
+# GitHub Actions service account for CI/CD
+resource "google_service_account" "github_actions_sa" {
+  count        = var.create_github_actions_sa ? 1 : 0
+  account_id   = "github-actions-${var.environment}"
+  display_name = "GitHub Actions CI/CD Service Account (${var.environment})"
+  description  = "Service account for GitHub Actions CI/CD pipeline"
+  project      = var.project_id
+}
+
+# IAM bindings for GitHub Actions service account
+resource "google_project_iam_member" "github_actions_artifact_registry_writer" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/artifactregistry.writer"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_cloud_functions_developer" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/cloudfunctions.developer"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_cloud_build_editor" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/cloudbuild.builds.editor"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_service_account_user" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_firebase_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.firebase_project_id
+  role    = "roles/firebase.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_cloud_run_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+resource "google_project_iam_member" "github_actions_storage_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
 }
 
 # Secret Manager secrets for sensitive configuration

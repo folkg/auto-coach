@@ -34,3 +34,45 @@ output "api_url" {
   description = "The URL of the deployed Cloud Run service (alias for service_url)"
   value       = google_cloud_run_v2_service.auto_coach_api.uri
 }
+
+output "github_actions_service_account_email" {
+  description = "The email of the GitHub Actions service account for CI/CD"
+  value       = var.create_github_actions_sa ? google_service_account.github_actions_sa[0].email : null
+}
+
+output "github_actions_setup_instructions" {
+  description = "Instructions for setting up GitHub Actions with this service account"
+  value = var.create_github_actions_sa ? join("\n", [
+    "GitHub Actions Service Account Created: ${google_service_account.github_actions_sa[0].email}",
+    "",
+    "To use this service account in GitHub Actions:",
+    "1. Create a service account key:",
+    "   gcloud iam service-accounts keys create github-actions-key.json \\",
+    "     --iam-account=${google_service_account.github_actions_sa[0].email}",
+    "",
+    "2. Add all required secrets to GitHub:",
+    "   - Go to your repo Settings > Secrets and variables > Actions",
+    "   - Create these secrets (paste raw values WITHOUT quotes):",
+    "",
+    "   GOOGLE_CREDENTIALS",
+    "     - Paste entire contents of github-actions-key.json (including braces)",
+    "",
+    "   FIREBASE_PROJECT_ID",
+    "     - Value: ${var.firebase_project_id}",
+    "",
+    "   YAHOO_APP_ID",
+    "     - Value: ${var.yahoo_app_id}",
+    "",
+    "   YAHOO_CLIENT_ID",
+    "     - Value: ${var.yahoo_client_id}",
+    "",
+    "   YAHOO_CLIENT_SECRET",
+    "     - Value: (your Yahoo client secret - do NOT include quotes)",
+    "",
+    "   SENDGRID_API_KEY",
+    "     - Value: (your SendGrid API key - do NOT include quotes)",
+    "",
+    "3. Delete the local key file for security:",
+    "   rm github-actions-key.json"
+  ]) : "GitHub Actions service account creation is disabled"
+}

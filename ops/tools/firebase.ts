@@ -31,9 +31,15 @@ export async function deployHosting(
   }
 
   logStep("Hosting", `Deploying to live site: ${env.hostingSite}...`);
-  const result =
-    await $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`.text();
-  return result;
+  try {
+    const result =
+      await $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`.text();
+    return result;
+  } catch (error) {
+    console.error("Firebase hosting deployment failed:");
+    console.error(error);
+    throw error;
+  }
 }
 
 export async function deployFunctions(
