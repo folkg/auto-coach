@@ -20,6 +20,7 @@ interface DeployArgs {
   channel?: string;
   dryRun: boolean;
   skipBuild: boolean;
+  skipInfra: boolean;
 }
 
 function parseArguments(): DeployArgs {
@@ -31,6 +32,7 @@ function parseArguments(): DeployArgs {
       channel: { type: "string", short: "c" },
       "dry-run": { type: "boolean", default: false },
       "skip-build": { type: "boolean", default: false },
+      "skip-infra": { type: "boolean", default: false },
     },
     allowPositionals: true,
   });
@@ -59,6 +61,7 @@ function parseArguments(): DeployArgs {
     channel: values.channel as string | undefined,
     dryRun: values["dry-run"] as boolean,
     skipBuild: values["skip-build"] as boolean,
+    skipInfra: values["skip-infra"] as boolean,
   };
 }
 
@@ -91,17 +94,29 @@ async function deployAPI(
   await buildContainer();
   await tagContainer(projectId, envConfig.containerRepo, tags);
   await pushContainer(projectId, envConfig.containerRepo, tags);
-  await applyInfrastructure(
-    envConfig,
-    primaryTag,
-    projectId,
-    firebaseProjectId,
-  );
 
-  const apiURL = await getAPIURL();
-  logSuccess("API deployed successfully!");
-  log(`API URL: ${apiURL}`);
-  log(`Container tags: ${tags.join(", ")}`);
+  if (!args.skipInfra) {
+    await applyInfrastructure(
+      envConfig,
+      primaryTag,
+      projectId,
+      firebaseProjectId,
+    );
+    const apiURL = await getAPIURL();
+    logSuccess("API deployed successfully!");
+    log(`API URL: ${apiURL}`);
+    log(`Container tags: ${tags.join(", ")}`);
+  } else {
+    logStep(
+      "API",
+      "Skipping infrastructure apply - container pushed successfully",
+    );
+    logSuccess("Container image ready for deployment");
+    log(`Container tags: ${tags.join(", ")}`);
+    log(
+      "Deploy to Cloud Run with: gcloud run deploy auto-coach-api-${args.env} --image ${envConfig.containerRepo}/auto-coach-api:${primaryTag}",
+    );
+  }
 }
 
 async function deployClient(args: DeployArgs): Promise<void> {
