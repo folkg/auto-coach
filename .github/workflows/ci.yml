@@ -198,13 +198,16 @@ jobs:
         env:
           PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
-          YAHOO_CLIENT_ID: ${{ secrets.YAHOO_CLIENT_ID }}
-          YAHOO_CLIENT_SECRET: ${{ secrets.YAHOO_CLIENT_SECRET }}
-          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: |
           chmod +x server/api/dist/server
-          bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build
+          bun run deploy api --env prod --version v0.0.${{ github.run_number }} --skip-build --skip-infra
+
+      - name: Deploy API to Cloud Run
+        run: |
+          gcloud run deploy auto-coach-api-prod \
+            --image us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-api:v0.0.${{ github.run_number }} \
+            --region us-central1 \
+            --project ${{ env.GOOGLE_CLOUD_PROJECT }}
 
   deploy-functions-prod:
     name: Deploy Functions (Production)

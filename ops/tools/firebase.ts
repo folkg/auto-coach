@@ -33,7 +33,7 @@ export async function deployHosting(
   logStep("Hosting", `Deploying to live site: ${env.hostingSite}...`);
   try {
     const result =
-      await $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`.text();
+      await $`cd ${projectRoot} && GOOGLE_APPLICATION_CREDENTIALS=${process.env.GOOGLE_APPLICATION_CREDENTIALS} bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`.text();
     return result;
   } catch (error) {
     console.error("Firebase hosting deployment failed:");
@@ -55,7 +55,7 @@ export async function deployFunctions(
 
   logStep("Functions", "Deploying Firebase Functions...");
   const projectRoot = resolve(import.meta.dir, "../..");
-  await $`cd ${projectRoot} && bunx firebase-tools deploy --only functions --project ${projectId}`;
+  await $`cd ${projectRoot} && GOOGLE_APPLICATION_CREDENTIALS=${process.env.GOOGLE_APPLICATION_CREDENTIALS} bunx firebase-tools deploy --only functions --project ${projectId}`;
 }
 
 export async function deployFirestore(
