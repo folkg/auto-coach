@@ -111,3 +111,9 @@ variable "yahoo_client_secret" {
     error_message = "Yahoo client secret cannot be empty."
   }
 }
+
+variable "create_github_actions_sa" {
+  description = "Whether to create GitHub Actions service account and IAM bindings"
+  type        = bool
+  default     = true
+}

@@ -579,6 +579,86 @@ tofu state rm google_cloud_run_v2_service.auto_coach_api
 tofu import google_cloud_run_v2_service.auto_coach_api projects/$PROJECT_ID/locations/us-central1/services/auto-coach-api-dev
 ```
 
+## 🤖 GitHub Actions CI/CD Setup
+
+The infrastructure automatically creates a service account for GitHub Actions with all required permissions.
+
+### Step 1: Apply Infrastructure with GitHub Actions SA
+
+```bash
+cd infrastructure/opentofu
+
+tofu apply \
+  -var-file="environments/prod.tfvars" \
+  -var="project_id=$PROJECT_ID" \
+  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
+  -var="create_github_actions_sa=true" \
+  ...
+```
+
+### Step 2: Get Service Account Details
+
+```bash
+# View the setup instructions
+tofu output github_actions_setup_instructions
+
+# Get just the email
+tofu output -raw github_actions_service_account_email
+```
+
+### Step 3: Create Service Account Key
+
+```bash
+# Create a key file (do this locally, not in CI)
+SA_EMAIL=$(tofu output -raw github_actions_service_account_email)
+
+gcloud iam service-accounts keys create github-actions-key.json \
+  --iam-account=$SA_EMAIL \
+  --project=$PROJECT_ID
+```
+
+### Step 4: Add to GitHub Secrets
+
+1. Go to your repo: https://github.com/YOUR_USERNAME/auto-coach
+2. Settings > Secrets and variables > Actions
+3. Click "New repository secret"
+4. Name: `GOOGLE_CREDENTIALS`
+5. Value: Paste the **entire contents** of `github-actions-key.json`
+6. Click "Add secret"
+
+### Step 5: Add Other Required Secrets
+
+Create these additional secrets in GitHub:
+- `FIREBASE_PROJECT_ID`: Your Firebase project ID (e.g., `auto-gm-372620`)
+- `GCP_PROJECT_ID`: Your GCP project ID (same as Firebase project ID)
+
+### Step 6: Clean Up Local Key
+
+```bash
+# IMPORTANT: Delete the local key file for security
+rm github-actions-key.json
+```
+
+### What the Service Account Can Do
+
+The GitHub Actions service account has these permissions:
+- ✅ Push Docker images to Artifact Registry
+- ✅ Deploy Cloud Functions
+- ✅ Deploy to Cloud Run
+- ✅ Deploy Firebase Hosting
+- ✅ Manage Cloud Build jobs
+- ✅ Use service accounts for deployments
+
+### Disabling GitHub Actions SA
+
+If you don't need CI/CD or want to manage permissions manually:
+
+```bash
+tofu apply \
+  -var="create_github_actions_sa=false" \
+  ...
+```
+
 ## 🔒 Security Best Practices
 
 ✅ **Secrets are stored in Google Secret Manager** (never in code)
