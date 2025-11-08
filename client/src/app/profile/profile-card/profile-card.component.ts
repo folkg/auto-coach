@@ -131,6 +131,11 @@ export class ProfileCardComponent implements OnInit, OnDestroy {
       await this.auth.updateUserEmail(emailAddress);
       this.isEditing.set(false);
       this.profileForm.markAsPristine();
+      this.isDirty.emit(false);
+      this.errorDialog(
+        `A verification email has been sent to ${emailAddress}. Please check your inbox and click the verification link to complete the email change.`,
+        "Email Update Sent",
+      );
     } catch (err) {
       this.errorDialog(getErrorMessage(err), "Error updating email");
     }
