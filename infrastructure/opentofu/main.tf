@@ -386,7 +386,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           }
         }
         initial_delay_seconds = 1
-        timeout_seconds       = 3
+        timeout_seconds       = 1
         period_seconds        = 2
         failure_threshold     = 3
       }
