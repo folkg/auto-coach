@@ -4,6 +4,7 @@ import { getAuth, getIdToken } from "firebase/auth";
 import { hc } from "hono/client";
 
 const getApiBaseUrl = (): string => {
+  // biome-ignore lint/complexity/useLiteralKeys: Angular TypeScript compiler requires bracket notation for env vars
   const envUrl = import.meta.env["NG_APP_API_BASE_URL"];
   // If env URL is explicitly set to empty string, use same origin (production)
   if (envUrl === "") {
