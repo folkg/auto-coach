@@ -114,7 +114,7 @@ async function deployAPI(
     logSuccess("Container image ready for deployment");
     log(`Container tags: ${tags.join(", ")}`);
     log(
-      "Deploy to Cloud Run with: gcloud run deploy auto-coach-api-${args.env} --image ${envConfig.containerRepo}/auto-coach-api:${primaryTag}",
+      `Deploy to Cloud Run with: gcloud run deploy auto-coach-api-${args.env} --image ${envConfig.containerRepo}/auto-coach-api:${primaryTag}`,
     );
   }
 }

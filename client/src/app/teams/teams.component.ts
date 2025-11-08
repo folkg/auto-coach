@@ -87,14 +87,17 @@ export class TeamsComponent implements OnInit {
     const teamKey = $event.team.team_key;
     const changeTo = $event.isSettingLineups;
 
+    // Optimistic update first for immediate UI response
+    this.syncTeamsService.optimisticallyUpdateTeam(
+      teamKey,
+      "is_setting_lineups",
+      changeTo,
+    );
+
     try {
       await this.api.setLineupsBoolean(teamKey, changeTo);
-      this.syncTeamsService.optimisticallyUpdateTeam(
-        teamKey,
-        "is_setting_lineups",
-        changeTo,
-      );
     } catch (_ignore) {
+      // Revert optimistic update on error
       this.syncTeamsService.optimisticallyUpdateTeam(
         teamKey,
         "is_setting_lineups",
@@ -103,8 +106,6 @@ export class TeamsComponent implements OnInit {
       await this.errorDialog(
         "Could not update team's status on the server. Please check your internet connection and try again later.",
       );
-    } finally {
-      this.syncTeamsService.refreshTeams();
     }
   }
 
@@ -115,14 +116,17 @@ export class TeamsComponent implements OnInit {
     const isPaused =
       initialPauseState !== undefined && initialPauseState !== -1;
 
+    // Optimistic update first for immediate UI response
+    this.syncTeamsService.optimisticallyUpdateTeam(
+      teamKey,
+      "lineup_paused_at",
+      isPaused ? -1 : Date.now(),
+    );
+
     try {
-      this.syncTeamsService.optimisticallyUpdateTeam(
-        teamKey,
-        "lineup_paused_at",
-        isPaused ? -1 : Date.now(),
-      );
       await this.api.setPauseLineupActions(teamKey, !isPaused);
     } catch (_ignore) {
+      // Revert optimistic update on error
       this.syncTeamsService.optimisticallyUpdateTeam(
         teamKey,
         "lineup_paused_at",
@@ -131,8 +135,6 @@ export class TeamsComponent implements OnInit {
       await this.errorDialog(
         "Could not update team's status on the server. Please check your internet connection and try again later.",
       );
-    } finally {
-      this.syncTeamsService.refreshTeams();
     }
   }
 
