@@ -89,17 +89,23 @@ export class AuthService {
   async updateUserEmail(email: string): Promise<void> {
     try {
       assertDefined(this.auth.currentUser);
+      await this.reauthenticateYahoo();
       await verifyBeforeUpdateEmail(this.auth.currentUser, email);
     } catch (err) {
       if (err instanceof Error) {
-        if (err.message === "Firebase: Error (auth/requires-recent-login).") {
-          try {
-            await this.reauthenticateYahoo();
-            await this.updateUserEmail(email);
-            return;
-          } catch (err) {
-            throw new Error(`Couldn't reauthenticate: ${getErrorMessage(err)}`);
-          }
+        if (err.message.includes("auth/email-already-in-use")) {
+          throw new Error(
+            "This email address is already in use by another account.",
+          );
+        }
+        if (err.message.includes("auth/invalid-email")) {
+          throw new Error("The email address is not valid.");
+        }
+        if (
+          err.message.includes("auth/cancelled-popup-request") ||
+          err.message.includes("auth/popup-closed-by-user")
+        ) {
+          throw new Error("Authentication was cancelled. Please try again.");
         }
       }
       throw new Error(`Couldn't update email: ${getErrorMessage(err)}`);
