@@ -17,7 +17,7 @@ import {
 
 const TeamStandingsSchema = type({
   team_standings: {
-    rank: "string | number",
+    rank: "string | number | null",
     "points_for?": "string | number",
     "points_against?": "string | number",
     "points_change?": "string | number",

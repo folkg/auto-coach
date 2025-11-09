@@ -14,6 +14,7 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
+import { delay } from "../../../../common/src/utilities/delay";
 import { getErrorMessage } from "../../../../common/src/utilities/error";
 import { AUTH } from "../shared/firebase-tokens";
 
@@ -56,13 +57,62 @@ export class AuthService {
   async loginYahoo(): Promise<void> {
     this.loading$.next(true);
     try {
-      const provider = new OAuthProvider("yahoo.com");
-      await signInWithPopup(this.auth, provider);
+      await this.attemptYahooLoginWithRetry();
       await this.router.navigate(["/teams"]);
     } catch (err) {
+      if (err instanceof Error) {
+        if (
+          err.message.includes("auth/cancelled-popup-request") ||
+          err.message.includes("auth/popup-closed-by-user")
+        ) {
+          // Wait a moment for auth state to settle and check if user actually authenticated
+          // Sometimes this can be buggy
+          await delay(1000);
+          const user = this.auth.currentUser;
+          if (user) {
+            await this.router.navigate(["/teams"]);
+            return;
+          }
+          throw new Error("Authentication was cancelled. Please try again.");
+        }
+      }
       throw new Error(`Couldn't sign in with Yahoo: ${getErrorMessage(err)}`);
     } finally {
       this.loading$.next(false);
+    }
+  }
+
+  private async attemptYahooLoginWithRetry(maxRetries = 2): Promise<void> {
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+      try {
+        const provider = new OAuthProvider("yahoo.com");
+        await signInWithPopup(this.auth, provider);
+        return;
+      } catch (err) {
+        if (err instanceof Error) {
+          // Check if user actually authenticated despite the error
+          // Sometimes this can be buggy
+          const user = this.auth.currentUser;
+          if (user) {
+            return; // Success despite error
+          }
+
+          // Retryable errors
+          if (
+            err.message.includes("auth/popup-blocked") ||
+            err.message.includes("auth/cancelled-popup-request") ||
+            err.message.includes("auth/popup-closed-by-user")
+          ) {
+            if (attempt === maxRetries) {
+              throw err;
+            }
+            await delay(2 ** attempt * 1000);
+            continue;
+          }
+        }
+
+        throw err;
+      }
     }
   }
 
