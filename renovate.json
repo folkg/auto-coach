@@ -2,17 +2,18 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:js-app", ":automergeMinor"],
   "timezone": "America/Edmonton",
-  "schedule": ["before 7am every friday"],
-  "automergeSchedule": ["before 7am every friday"],
+  "description": "before 7am on the first day of the month",
+  "schedule": ["0 0-7 1 * *"],
   "lockFileMaintenance": {
     "enabled": true,
-    "schedule": ["before 7am every friday"]
+    "description": "before 7am on the first day of the month",
+    "schedule": ["0 0-7 1 * *"]
   },
   "packageRules": [
     {
       "matchPackagePatterns": ["*"],
-      "schedule": ["before 7am every friday"],
-      "automergeSchedule": ["before 7am every friday"]
+      "description": "before 7am on the first day of the month",
+      "schedule": ["0 0-7 1 * *"]
     }
   ],
   "rangeStrategy": "pin"
