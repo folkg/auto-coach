@@ -57,7 +57,7 @@ export const InfoTeam = YahooTeam.and(
     game_is_over: "boolean",
     team_url: "string",
     team_logo: "string",
-    rank: "string|number",
+    rank: "string|number|null",
     "points_for?": "string|number",
     "points_against?": "string|number",
     "points_back?": "string|number",

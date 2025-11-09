@@ -28,7 +28,7 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <div class="card-content-section">
-      <b>{{ team.rank | nth }} of {{ team.num_teams }}</b>
+      <b>{{ team.rank ?? '--' | nth }} of {{ team.num_teams }}</b>
       @if (team.outcome_totals) {
         <br />
         {{ team.outcome_totals.wins }}-{{ team.outcome_totals.losses }}-{{
