@@ -29,9 +29,22 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.auth
-      .loginYahoo()
-      .catch((err) => this.errorDialog(getErrorMessage(err)));
+    this.auth.loginYahoo().catch((err) => {
+      const errorMessage = getErrorMessage(err);
+      if (errorMessage.includes("Authentication was cancelled")) {
+        this.errorDialog(
+          "The sign-in popup was closed before authentication could complete. Please try again and keep the popup open until you're redirected back.",
+          "Sign In Interrupted",
+        );
+      } else if (errorMessage.includes("popup-blocked")) {
+        this.errorDialog(
+          "The sign-in popup was blocked by your browser. Please allow popups for this site and try again.",
+          "Popup Blocked",
+        );
+      } else {
+        this.errorDialog(errorMessage);
+      }
+    });
   }
 
   logout() {
