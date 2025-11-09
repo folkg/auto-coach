@@ -4,9 +4,13 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
+    globals: true,
+    reporters: ["verbose"],
+    testTimeout: 10000,
     projects: [
       {
-        plugins: [angular(), tsconfigPaths()],
+        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
+        plugins: [angular() as any, tsconfigPaths() as any],
         test: {
           name: "client",
           root: "./client",
@@ -36,23 +40,37 @@ export default defineConfig({
         },
       },
       {
-        plugins: [tsconfigPaths()],
+        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
+        plugins: [tsconfigPaths() as any],
         test: {
           name: "server-core",
           root: "./server/core",
-          setupFiles: ["dotenv/config"],
           include: ["src/**/*.{test,spec}.ts"],
           exclude: ["node_modules/**", "dist/**", "lib/**"],
+          environment: "node",
         },
       },
       {
-        plugins: [tsconfigPaths()],
+        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
+        plugins: [tsconfigPaths() as any],
         test: {
           name: "server-functions",
           root: "./server/functions",
-          setupFiles: ["dotenv/config"],
           include: ["src/**/*.{test,spec}.ts"],
           exclude: ["node_modules/**", "dist/**", "lib/**"],
+          environment: "node",
+        },
+      },
+      {
+        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
+        plugins: [tsconfigPaths() as any],
+        test: {
+          name: "mutation-api",
+          root: "./server/mutation-api",
+          include: ["src/**/*.test.ts"],
+          exclude: ["node_modules/**", "dist/**"],
+          environment: "node",
+          setupFiles: ["src/test-setup.ts"],
         },
       },
     ],

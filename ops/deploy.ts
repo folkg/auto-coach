@@ -10,11 +10,18 @@ import {
 import { loadEnvironment } from "./tools/environment";
 import { buildClient, deployFunctions, deployHosting } from "./tools/firebase";
 import { log, logError, logStep, logSuccess, logWarning } from "./tools/log";
+import { deployMutationAPI } from "./tools/mutation-api";
 import { applyInfrastructure, getAPIURL } from "./tools/tofu";
 import { determineContainerTags, getPrimaryTag } from "./tools/versioning";
 
 interface DeployArgs {
-  component: "api" | "client" | "functions" | "firestore" | "full";
+  component:
+    | "api"
+    | "client"
+    | "functions"
+    | "firestore"
+    | "mutation-api"
+    | "full";
   env: "dev" | "prod";
   version?: string;
   channel?: string;
@@ -41,11 +48,18 @@ function parseArguments(): DeployArgs {
   if (
     !(
       component &&
-      ["api", "client", "functions", "firestore", "full"].includes(component)
+      [
+        "api",
+        "client",
+        "functions",
+        "firestore",
+        "mutation-api",
+        "full",
+      ].includes(component)
     )
   ) {
     throw new Error(
-      "Component required: api, client, functions, firestore, or full",
+      "Component required: api, client, functions, firestore, mutation-api, or full",
     );
   }
 
@@ -271,6 +285,14 @@ async function main(): Promise<void> {
         break;
       case "firestore":
         await deployClient(args);
+        break;
+      case "mutation-api":
+        if (!projectId) {
+          throw new Error(
+            "GCP_PROJECT_ID or PROJECT_ID environment variable required for Mutation API deployment",
+          );
+        }
+        await deployMutationAPI(args, projectId, firebaseProjectId);
         break;
       case "full":
         if (!projectId) {

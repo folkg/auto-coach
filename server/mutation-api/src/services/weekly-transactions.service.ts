@@ -1,0 +1,128 @@
+import type { FirestoreTeam } from "@common/types/team.js";
+import { Data, Effect } from "effect";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
+import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
+import {
+  enqueueUsersTeams,
+  mapUsersToActiveTeams,
+} from "./scheduling.service.js";
+import { processTomorrowsTransactions } from "./set-lineup.service.js";
+
+export class WeeklyTransactionsError extends Data.TaggedError(
+  "WeeklyTransactionsError",
+)<{
+  readonly message: string;
+  readonly uid?: string;
+}> {}
+
+function toErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+
+/**
+ * Schedules weekly league transactions for all users with teams that have
+ * a weekly deadline matching tomorrow.
+ *
+ * This fetches teams from Firestore, groups them by user, and enqueues
+ * Cloud Tasks for processing each user's teams.
+ */
+export function scheduleWeeklyLeagueTransactions(): Effect.Effect<
+  void,
+  WeeklyTransactionsError
+> {
+  return Effect.gen(function* () {
+    // Step 1: Fetch teams with tomorrow's weekly deadline
+    const teamsSnapshot: QuerySnapshot<DocumentData> = yield* Effect.tryPromise(
+      {
+        try: () => getTomorrowsActiveWeeklyTeams(),
+        catch: (error: unknown) =>
+          new WeeklyTransactionsError({
+            message: `Failed to fetch weekly teams from Firestore: ${toErrorMessage(error)}`,
+          }),
+      },
+    );
+
+    // Step 2: Map users to their active teams
+    const activeUsers = mapUsersToActiveTeams(teamsSnapshot);
+
+    if (activeUsers.size === 0) {
+      console.log("No users to process weekly transactions for");
+      return;
+    }
+
+    // Step 3: Enqueue tasks for each user
+    const queueName = "weekly-transactions-queue";
+    yield* enqueueUsersTeams(activeUsers, queueName).pipe(
+      Effect.mapError(
+        (error) =>
+          new WeeklyTransactionsError({
+            message: `Failed to enqueue weekly transactions: ${error.message}`,
+          }),
+      ),
+    );
+
+    console.log(
+      `Successfully enqueued weekly transaction tasks for ${activeUsers.size} users`,
+    );
+  });
+}
+
+/**
+ * Performs weekly league transactions for a specific user's teams.
+ *
+ * This fetches top available players and processes tomorrow's transactions
+ * for all provided teams.
+ */
+export function performWeeklyLeagueTransactions(
+  uid: string,
+  firestoreTeams: readonly FirestoreTeam[],
+): Effect.Effect<void, WeeklyTransactionsError> {
+  return Effect.gen(function* () {
+    if (!uid) {
+      return yield* Effect.fail(
+        new WeeklyTransactionsError({ message: "No uid provided" }),
+      );
+    }
+
+    if (!firestoreTeams) {
+      return yield* Effect.fail(
+        new WeeklyTransactionsError({ message: "No teams provided", uid }),
+      );
+    }
+
+    if (firestoreTeams.length === 0) {
+      console.log(`No weekly teams for user ${uid}`);
+      return;
+    }
+
+    // Step 1: Fetch top available players for all teams
+    const topAvailablePlayerCandidates = yield* Effect.tryPromise({
+      try: () => getTopAvailablePlayers([...firestoreTeams], uid),
+      catch: (error: unknown) =>
+        new WeeklyTransactionsError({
+          message: `Failed to get top available players: ${toErrorMessage(error)}`,
+          uid,
+        }),
+    });
+
+    // Step 2: Process tomorrow's transactions
+    yield* processTomorrowsTransactions(
+      firestoreTeams,
+      firestoreTeams,
+      uid,
+      topAvailablePlayerCandidates,
+    ).pipe(
+      Effect.mapError(
+        (error) =>
+          new WeeklyTransactionsError({
+            message: `Failed to process tomorrow's transactions: ${error.message}`,
+            uid,
+          }),
+      ),
+    );
+  });
+}
