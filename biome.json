@@ -68,7 +68,8 @@
       "suspicious": {
         "noSkippedTests": "error",
         "useAwait": "error",
-        "noEmptyBlockStatements": "error"
+        "noEmptyBlockStatements": "error",
+        "noExplicitAny": "error"
       },
       "nursery": {
         "noFloatingPromises": "error"

@@ -1,0 +1,323 @@
+import type { FirestoreTeam } from "@common/types/team.js";
+import type { Firestore } from "@google-cloud/firestore";
+import { Effect, Schema } from "effect";
+import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
+import {
+  RateLimitError as ApiRateLimitError,
+  DomainError,
+  type ExecuteMutationRequest,
+  type ExecuteMutationResponse,
+  type MutationError,
+  SystemError,
+  type TaskStatusUpdate,
+} from "../types/api-schemas.js";
+import type { MutationTask } from "../types/schemas.js";
+import { recalculateScarcityOffsetsForAll } from "./positional-scarcity.service.js";
+import type { RateLimiterService } from "./rate-limiter.service.js";
+import { setUsersLineup } from "./set-lineup.service.js";
+import { performWeeklyLeagueTransactions } from "./weekly-transactions.service.js";
+
+export interface ExecutionService {
+  executeMutation(
+    request: ExecuteMutationRequest,
+  ): Effect.Effect<ExecuteMutationResponse, MutationError>;
+  updateTaskStatus(update: TaskStatusUpdate): Effect.Effect<void, never>;
+}
+
+const SetLineupPayloadSchema = Schema.Struct({
+  uid: Schema.String,
+  teams: Schema.Array(Schema.Unknown),
+});
+
+const WeeklyTransactionsPayloadSchema = Schema.Struct({
+  uid: Schema.String,
+  teams: Schema.Array(Schema.Unknown),
+});
+
+export class ExecutionServiceImpl implements ExecutionService {
+  constructor(
+    private readonly firestore: Firestore,
+    private readonly rateLimiter: RateLimiterService,
+  ) {}
+
+  executeMutation(
+    request: ExecuteMutationRequest,
+  ): Effect.Effect<ExecuteMutationResponse, MutationError> {
+    const { task } = request;
+    const self = this;
+
+    return Effect.gen(function* () {
+      // Update task status to PROCESSING
+      yield* self.updateTaskStatus({
+        taskId: task.id,
+        status: "PROCESSING",
+        message: "Starting mutation execution",
+      });
+
+      // Check rate limits
+      yield* self.rateLimiter.checkRateLimit(task.userId).pipe(
+        Effect.mapError(
+          (error) =>
+            new ApiRateLimitError({
+              message: error.message,
+              code: "RATE_LIMIT_EXCEEDED",
+              retryAfter: error.retryAfter,
+            }),
+        ),
+      );
+
+      // Check circuit breaker
+      yield* self.rateLimiter.checkCircuitBreaker().pipe(
+        Effect.mapError(
+          (error) =>
+            new ApiRateLimitError({
+              message: error.message,
+              code: "CIRCUIT_BREAKER_OPEN",
+              retryAfter: 60,
+            }),
+        ),
+      );
+
+      // Consume a token
+      yield* self.rateLimiter.consumeToken(task.userId).pipe(
+        Effect.mapError(
+          (error) =>
+            new ApiRateLimitError({
+              message: error.message,
+              code: "TOKEN_CONSUMPTION_FAILED",
+            }),
+        ),
+      );
+
+      // Execute mutation based on type, handling special cases
+      const taskResult = yield* self.executeTask(task).pipe(
+        Effect.matchEffect({
+          onFailure: (error) => self.handleTaskError(task, error),
+          onSuccess: () => self.handleTaskSuccess(task),
+        }),
+      );
+
+      return taskResult;
+    });
+  }
+
+  private handleTaskError(
+    task: MutationTask,
+    error: MutationError,
+  ): Effect.Effect<ExecuteMutationResponse, MutationError> {
+    const self = this;
+
+    return Effect.gen(function* () {
+      // Handle RevokedRefreshTokenError specially - log but don't fail
+      if (
+        error._tag === "DomainError" &&
+        error.code === "REVOKED_REFRESH_TOKEN"
+      ) {
+        yield* self.updateTaskStatus({
+          taskId: task.id,
+          status: "COMPLETED",
+          message: "Task completed (user token revoked, logged)",
+        });
+        yield* self.rateLimiter.recordSuccess();
+        return {
+          success: true,
+          taskId: task.id,
+          status: "COMPLETED",
+          message: "Task completed (user token revoked, logged)",
+          processedAt: new Date().toISOString(),
+        };
+      }
+
+      // Handle different error types
+      if (error._tag === "DomainError") {
+        yield* self.updateTaskStatus({
+          taskId: task.id,
+          status: "FAILED",
+          message: error.message,
+          error: error.code,
+        });
+        return yield* Effect.fail(error);
+      }
+
+      if (error._tag === "RateLimitError") {
+        yield* self.rateLimiter.recordFailure(error);
+        yield* self.updateTaskStatus({
+          taskId: task.id,
+          status: "FAILED",
+          message: error.message,
+          error: "RATE_LIMIT",
+        });
+        return yield* Effect.fail(error);
+      }
+
+      // System errors are retryable
+      yield* self.updateTaskStatus({
+        taskId: task.id,
+        status: "FAILED",
+        message: error.message,
+        error: error.code,
+      });
+      return yield* Effect.fail(error);
+    });
+  }
+
+  private handleTaskSuccess(
+    task: MutationTask,
+  ): Effect.Effect<ExecuteMutationResponse, never> {
+    const self = this;
+
+    return Effect.gen(function* () {
+      yield* self.rateLimiter.recordSuccess();
+      yield* self.updateTaskStatus({
+        taskId: task.id,
+        status: "COMPLETED",
+        message: "Mutation completed successfully",
+      });
+
+      return {
+        success: true,
+        taskId: task.id,
+        status: "COMPLETED",
+        message: "Mutation completed successfully",
+        processedAt: new Date().toISOString(),
+      };
+    });
+  }
+
+  private executeTask(task: MutationTask): Effect.Effect<void, MutationError> {
+    switch (task.type) {
+      case "SET_LINEUP":
+        return this.executeSetLineup(task);
+      case "WEEKLY_TRANSACTIONS":
+        return this.executeWeeklyTransactions(task);
+      case "CALC_POSITIONAL_SCARCITY":
+        return this.executeCalcPositionalScarcity();
+    }
+  }
+
+  private executeSetLineup(
+    task: MutationTask,
+  ): Effect.Effect<void, MutationError> {
+    return Effect.gen(function* () {
+      // Decode and validate payload
+      const { uid, teams } = yield* Schema.decodeUnknown(
+        SetLineupPayloadSchema,
+      )(task.payload).pipe(
+        Effect.mapError(
+          (parseError) =>
+            new DomainError({
+              message: `Invalid payload: ${parseError.message}`,
+              code: "INVALID_PAYLOAD",
+              userId: task.userId,
+            }),
+        ),
+      );
+
+      // Call the set-lineup service
+      yield* setUsersLineup(uid, teams as readonly FirestoreTeam[]).pipe(
+        Effect.catchAll((error): Effect.Effect<void, MutationError> => {
+          // Check for RevokedRefreshTokenError
+          if (error instanceof RevokedRefreshTokenError) {
+            return Effect.fail(
+              new DomainError({
+                message: error.message,
+                code: "REVOKED_REFRESH_TOKEN",
+                userId: uid,
+              }),
+            );
+          }
+
+          const errorMessage =
+            error instanceof Error ? error.message : String(error);
+
+          if (errorMessage.includes("RevokedRefreshTokenError")) {
+            return Effect.fail(
+              new DomainError({
+                message: errorMessage,
+                code: "REVOKED_REFRESH_TOKEN",
+                userId: uid,
+              }),
+            );
+          }
+
+          return Effect.fail(
+            new SystemError({
+              message: `Set lineup failed: ${errorMessage}`,
+              code: "SET_LINEUP_FAILED",
+              retryable: true,
+            }),
+          );
+        }),
+      );
+    });
+  }
+
+  private executeWeeklyTransactions(
+    task: MutationTask,
+  ): Effect.Effect<void, MutationError> {
+    return Effect.gen(function* () {
+      // Decode and validate payload
+      const { uid, teams } = yield* Schema.decodeUnknown(
+        WeeklyTransactionsPayloadSchema,
+      )(task.payload).pipe(
+        Effect.mapError(
+          (parseError) =>
+            new DomainError({
+              message: `Invalid payload: ${parseError.message}`,
+              code: "INVALID_PAYLOAD",
+              userId: task.userId,
+            }),
+        ),
+      );
+
+      // Call the weekly-transactions service
+      yield* performWeeklyLeagueTransactions(
+        uid,
+        teams as readonly FirestoreTeam[],
+      ).pipe(
+        Effect.mapError(
+          (error) =>
+            new SystemError({
+              message: `Weekly transactions failed: ${error.message}`,
+              code: "WEEKLY_TRANSACTIONS_FAILED",
+              retryable: true,
+            }),
+        ),
+      );
+    });
+  }
+
+  private executeCalcPositionalScarcity(): Effect.Effect<void, MutationError> {
+    return recalculateScarcityOffsetsForAll().pipe(
+      Effect.mapError(
+        (error) =>
+          new SystemError({
+            message: error.message,
+            code: "CALC_POSITIONAL_SCARCITY_FAILED",
+            retryable: true,
+          }),
+      ),
+    );
+  }
+
+  updateTaskStatus(update: TaskStatusUpdate): Effect.Effect<void, never> {
+    return Effect.ignore(
+      Effect.tryPromise({
+        try: async () => {
+          const docRef = this.firestore
+            .collection("mutationTasks")
+            .doc(update.taskId);
+          await docRef.update({
+            status: update.status,
+            message: update.message,
+            error: update.error,
+            updatedAt: new Date(),
+          });
+        },
+        catch: () => {
+          // Ignore errors in status updates
+        },
+      }),
+    );
+  }
+}

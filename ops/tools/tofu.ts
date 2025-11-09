@@ -48,3 +48,10 @@ export async function getAPIURL(): Promise<string> {
     await $`cd ${projectRoot}/infrastructure/opentofu && tofu output -raw api_url`.text();
   return result.trim();
 }
+
+export async function getMutationAPIURL(): Promise<string> {
+  const projectRoot = resolve(import.meta.dir, "../..");
+  const result =
+    await $`cd ${projectRoot}/infrastructure/opentofu && tofu output -raw mutation_api_url`.text();
+  return result.trim();
+}

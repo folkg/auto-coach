@@ -21,6 +21,7 @@ jobs:
       client-changed: ${{ steps.filter.outputs.client }}
       functions-changed: ${{ steps.filter.outputs.functions }}
       firestore-changed: ${{ steps.filter.outputs.firestore }}
+      mutation-api-changed: ${{ steps.filter.outputs.mutation-api }}
       general-critical: ${{ steps.filter.outputs.general-critical }}
     steps:
       - name: Checkout
@@ -53,6 +54,11 @@ jobs:
             firestore:
               - 'firestore.rules'
               - 'firestore.indexes.json'
+            mutation-api:
+              - 'server/mutation-api/**'
+              - 'common/**'
+              - 'infrastructure/opentofu/**'
+              - 'ops/**'
             general-critical:
               - 'infrastructure/**'
               - 'ops/**'

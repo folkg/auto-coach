@@ -2,6 +2,7 @@ name: prod
 firebaseProject: auto-gm-372620
 hostingSite: auto-gm-372620
 cloudRunService: auto-coach-api-prod
+mutationApiService: mutation-api-prod
 region: us-central1
 containerRepo: us-central1-docker.pkg.dev
 allowedOrigins:

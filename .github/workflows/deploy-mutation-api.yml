@@ -1,0 +1,247 @@
+name: Deploy Mutation API
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'server/mutation-api/**'
+      - 'common/**'
+      - 'infrastructure/opentofu/**'
+      - 'ops/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'server/mutation-api/**'
+      - 'common/**'
+      - 'infrastructure/opentofu/**'
+      - 'ops/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - prod
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect Changes
+    runs-on: ubuntu-latest
+    outputs:
+      mutation-api-changed: ${{ steps.filter.outputs.mutation-api }}
+      infrastructure-changed: ${{ steps.filter.outputs.infrastructure }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous commit SHA
+        id: prev-commit
+        if: github.event_name == 'push'
+        run: echo "sha=$(git rev-parse HEAD^)" >> $GITHUB_OUTPUT
+
+      - name: Check changed paths
+        uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          base: ${{ github.event_name == 'push' && steps.prev-commit.outputs.sha || github.base_ref }}
+          filters: |
+            mutation-api:
+              - 'server/mutation-api/**'
+              - 'common/**'
+            infrastructure:
+              - 'infrastructure/opentofu/**'
+              - 'ops/**'
+
+  test-and-build:
+    name: Test & Build Mutation API
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.mutation-api-changed == 'true' || github.event_name == 'workflow_dispatch'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run linting
+        working-directory: server/mutation-api
+        run: bun run lint
+
+      - name: Run tests
+        working-directory: server/mutation-api
+        run: bun run test
+
+      - name: Build Mutation API
+        working-directory: server/mutation-api
+        run: bun run build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-api-build
+          path: server/mutation-api/dist/
+
+  build-and-push-container:
+    name: Build & Push Container
+    runs-on: ubuntu-latest
+    needs: [detect-changes, test-and-build]
+    if: needs.detect-changes.outputs.mutation-api-changed == 'true' || github.event_name == 'workflow_dispatch'
+    environment: ${{ github.event.inputs.environment || 'dev' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker to use gcloud as credential helper
+        run: gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build Mutation API
+        working-directory: server/mutation-api
+        run: bun run build
+
+      - name: Build Docker image
+        working-directory: server/mutation-api
+        run: |
+          export VERSION=v0.0.${{ github.run_number }}
+          export PROJECT_ID=${{ env.GOOGLE_CLOUD_PROJECT }}
+          bun run container:build
+          docker tag auto-coach-mutation-api us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-mutation-api:v0.0.${{ github.run_number }}
+          docker tag auto-coach-mutation-api us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-mutation-api:latest
+
+      - name: Push Docker image
+        run: |
+          docker push us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-mutation-api:v0.0.${{ github.run_number }}
+          docker push us-central1-docker.pkg.dev/${{ env.GOOGLE_CLOUD_PROJECT }}/auto-coach/auto-coach-mutation-api:latest
+
+  deploy-infrastructure:
+    name: Deploy Infrastructure
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-and-push-container]
+    if: (needs.detect-changes.outputs.infrastructure-changed == 'true' || needs.detect-changes.outputs.mutation-api-changed == 'true') && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Setup OpenTofu
+        uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: 1.6.0
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Deploy Mutation API Infrastructure
+        env:
+          PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          cd infrastructure/opentofu
+          tofu init
+          tofu workspace select prod || tofu workspace new prod
+          tofu apply -var="container_image_tag=v0.0.${{ github.run_number }}" -auto-approve
+
+  deploy-dev:
+    name: Deploy to Dev
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-and-push-container]
+    if: (needs.detect-changes.outputs.mutation-api-changed == 'true' || github.event_name == 'workflow_dispatch') && (github.event_name == 'push' || github.event.inputs.environment == 'dev')
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Mutation API to Dev
+        env:
+          PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          bun run deploy mutation-api --env dev --version v0.0.${{ github.run_number }}
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [detect-changes, build-and-push-container, deploy-infrastructure]
+    if: needs.detect-changes.outputs.mutation-api-changed == 'true' && github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Mutation API to Production
+        env:
+          PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+        run: |
+          bun run deploy mutation-api --env prod --version v0.0.${{ github.run_number }}

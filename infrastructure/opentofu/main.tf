@@ -433,3 +433,11 @@ resource "google_cloud_run_v2_service_iam_member" "access_policy" {
   role     = "roles/run.invoker"
   member   = local.allow_unauthenticated ? "allUsers" : "allAuthenticatedUsers"
 }
+
+# Additional IAM bindings for GitHub Actions service account for Mutation API
+resource "google_project_iam_member" "github_actions_mutation_api_cloud_run_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
