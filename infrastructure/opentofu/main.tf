@@ -11,7 +11,7 @@ terraform {
 # Local values for environment-specific settings
 locals {
   max_instances         = var.environment == "prod" ? 100 : 10
-  allow_unauthenticated = var.environment == "dev"
+  allow_unauthenticated = var.environment == "dev" || var.environment == "prod"
 
   common_labels = {
     environment = var.environment
@@ -385,9 +385,9 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 1
-        timeout_seconds       = 1
-        period_seconds        = 2
+        initial_delay_seconds = 10
+        timeout_seconds       = 5
+        period_seconds        = 10
         failure_threshold     = 3
       }
 
