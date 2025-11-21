@@ -56,7 +56,7 @@
         "@testing-library/angular": "18.1.1",
         "@testing-library/jest-dom": "6.9.1",
         "@testing-library/user-event": "14.6.1",
-        "@types/jasmine": "5.1.12",
+        "@types/jasmine": "5.1.13",
         "@vitest/browser": "3.2.4",
         "jasmine-core": "5.12.0",
         "playwright": "1.56.0",
@@ -1091,7 +1091,7 @@
 
     "@types/istanbul-reports": ["@types/istanbul-reports@3.0.4", "", { "dependencies": { "@types/istanbul-lib-report": "*" } }, "sha512-pk2B1NWalF9toCRu6gjBzR69syFjP4Od8WRAX+0mmf9lAjCRicLOWc+ZrxZHx/0XRjotgkF9t6iaMJ+aXcOdZQ=="],
 
-    "@types/jasmine": ["@types/jasmine@5.1.12", "", {}, "sha512-1BzPxNsFDLDfj9InVR3IeY0ZVf4o9XV+4mDqoCfyPkbsA7dYyKAPAb2co6wLFlHcvxPlt1wShm7zQdV7uTfLGA=="],
+    "@types/jasmine": ["@types/jasmine@5.1.13", "", {}, "sha512-MYCcDkruFc92LeYZux5BC0dmqo2jk+M5UIZ4/oFnAPCXN9mCcQhLyj7F3/Za7rocVyt5YRr1MmqJqFlvQ9LVcg=="],
 
     "@types/json-schema": ["@types/json-schema@7.0.15", "", {}, "sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA=="],
 
