@@ -4,10 +4,10 @@
  * These tests verify the positional scarcity calculation flows.
  */
 
-import type { CommonTeam } from "@common/types/team.js";
-import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vitest";
+import type { CommonTeam } from "@common/types/team.js";
+import { describe, expect, it } from "@effect/vitest";
 
 // Create hoisted mocks to avoid initialization order issues
 const mocks = vi.hoisted(() => ({
@@ -59,9 +59,7 @@ describe("PositionalScarcityService Integration Tests", () => {
     it("propagates errors from core service", () =>
       Effect.gen(function* () {
         // Arrange
-        mocks.getScarcityOffsetsForTeam.mockRejectedValueOnce(
-          new Error("Core service error"),
-        );
+        mocks.getScarcityOffsetsForTeam.mockRejectedValueOnce(new Error("Core service error"));
 
         const mockTeam: CommonTeam = {
           team_key: "nhl.l.12345.t.1",
@@ -74,9 +72,7 @@ describe("PositionalScarcityService Integration Tests", () => {
         };
 
         // Act
-        const result = yield* Effect.either(
-          getScarcityOffsetsForTeam(mockTeam),
-        );
+        const result = yield* Effect.either(getScarcityOffsetsForTeam(mockTeam));
 
         // Assert
         expect(result._tag).toBe("Left");

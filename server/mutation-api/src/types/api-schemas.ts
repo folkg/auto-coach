@@ -8,9 +8,7 @@ export const SetLineupRequestSchema = Schema.Struct({
   lineupChanges: Schema.Array(Schema.Unknown), // Will be typed more specifically
 });
 
-export type SetLineupRequest = Schema.Schema.Type<
-  typeof SetLineupRequestSchema
->;
+export type SetLineupRequest = Schema.Schema.Type<typeof SetLineupRequestSchema>;
 
 export const WeeklyTransactionsRequestSchema = Schema.Struct({
   userId: Schema.String,
@@ -18,9 +16,7 @@ export const WeeklyTransactionsRequestSchema = Schema.Struct({
   transactions: Schema.Array(Schema.Unknown), // Will be typed more specifically
 });
 
-export type WeeklyTransactionsRequest = Schema.Schema.Type<
-  typeof WeeklyTransactionsRequestSchema
->;
+export type WeeklyTransactionsRequest = Schema.Schema.Type<typeof WeeklyTransactionsRequestSchema>;
 
 export const CalcPositionalScarcityRequestSchema = Schema.Struct({
   userId: Schema.String,
@@ -35,9 +31,7 @@ export const ExecuteMutationRequestSchema = Schema.Struct({
   task: MutationTaskSchema,
 });
 
-export type ExecuteMutationRequest = Schema.Schema.Type<
-  typeof ExecuteMutationRequestSchema
->;
+export type ExecuteMutationRequest = Schema.Schema.Type<typeof ExecuteMutationRequestSchema>;
 
 // Response schemas
 export const DispatchResponseSchema = Schema.Struct({
@@ -46,9 +40,7 @@ export const DispatchResponseSchema = Schema.Struct({
   message: Schema.String,
 });
 
-export type DispatchResponse = Schema.Schema.Type<
-  typeof DispatchResponseSchema
->;
+export type DispatchResponse = Schema.Schema.Type<typeof DispatchResponseSchema>;
 
 export const ExecuteMutationResponseSchema = Schema.Struct({
   success: Schema.Boolean,
@@ -58,9 +50,7 @@ export const ExecuteMutationResponseSchema = Schema.Struct({
   processedAt: Schema.String,
 });
 
-export type ExecuteMutationResponse = Schema.Schema.Type<
-  typeof ExecuteMutationResponseSchema
->;
+export type ExecuteMutationResponse = Schema.Schema.Type<typeof ExecuteMutationResponseSchema>;
 
 // Error response schema
 export const ErrorResponseSchema = Schema.Struct({
@@ -105,6 +95,4 @@ export const TaskStatusUpdateSchema = Schema.Struct({
   error: Schema.optional(Schema.String),
 });
 
-export type TaskStatusUpdate = Schema.Schema.Type<
-  typeof TaskStatusUpdateSchema
->;
+export type TaskStatusUpdate = Schema.Schema.Type<typeof TaskStatusUpdateSchema>;

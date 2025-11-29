@@ -1,14 +1,12 @@
-import { FieldValue, type Firestore } from "@google-cloud/firestore";
 import { Data, Effect, Schema } from "effect";
+import { FieldValue, type Firestore } from "@google-cloud/firestore";
 
 export class RateLimitError extends Data.TaggedError("RateLimitError")<{
   readonly message: string;
   readonly retryAfter?: number;
 }> {}
 
-export class CircuitBreakerError extends Data.TaggedError(
-  "CircuitBreakerError",
-)<{
+export class CircuitBreakerError extends Data.TaggedError("CircuitBreakerError")<{
   readonly message: string;
   readonly isGlobalPause: boolean;
 }> {}
@@ -27,10 +25,7 @@ export interface RateLimiterService {
   checkCircuitBreaker(): Effect.Effect<void, CircuitBreakerError>;
   recordSuccess(): Effect.Effect<void, never>;
   recordFailure(error: Error): Effect.Effect<void, never>;
-  triggerGlobalPause(
-    reason: string,
-    durationMs?: number,
-  ): Effect.Effect<void, never>;
+  triggerGlobalPause(reason: string, durationMs?: number): Effect.Effect<void, never>;
   clearGlobalPause(): Effect.Effect<void, never>;
 }
 
@@ -136,9 +131,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     return Effect.tryPromise({
       try: async () => {
         // Check global pause first
-        const globalDocRef = this.firestore
-          .collection("rateLimits")
-          .doc("global");
+        const globalDocRef = this.firestore.collection("rateLimits").doc("global");
         const globalDoc = await globalDocRef.get();
 
         if (globalDoc.exists) {
@@ -160,9 +153,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         }
 
         // Check circuit breaker state
-        const cbDocRef = this.firestore
-          .collection("rateLimits")
-          .doc("circuitBreaker");
+        const cbDocRef = this.firestore.collection("rateLimits").doc("circuitBreaker");
         const cbDoc = await cbDocRef.get();
 
         if (!cbDoc.exists) {
@@ -203,9 +194,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
-          const cbDocRef = this.firestore
-            .collection("rateLimits")
-            .doc("circuitBreaker");
+          const cbDocRef = this.firestore.collection("rateLimits").doc("circuitBreaker");
           await cbDocRef.update({
             isOpen: false,
             failureCount: FieldValue.delete(),
@@ -224,16 +213,13 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
-          const isRateLimitError =
-            error.message.includes("429") || error.message.includes("999");
+          const isRateLimitError = error.message.includes("429") || error.message.includes("999");
 
           if (!isRateLimitError) {
             return; // Only trigger on rate limit errors
           }
 
-          const cbDocRef = this.firestore
-            .collection("rateLimits")
-            .doc("circuitBreaker");
+          const cbDocRef = this.firestore.collection("rateLimits").doc("circuitBreaker");
           const now = new Date();
           let finalFailureCount = 1;
 
@@ -284,16 +270,11 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     );
   }
 
-  triggerGlobalPause(
-    reason: string,
-    durationMs = 300000,
-  ): Effect.Effect<void, never> {
+  triggerGlobalPause(reason: string, durationMs = 300000): Effect.Effect<void, never> {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
-          const globalDocRef = this.firestore
-            .collection("rateLimits")
-            .doc("global");
+          const globalDocRef = this.firestore.collection("rateLimits").doc("global");
           await globalDocRef.set({
             isPaused: true,
             pauseReason: reason,
@@ -312,9 +293,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
-          const globalDocRef = this.firestore
-            .collection("rateLimits")
-            .doc("global");
+          const globalDocRef = this.firestore.collection("rateLimits").doc("global");
           await globalDocRef.update({
             isPaused: false,
           });

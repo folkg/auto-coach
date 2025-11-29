@@ -68,9 +68,7 @@ describe("RateLimiterService", () => {
       mockGet.mockResolvedValue({ exists: false });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkRateLimit("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkRateLimit("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -90,9 +88,7 @@ describe("RateLimiterService", () => {
       });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkRateLimit("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkRateLimit("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -110,9 +106,7 @@ describe("RateLimiterService", () => {
       });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkRateLimit("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkRateLimit("user123")));
 
       // Assert
       expect(Either.isLeft(result)).toBe(true);
@@ -135,9 +129,7 @@ describe("RateLimiterService", () => {
       });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkRateLimit("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkRateLimit("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -158,9 +150,7 @@ describe("RateLimiterService", () => {
       );
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.consumeToken("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.consumeToken("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -186,9 +176,7 @@ describe("RateLimiterService", () => {
       );
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.consumeToken("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.consumeToken("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -214,9 +202,7 @@ describe("RateLimiterService", () => {
       );
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.consumeToken("user123")),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.consumeToken("user123")));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -229,9 +215,7 @@ describe("RateLimiterService", () => {
       mockGet.mockResolvedValue({ exists: false });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkCircuitBreaker()),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -253,9 +237,7 @@ describe("RateLimiterService", () => {
         });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkCircuitBreaker()),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
 
       // Assert
       expect(Either.isLeft(result)).toBe(true);
@@ -281,9 +263,7 @@ describe("RateLimiterService", () => {
         });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkCircuitBreaker()),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
 
       // Assert
       expect(Either.isRight(result)).toBe(true);
@@ -309,9 +289,7 @@ describe("RateLimiterService", () => {
       });
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.either(rateLimiter.checkCircuitBreaker()),
-      );
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
 
       // Assert
       expect(Either.isLeft(result)).toBe(true);
@@ -410,9 +388,7 @@ describe("RateLimiterService", () => {
       mockSet.mockResolvedValue(undefined);
 
       // Act
-      await Effect.runPromise(
-        rateLimiter.triggerGlobalPause("Test pause", 60000),
-      );
+      await Effect.runPromise(rateLimiter.triggerGlobalPause("Test pause", 60000));
 
       // Assert
       expect(mockCollection).toHaveBeenCalledWith("rateLimits");

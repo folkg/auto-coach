@@ -1,19 +1,14 @@
 import "@analogjs/vitest-angular/setup-snapshots";
 import "@angular/compiler";
 import "@testing-library/jest-dom/vitest";
-
 import { NgModule, provideZonelessChangeDetection } from "@angular/core";
 import { getTestBed } from "@angular/core/testing";
-import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
-import {
-  mockAuth,
-  mockFirestore,
-  mockFunctions,
-} from "./__mocks__/firebase/firebase";
+import { provideNoopAnimations } from "@angular/platform-browser/animations";
+import { mockAuth, mockFirestore, mockFunctions } from "./__mocks__/firebase/firebase";
 import { AUTH, FIRESTORE, FUNCTIONS } from "./app/shared/firebase-tokens";
 
 @NgModule({

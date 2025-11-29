@@ -59,12 +59,7 @@ export const MutationPayloadSchema = Schema.Union(
 
 export type MutationPayload = Schema.Schema.Type<typeof MutationPayloadSchema>;
 
-export const MutationTaskStatus = Schema.Literal(
-  "PENDING",
-  "PROCESSING",
-  "COMPLETED",
-  "FAILED",
-);
+export const MutationTaskStatus = Schema.Literal("PENDING", "PROCESSING", "COMPLETED", "FAILED");
 
 export const MutationTaskSchema = Schema.Struct({
   id: Schema.String,

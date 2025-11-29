@@ -1,12 +1,12 @@
 import { Effect } from "effect";
 import { Hono } from "hono";
+import type { ErrorResponse } from "../types/api-schemas";
+import type { AuthContext } from "../types/hono-app-type";
 import {
   type DispatchServiceError,
   DispatchServiceImpl,
   DispatchServiceLive,
 } from "../services/dispatch.service";
-import type { ErrorResponse } from "../types/api-schemas";
-import type { AuthContext } from "../types/hono-app-type";
 import {
   validateCalcPositionalScarcity,
   validateSetLineup,
@@ -62,25 +62,21 @@ export function createDispatchRoutes() {
   });
 
   // POST /calc-positional-scarcity
-  app.post(
-    "/calc-positional-scarcity",
-    validateCalcPositionalScarcity,
-    async (c) => {
-      const scarcityRequest = c.req.valid("json");
+  app.post("/calc-positional-scarcity", validateCalcPositionalScarcity, async (c) => {
+    const scarcityRequest = c.req.valid("json");
 
-      const result = await Effect.runPromise(
-        dispatchService.dispatchCalcPositionalScarcity(scarcityRequest).pipe(
-          Effect.provide(DispatchServiceLive),
-          Effect.match({
-            onFailure: (error) => c.json(errorToResponse(error), 500),
-            onSuccess: (response) => c.json(response, 200),
-          }),
-        ),
-      );
+    const result = await Effect.runPromise(
+      dispatchService.dispatchCalcPositionalScarcity(scarcityRequest).pipe(
+        Effect.provide(DispatchServiceLive),
+        Effect.match({
+          onFailure: (error) => c.json(errorToResponse(error), 500),
+          onSuccess: (response) => c.json(response, 200),
+        }),
+      ),
+    );
 
-      return result;
-    },
-  );
+    return result;
+  });
 
   return app;
 }

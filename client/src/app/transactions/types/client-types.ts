@@ -1,7 +1,4 @@
-import type {
-  LineupChanges,
-  PlayerTransaction,
-} from "@common/types/transactions";
+import type { LineupChanges, PlayerTransaction } from "@common/types/transactions";
 
 /**
  * Client-specific extension of PlayerTransaction with UI state

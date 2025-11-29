@@ -1,28 +1,17 @@
+import type { TPlayer } from "@common/types/transactions";
 import { NgClass } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import {
-  MatCheckbox,
-  type MatCheckboxChange,
-} from "@angular/material/checkbox";
+import { MatCheckbox, type MatCheckboxChange } from "@angular/material/checkbox";
 import { MatIcon } from "@angular/material/icon";
-
-import type { TPlayer } from "@common/types/transactions";
-import { PlayerComponent } from "../player/player.component";
 import type { PlayerTransactionClient } from "../types/client-types";
+import { PlayerComponent } from "../player/player.component";
 
 @Component({
   selector: "app-transaction[transaction]",
   templateUrl: "./transaction.component.html",
   styleUrls: ["./transaction.component.scss"],
-  imports: [
-    NgClass,
-    MatCheckbox,
-    ReactiveFormsModule,
-    FormsModule,
-    MatIcon,
-    PlayerComponent,
-  ],
+  imports: [NgClass, MatCheckbox, ReactiveFormsModule, FormsModule, MatIcon, PlayerComponent],
 })
 export class TransactionComponent {
   @Input({ required: true }) transaction!: PlayerTransactionClient;

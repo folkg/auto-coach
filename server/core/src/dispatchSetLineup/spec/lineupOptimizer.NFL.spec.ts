@@ -1,5 +1,5 @@
-import type { TeamOptimizer } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
+import type { TeamOptimizer } from "@common/types/team.js";
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 
 vi.mock("firebase-admin/firestore", () => ({

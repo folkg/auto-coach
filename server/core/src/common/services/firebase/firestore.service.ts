@@ -1,10 +1,3 @@
-import {
-  type ClientTeam,
-  FirestoreTeam,
-  type InfoTeam,
-  yahooToFirestore,
-} from "@common/types/team.js";
-import { assertType } from "@common/utilities/checks.js";
 import { isAxiosError } from "axios";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {
@@ -14,6 +7,13 @@ import {
   type QuerySnapshot,
 } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
+import {
+  type ClientTeam,
+  FirestoreTeam,
+  type InfoTeam,
+  yahooToFirestore,
+} from "@common/types/team.js";
+import { assertType } from "@common/utilities/checks.js";
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 import { sendUserEmail } from "../email/email.service.js";
@@ -51,9 +51,7 @@ db.settings({
  * @param {(string)} uid The firebase uid
  * @return {Promise<ReturnCredential>} The credential with token and expiry
  */
-export async function loadYahooAccessToken(
-  uid: string,
-): Promise<ReturnCredential> {
+export async function loadYahooAccessToken(uid: string): Promise<ReturnCredential> {
   // fetch the current token from the database
   const doc = await db.collection("users").doc(uid).get();
   const docData = doc.data();
@@ -101,9 +99,7 @@ export async function loadYahooAccessToken(
           `Could not refresh access token for user: ${uid} : ${error.response?.data.error} ${error.response?.data.error_description}`,
         );
       }
-      throw new Error(
-        `Could not refresh access token for user: ${uid} : ${error}`,
-      );
+      throw new Error(`Could not refresh access token for user: ${uid} : ${error}`);
     }
     try {
       await db
@@ -150,15 +146,11 @@ export async function flagRefreshToken(uid: string) {
  * @param {string} uid - The user id
  * @return {Promise<ITeamFirestore[]>} - An array of teams
  */
-export async function fetchTeamsFirestore(
-  uid: string,
-): Promise<FirestoreTeam[]> {
+export async function fetchTeamsFirestore(uid: string): Promise<FirestoreTeam[]> {
   try {
     // get all teams for the user that have not ended
     const teamsRef = db.collection(`users/${uid}/teams`);
-    const teamsSnapshot = await teamsRef
-      .where("end_date", ">=", Date.now())
-      .get();
+    const teamsSnapshot = await teamsRef.where("end_date", ">=", Date.now()).get();
 
     return teamsSnapshot.docs.map((doc) => {
       const team = doc.data();
@@ -189,11 +181,7 @@ export async function getActiveTeamsForLeagues(leagues: string[]) {
       .where("is_setting_lineups", "==", true)
       .where("end_date", ">=", Date.now())
       .where("game_code", "in", leagues)
-      .where("weekly_deadline", "in", [
-        "",
-        "intraday",
-        getCurrentPacificNumDay().toString(),
-      ])
+      .where("weekly_deadline", "in", ["", "intraday", getCurrentPacificNumDay().toString()])
       .get();
   } catch (error) {
     return Promise.reject(error);
@@ -235,11 +223,7 @@ export async function getTomorrowsActiveWeeklyTeams() {
       .where("is_setting_lineups", "==", true)
       .where("allow_transactions", "==", true)
       .where("end_date", ">=", Date.now())
-      .where(
-        "weekly_deadline",
-        "==",
-        (getCurrentPacificNumDay() + 1).toString(),
-      )
+      .where("weekly_deadline", "==", (getCurrentPacificNumDay() + 1).toString())
       .get();
   } catch (error) {
     return Promise.reject(error);
@@ -313,10 +297,7 @@ export async function updateFirestoreTimestamp(uid: string, teamKey: string) {
       last_updated: Date.now(),
     });
   } catch (error) {
-    logger.error(
-      `Error in updateFirestoreTimestamp for User: ${uid} and team: ${teamKey}`,
-      error,
-    );
+    logger.error(`Error in updateFirestoreTimestamp for User: ${uid} and team: ${teamKey}`, error);
   }
 }
 
@@ -330,10 +311,7 @@ export async function updateTeamFirestore(
     await teamRef.update(data);
     logger.info(`Updated team ${teamKey} for user ${uid} in Firestore`);
   } catch (error) {
-    logger.error(
-      `Error in updateTeamFirestore for User: ${uid} and team: ${teamKey}`,
-      error,
-    );
+    logger.error(`Error in updateTeamFirestore for User: ${uid} and team: ${teamKey}`, error);
   }
 }
 
@@ -343,9 +321,7 @@ export async function updateTeamFirestore(
  * @param {string} league The league code
  * @return {Promise<QuerySnapshot<DocumentData>>} the team
  */
-export async function getIntradayTeams(
-  league: string,
-): Promise<QuerySnapshot<DocumentData>> {
+export async function getIntradayTeams(league: string): Promise<QuerySnapshot<DocumentData>> {
   const teamsRef = db.collectionGroup("teams");
   try {
     const teamsSnapshot = await teamsRef
@@ -355,13 +331,8 @@ export async function getIntradayTeams(
       .get();
     return teamsSnapshot;
   } catch (error) {
-    logger.error(
-      `Error fetching Intraday ${league.toUpperCase()} teams from firestore`,
-      error,
-    );
-    throw new Error(
-      `Error fetching Intraday ${league.toUpperCase()} teams from firestore`,
-    );
+    logger.error(`Error fetching Intraday ${league.toUpperCase()} teams from firestore`, error);
+    throw new Error(`Error fetching Intraday ${league.toUpperCase()} teams from firestore`);
   }
 }
 
@@ -386,13 +357,8 @@ export async function storeStartingPlayersInFirestore(
       date: getPacificTimeDateString(new Date()),
     });
   } catch (error) {
-    logger.error(
-      `Error storing starting ${league.toUpperCase()} players in Firestore`,
-      error,
-    );
-    throw new Error(
-      `Error storing starting ${league.toUpperCase()} players in Firestore`,
-    );
+    logger.error(`Error storing starting ${league.toUpperCase()} players in Firestore`, error);
+    throw new Error(`Error storing starting ${league.toUpperCase()} players in Firestore`);
   }
 }
 
@@ -405,13 +371,12 @@ export async function storeStartingPlayersInFirestore(
  * @param {string} league - the league
  * @return {Promise<string[]>} - the starting players
  */
-export async function getStartingPlayersFromFirestore(
-  league: string,
-): Promise<string[]> {
+export async function getStartingPlayersFromFirestore(league: string): Promise<string[]> {
   const startingPlayersRef = db.collection("startingPlayers");
   try {
-    const startingPlayersSnapshot: DocumentSnapshot<DocumentData> =
-      await startingPlayersRef.doc(league).get();
+    const startingPlayersSnapshot: DocumentSnapshot<DocumentData> = await startingPlayersRef
+      .doc(league)
+      .get();
 
     if (startingPlayersSnapshot.exists) {
       // check if the starting players were updated today
@@ -432,10 +397,7 @@ export async function getStartingPlayersFromFirestore(
       logger.error(error);
     }
   } catch (error) {
-    logger.error(
-      `Error getting starting ${league.toUpperCase()} players from Firestore`,
-      error,
-    );
+    logger.error(`Error getting starting ${league.toUpperCase()} players from Firestore`, error);
   }
 
   // return an empty array if there was an error
@@ -446,8 +408,7 @@ export async function getStartingPlayersFromFirestore(
 export async function getPositionalScarcityOffsets() {
   const scarcityOffsetsRef = db.collection("positionalScarcityOffsets");
   try {
-    const scarcityOffsetsSnapshot: QuerySnapshot<DocumentData> =
-      await scarcityOffsetsRef.get();
+    const scarcityOffsetsSnapshot: QuerySnapshot<DocumentData> = await scarcityOffsetsRef.get();
 
     if (scarcityOffsetsSnapshot.empty) {
       return {};
@@ -488,9 +449,7 @@ export async function updatePositionalScarcityOffset(
   }
 }
 
-export async function storeTodaysPostponedTeams(
-  teams: string[],
-): Promise<void> {
+export async function storeTodaysPostponedTeams(teams: string[]): Promise<void> {
   try {
     await db.collection("postponedGames").doc("today").set({
       date: todayPacific(),
@@ -501,22 +460,16 @@ export async function storeTodaysPostponedTeams(
   }
 }
 
-export async function getTodaysPostponedTeams(): Promise<
-  Set<string> | undefined
-> {
+export async function getTodaysPostponedTeams(): Promise<Set<string> | undefined> {
   try {
-    const postponedGamesSnapshot = await db
-      .collection("postponedGames")
-      .doc("today")
-      .get();
+    const postponedGamesSnapshot = await db.collection("postponedGames").doc("today").get();
 
     if (postponedGamesSnapshot.exists) {
       // check if the postponed games were updated today
       const date: string | undefined = postponedGamesSnapshot.data()?.date;
 
       if (date === todayPacific()) {
-        const teams: string[] | undefined =
-          postponedGamesSnapshot.data()?.teams;
+        const teams: string[] | undefined = postponedGamesSnapshot.data()?.teams;
         return new Set(teams);
       }
     }
@@ -531,10 +484,7 @@ export async function getRandomUID(): Promise<string> {
   const usersRef = db.collection("users");
   // Allow any errors to bubble up to the caller
   // Orders by the ever-changing access token, then gets the first one
-  const randomUserSnapshot = await usersRef
-    .orderBy("tokenExpirationTime", "desc")
-    .limit(1)
-    .get();
+  const randomUserSnapshot = await usersRef.orderBy("tokenExpirationTime", "desc").limit(1).get();
   const randomUser = randomUserSnapshot.docs[0];
   if (!randomUser) {
     throw new Error("No users found in Firestore");

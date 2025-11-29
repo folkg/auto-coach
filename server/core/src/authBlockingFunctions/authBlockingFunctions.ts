@@ -1,33 +1,28 @@
 import { logger } from "firebase-functions";
 import * as functionsV1 from "firebase-functions/v1";
+import type { FirestoreUser } from "./interfaces/FirestoreUser.js";
 import { sendCustomVerificationEmail } from "../common/services/email/email.service.js";
 import { db } from "../common/services/firebase/firestore.service.js";
-import type { FirestoreUser } from "./interfaces/FirestoreUser.js";
 
-export const beforeSignInV1 = functionsV1.auth
-  .user()
-  .beforeSignIn(async (user, context) => {
-    const credential = context.credential;
-    if (credential) {
-      const uid = user.uid;
-      const data: FirestoreUser = {
-        accessToken: credential.accessToken ?? "",
-        refreshToken: credential.refreshToken ?? "",
-        tokenExpirationTime: Date.parse(credential.expirationTime as string),
-        subscriptionExpirationTime: -1,
-        isFreeTrialActivated: false,
-      };
+export const beforeSignInV1 = functionsV1.auth.user().beforeSignIn(async (user, context) => {
+  const credential = context.credential;
+  if (credential) {
+    const uid = user.uid;
+    const data: FirestoreUser = {
+      accessToken: credential.accessToken ?? "",
+      refreshToken: credential.refreshToken ?? "",
+      tokenExpirationTime: Date.parse(credential.expirationTime as string),
+      subscriptionExpirationTime: -1,
+      isFreeTrialActivated: false,
+    };
 
-      try {
-        await db.collection("users").doc(uid).set(data);
-      } catch (error) {
-        logger.error(
-          `Error saving login token credentials in Firestore for user ${uid}`,
-          error,
-        );
-      }
+    try {
+      await db.collection("users").doc(uid).set(data);
+    } catch (error) {
+      logger.error(`Error saving login token credentials in Firestore for user ${uid}`, error);
     }
-  });
+  }
+});
 
 export const beforeCreateV1 = functionsV1.auth.user().beforeCreate((user) => {
   // force all users to verify their email addresses initially

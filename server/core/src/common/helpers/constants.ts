@@ -1,11 +1,6 @@
 // Statuses to be considered a "healthy" player
 // TODO: Does Game Time Decision count as healthy?
-export const HEALTHY_STATUS_LIST = [
-  "Healthy",
-  "Questionable",
-  "Probable",
-  "Game Time Decision",
-];
+export const HEALTHY_STATUS_LIST = ["Healthy", "Questionable", "Probable", "Game Time Decision"];
 // Roster positions considered to be inactive
 export const INACTIVE_POSITION_LIST = ["IR", "IR+", "IL", "IL+", "NA"];
 export const LONG_TERM_IL_POSITIONS_LIST = ["IL", "IR"];
@@ -25,20 +20,7 @@ export const COMPOUND_POSITION_COMPOSITIONS: LeagueCompoundPositions = {
     MI: ["2B", "SS"],
     IF: ["1B", "2B", "3B", "SS"],
     OF: ["LF", "CF", "RF"],
-    Util: [
-      "1B",
-      "2B",
-      "3B",
-      "SS",
-      "C",
-      "LF",
-      "CF",
-      "RF",
-      "CI",
-      "MI",
-      "IF",
-      "OF",
-    ],
+    Util: ["1B", "2B", "3B", "SS", "C", "LF", "CF", "RF", "CI", "MI", "IF", "OF"],
     P: ["SP", "RP"],
   },
   nfl: {

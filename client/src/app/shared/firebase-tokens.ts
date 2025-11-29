@@ -1,7 +1,7 @@
-import { InjectionToken } from "@angular/core";
 import { type Auth, getAuth } from "firebase/auth";
 import { type Firestore, getFirestore } from "firebase/firestore";
 import { type Functions, getFunctions } from "firebase/functions";
+import { InjectionToken } from "@angular/core";
 
 export const AUTH = new InjectionToken<Auth>("Firebase Auth", {
   providedIn: "root",

@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
-import { parseArgs } from "node:util";
 import { $ } from "bun";
+import { parseArgs } from "node:util";
 import { loadEnvironment } from "./environment";
 import { log, logError, logStep, logSuccess, logWarning } from "./log";
 import { applyInfrastructure } from "./tofu";
@@ -58,10 +58,7 @@ async function buildMutationAPIContainer(): Promise<void> {
   await $`cd ${projectRoot}/server/mutation-api && bun run container:build`;
 }
 
-async function tagMutationAPIContainer(
-  containerRepo: string,
-  tags: string[],
-): Promise<void> {
+async function tagMutationAPIContainer(containerRepo: string, tags: string[]): Promise<void> {
   logStep("Docker", "Tagging Mutation API container...");
 
   for (const tag of tags) {
@@ -69,10 +66,7 @@ async function tagMutationAPIContainer(
   }
 }
 
-async function pushMutationAPIContainer(
-  containerRepo: string,
-  tags: string[],
-): Promise<void> {
+async function pushMutationAPIContainer(containerRepo: string, tags: string[]): Promise<void> {
   logStep("Docker", "Pushing Mutation API container...");
 
   for (const tag of tags) {
@@ -89,10 +83,7 @@ export async function deployMutationAPI(
   const tags = await determineContainerTags(args.env, args.version);
   const primaryTag = getPrimaryTag(tags);
 
-  logStep(
-    "Deploy Mutation API",
-    `Environment: ${args.env}, Tags: ${tags.join(", ")}`,
-  );
+  logStep("Deploy Mutation API", `Environment: ${args.env}, Tags: ${tags.join(", ")}`);
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
@@ -115,21 +106,13 @@ export async function deployMutationAPI(
   await pushMutationAPIContainer(envConfig.containerRepo, tags);
 
   if (!args.skipInfra) {
-    await applyInfrastructure(
-      envConfig,
-      primaryTag,
-      projectId,
-      firebaseProjectId,
-    );
+    await applyInfrastructure(envConfig, primaryTag, projectId, firebaseProjectId);
     const apiURL = await getMutationAPIURL();
     logSuccess("Mutation API deployed successfully!");
     log(`API URL: ${apiURL}`);
     log(`Container tags: ${tags.join(", ")}`);
   } else {
-    logStep(
-      "Mutation API",
-      "Skipping infrastructure apply - container pushed successfully",
-    );
+    logStep("Mutation API", "Skipping infrastructure apply - container pushed successfully");
     logSuccess("Container image ready for deployment");
     log(`Container tags: ${tags.join(", ")}`);
     log(
@@ -143,9 +126,7 @@ async function getMutationAPIURL(): Promise<string> {
   const env = process.env.NODE_ENV || "dev";
 
   if (!projectId) {
-    throw new Error(
-      "GCP_PROJECT_ID or PROJECT_ID environment variable required",
-    );
+    throw new Error("GCP_PROJECT_ID or PROJECT_ID environment variable required");
   }
 
   const result =
@@ -158,13 +139,9 @@ async function main(): Promise<void> {
     const args = parseArguments();
 
     const projectId = process.env.GCP_PROJECT_ID || process.env.PROJECT_ID;
-    const firebaseProjectId =
-      process.env.FIREBASE_PROJECT_ID || "auto-gm-372620";
+    const firebaseProjectId = process.env.FIREBASE_PROJECT_ID || "auto-gm-372620";
 
-    logStep(
-      "Configuration",
-      `Component: mutation-api, Environment: ${args.env}`,
-    );
+    logStep("Configuration", `Component: mutation-api, Environment: ${args.env}`);
 
     if (!projectId) {
       throw new Error(

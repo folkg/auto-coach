@@ -5,9 +5,10 @@
  * weekly transactions, and positional scarcity calculations.
  */
 
-import { describe, expect, it } from "@effect/vitest";
-import { Effect, Layer } from "effect";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { Effect, Layer } from "effect";
+import { describe, expect, it } from "@effect/vitest";
+import type { TeamData } from "./scheduling.service.js";
 import {
   DispatchServiceImpl,
   FirestoreService,
@@ -17,7 +18,6 @@ import {
   WeeklyTransactionsService,
 } from "./dispatch.service.js";
 import { PositionalScarcityError } from "./positional-scarcity.service.js";
-import type { TeamData } from "./scheduling.service.js";
 import { WeeklyTransactionsError } from "./weekly-transactions.service.js";
 
 describe("DispatchService Integration Tests", () => {
@@ -39,8 +39,7 @@ describe("DispatchService Integration Tests", () => {
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
-            getActiveTeamsForLeagues: () =>
-              Promise.resolve(createMockTeamsSnapshot([])),
+            getActiveTeamsForLeagues: () => Promise.resolve(createMockTeamsSnapshot([])),
           }),
         );
 
@@ -76,8 +75,7 @@ describe("DispatchService Integration Tests", () => {
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
-            getActiveTeamsForLeagues: () =>
-              Promise.resolve(createMockTeamsSnapshot([])),
+            getActiveTeamsForLeagues: () => Promise.resolve(createMockTeamsSnapshot([])),
           }),
         );
 
@@ -197,8 +195,7 @@ describe("DispatchService Integration Tests", () => {
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
-            getActiveTeamsForLeagues: () =>
-              Promise.resolve(createMockTeamsSnapshot([])),
+            getActiveTeamsForLeagues: () => Promise.resolve(createMockTeamsSnapshot([])),
           }),
         );
 

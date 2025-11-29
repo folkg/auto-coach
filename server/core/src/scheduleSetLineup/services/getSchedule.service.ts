@@ -1,7 +1,7 @@
 import type { Schedule } from "@common/types/Schedule.js";
+import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
 import { db } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString } from "../../common/services/utilities.service.js";
-import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
 import { getTodaysGames } from "./scheduling.service.js";
 
 /**
@@ -20,10 +20,7 @@ export async function getSchedule(_uid: string): Promise<Schedule> {
   let gameStartTimes: GameStartTimes;
   let date: string;
 
-  if (
-    !(scheduleDoc.exists && scheduleDocData) ||
-    scheduleDocData.date !== todayDate
-  ) {
+  if (!(scheduleDoc.exists && scheduleDocData) || scheduleDocData.date !== todayDate) {
     // If no data exists or it's for a different date, fetch new data
     gameStartTimes = await getTodaysGames(todayDate);
     date = todayDate;

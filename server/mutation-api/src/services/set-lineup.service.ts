@@ -1,9 +1,7 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
-import type {
-  LineupChanges,
-  PlayerTransaction,
-} from "@common/types/transactions.js";
 import { Data, Effect } from "effect";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
+import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
+import type { TopAvailablePlayers } from "../../../core/src/common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 import {
   getTodaysPostponedTeams,
   updateFirestoreTimestamp,
@@ -23,7 +21,6 @@ import {
   initStartingGoalies,
   initStartingPitchers,
 } from "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js";
-import type { TopAvailablePlayers } from "../../../core/src/common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 import { LineupOptimizer } from "../../../core/src/dispatchSetLineup/classes/LineupOptimizer.js";
 import { isFirstRunOfTheDay } from "../../../core/src/scheduleSetLineup/services/scheduleSetLineup.service.js";
 import {
@@ -54,14 +51,10 @@ export function setUsersLineup(
 ): Effect.Effect<void, SetLineupError> {
   return Effect.gen(function* () {
     if (!uid) {
-      return yield* Effect.fail(
-        new SetLineupError({ message: "No uid provided" }),
-      );
+      return yield* Effect.fail(new SetLineupError({ message: "No uid provided" }));
     }
     if (!firestoreTeams) {
-      return yield* Effect.fail(
-        new SetLineupError({ message: "No teams provided", uid }),
-      );
+      return yield* Effect.fail(new SetLineupError({ message: "No teams provided", uid }));
     }
 
     // Step 1: Filter paused teams
@@ -81,8 +74,7 @@ export function setUsersLineup(
         }),
     });
 
-    const initStartingPlayersEffect =
-      initializeGlobalStartingPlayers(firestoreTeamsToSet);
+    const initStartingPlayersEffect = initializeGlobalStartingPlayers(firestoreTeamsToSet);
 
     // Step 3: Get postponed teams
     const postponedTeams = yield* initializePostponedTeams();
@@ -108,10 +100,7 @@ export function setUsersLineup(
     }
 
     // Step 5: Enrich with Firestore settings
-    usersTeams = enrichTeamsWithFirestoreSettings(
-      usersTeams,
-      firestoreTeamsToSet,
-    );
+    usersTeams = enrichTeamsWithFirestoreSettings(usersTeams, firestoreTeamsToSet);
 
     // Step 6: Patch changes to Firestore (fire-and-forget)
     Effect.runFork(
@@ -261,29 +250,21 @@ export function processTransactionsForNextDayTeams(
     const teams = getTeamsForNextDayTransactions(originalTeams);
 
     // Pre-check to see if we need to do anything using today's roster
-    const {
-      dropPlayerTransactions: potentialDrops,
-      addSwapTransactions: potentialAddSwaps,
-    } = yield* Effect.tryPromise({
-      try: () =>
-        createPlayersTransactions([...teams], topAvailablePlayerCandidates),
-      catch: (error: unknown) =>
-        new SetLineupError({
-          message: `Failed to create player transactions: ${toErrorMessage(error)}`,
-          uid,
-        }),
-    });
+    const { dropPlayerTransactions: potentialDrops, addSwapTransactions: potentialAddSwaps } =
+      yield* Effect.tryPromise({
+        try: () => createPlayersTransactions([...teams], topAvailablePlayerCandidates),
+        catch: (error: unknown) =>
+          new SetLineupError({
+            message: `Failed to create player transactions: ${toErrorMessage(error)}`,
+            uid,
+          }),
+      });
 
     if (!(potentialDrops || potentialAddSwaps)) {
       return;
     }
 
-    yield* processTomorrowsTransactions(
-      teams,
-      firestoreTeams,
-      uid,
-      topAvailablePlayerCandidates,
-    );
+    yield* processTomorrowsTransactions(teams, firestoreTeams, uid, topAvailablePlayerCandidates);
   });
 }
 
@@ -308,23 +289,12 @@ export function processTomorrowsTransactions(
         }),
     });
 
-    tomorrowsTeams = enrichTeamsWithFirestoreSettings(
-      tomorrowsTeams,
-      firestoreTeams,
-    );
+    tomorrowsTeams = enrichTeamsWithFirestoreSettings(tomorrowsTeams, firestoreTeams);
 
     yield* Effect.all(
       [
-        processManualTransactions(
-          tomorrowsTeams,
-          topAvailablePlayerCandidates,
-          uid,
-        ),
-        processAutomaticTransactions(
-          tomorrowsTeams,
-          topAvailablePlayerCandidates,
-          uid,
-        ),
+        processManualTransactions(tomorrowsTeams, topAvailablePlayerCandidates, uid),
+        processAutomaticTransactions(tomorrowsTeams, topAvailablePlayerCandidates, uid),
       ],
       { concurrency: "unbounded" },
     );
@@ -340,27 +310,23 @@ export function processAutomaticTransactions(
   uid: string,
 ): Effect.Effect<boolean, SetLineupError> {
   return Effect.gen(function* () {
-    const teamsWithAutoTransactions = teams.filter(
-      (t) => t.automated_transaction_processing,
-    );
+    const teamsWithAutoTransactions = teams.filter((t) => t.automated_transaction_processing);
 
     if (teamsWithAutoTransactions.length === 0) {
       return false;
     }
 
-    const { dropPlayerTransactions, lineupChanges, addSwapTransactions } =
-      yield* Effect.tryPromise({
+    const { dropPlayerTransactions, lineupChanges, addSwapTransactions } = yield* Effect.tryPromise(
+      {
         try: () =>
-          createPlayersTransactions(
-            [...teamsWithAutoTransactions],
-            topAvailablePlayerCandidates,
-          ),
+          createPlayersTransactions([...teamsWithAutoTransactions], topAvailablePlayerCandidates),
         catch: (error: unknown) =>
           new SetLineupError({
             message: `Failed to create transactions: ${toErrorMessage(error)}`,
             uid,
           }),
-      });
+      },
+    );
 
     const transactionData = {
       dropPlayerTransactions,
@@ -399,23 +365,16 @@ export function processManualTransactions(
       return;
     }
 
-    const { dropPlayerTransactions, addSwapTransactions } =
-      yield* Effect.tryPromise({
-        try: () =>
-          createPlayersTransactions(
-            [...teamsToCheck],
-            topAvailablePlayerCandidates,
-          ),
-        catch: (error: unknown) =>
-          new SetLineupError({
-            message: `Failed to create manual transactions: ${toErrorMessage(error)}`,
-            uid,
-          }),
-      });
+    const { dropPlayerTransactions, addSwapTransactions } = yield* Effect.tryPromise({
+      try: () => createPlayersTransactions([...teamsToCheck], topAvailablePlayerCandidates),
+      catch: (error: unknown) =>
+        new SetLineupError({
+          message: `Failed to create manual transactions: ${toErrorMessage(error)}`,
+          uid,
+        }),
+    });
 
-    const proposedTransactions: PlayerTransaction[] = (
-      dropPlayerTransactions ?? []
-    )
+    const proposedTransactions: PlayerTransaction[] = (dropPlayerTransactions ?? [])
       .concat(addSwapTransactions ?? [])
       .flat();
 
@@ -472,10 +431,7 @@ let _postponedTeams: Set<string> | undefined;
 /**
  * Get today's postponed games (cached)
  */
-export function initializePostponedTeams(): Effect.Effect<
-  Set<string>,
-  SetLineupError
-> {
+export function initializePostponedTeams(): Effect.Effect<Set<string>, SetLineupError> {
   if (_postponedTeams) {
     return Effect.succeed(_postponedTeams);
   }
@@ -502,9 +458,7 @@ export function resetPostponedTeamsCache(): void {
 /**
  * Filter teams with intraday transactions capability
  */
-export function getTeamsWithSameDayTransactions(
-  teams: readonly TeamOptimizer[],
-): TeamOptimizer[] {
+export function getTeamsWithSameDayTransactions(teams: readonly TeamOptimizer[]): TeamOptimizer[] {
   return teams.filter(
     (team) =>
       (team.allow_adding || team.allow_dropping || team.allow_add_drops) &&
@@ -515,9 +469,7 @@ export function getTeamsWithSameDayTransactions(
 /**
  * Filter teams for next-day transactions
  */
-export function getTeamsForNextDayTransactions(
-  teams: readonly TeamOptimizer[],
-): TeamOptimizer[] {
+export function getTeamsForNextDayTransactions(teams: readonly TeamOptimizer[]): TeamOptimizer[] {
   return teams.filter(
     (team) =>
       (team.allow_adding || team.allow_dropping || team.allow_add_drops) &&
@@ -539,11 +491,8 @@ export function tomorrowsDateAsString(): string {
 /**
  * Filter out paused teams (paused today)
  */
-function filterPausedTeams(
-  firestoreTeams: readonly FirestoreTeam[],
-): FirestoreTeam[] {
-  const isNotPaused = (team: FirestoreTeam) =>
-    !isTodayPacific(team.lineup_paused_at);
+function filterPausedTeams(firestoreTeams: readonly FirestoreTeam[]): FirestoreTeam[] {
+  const isNotPaused = (team: FirestoreTeam) => !isTodayPacific(team.lineup_paused_at);
 
   return firestoreTeams.filter(isNotPaused);
 }

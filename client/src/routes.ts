@@ -1,5 +1,4 @@
 import type { Routes } from "@angular/router";
-
 import { AboutComponent } from "./app/about/about.component";
 import { authGuard } from "./app/guards/auth.guard";
 import { DirtyFormGuard } from "./app/guards/dirty-form.guard";
@@ -28,25 +27,20 @@ export const routes: Routes = [
   {
     path: "feedback",
     loadComponent: () =>
-      import("./app/feedback/feedback.component").then(
-        (m) => m.FeedbackComponent,
-      ),
+      import("./app/feedback/feedback.component").then((m) => m.FeedbackComponent),
     canActivate: [authGuard],
     canDeactivate: [DirtyFormGuard],
   },
   {
     path: "profile",
-    loadComponent: () =>
-      import("./app/profile/profile.component").then((m) => m.ProfileComponent),
+    loadComponent: () => import("./app/profile/profile.component").then((m) => m.ProfileComponent),
     canActivate: [authGuard],
     canDeactivate: [DirtyFormGuard],
   },
   {
     path: "transactions",
     loadComponent: () =>
-      import("./app/transactions/transactions.component").then(
-        (m) => m.TransactionsComponent,
-      ),
+      import("./app/transactions/transactions.component").then((m) => m.TransactionsComponent),
     canActivate: [authGuard],
   },
   { path: "**", component: NotfoundComponent },

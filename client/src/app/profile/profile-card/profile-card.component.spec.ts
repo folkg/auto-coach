@@ -1,8 +1,8 @@
-import { render, screen } from "@testing-library/angular";
-import userEvent from "@testing-library/user-event";
 import type { User } from "firebase/auth";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/angular";
+import userEvent from "@testing-library/user-event";
 import { createMock } from "../../../__mocks__/utils/createMock";
 import { AppStatusService } from "../../services/app-status.service";
 import { AuthService } from "../../services/auth.service";
@@ -183,9 +183,7 @@ describe("ProfileCardComponent", () => {
     const saveButton = screen.getByText("Save Changes");
     await user.click(saveButton);
 
-    expect(mockAuthService.updateUserEmail).toHaveBeenCalledWith(
-      "new@example.com",
-    );
+    expect(mockAuthService.updateUserEmail).toHaveBeenCalledWith("new@example.com");
   });
 
   it("calls sendVerificationEmail when clicking resend verification email button", async () => {

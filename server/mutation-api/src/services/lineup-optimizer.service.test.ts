@@ -1,10 +1,7 @@
-import type { TeamOptimizer } from "@common/types/team.js";
 import { Effect } from "effect";
 import { beforeEach, describe, expect, it } from "vitest";
-import {
-  createLineupOptimizer,
-  type LineupOptimizer,
-} from "./lineup-optimizer.service.js";
+import type { TeamOptimizer } from "@common/types/team.js";
+import { createLineupOptimizer, type LineupOptimizer } from "./lineup-optimizer.service.js";
 
 describe("LineupOptimizer", () => {
   let mockTeam: TeamOptimizer;
@@ -59,9 +56,7 @@ describe("LineupOptimizer", () => {
 
   describe("optimizeStartingLineup", () => {
     it("should optimize starting lineup successfully", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.optimizeStartingLineup(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.optimizeStartingLineup());
 
       expect(result).toBeUndefined();
     });
@@ -100,9 +95,7 @@ describe("LineupOptimizer", () => {
 
   describe("playerTransactions", () => {
     it("should return null when no transactions generated", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.playerTransactions,
-      );
+      const result = await Effect.runPromise(lineupOptimizer.playerTransactions);
 
       expect(result).toBeNull();
     });
@@ -110,9 +103,7 @@ describe("LineupOptimizer", () => {
 
   describe("shouldPostLineupChanges", () => {
     it("should return false when no changes needed", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.shouldPostLineupChanges(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.shouldPostLineupChanges());
 
       expect(result).toBe(false);
     });
@@ -150,9 +141,7 @@ describe("LineupOptimizer", () => {
         },
       ];
 
-      const result = await Effect.runPromise(
-        lineupOptimizer.setAddCandidates(mockCandidates),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.setAddCandidates(mockCandidates));
 
       expect(result).toBeUndefined();
     });
@@ -160,9 +149,7 @@ describe("LineupOptimizer", () => {
 
   describe("getCurrentTeamState", () => {
     it("should return current team state", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.getCurrentTeamState(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.getCurrentTeamState());
 
       expect(result).toBeDefined();
       expect(result.team_key).toBe(mockTeam.team_key);
@@ -171,9 +158,7 @@ describe("LineupOptimizer", () => {
 
   describe("isSuccessfullyOptimized", () => {
     it("should check optimization status", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.isSuccessfullyOptimized(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.isSuccessfullyOptimized());
 
       expect(typeof result).toBe("boolean");
     });
@@ -181,9 +166,7 @@ describe("LineupOptimizer", () => {
 
   describe("generateDropPlayerTransactions", () => {
     it("should generate drop transactions", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.generateDropPlayerTransactions(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.generateDropPlayerTransactions());
 
       expect(result).toBeUndefined();
     });
@@ -191,9 +174,7 @@ describe("LineupOptimizer", () => {
 
   describe("generateAddPlayerTransactions", () => {
     it("should generate add transactions", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.generateAddPlayerTransactions(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.generateAddPlayerTransactions());
 
       expect(result).toBeUndefined();
     });
@@ -201,9 +182,7 @@ describe("LineupOptimizer", () => {
 
   describe("generateSwapPlayerTransactions", () => {
     it("should generate swap transactions", async () => {
-      const result = await Effect.runPromise(
-        lineupOptimizer.generateSwapPlayerTransactions(),
-      );
+      const result = await Effect.runPromise(lineupOptimizer.generateSwapPlayerTransactions());
 
       expect(result).toBeUndefined();
     });

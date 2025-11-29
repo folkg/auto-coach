@@ -1,35 +1,22 @@
+import { lastValueFrom } from "rxjs";
+import type { Schedule } from "@common/types/Schedule";
 import { NgIf } from "@angular/common";
 import { Component, type OnInit, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from "@angular/material/card";
-// biome-ignore lint/style/useImportType: This is an injection token
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
-import type { Schedule } from "@common/types/Schedule";
 import { getErrorMessage, logError } from "@common/utilities/error";
-import { lastValueFrom } from "rxjs";
+import type { PauseLineupEvent, SetLineupEvent } from "./interfaces/outputEvents";
 import { ProfileCardComponent } from "../profile/profile-card/profile-card.component";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../services/app-status.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { SyncTeamsService } from "../services/sync-teams.service";
 import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
-import type {
-  PauseLineupEvent,
-  SetLineupEvent,
-} from "./interfaces/outputEvents";
 import { RelativeDatePipe } from "./pipes/relative-date.pipe";
 import { TeamComponent } from "./team/team.component";
 
@@ -88,21 +75,13 @@ export class TeamsComponent implements OnInit {
     const changeTo = $event.isSettingLineups;
 
     // Optimistic update first for immediate UI response
-    this.syncTeamsService.optimisticallyUpdateTeam(
-      teamKey,
-      "is_setting_lineups",
-      changeTo,
-    );
+    this.syncTeamsService.optimisticallyUpdateTeam(teamKey, "is_setting_lineups", changeTo);
 
     try {
       await this.api.setLineupsBoolean(teamKey, changeTo);
     } catch (_ignore) {
       // Revert optimistic update on error
-      this.syncTeamsService.optimisticallyUpdateTeam(
-        teamKey,
-        "is_setting_lineups",
-        !changeTo,
-      );
+      this.syncTeamsService.optimisticallyUpdateTeam(teamKey, "is_setting_lineups", !changeTo);
       await this.errorDialog(
         "Could not update team's status on the server. Please check your internet connection and try again later.",
       );
@@ -113,8 +92,7 @@ export class TeamsComponent implements OnInit {
     const teamKey = $event.team.team_key;
 
     const initialPauseState = $event.team.lineup_paused_at;
-    const isPaused =
-      initialPauseState !== undefined && initialPauseState !== -1;
+    const isPaused = initialPauseState !== undefined && initialPauseState !== -1;
 
     // Optimistic update first for immediate UI response
     this.syncTeamsService.optimisticallyUpdateTeam(

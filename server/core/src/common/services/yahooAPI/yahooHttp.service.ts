@@ -54,11 +54,7 @@ export function httpPostAxiosUnauth<T>(url: string, body: unknown) {
   });
 }
 
-export async function httpPostAxiosAuth<T>(
-  uid: string,
-  url: string,
-  body: unknown,
-) {
+export async function httpPostAxiosAuth<T>(uid: string, url: string, body: unknown) {
   const credential = await loadYahooAccessToken(uid);
   const accessToken = credential.accessToken;
 

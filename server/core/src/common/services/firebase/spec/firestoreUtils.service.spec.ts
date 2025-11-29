@@ -1,5 +1,5 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { createMock } from "../../../spec/createMock";
 import * as firestoreService from "../firestore.service";
 import { patchTeamChangesInFirestore } from "../firestoreUtils.service";
@@ -91,10 +91,7 @@ describe("patchTeamChangesInFirestore", () => {
       }),
     ];
 
-    const updateTeamFirestoreSpy = vi.spyOn(
-      firestoreService,
-      "updateTeamFirestore",
-    );
+    const updateTeamFirestoreSpy = vi.spyOn(firestoreService, "updateTeamFirestore");
 
     await patchTeamChangesInFirestore(yahooTeams, firestoreTeams);
 

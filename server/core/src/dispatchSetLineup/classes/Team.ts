@@ -1,16 +1,9 @@
+import { type } from "arktype";
 import assert from "node:assert";
 import type { Leagues } from "@common/types/Leagues.js";
-import type {
-  GamesPlayed,
-  InningsPitched,
-  TeamOptimizer,
-} from "@common/types/team.js";
-import type {
-  TransactionDetails,
-  TransactionPlayer,
-} from "@common/types/transactions.js";
+import type { GamesPlayed, InningsPitched, TeamOptimizer } from "@common/types/team.js";
+import type { TransactionDetails, TransactionPlayer } from "@common/types/transactions.js";
 import { isDefined } from "@common/utilities/checks.js";
-import { type } from "arktype";
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../common/classes/Player.js";
 import {
@@ -72,10 +65,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   private _lockedPlayers: Set<string> = new Set();
   private _numNewAdds = 0;
 
-  constructor(
-    team: TeamOptimizer,
-    positionalScarcityOffsets?: LeagueSpecificScarcityOffsets,
-  ) {
+  constructor(team: TeamOptimizer, positionalScarcityOffsets?: LeagueSpecificScarcityOffsets) {
     const teamCopy = structuredClone(team);
     super(teamCopy.players);
 
@@ -107,8 +97,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     this.allow_adding = teamCopy.allow_adding;
     this.allow_add_drops = teamCopy.allow_add_drops;
     this.allow_waiver_adds = teamCopy.allow_waiver_adds;
-    this.automated_transaction_processing =
-      teamCopy.automated_transaction_processing;
+    this.automated_transaction_processing = teamCopy.automated_transaction_processing;
     this.last_updated = teamCopy.last_updated;
     this.lineup_paused_at = teamCopy.lineup_paused_at ?? -1;
 
@@ -123,8 +112,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       gameCode: this.game_code,
       weeklyDeadline: this.weekly_deadline,
       ownershipScoreFunction: this.ownershipScoreFunction,
-      seasonTimeProgress:
-        (getNow() - this.start_date) / (this.end_date - this.start_date),
+      seasonTimeProgress: (getNow() - this.start_date) / (this.end_date - this.start_date),
       gamesPlayed: this.games_played,
       inningsPitched: this.innings_pitched,
     });
@@ -146,18 +134,12 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     for (const position of this.games_played) {
       // Use a 1.5% buffer to allow for some day-to-day variance
       // Results in an 83.23 roster spot requirement for 82 games max, or 164.43 for 162 games max
-      if (
-        position.games_played.projected >
-        position.games_played.max * (1 + BUFFER)
-      ) {
+      if (position.games_played.projected > position.games_played.max * (1 + BUFFER)) {
         this.reduceAvailableRosterSpots(position.position, 1);
       }
     }
     if (this.innings_pitched !== undefined) {
-      if (
-        this.innings_pitched.projected >
-        this.innings_pitched.max * (1 + BUFFER)
-      ) {
+      if (this.innings_pitched.projected > this.innings_pitched.max * (1 + BUFFER)) {
         this.reduceAvailableRosterSpots("P", 1) ||
           this.reduceAvailableRosterSpots("RP", 1) ||
           this.reduceAvailableRosterSpots("SP", 1);
@@ -197,12 +179,9 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     }
   }
 
-  private makeTransactionPlayerInelligible(
-    playerInTransaction: TransactionPlayer,
-  ) {
+  private makeTransactionPlayerInelligible(playerInTransaction: TransactionPlayer) {
     const matchingTeamPlayer = this.players.find(
-      (player) =>
-        player.player_key === flattenArray(playerInTransaction[0]).player_key,
+      (player) => player.player_key === flattenArray(playerInTransaction[0]).player_key,
     );
 
     if (!matchingTeamPlayer?.isInactiveList()) {
@@ -214,9 +193,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     isPendingTransaction: boolean,
     playerInTransaction: TransactionPlayer,
   ) {
-    const player = TransactionPlayerInfoSchema.assert(
-      flattenArray(playerInTransaction[0]),
-    );
+    const player = TransactionPlayerInfoSchema.assert(flattenArray(playerInTransaction[0]));
     const playerKey = player.player_key;
     const eligiblePositions = player.display_position.split(",");
     // sometimes transaction_data is an array of size 1, sometimes just the object. Why, Yahoo?
@@ -225,8 +202,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       transactionData = transactionData[0];
     }
 
-    const isAddingPlayer =
-      transactionData.destination_team_key === this.team_key;
+    const isAddingPlayer = transactionData.destination_team_key === this.team_key;
 
     // only adjust pendingAddDropDifferential count for officially "pending" transactions, not "proposed" trades
     if (isAddingPlayer) {
@@ -248,8 +224,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   }
 
   public addPendingAdd(player: Player): void {
-    const { player_key: playerKey, eligible_positions: eligiblePositions } =
-      player;
+    const { player_key: playerKey, eligible_positions: eligiblePositions } = player;
     this._pendingAddPlayers.set(playerKey, eligiblePositions);
     this._numNewAdds += 1;
   }
@@ -259,8 +234,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   }
 
   public addPendingDrop(player: Player): void {
-    const { player_key: playerKey, eligible_positions: eligiblePositions } =
-      player;
+    const { player_key: playerKey, eligible_positions: eligiblePositions } = player;
     this._lockedPlayers.add(playerKey);
     this._pendingDropPlayers.set(playerKey, eligiblePositions);
   }
@@ -304,15 +278,12 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   }
 
   public get droppablePlayers(): Player[] {
-    return this.droppablePlayersInclIL.filter(
-      (player) => !player.isInactiveList(),
-    );
+    return this.droppablePlayersInclIL.filter((player) => !player.isInactiveList());
   }
 
   public get droppablePlayersInclIL(): Player[] {
     return this.players.filter(
-      (player) =>
-        !(player.is_undroppable || this._lockedPlayers.has(player.player_key)),
+      (player) => !(player.is_undroppable || this._lockedPlayers.has(player.player_key)),
     );
   }
 
@@ -346,25 +317,19 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   }
 
   public get inactiveListEligiblePlayers(): Player[] {
-    return this._editablePlayers.filter((player) =>
-      player.isInactiveListEligible(),
-    );
+    return this._editablePlayers.filter((player) => player.isInactiveListEligible());
   }
 
   public get inactiveOnRosterPlayers(): Player[] {
     return this._editablePlayers.filter(
       (player) =>
         player.isActiveRoster() &&
-        player.eligible_positions.some((position) =>
-          INACTIVE_POSITION_LIST.includes(position),
-        ),
+        player.eligible_positions.some((position) => INACTIVE_POSITION_LIST.includes(position)),
     );
   }
 
   public get healthyOnIL(): Player[] {
-    return this._editablePlayers.filter(
-      (player) => player.isHealthy() && player.isInactiveList(),
-    );
+    return this._editablePlayers.filter((player) => player.isHealthy() && player.isInactiveList());
   }
 
   public get unfilledPositionCounter(): { [key: string]: number } {
@@ -405,8 +370,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
   public get overfilledPositions(): string[] {
     return Object.keys(this.unfilledPositionCounter).filter(
-      (position) =>
-        position !== "BN" && (this.unfilledPositionCounter[position] ?? 0) < 0,
+      (position) => position !== "BN" && (this.unfilledPositionCounter[position] ?? 0) < 0,
     );
   }
 
@@ -422,9 +386,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     const unfilledPositions = this.unfilledPositionCounter;
     return Object.keys(unfilledPositions).reduce(
       (acc, position) =>
-        !INACTIVE_POSITION_LIST.includes(position)
-          ? acc + (unfilledPositions[position] ?? 0)
-          : acc,
+        !INACTIVE_POSITION_LIST.includes(position) ? acc + (unfilledPositions[position] ?? 0) : acc,
       0,
     );
   }
@@ -495,16 +457,15 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     const result: string[] = [];
 
     // validPlayerKeysWithPositions: string[playerKey] = [eligiblePositions]
-    const validPlayerKeysWithPositions: string[][] =
-      this.getValidPlayerKeysWithEligiblePositions();
+    const validPlayerKeysWithPositions: string[][] = this.getValidPlayerKeysWithEligiblePositions();
 
     const positionPlayerCapacity: { [position: string]: number } =
       this.getPlayerCapacityAtPosition();
 
     for (const position in positionPlayerCapacity) {
       if (Object.hasOwn(positionPlayerCapacity, position)) {
-        const playerKeysAtPosition = validPlayerKeysWithPositions.filter(
-          (eligiblePositions) => eligiblePositions.includes(position),
+        const playerKeysAtPosition = validPlayerKeysWithPositions.filter((eligiblePositions) =>
+          eligiblePositions.includes(position),
         );
         const positionCapacity = positionPlayerCapacity[position];
         if (
@@ -521,10 +482,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
   private getValidPlayerKeysWithEligiblePositions(): string[][] {
     return this.players
-      .filter(
-        (player) =>
-          !(player.isLTIR() || this._pendingDropPlayers.has(player.player_key)),
-      )
+      .filter((player) => !(player.isLTIR() || this._pendingDropPlayers.has(player.player_key)))
       .map((player) => {
         const {
           eligible_positions: eligiblePositions,
@@ -545,25 +503,19 @@ export class Team extends PlayerCollection implements TeamOptimizer {
       (position) => !INACTIVE_POSITION_LIST.includes(position),
     );
 
-    const result = positions.reduce(
-      (acc: { [position: string]: number }, position: string) => {
-        acc[position] = this.roster_positions[position] ?? 0;
-        const isCompoundPosition =
-          Object.keys(compoundPositions).includes(position);
-        if (isCompoundPosition) {
-          const childPositions = compoundPositions[position];
-          if (childPositions) {
-            for (const childPosition of childPositions) {
-              acc[position] =
-                (acc[position] ?? 0) +
-                (this.roster_positions[childPosition] ?? 0);
-            }
+    const result = positions.reduce((acc: { [position: string]: number }, position: string) => {
+      acc[position] = this.roster_positions[position] ?? 0;
+      const isCompoundPosition = Object.keys(compoundPositions).includes(position);
+      if (isCompoundPosition) {
+        const childPositions = compoundPositions[position];
+        if (childPositions) {
+          for (const childPosition of childPositions) {
+            acc[position] = (acc[position] ?? 0) + (this.roster_positions[childPosition] ?? 0);
           }
         }
-        return acc;
-      },
-      {},
-    );
+      }
+      return acc;
+    }, {});
 
     const maxExtraPlayers = POSITIONAL_MAX_EXTRA_PLAYERS[this.game_code];
     if (!maxExtraPlayers) {
@@ -575,12 +527,10 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     );
 
     for (const extraPosition of extraPositionsToCheck) {
-      const parentPositions = Object.keys(compoundPositions).filter(
-        (parentPosition) => {
-          const composition = compoundPositions[parentPosition];
-          return composition?.includes(extraPosition) ?? false;
-        },
-      );
+      const parentPositions = Object.keys(compoundPositions).filter((parentPosition) => {
+        const composition = compoundPositions[parentPosition];
+        return composition?.includes(extraPosition) ?? false;
+      });
 
       if (parentPositions.length === 0) {
         continue;
@@ -596,9 +546,7 @@ export class Team extends PlayerCollection implements TeamOptimizer {
   }
 
   public getPlayersAt(position: string): Player[] {
-    return this._editablePlayers.filter(
-      (player) => player.selected_position === position,
-    );
+    return this._editablePlayers.filter((player) => player.selected_position === position);
   }
 
   public isCurrentTransactionPaceOK(): boolean {
@@ -633,18 +581,13 @@ export class Team extends PlayerCollection implements TeamOptimizer {
 
     return weeklyPaceExceeded === false && seasonPaceExceeded === false;
 
-    function isToleranceExceeded(
-      currentAdds: number,
-      maxAdds: number,
-      progress: number,
-    ) {
+    function isToleranceExceeded(currentAdds: number, maxAdds: number, progress: number) {
       const TOLERANCE = 0.1;
 
       // the fewer the number of remaining adds, the less tolerance we allow
       const dynamicTolerance = TOLERANCE * (maxAdds - currentAdds);
 
-      const isPastTolerance =
-        currentAdds >= progress * maxAdds + dynamicTolerance;
+      const isPastTolerance = currentAdds >= progress * maxAdds + dynamicTolerance;
       const oneTransactionLeft = currentAdds >= maxAdds - 1;
 
       return isPastTolerance || oneTransactionLeft;

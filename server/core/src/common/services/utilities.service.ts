@@ -1,7 +1,7 @@
-import { assertType } from "@common/utilities/checks.js";
 import { type } from "arktype";
 import { GoogleAuth } from "google-auth-library";
 import spacetime from "spacetime";
+import { assertType } from "@common/utilities/checks.js";
 
 /**
  * The properties of the Player object are not consistent.
@@ -11,17 +11,12 @@ import spacetime from "spacetime";
  * @param {string} key - The property name to search for
  * @return {unknown} - The value of the property
  */
-export function getChild(
-  array: Record<string, unknown>[],
-  key: string,
-): unknown {
+export function getChild(array: Record<string, unknown>[], key: string): unknown {
   const element = array.find((o) => o[key] !== undefined);
   return element ? element[key] : null;
 }
 
-export function flattenArray(
-  arr: Record<string, unknown>[],
-): Record<string, unknown> {
+export function flattenArray(arr: Record<string, unknown>[]): Record<string, unknown> {
   return arr.reduce<Record<string, unknown>>((acc, item) => {
     if (typeof item === "object" && item !== null && !Array.isArray(item)) {
       for (const [key, value] of Object.entries(item)) {
@@ -32,10 +27,7 @@ export function flattenArray(
   }, {});
 }
 
-export function parseToInt(
-  value: string | number | undefined,
-  defaultValue = -1,
-): number {
+export function parseToInt(value: string | number | undefined, defaultValue = -1): number {
   if (value === undefined) {
     return defaultValue;
   }
@@ -65,10 +57,7 @@ let auth: GoogleAuth;
  * @return {Promise<string>} The URL of the function
  *
  */
-export async function getFunctionUrl(
-  name: string,
-  location = "us-central1",
-): Promise<string> {
+export async function getFunctionUrl(name: string, location = "us-central1"): Promise<string> {
   if (!auth) {
     auth = new GoogleAuth({
       scopes: "https://www.googleapis.com/auth/cloud-platform",
@@ -196,10 +185,7 @@ export function getProgressBetween(startDate: number, endDate: number): number {
  * @param {()} predicate The predicate function
  * @return {[][]} The partitioned array
  */
-export function partitionArray<T>(
-  arr: T[],
-  predicate: (item: T) => boolean,
-): T[][] {
+export function partitionArray<T>(arr: T[], predicate: (item: T) => boolean): T[][] {
   return arr.reduce(
     (acc, item) => {
       if (predicate(item)) {

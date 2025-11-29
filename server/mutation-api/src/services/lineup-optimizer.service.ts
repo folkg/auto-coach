@@ -1,15 +1,10 @@
-import type { TeamOptimizer } from "@common/types/team.js";
-import type {
-  LineupChanges,
-  PlayerTransaction,
-} from "@common/types/transactions.js";
 import { Data, Effect } from "effect";
+import type { TeamOptimizer } from "@common/types/team.js";
+import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import { LineupOptimizer as CoreLineupOptimizer } from "../../../core/src/dispatchSetLineup/classes/LineupOptimizer.js";
 
-export class LineupOptimizerError extends Data.TaggedError(
-  "LineupOptimizerError",
-)<{
+export class LineupOptimizerError extends Data.TaggedError("LineupOptimizerError")<{
   readonly message: string;
 }> {}
 
@@ -64,10 +59,7 @@ export class LineupOptimizer {
     });
   }
 
-  get lineupChanges(): Effect.Effect<
-    LineupChanges | null,
-    LineupOptimizerError
-  > {
+  get lineupChanges(): Effect.Effect<LineupChanges | null, LineupOptimizerError> {
     return Effect.try({
       try: () => this.coreOptimizer.lineupChanges,
       catch: (error) =>
@@ -77,10 +69,7 @@ export class LineupOptimizer {
     });
   }
 
-  get playerTransactions(): Effect.Effect<
-    PlayerTransaction[] | null,
-    LineupOptimizerError
-  > {
+  get playerTransactions(): Effect.Effect<PlayerTransaction[] | null, LineupOptimizerError> {
     return Effect.try({
       try: () => this.coreOptimizer.playerTransactions,
       catch: (error) =>
@@ -141,10 +130,7 @@ export function createLineupOptimizer(
 ): Effect.Effect<LineupOptimizer, LineupOptimizerError> {
   return Effect.try({
     try: () => {
-      const coreOptimizer = new CoreLineupOptimizer(
-        team,
-        positionalScarcityOffsets,
-      );
+      const coreOptimizer = new CoreLineupOptimizer(team, positionalScarcityOffsets);
       return new LineupOptimizer(coreOptimizer);
     },
     catch: (error) =>

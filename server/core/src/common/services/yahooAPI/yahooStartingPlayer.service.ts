@@ -1,5 +1,5 @@
-import { type } from "arktype";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { type } from "arktype";
 import { logger } from "firebase-functions";
 import {
   getIntradayTeams,
@@ -31,8 +31,7 @@ export async function fetchStartingPlayers(league: string): Promise<void> {
   // get a team from firestore where weekly_deadline='intraday' and game='nhl'
   // we will use their access token to get the starting goalies for all users
 
-  const teamsSnapshot: QuerySnapshot<DocumentData> =
-    await getIntradayTeams(league);
+  const teamsSnapshot: QuerySnapshot<DocumentData> = await getIntradayTeams(league);
   if (teamsSnapshot.empty) {
     throw new Error(
       `No teams found with weekly_deadline='intraday' and game=${league.toUpperCase()}`,
@@ -49,11 +48,7 @@ export async function fetchStartingPlayers(league: string): Promise<void> {
     throw new Error(`Invalid team key format: ${teamKey}`);
   }
   const uid = firstDoc.data().uid;
-  const startingPlayers: string[] = await parseStartingPlayersFromYahoo(
-    league,
-    uid,
-    leagueKey,
-  );
+  const startingPlayers: string[] = await parseStartingPlayersFromYahoo(league, uid, leagueKey);
 
   const startersGlobalArray: { [league: string]: string[] } = {
     nhl: NHL_STARTING_GOALIES,
@@ -99,9 +94,7 @@ async function parseStartingPlayersFromYahoo(
         }
 
         const [basePlayer] = player.player;
-        const flatBasePlayer = FlatBasePlayerSchema.assert(
-          flattenArray(basePlayer),
-        );
+        const flatBasePlayer = FlatBasePlayerSchema.assert(flattenArray(basePlayer));
 
         result.push(flatBasePlayer.player_key);
       }

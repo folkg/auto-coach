@@ -1,5 +1,5 @@
-import { type InfoTeam, yahooToFirestore } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
+import { type InfoTeam, yahooToFirestore } from "@common/types/team.js";
 
 vi.mock("firebase-admin/firestore", () => {
   return {

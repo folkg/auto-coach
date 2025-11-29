@@ -1,6 +1,6 @@
+import { Data, Effect } from "effect";
 import type { Firestore } from "@google-cloud/firestore";
 import type { CloudTasksClient } from "@google-cloud/tasks";
-import { Data, Effect } from "effect";
 import type { MutationTask } from "../types/schemas";
 import { HttpError } from "../types/schemas";
 
@@ -56,11 +56,7 @@ export class MutationTaskService {
           });
         }
 
-        const parent = this.tasksClient.queuePath(
-          projectId,
-          location,
-          request.queueName,
-        );
+        const parent = this.tasksClient.queuePath(projectId, location, request.queueName);
 
         const cloudTask = {
           name: `${parent}/tasks/${id}`,
@@ -74,9 +70,7 @@ export class MutationTaskService {
           },
           scheduleTime: request.scheduledFor
             ? {
-                seconds: Math.floor(
-                  new Date(request.scheduledFor).getTime() / 1000,
-                ),
+                seconds: Math.floor(new Date(request.scheduledFor).getTime() / 1000),
               }
             : undefined,
         };
@@ -111,10 +105,7 @@ export class MutationTaskService {
     });
   }
 
-  cancelMutationTask(
-    taskId: string,
-    queueName: string,
-  ): Effect.Effect<void, MutationTaskError> {
+  cancelMutationTask(taskId: string, queueName: string): Effect.Effect<void, MutationTaskError> {
     return Effect.tryPromise({
       try: async () => {
         const projectId = process.env.GOOGLE_CLOUD_PROJECT_ID;
@@ -127,12 +118,7 @@ export class MutationTaskService {
           });
         }
 
-        const name = this.tasksClient.taskPath(
-          projectId,
-          location,
-          queueName,
-          taskId,
-        );
+        const name = this.tasksClient.taskPath(projectId, location, queueName, taskId);
 
         await this.tasksClient.deleteTask({ name });
       },

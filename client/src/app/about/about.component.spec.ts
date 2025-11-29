@@ -1,8 +1,8 @@
-import { MatCardModule } from "@angular/material/card";
-import { render, screen } from "@testing-library/angular";
 import { BehaviorSubject } from "rxjs";
 import spacetime from "spacetime";
 import { beforeEach, describe, expect, it } from "vitest";
+import { MatCardModule } from "@angular/material/card";
+import { render, screen } from "@testing-library/angular";
 import { AppStatusService } from "../services/app-status.service";
 import { RobotsComponent } from "../shared/robots/robots.component";
 import { RelativeDatePipe } from "../teams/pipes/relative-date.pipe";
@@ -18,9 +18,7 @@ describe("AboutComponent", () => {
     focus$,
   };
 
-  const defaultProviders = [
-    { provide: AppStatusService, useValue: mockAppStatusService },
-  ];
+  const defaultProviders = [{ provide: AppStatusService, useValue: mockAppStatusService }];
 
   beforeEach(() => {
     focus$.next(mockSpacetimeNow);
@@ -55,9 +53,7 @@ describe("AboutComponent", () => {
 
     expect(screen.getByText("Optimized Lineups")).toBeInTheDocument();
     expect(screen.getByText("Last Minute Lineup Changes")).toBeInTheDocument();
-    expect(
-      screen.getByText("Intelligent Use of Injury Spaces"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Intelligent Use of Injury Spaces")).toBeInTheDocument();
     expect(screen.getByText("Easy to Use")).toBeInTheDocument();
   });
 

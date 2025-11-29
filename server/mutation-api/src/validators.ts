@@ -6,22 +6,13 @@ import {
   WeeklyTransactionsRequestSchema,
 } from "./types/api-schemas";
 
-export const validateSetLineup = effectValidator(
-  "json",
-  SetLineupRequestSchema,
-);
+export const validateSetLineup = effectValidator("json", SetLineupRequestSchema);
 
-export const validateWeeklyTransactions = effectValidator(
-  "json",
-  WeeklyTransactionsRequestSchema,
-);
+export const validateWeeklyTransactions = effectValidator("json", WeeklyTransactionsRequestSchema);
 
 export const validateCalcPositionalScarcity = effectValidator(
   "json",
   CalcPositionalScarcityRequestSchema,
 );
 
-export const validateExecuteMutation = effectValidator(
-  "json",
-  ExecuteMutationRequestSchema,
-);
+export const validateExecuteMutation = effectValidator("json", ExecuteMutationRequestSchema);

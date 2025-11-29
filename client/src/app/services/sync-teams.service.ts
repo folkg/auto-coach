@@ -1,10 +1,3 @@
-import { Injectable } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-// biome-ignore lint/style/useImportType: This is an injection token
-import { MatDialog } from "@angular/material/dialog";
-import { ClientTeam } from "@common/types/team";
-import { isDefined, isType } from "@common/utilities/checks";
-import { getErrorMessage } from "@common/utilities/error";
 import {
   BehaviorSubject,
   catchError,
@@ -20,14 +13,18 @@ import {
   startWith,
   switchMap,
 } from "rxjs";
-// biome-ignore lint/style/useImportType: This is an injection token
+import { Injectable } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatDialog } from "@angular/material/dialog";
+import { ClientTeam } from "@common/types/team";
+import { isDefined, isType } from "@common/utilities/checks";
+import { getErrorMessage } from "@common/utilities/error";
 import { AuthService } from "../services/auth.service";
 import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { shareLatest } from "../shared/utils/shareLatest";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "./api.service";
 
 @Injectable({
@@ -53,38 +50,30 @@ export class SyncTeamsService {
       switchMap(() => {
         const sessionStorageTeams = this.loadSessionStorageTeams();
         const hasValidSessionStorageTeams =
-          isType(sessionStorageTeams, ClientTeam.array()) &&
-          sessionStorageTeams.length > 0;
+          isType(sessionStorageTeams, ClientTeam.array()) && sessionStorageTeams.length > 0;
 
         if (hasValidSessionStorageTeams) {
           return concat(
             of({ loading: true, teams: sessionStorageTeams }),
-            from(
-              this.patchTeamPropertiesFromFirestore(sessionStorageTeams),
-            ).pipe(map((teams) => ({ loading: false, teams }))),
-          );
-        }
-
-        const localStorageTeams = this.loadLocalStorageTeams();
-        const hasValidLocalStorageTeams = isType(
-          localStorageTeams,
-          ClientTeam.array(),
-        );
-
-        if (hasValidLocalStorageTeams) {
-          return concat(
-            of({ loading: true, teams: localStorageTeams }),
-            from(this.fetchTeams()).pipe(
+            from(this.patchTeamPropertiesFromFirestore(sessionStorageTeams)).pipe(
               map((teams) => ({ loading: false, teams })),
             ),
           );
         }
 
+        const localStorageTeams = this.loadLocalStorageTeams();
+        const hasValidLocalStorageTeams = isType(localStorageTeams, ClientTeam.array());
+
+        if (hasValidLocalStorageTeams) {
+          return concat(
+            of({ loading: true, teams: localStorageTeams }),
+            from(this.fetchTeams()).pipe(map((teams) => ({ loading: false, teams }))),
+          );
+        }
+
         return concat(
           of({ loading: true, teams: [] }),
-          from(this.fetchTeams()).pipe(
-            map((teams) => ({ loading: false, teams })),
-          ),
+          from(this.fetchTeams()).pipe(map((teams) => ({ loading: false, teams }))),
         );
       }),
       catchError((err) => {
@@ -166,9 +155,7 @@ export class SyncTeamsService {
     const partialTeams = await this.api.fetchTeamsPartial();
 
     return teamsToPatch.map((teamToPatch) => {
-      const completeTeam = partialTeams.find(
-        (team) => team.team_key === teamToPatch.team_key,
-      );
+      const completeTeam = partialTeams.find((team) => team.team_key === teamToPatch.team_key);
       return completeTeam ? { ...teamToPatch, ...completeTeam } : teamToPatch;
     });
   }
@@ -190,9 +177,7 @@ export class SyncTeamsService {
         })
         .catch(console.error);
     } else if (errorMessage) {
-      this.errorDialog(errorMessage, "ERROR Fetching Teams").catch(
-        console.error,
-      );
+      this.errorDialog(errorMessage, "ERROR Fetching Teams").catch(console.error);
     } else {
       this.errorDialog(
         "Please ensure you are connected to the internet and try again",

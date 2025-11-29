@@ -1,5 +1,5 @@
-import type { TeamOptimizer } from "@common/types/team.js";
 import { describe, expect, it, vi } from "vitest";
+import type { TeamOptimizer } from "@common/types/team.js";
 import {
   getTeamsForNextDayTransactions,
   getTeamsWithSameDayTransactions,
@@ -8,21 +8,15 @@ import {
   tomorrowsDateAsString,
 } from "./set-lineup.service.js";
 
-vi.mock(
-  "../../../core/src/common/services/firebase/firestore.service.js",
-  () => ({
-    getTodaysPostponedTeams: vi.fn(),
-    updateFirestoreTimestamp: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/firebase/firestore.service.js", () => ({
+  getTodaysPostponedTeams: vi.fn(),
+  updateFirestoreTimestamp: vi.fn(),
+}));
 
-vi.mock(
-  "../../../core/src/common/services/firebase/firestoreUtils.service.js",
-  () => ({
-    enrichTeamsWithFirestoreSettings: vi.fn((teams) => teams),
-    patchTeamChangesInFirestore: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/firebase/firestoreUtils.service.js", () => ({
+  enrichTeamsWithFirestoreSettings: vi.fn((teams) => teams),
+  patchTeamChangesInFirestore: vi.fn(),
+}));
 
 vi.mock("../../../core/src/common/services/utilities.service.js", () => ({
   getCurrentPacificNumDay: vi.fn(() => 3),
@@ -30,48 +24,31 @@ vi.mock("../../../core/src/common/services/utilities.service.js", () => ({
   isTodayPacific: vi.fn(() => false),
 }));
 
-vi.mock(
-  "../../../core/src/common/services/yahooAPI/yahooAPI.service.js",
-  () => ({
-    putLineupChanges: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/yahooAPI/yahooAPI.service.js", () => ({
+  putLineupChanges: vi.fn(),
+}));
 
-vi.mock(
-  "../../../core/src/common/services/yahooAPI/yahooLineupBuilder.service.js",
-  () => ({
-    fetchRostersFromYahoo: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/yahooAPI/yahooLineupBuilder.service.js", () => ({
+  fetchRostersFromYahoo: vi.fn(),
+}));
 
-vi.mock(
-  "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js",
-  () => ({
-    initStartingGoalies: vi.fn(),
-    initStartingPitchers: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js", () => ({
+  initStartingGoalies: vi.fn(),
+  initStartingPitchers: vi.fn(),
+}));
 
-vi.mock(
-  "../../../core/src/scheduleSetLineup/services/scheduleSetLineup.service.js",
-  () => ({
-    isFirstRunOfTheDay: vi.fn(() => true),
-  }),
-);
+vi.mock("../../../core/src/scheduleSetLineup/services/scheduleSetLineup.service.js", () => ({
+  isFirstRunOfTheDay: vi.fn(() => true),
+}));
 
-vi.mock(
-  "../../../core/src/transactions/services/processTransactions.service.js",
-  () => ({
-    createPlayersTransactions: vi.fn(),
-    getTopAvailablePlayers: vi.fn(),
-    postTransactions: vi.fn(),
-    sendPotentialTransactionEmail: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/transactions/services/processTransactions.service.js", () => ({
+  createPlayersTransactions: vi.fn(),
+  getTopAvailablePlayers: vi.fn(),
+  postTransactions: vi.fn(),
+  sendPotentialTransactionEmail: vi.fn(),
+}));
 
-function createMockTeamOptimizer(
-  overrides: Partial<TeamOptimizer> = {},
-): TeamOptimizer {
+function createMockTeamOptimizer(overrides: Partial<TeamOptimizer> = {}): TeamOptimizer {
   return {
     team_key: "123.l.456.t.1",
     game_code: "mlb",
@@ -264,10 +241,7 @@ describe("getTeamsForNextDayTransactions", () => {
     });
 
     // Act
-    const result = getTeamsForNextDayTransactions([
-      matchingDeadlineTeam,
-      nonMatchingTeam,
-    ]);
+    const result = getTeamsForNextDayTransactions([matchingDeadlineTeam, nonMatchingTeam]);
 
     // Assert
     expect(result).toHaveLength(1);

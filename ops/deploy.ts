@@ -1,12 +1,7 @@
 #!/usr/bin/env bun
-import { parseArgs } from "node:util";
 import { $ } from "bun";
-import {
-  buildAPI,
-  buildContainer,
-  pushContainer,
-  tagContainer,
-} from "./tools/docker";
+import { parseArgs } from "node:util";
+import { buildAPI, buildContainer, pushContainer, tagContainer } from "./tools/docker";
 import { loadEnvironment } from "./tools/environment";
 import { buildClient, deployFunctions, deployHosting } from "./tools/firebase";
 import { log, logError, logStep, logSuccess, logWarning } from "./tools/log";
@@ -15,13 +10,7 @@ import { applyInfrastructure, getAPIURL } from "./tools/tofu";
 import { determineContainerTags, getPrimaryTag } from "./tools/versioning";
 
 interface DeployArgs {
-  component:
-    | "api"
-    | "client"
-    | "functions"
-    | "firestore"
-    | "mutation-api"
-    | "full";
+  component: "api" | "client" | "functions" | "firestore" | "mutation-api" | "full";
   env: "dev" | "prod";
   version?: string;
   channel?: string;
@@ -48,19 +37,10 @@ function parseArguments(): DeployArgs {
   if (
     !(
       component &&
-      [
-        "api",
-        "client",
-        "functions",
-        "firestore",
-        "mutation-api",
-        "full",
-      ].includes(component)
+      ["api", "client", "functions", "firestore", "mutation-api", "full"].includes(component)
     )
   ) {
-    throw new Error(
-      "Component required: api, client, functions, firestore, mutation-api, or full",
-    );
+    throw new Error("Component required: api, client, functions, firestore, mutation-api, or full");
   }
 
   const env = (values.env as "dev" | "prod") || "dev";
@@ -110,21 +90,13 @@ async function deployAPI(
   await pushContainer(projectId, envConfig.containerRepo, tags);
 
   if (!args.skipInfra) {
-    await applyInfrastructure(
-      envConfig,
-      primaryTag,
-      projectId,
-      firebaseProjectId,
-    );
+    await applyInfrastructure(envConfig, primaryTag, projectId, firebaseProjectId);
     const apiURL = await getAPIURL();
     logSuccess("API deployed successfully!");
     log(`API URL: ${apiURL}`);
     log(`Container tags: ${tags.join(", ")}`);
   } else {
-    logStep(
-      "API",
-      "Skipping infrastructure apply - container pushed successfully",
-    );
+    logStep("API", "Skipping infrastructure apply - container pushed successfully");
     logSuccess("Container image ready for deployment");
     log(`Container tags: ${tags.join(", ")}`);
     log(
@@ -136,10 +108,7 @@ async function deployAPI(
 async function deployClient(args: DeployArgs): Promise<void> {
   const envConfig = loadEnvironment(args.env);
 
-  logStep(
-    "Deploy Client",
-    `Environment: ${args.env}, Site: ${envConfig.hostingSite}`,
-  );
+  logStep("Deploy Client", `Environment: ${args.env}, Site: ${envConfig.hostingSite}`);
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
@@ -200,23 +169,16 @@ async function deployFunctionsComponent(
   );
 
   // Copy common to node_modules/@common so package imports from core work
-  const commonModuleDir = resolve(
-    projectRoot,
-    "server/functions/node_modules/@common",
-  );
+  const commonModuleDir = resolve(projectRoot, "server/functions/node_modules/@common");
   mkdirSync(commonModuleDir, { recursive: true });
 
-  cpSync(
-    resolve(projectRoot, "common/dist/types"),
-    resolve(commonModuleDir, "types"),
-    { recursive: true },
-  );
+  cpSync(resolve(projectRoot, "common/dist/types"), resolve(commonModuleDir, "types"), {
+    recursive: true,
+  });
 
-  cpSync(
-    resolve(projectRoot, "common/dist/utilities"),
-    resolve(commonModuleDir, "utilities"),
-    { recursive: true },
-  );
+  cpSync(resolve(projectRoot, "common/dist/utilities"), resolve(commonModuleDir, "utilities"), {
+    recursive: true,
+  });
 
   // Create package.json for @common module
   writeFileSync(
@@ -238,10 +200,7 @@ async function deployFullStack(
   projectId: string,
   firebaseProjectId: string,
 ): Promise<void> {
-  logStep(
-    "Deploy Full Stack",
-    `Environment: ${args.env}, Version: ${args.version || "latest"}`,
-  );
+  logStep("Deploy Full Stack", `Environment: ${args.env}, Version: ${args.version || "latest"}`);
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
@@ -260,13 +219,9 @@ async function main(): Promise<void> {
     const args = parseArguments();
 
     const projectId = process.env.GCP_PROJECT_ID || process.env.PROJECT_ID;
-    const firebaseProjectId =
-      process.env.FIREBASE_PROJECT_ID || "auto-gm-372620";
+    const firebaseProjectId = process.env.FIREBASE_PROJECT_ID || "auto-gm-372620";
 
-    logStep(
-      "Configuration",
-      `Component: ${args.component}, Environment: ${args.env}`,
-    );
+    logStep("Configuration", `Component: ${args.component}, Environment: ${args.env}`);
 
     switch (args.component) {
       case "api":

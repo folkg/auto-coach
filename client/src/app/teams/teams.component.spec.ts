@@ -1,6 +1,5 @@
-import { type ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { beforeEach, describe, expect, it } from "vitest";
+import { type ComponentFixture, TestBed } from "@angular/core/testing";
 import { TeamsComponent } from "./teams.component";
 
 describe.todo("DashboardComponent", () => {

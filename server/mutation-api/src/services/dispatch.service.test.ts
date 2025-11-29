@@ -1,7 +1,7 @@
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { Effect, Layer } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Layer } from "effect";
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import type {
   CalcPositionalScarcityRequest,
   SetLineupRequest,
@@ -89,10 +89,7 @@ function createTestSchedulingService(overrides: {
       return (
         overrides.activeUsers ??
         new Map<string, TeamData[]>([
-          [
-            "user-1",
-            [{ uid: "user-1", game_code: "nba", start_date: 0 } as TeamData],
-          ],
+          ["user-1", [{ uid: "user-1", game_code: "nba", start_date: 0 } as TeamData]],
         ])
       );
     },
@@ -163,8 +160,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("skips dispatch at hour 0 (midnight run)", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
@@ -180,8 +176,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("dispatches at hour 1 (first run of day)", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
@@ -201,8 +196,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("dispatches at any non-zero hour", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
@@ -222,8 +216,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("returns early when no leagues have games starting soon", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
@@ -239,8 +232,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("returns early when no active users found", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
@@ -261,25 +253,18 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("returns correct task count on success", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.success).toBe(true);
       expect(result.taskCount).toBe(3);
-      expect(result.message).toContain(
-        "Successfully enqueued 3 set lineup tasks",
-      );
+      expect(result.message).toContain("Successfully enqueued 3 set lineup tasks");
     }).pipe(
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
           leagues: ["nba"],
-          enqueuedTasks: [
-            { uid: "user-1" },
-            { uid: "user-2" },
-            { uid: "user-3" },
-          ],
+          enqueuedTasks: [{ uid: "user-1" }, { uid: "user-2" }, { uid: "user-3" }],
         }),
       ),
       Effect.provide(createTestFirestoreService({})),
@@ -289,8 +274,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("includes league names in success message", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert
       expect(result.message).toContain("nba");
@@ -309,9 +293,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("fails when leaguesToSetLineupsFor fails", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result = yield* Effect.flip(
-        dispatchService.dispatchSetLineup(mockSetLineupRequest),
-      );
+      const result = yield* Effect.flip(dispatchService.dispatchSetLineup(mockSetLineupRequest));
 
       // Assert
       expect(result._tag).toBe("SchedulingError");
@@ -332,9 +314,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("fails when getActiveTeamsForLeagues fails", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result = yield* Effect.flip(
-        dispatchService.dispatchSetLineup(mockSetLineupRequest),
-      );
+      const result = yield* Effect.flip(dispatchService.dispatchSetLineup(mockSetLineupRequest));
 
       // Assert
       expect(result._tag).toBe("DispatchError");
@@ -354,9 +334,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("fails when enqueueUsersTeams fails", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result = yield* Effect.flip(
-        dispatchService.dispatchSetLineup(mockSetLineupRequest),
-      );
+      const result = yield* Effect.flip(dispatchService.dispatchSetLineup(mockSetLineupRequest));
 
       // Assert
       expect(result._tag).toBe("SchedulingError");
@@ -378,8 +356,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("continues despite postponed teams failure (logged only)", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert - should still succeed because postponed teams failure is logged, not thrown
       expect(result.success).toBe(true);
@@ -400,8 +377,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
   it.effect("continues despite starting players failure (logged only)", () =>
     Effect.gen(function* () {
       // Arrange & Act
-      const result =
-        yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
 
       // Assert - should still succeed because starting players failure is logged, not thrown
       expect(result.success).toBe(true);
@@ -441,9 +417,7 @@ describe("DispatchServiceImpl.dispatchWeeklyTransactions", () => {
     Effect.gen(function* () {
       // Arrange & Act
       const result = yield* Effect.flip(
-        dispatchService.dispatchWeeklyTransactions(
-          mockWeeklyTransactionsRequest,
-        ),
+        dispatchService.dispatchWeeklyTransactions(mockWeeklyTransactionsRequest),
       );
 
       // Assert
@@ -482,9 +456,7 @@ describe("DispatchServiceImpl.dispatchCalcPositionalScarcity", () => {
     Effect.gen(function* () {
       // Arrange & Act
       const result = yield* Effect.flip(
-        dispatchService.dispatchCalcPositionalScarcity(
-          mockCalcPositionalScarcityRequest,
-        ),
+        dispatchService.dispatchCalcPositionalScarcity(mockCalcPositionalScarcityRequest),
       );
 
       // Assert

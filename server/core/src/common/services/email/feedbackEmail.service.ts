@@ -1,5 +1,5 @@
-import type { FeedbackData } from "@common/types/feedback.js";
 import { getAuth } from "firebase-admin/auth";
+import type { FeedbackData } from "@common/types/feedback.js";
 import { sendFeedbackEmail } from "./email.service.js";
 
 /**

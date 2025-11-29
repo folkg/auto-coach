@@ -37,10 +37,7 @@ export function ensure<T>(
   return val;
 }
 
-export function isType<T>(
-  data: unknown,
-  schema: (data: unknown) => T | ArkErrors,
-): data is T {
+export function isType<T>(data: unknown, schema: (data: unknown) => T | ArkErrors): data is T {
   const out = schema(data);
   if (out instanceof type.errors) {
     return false;
@@ -58,10 +55,7 @@ export function assertType<T>(
   }
 }
 
-export function ensureType<T>(
-  data: unknown,
-  schema: (data: unknown) => T | ArkErrors,
-): T {
+export function ensureType<T>(data: unknown, schema: (data: unknown) => T | ArkErrors): T {
   const out = schema(data);
   if (out instanceof type.errors) {
     throw new Error(out.summary);

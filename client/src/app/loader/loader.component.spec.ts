@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/angular";
 import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/angular";
 import { LoaderComponent } from "./loader.component";
 
 describe("LoaderComponent", () => {

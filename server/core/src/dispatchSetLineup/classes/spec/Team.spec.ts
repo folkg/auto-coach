@@ -16,9 +16,7 @@ describe("Test Team Class", () => {
     const teamJSON = require("./MLBpendingTransactions.json");
     const team = new Team(teamJSON[0]);
 
-    const testPlayer = team.allPlayers.find(
-      (p) => p.player_key === "422.p.8616",
-    );
+    const testPlayer = team.allPlayers.find((p) => p.player_key === "422.p.8616");
     expect(testPlayer?.eligible_positions).toEqual(["RP", "P", "BN"]);
   });
 
@@ -26,9 +24,7 @@ describe("Test Team Class", () => {
     const teamJSON = require("./MLBpendingTransactionsWIR+.json");
     const team = new Team(teamJSON[0]);
 
-    const testPlayer = team.allPlayers.find(
-      (p) => p.player_key === "422.p.8616",
-    );
+    const testPlayer = team.allPlayers.find((p) => p.player_key === "422.p.8616");
     expect(testPlayer?.eligible_positions).toEqual(["RP", "P", "BN"]);
   });
 
@@ -36,13 +32,9 @@ describe("Test Team Class", () => {
     const teamJSON = require("./MLBpendingTransactions.json");
     const team = new Team(teamJSON[0]);
 
-    const testPlayer = team.allPlayers.find(
-      (p) => p.player_key === "422.p.12120",
-    );
+    const testPlayer = team.allPlayers.find((p) => p.player_key === "422.p.12120");
     expect(testPlayer?.eligible_positions).toEqual(["SP", "P", "BN"]);
-    const testPlayer2 = team.allPlayers.find(
-      (p) => p.player_key === "422.p.11121",
-    );
+    const testPlayer2 = team.allPlayers.find((p) => p.player_key === "422.p.11121");
     expect(testPlayer2?.eligible_positions).toEqual(["SP", "RP", "P", "BN"]);
   });
 
@@ -50,13 +42,9 @@ describe("Test Team Class", () => {
     const teamJSON = require("./MLBpendingTransactionsWpendingILtrade.json");
     const team = new Team(teamJSON[0]);
 
-    const testPlayer = team.allPlayers.find(
-      (p) => p.player_key === "422.p.12120",
-    );
+    const testPlayer = team.allPlayers.find((p) => p.player_key === "422.p.12120");
     expect(testPlayer?.eligible_positions).toEqual(["SP", "P", "IL", "BN"]);
-    const testPlayer2 = team.allPlayers.find(
-      (p) => p.player_key === "422.p.11121",
-    );
+    const testPlayer2 = team.allPlayers.find((p) => p.player_key === "422.p.11121");
     expect(testPlayer2?.eligible_positions).toEqual(["SP", "RP", "P", "BN"]);
   });
 
@@ -66,11 +54,7 @@ describe("Test Team Class", () => {
 
     expect(team.allPendingAddDropDifferential).toEqual(0);
     expect(team.pendingAddPlayerKeys).toEqual(["422.p.9193"]);
-    expect(team.pendingLockedPlayerKeys).toEqual([
-      "422.p.8616",
-      "422.p.12120",
-      "422.p.11121",
-    ]);
+    expect(team.pendingLockedPlayerKeys).toEqual(["422.p.8616", "422.p.12120", "422.p.11121"]);
   });
 
   it("should have an add/drop differential of -1", () => {
@@ -79,11 +63,7 @@ describe("Test Team Class", () => {
 
     expect(team.allPendingAddDropDifferential).toEqual(-1);
     expect(team.pendingAddPlayerKeys).toEqual([]);
-    expect(team.pendingLockedPlayerKeys).toEqual([
-      "422.p.8616",
-      "422.p.12120",
-      "422.p.11121",
-    ]);
+    expect(team.pendingLockedPlayerKeys).toEqual(["422.p.8616", "422.p.12120", "422.p.11121"]);
   });
 
   it("should affect add/drop differential if a player is in a 'pending' (not 'proposed') trade", () => {
@@ -92,11 +72,7 @@ describe("Test Team Class", () => {
 
     expect(team.allPendingAddDropDifferential).toEqual(-2);
     expect(team.pendingAddPlayerKeys).toEqual(["422.p.9691"]);
-    expect(team.pendingLockedPlayerKeys).toEqual([
-      "422.p.8616",
-      "422.p.12120",
-      "422.p.11121",
-    ]);
+    expect(team.pendingLockedPlayerKeys).toEqual(["422.p.8616", "422.p.12120", "422.p.11121"]);
   });
 
   it("should have an add/drop differential of 2", () => {
@@ -104,15 +80,8 @@ describe("Test Team Class", () => {
     const team = new Team(teamJSON[0]);
 
     expect(team.allPendingAddDropDifferential).toEqual(2);
-    expect(team.pendingAddPlayerKeys).toEqual([
-      "422.p.9193",
-      "422.p.11121",
-      "422.p.9691",
-    ]);
-    expect(team.pendingLockedPlayerKeys).toEqual([
-      "422.p.12120",
-      "422.p.11121",
-    ]);
+    expect(team.pendingAddPlayerKeys).toEqual(["422.p.9193", "422.p.11121", "422.p.9691"]);
+    expect(team.pendingLockedPlayerKeys).toEqual(["422.p.12120", "422.p.11121"]);
   });
 
   test("transaction pace is good for both season and week", () => {
@@ -170,13 +139,7 @@ describe("Test Team Class", () => {
     const teamJSON = require("../../spec/testRosters/MLB/unfilledRosterPositions-UtilCritical.json");
     const team = new Team(teamJSON);
 
-    expect(team.almostCriticalPositions).toEqual([
-      "C",
-      "SS",
-      "RP",
-      "MI",
-      "Util",
-    ]);
+    expect(team.almostCriticalPositions).toEqual(["C", "SS", "RP", "MI", "Util"]);
   });
 
   it("should return empty array, since there is no max cap on any MLB positions", () => {
@@ -190,9 +153,7 @@ describe("Test Team Class", () => {
     const teamJSON = require("../../../common/services/yahooAPI/spec/testYahooLineupJSON/output/NFLLineups.json");
     const team = new Team(teamJSON[1]);
 
-    expect(team.atMaxCapPositions).toEqual(
-      expect.arrayContaining(["QB", "K", "DEF"]),
-    );
+    expect(team.atMaxCapPositions).toEqual(expect.arrayContaining(["QB", "K", "DEF"]));
   });
 
   it("should include QB as at max capacity even though there is only a Q/W/R/T position on roster", () => {

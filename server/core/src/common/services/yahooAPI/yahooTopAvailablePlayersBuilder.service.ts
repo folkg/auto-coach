@@ -1,6 +1,5 @@
-import type { IPlayer } from "@common/types/Player.js";
-
 import { type } from "arktype";
+import type { IPlayer } from "@common/types/Player.js";
 import { YahooAPIPlayersSchema } from "./interfaces/YahooAPIResponse.js";
 import {
   type AvailabilityStatus,
@@ -49,12 +48,7 @@ export async function fetchTopAvailablePlayersFromYahoo(
     }
   }
 
-  const yahooJSON = await getTopAvailablePlayers(
-    teamKeys,
-    uid,
-    availabilityStatus,
-    sort,
-  );
+  const yahooJSON = await getTopAvailablePlayers(teamKeys, uid, availabilityStatus, sort);
 
   const gamesJSON = yahooJSON.fantasy_content.users[0].user[1].games;
 

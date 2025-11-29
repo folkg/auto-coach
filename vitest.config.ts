@@ -1,6 +1,6 @@
-import angular from "@analogjs/vite-plugin-angular";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
+import angular from "@analogjs/vite-plugin-angular";
 
 export default defineConfig({
   test: {

@@ -8,9 +8,9 @@
  * to avoid polluting module state for other tests.
  */
 
+import { Effect } from "effect";
 import type { FirestoreTeam } from "@common/types/team.js";
 import { describe, expect, it } from "@effect/vitest";
-import { Effect } from "effect";
 import { performWeeklyLeagueTransactions } from "./weekly-transactions.service.js";
 
 describe("WeeklyTransactionsService Integration Tests", () => {
@@ -21,9 +21,7 @@ describe("WeeklyTransactionsService Integration Tests", () => {
         const teams: readonly FirestoreTeam[] = [];
 
         // Act
-        const result = yield* Effect.either(
-          performWeeklyLeagueTransactions("", teams),
-        );
+        const result = yield* Effect.either(performWeeklyLeagueTransactions("", teams));
 
         // Assert
         expect(result._tag).toBe("Left");
