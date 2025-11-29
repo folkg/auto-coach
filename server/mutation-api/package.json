@@ -28,13 +28,14 @@
     "dotenv": "17.2.3",
     "effect": "3.19.4",
     "firebase-admin": "13.6.0",
-    "hono": "4.10.6"
+    "hono": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "0.27.0",
     "@types/node": "24.7.2",
-    "msw": "^2.12.2",
-    "typescript": "5.9.3",
-    "vitest": "3.2.4"
+    "msw": "2.12.2",
+    "typescript": "catalog:",
+    "vitest": "catalog:",
+    "vite-tsconfig-paths": "catalog:"
   }
 }

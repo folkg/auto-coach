@@ -53,6 +53,12 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
+            },
+            "testing": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true
             }
           },
           "defaultConfiguration": "production"
@@ -77,7 +83,12 @@
           }
         },
         "test": {
-          "builder": "@analogjs/vitest-angular:test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json",
+            "browsers": ["chromium"],
+            "runnerConfig": "vitest.config.ts"
+          }
         }
       }
     }

@@ -6,46 +6,53 @@ beforeAll(() => server.listen({ onUnhandledRequest: "warn" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-// Mock Firebase/Firestore
-const mockFirestore = {
-  collection: vi.fn().mockReturnValue({
-    doc: vi.fn().mockReturnValue({
-      get: vi.fn().mockResolvedValue({
-        exists: false,
+// Create a stable Firestore mock object that won't be reset
+function createFirestoreMock() {
+  return {
+    collection: vi.fn().mockReturnValue({
+      doc: vi.fn().mockReturnValue({
+        get: vi.fn().mockResolvedValue({
+          exists: false,
+        }),
+        set: vi.fn().mockResolvedValue(undefined),
+        update: vi.fn().mockResolvedValue(undefined),
+        delete: vi.fn().mockResolvedValue(undefined),
       }),
-      set: vi.fn().mockResolvedValue(undefined),
-      update: vi.fn().mockResolvedValue(undefined),
-      delete: vi.fn().mockResolvedValue(undefined),
+      add: vi.fn().mockResolvedValue({ id: "test-id" }),
+      where: vi.fn().mockReturnThis(),
+      orderBy: vi.fn().mockReturnThis(),
+      limit: vi.fn().mockReturnThis(),
+      get: vi.fn().mockResolvedValue({
+        docs: [],
+      }),
     }),
-    add: vi.fn().mockResolvedValue({ id: "test-id" }),
-    where: vi.fn().mockReturnThis(),
-    orderBy: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    get: vi.fn().mockResolvedValue({
-      docs: [],
-    }),
-  }),
-};
+  };
+}
 
+// Mock Firebase/Firestore - use a class-like constructor function
 vi.mock("firebase-admin/firestore", () => ({
-  Firestore: vi.fn().mockImplementation(() => mockFirestore),
+  Firestore: function MockFirestore() {
+    return createFirestoreMock();
+  },
 }));
 
-// Mock Google Cloud Firestore
+// Mock Google Cloud Firestore - use a class-like constructor function
 vi.mock("@google-cloud/firestore", () => ({
-  Firestore: vi.fn().mockImplementation(() => mockFirestore),
+  Firestore: function MockFirestore() {
+    return createFirestoreMock();
+  },
 }));
 
-// Mock Google Cloud Tasks
+// Mock Google Cloud Tasks - use a class-like constructor function
 vi.mock("@google-cloud/tasks", () => ({
-  CloudTasksClient: vi.fn().mockImplementation(() => ({
-    queuePath: vi.fn().mockReturnValue("projects/test/locations/us-central1/queues/test-queue"),
-    taskPath: vi
-      .fn()
-      .mockReturnValue("projects/test/locations/us-central1/queues/test-queue/tasks/test-task"),
-    createTask: vi.fn().mockResolvedValue({}),
-    deleteTask: vi.fn().mockResolvedValue({}),
-  })),
+  CloudTasksClient: function MockCloudTasksClient() {
+    return {
+      queuePath: () => "projects/test/locations/us-central1/queues/test-queue",
+      taskPath: () => "projects/test/locations/us-central1/queues/test-queue/tasks/test-task",
+      createTask: () => Promise.resolve({}),
+      deleteTask: () => Promise.resolve({}),
+    };
+  },
 }));
 
 // Note: We do NOT mock the "effect" module as it breaks TaggedError functionality

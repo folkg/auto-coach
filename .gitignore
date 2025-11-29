@@ -54,8 +54,9 @@ web_modules/
 .DS_Store
 Thumbs.db
 
-# Aider
-.aider*
+# Test
+__screenshots__/
+**/__screenshots__/
 
 # Ignore all Firebase service account keys
 firebase-adminsdk-*.json
