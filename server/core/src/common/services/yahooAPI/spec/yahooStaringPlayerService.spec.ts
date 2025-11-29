@@ -64,6 +64,7 @@ describe("Test setStartingPlayers()", () => {
   ];
   const startingPlayersObject = require("./startingPlayersObject.json");
 
+  // Create spies at module level
   const spyGetIntradayTeams = vi.spyOn(firestoreService, "getIntradayTeams");
   const spyStoreStartingPlayersInFirestore = vi.spyOn(
     firestoreService,

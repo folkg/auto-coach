@@ -1,8 +1,7 @@
 import { defineConfig } from "vite";
 import tsconfigPaths from "vite-tsconfig-paths";
-/// <reference types="vitest" />
-
 import angular from "@analogjs/vite-plugin-angular";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig(({ mode }) => {
   return {
@@ -15,7 +14,7 @@ export default defineConfig(({ mode }) => {
       browser: {
         enabled: true,
         headless: true,
-        provider: "playwright",
+        provider: playwright(),
         instances: [{ browser: "chromium" }],
       },
     },

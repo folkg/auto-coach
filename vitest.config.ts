@@ -1,6 +1,7 @@
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 import angular from "@analogjs/vite-plugin-angular";
+import { playwright } from "@vitest/browser-playwright";
 
 export default defineConfig({
   test: {
@@ -9,8 +10,7 @@ export default defineConfig({
     testTimeout: 10000,
     projects: [
       {
-        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
-        plugins: [angular() as any, tsconfigPaths() as any],
+        plugins: [angular(), tsconfigPaths()],
         test: {
           name: "client",
           root: "./client",
@@ -21,7 +21,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: "playwright",
+            provider: playwright(),
             instances: [{ browser: "chromium" }],
           },
         },
@@ -40,8 +40,7 @@ export default defineConfig({
         },
       },
       {
-        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
-        plugins: [tsconfigPaths() as any],
+        plugins: [tsconfigPaths()],
         test: {
           name: "server-core",
           root: "./server/core",
@@ -51,8 +50,7 @@ export default defineConfig({
         },
       },
       {
-        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
-        plugins: [tsconfigPaths() as any],
+        plugins: [tsconfigPaths()],
         test: {
           name: "server-functions",
           root: "./server/functions",
@@ -62,8 +60,7 @@ export default defineConfig({
         },
       },
       {
-        // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
-        plugins: [tsconfigPaths() as any],
+        plugins: [tsconfigPaths()],
         test: {
           name: "mutation-api",
           root: "./server/mutation-api",

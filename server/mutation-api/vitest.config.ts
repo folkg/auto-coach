@@ -7,8 +7,7 @@ export default defineConfig({
   plugins: [
     tsconfigPaths({
       projects: ["tsconfig.json", "../core/tsconfig.json", "../../common/tsconfig.json"],
-      // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
-    }) as any,
+    }),
   ],
   test: {
     name: "mutation-api",
