@@ -1,8 +1,8 @@
-import type { Leagues } from "@common/types/Leagues.js";
-import { CloudTasksClient } from "@google-cloud/tasks";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import axios, { isAxiosError } from "axios";
 import { Data, Effect, Either } from "effect";
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import type { Leagues } from "@common/types/Leagues.js";
+import { CloudTasksClient } from "@google-cloud/tasks";
 import {
   db,
   storeTodaysPostponedTeams,
@@ -82,10 +82,7 @@ interface EnqueuedTask {
  * Games starting in the next hour will be set.
  * All leagues with games today will be set if this is the first execution of the day.
  */
-export function leaguesToSetLineupsFor(): Effect.Effect<
-  readonly Leagues[],
-  SchedulingError
-> {
+export function leaguesToSetLineupsFor(): Effect.Effect<readonly Leagues[], SchedulingError> {
   return Effect.gen(function* () {
     const todayDate = getPacificTimeDateString(new Date());
     const { loadedFromDB, gameStartTimes } = yield* loadTodaysGames(todayDate);
@@ -106,9 +103,7 @@ export function leaguesToSetLineupsFor(): Effect.Effect<
 /**
  * Determine if there are any leagues starting games in the next hour.
  */
-export function findLeaguesPlayingNextHour(
-  gameStartTimes: GameStartTimes,
-): Leagues[] {
+export function findLeaguesPlayingNextHour(gameStartTimes: GameStartTimes): Leagues[] {
   const now = Date.now();
   const nextHour = now + 3600000;
 
@@ -140,10 +135,7 @@ export function loadTodaysGames(
     });
 
     const scheduleDocData = scheduleDoc.data();
-    if (
-      !(scheduleDoc.exists && scheduleDocData) ||
-      scheduleDocData.date !== todayDate
-    ) {
+    if (!(scheduleDoc.exists && scheduleDocData) || scheduleDocData.date !== todayDate) {
       console.log("No games in database, fetching from internet");
       const gameStartTimes = yield* getTodaysGames(todayDate);
       return { loadedFromDB: false, gameStartTimes };
@@ -159,9 +151,7 @@ export function loadTodaysGames(
 /**
  * Fetches the game start times for all leagues from Yahoo/Sportsnet APIs and stores them.
  */
-export function getTodaysGames(
-  todayDate: string,
-): Effect.Effect<GameStartTimes, SchedulingError> {
+export function getTodaysGames(todayDate: string): Effect.Effect<GameStartTimes, SchedulingError> {
   return Effect.gen(function* () {
     const leagues: readonly Leagues[] = ["nba", "nhl", "nfl", "mlb"];
     const gameStartTimes: {
@@ -178,15 +168,12 @@ export function getTodaysGames(
 
     for (const league of leagues) {
       const times = yield* getGameTimesWithFallback(league, todayDate);
-      gameStartTimes[league] = times;
+      (gameStartTimes as Record<Leagues, number[]>)[league] = times;
     }
 
     yield* Effect.tryPromise({
       try: () =>
-        db
-          .collection("schedule")
-          .doc("today")
-          .set({ date: todayDate, games: gameStartTimes }),
+        db.collection("schedule").doc("today").set({ date: todayDate, games: gameStartTimes }),
       catch: (error: unknown) =>
         new SchedulingError({
           message: `Failed to store schedule in Firestore: ${error instanceof Error ? error.message : String(error)}`,
@@ -202,9 +189,7 @@ function getGameTimesWithFallback(
   todayDate: string,
 ): Effect.Effect<number[], SchedulingError> {
   return Effect.gen(function* () {
-    const yahooResult = yield* Effect.either(
-      getGameTimesYahoo(league, todayDate),
-    );
+    const yahooResult = yield* Effect.either(getGameTimesYahoo(league, todayDate));
 
     if (Either.isRight(yahooResult)) {
       return yahooResult.right;
@@ -213,18 +198,13 @@ function getGameTimesWithFallback(
     console.error("Error fetching games from Yahoo API", yahooResult.left);
     console.log("Trying to get games from Sportsnet API");
 
-    const sportsnetResult = yield* Effect.either(
-      getGameTimesSportsnet(league, todayDate),
-    );
+    const sportsnetResult = yield* Effect.either(getGameTimesSportsnet(league, todayDate));
 
     if (Either.isRight(sportsnetResult)) {
       return sportsnetResult.right;
     }
 
-    console.error(
-      "Error fetching games from Sportsnet API",
-      sportsnetResult.left,
-    );
+    console.error("Error fetching games from Sportsnet API", sportsnetResult.left);
     return [];
   });
 }
@@ -368,9 +348,7 @@ export function setStartingPlayersForToday(
     const leaguesWithStarters: readonly Leagues[] = ["nhl", "mlb"];
 
     for (const league of leaguesWithStarters) {
-      const hasTeam = teamsSnapshot?.docs?.some(
-        (doc) => doc.data().game_code === league,
-      );
+      const hasTeam = teamsSnapshot?.docs?.some((doc) => doc.data().game_code === league);
       if (hasTeam) {
         const result = yield* Effect.either(
           Effect.tryPromise({

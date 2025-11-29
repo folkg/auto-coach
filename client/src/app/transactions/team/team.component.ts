@@ -1,12 +1,6 @@
+import type { ClientTeam } from "@common/types/team";
 import { DecimalPipe } from "@angular/common";
-import {
-  Component,
-  computed,
-  EventEmitter,
-  Input,
-  input,
-  Output,
-} from "@angular/core";
+import { Component, computed, EventEmitter, Input, input, Output } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import {
   MatCard,
@@ -19,11 +13,10 @@ import {
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
-import type { ClientTeam } from "@common/types/team";
+import type { PlayerTransactionClient } from "../types/client-types";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";
 import { TransactionComponent } from "../transaction/transaction.component";
-import type { PlayerTransactionClient } from "../types/client-types";
 
 @Component({
   selector: "app-team[team][allTransactions]",
@@ -54,9 +47,7 @@ export class TeamComponent {
   }>();
 
   readonly transactions = computed(() =>
-    this.allTransactions().filter(
-      (transaction) => transaction.teamKey === this.team.team_key,
-    ),
+    this.allTransactions().filter((transaction) => transaction.teamKey === this.team.team_key),
   );
 
   readonly scoringType = SCORING_TYPES;

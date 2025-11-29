@@ -1,4 +1,3 @@
-import type { FirestoreTeam } from "@common/types/team.js";
 import {
   afterEach,
   beforeAll,
@@ -9,6 +8,7 @@ import {
   type MockInstance,
   vi,
 } from "vitest";
+import type { FirestoreTeam } from "@common/types/team.js";
 import * as constants from "../../../common/helpers/constants";
 import * as firestoreService from "../../../common/services/firebase/firestore.service";
 import { YahooAPIPlayerResponseSchema } from "../../../common/services/yahooAPI/interfaces/YahooAPIResponse";
@@ -35,24 +35,19 @@ const playersG = YahooAPIPlayerResponseSchema.assert(playersGJSON);
 const numbersArr100 = Array.from({ length: 100 }, (_, i) => 100 - i);
 
 // This changes sometimes, I want to make sure it's always the same for testing, since this isn't the focus
-const maxExtraSpy = vi
-  .spyOn(constants, "POSITIONAL_MAX_EXTRA_PLAYERS", "get")
-  .mockReturnValue({
-    mlb: { P: 6 },
-    nfl: { QB: 1, K: 0, DEF: 0 },
-    nba: {},
-    nhl: { G: 3 },
-  });
+const maxExtraSpy = vi.spyOn(constants, "POSITIONAL_MAX_EXTRA_PLAYERS", "get").mockReturnValue({
+  mlb: { P: 6 },
+  nfl: { QB: 1, K: 0, DEF: 0 },
+  nba: {},
+  nhl: { G: 3 },
+});
 
 const getTopPlayersGeneralSpy = vi.spyOn(yahooAPI, "getTopPlayersGeneral");
 
 // Stop calls to Firestore
 
 vi.spyOn(firestoreService, "getRandomUID").mockResolvedValue("1");
-const getPositionalScarcityOffsetsSpy = vi.spyOn(
-  firestoreService,
-  "getPositionalScarcityOffsets",
-);
+const getPositionalScarcityOffsetsSpy = vi.spyOn(firestoreService, "getPositionalScarcityOffsets");
 const updatePositionalScarcityOffsetSpy = vi
   .spyOn(firestoreService, "updatePositionalScarcityOffset")
   .mockResolvedValue();
@@ -88,9 +83,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions", () => {
     const team = createMock<FirestoreTeam>({
@@ -122,9 +115,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions and BN positions", () => {
     const team = createMock<FirestoreTeam>({
@@ -157,9 +148,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions, BN positions, and max extra players (NFL)", () => {
     const team = createMock<FirestoreTeam>({
@@ -188,9 +177,7 @@ describe("getReplacementLevel", () => {
       DEF: 12,
     };
     expectedOutput["W/R/T"] =
-      (expectedOutput.RB ?? 0) +
-      (expectedOutput.WR ?? 0) +
-      (expectedOutput.TE ?? 0);
+      (expectedOutput.RB ?? 0) + (expectedOutput.WR ?? 0) + (expectedOutput.TE ?? 0);
     expectedOutput["Q/W/R/T"] =
       (expectedOutput.QB ?? 0) +
       (expectedOutput.RB ?? 0) +
@@ -201,9 +188,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions (with no subs listed) and BN positions (NHL)", () => {
     const team = createMock<FirestoreTeam>({
@@ -226,9 +211,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions (subs and no subs), BN positions, and max extra players (NHL)", () => {
     // set this artifical value just to test the functionality
@@ -258,9 +241,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
   it("should return the correct replacement level for a team with compound positions (with no subs listed), BN positions, and max extra players (MLB)", () => {
     // set this artifically low just to test the functionality
@@ -299,9 +280,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
 
   it("should return the correct replacement level for a team with nested compound positions (W inside Util)", () => {
@@ -349,9 +328,7 @@ describe("getReplacementLevel", () => {
     for (const position in expectedOutput) {
       expect(result[position]).toBeCloseTo(expectedOutput[position] ?? 0, 2);
     }
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
 });
 
@@ -517,10 +494,7 @@ describe("getScarcityOffsetsForLeague", () => {
   });
 
   it("should return the correct offsets for team with 3 positions", async () => {
-    const result = await getLeagueSpecificScarcityOffsets(
-      league,
-      replacementLevels,
-    );
+    const result = await getLeagueSpecificScarcityOffsets(league, replacementLevels);
     // replacement level for F is 72, D is 48, G is 24. Get the ownership at each index.
     expect(result).toEqual({
       F: 29,
@@ -533,10 +507,7 @@ describe("getScarcityOffsetsForLeague", () => {
 
   it("should return the correct offsets for team with 3 positions and non-integer replacement levels", async () => {
     const replacementLevels = { F: 72.2, D: 48.5, G: 24.9 };
-    const result = await getLeagueSpecificScarcityOffsets(
-      league,
-      replacementLevels,
-    );
+    const result = await getLeagueSpecificScarcityOffsets(league, replacementLevels);
     // replacement level for F is 72, D is 48, G is 24. Get the ownership at each index.
     expect(result).toEqual({
       F: 29,
@@ -549,10 +520,7 @@ describe("getScarcityOffsetsForLeague", () => {
 
   it("should return the correct offsets for team with 3 positions and 0 and negative replacement levels", async () => {
     const replacementLevels = { F: 0, D: -1, G: -1.5 };
-    const result = await getLeagueSpecificScarcityOffsets(
-      league,
-      replacementLevels,
-    );
+    const result = await getLeagueSpecificScarcityOffsets(league, replacementLevels);
     // replacement level for F is 72, D is 48, G is 24. Get the ownership at each index.
     expect(result).toEqual({
       F: 100,
@@ -566,14 +534,9 @@ describe("getScarcityOffsetsForLeague", () => {
   it("should return empty if loading/calculating scarcity offsets fails", async () => {
     getPositionalScarcityOffsetsSpy.mockResolvedValueOnce({});
     // Don't actually fetch players from yahoo
-    vi.spyOn(yahooAPI, "getTopPlayersGeneral").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopPlayersGeneral").mockResolvedValue(createMock({}));
 
-    const result = await getLeagueSpecificScarcityOffsets(
-      league,
-      replacementLevels,
-    );
+    const result = await getLeagueSpecificScarcityOffsets(league, replacementLevels);
 
     expect(result).toEqual({});
     expect(updatePositionalScarcityOffsetSpy).toHaveBeenCalledTimes(0);
@@ -611,18 +574,8 @@ describe("getScarcityOffsetsForLeague", () => {
 
     expect(getTopPlayersGeneralSpy).toHaveBeenCalledTimes(5);
     const position = "F";
-    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(
-      "1",
-      league,
-      position,
-      0,
-    );
-    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(
-      "1",
-      league,
-      position,
-      100,
-    );
+    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith("1", league, position, 0);
+    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith("1", league, position, 100);
     expect(updatePositionalScarcityOffsetSpy).toHaveBeenCalledTimes(1);
     expect(updatePositionalScarcityOffsetSpy).toHaveBeenCalledWith(
       league,
@@ -706,9 +659,7 @@ describe("getScarcityOffsetsForTeam", () => {
 
     expect(result).toEqual(expectedOutput);
 
-    expect(Object.keys(result).length).toEqual(
-      Object.keys(expectedOutput).length,
-    );
+    expect(Object.keys(result).length).toEqual(Object.keys(expectedOutput).length);
   });
 });
 
@@ -732,12 +683,7 @@ describe("generateFetchPlayerPromises", () => {
 
     await Promise.all(result);
     expect(getTopPlayersGeneralSpy).toHaveBeenCalledTimes(1);
-    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(
-      uid,
-      gameCode,
-      position,
-      0,
-    );
+    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(uid, gameCode, position, 0);
   });
   it("should return an array of 2 promises if count is 26", async () => {
     const count = 26;
@@ -747,18 +693,8 @@ describe("generateFetchPlayerPromises", () => {
 
     await Promise.all(result);
     expect(getTopPlayersGeneralSpy).toHaveBeenCalledTimes(2);
-    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(
-      uid,
-      gameCode,
-      position,
-      0,
-    );
-    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(
-      uid,
-      gameCode,
-      position,
-      25,
-    );
+    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(uid, gameCode, position, 0);
+    expect(getTopPlayersGeneralSpy).toHaveBeenCalledWith(uid, gameCode, position, 25);
   });
   it("should return an empty array if count is 0", async () => {
     const count = 0;

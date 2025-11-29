@@ -15,15 +15,11 @@ export async function determineContainerTags(
   }
 
   if (!version) {
-    throw new Error(
-      "Version required for prod deployment (e.g., --version v1.2.3)",
-    );
+    throw new Error("Version required for prod deployment (e.g., --version v1.2.3)");
   }
 
   if (!version.match(/^v\d+\.\d+\.\d+$/)) {
-    throw new Error(
-      `Invalid version format: ${version}. Expected format: v1.2.3`,
-    );
+    throw new Error(`Invalid version format: ${version}. Expected format: v1.2.3`);
   }
 
   return [version, "prod-latest"];

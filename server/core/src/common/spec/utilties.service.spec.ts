@@ -36,9 +36,7 @@ describe("Utilities test", () => {
     const result = getPacificTimeDateString(date);
     // allow for a one day difference
     const today = new Date().toISOString().slice(0, 10);
-    const yesterday = new Date(date.getTime() - 24 * 60 * 60 * 1000)
-      .toISOString()
-      .slice(0, 10);
+    const yesterday = new Date(date.getTime() - 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     expect(result).toEqual(expect.stringMatching(`${today}|${yesterday}`));
   });
   test("getPacificStartOfDay", () => {

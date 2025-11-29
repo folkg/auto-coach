@@ -6,11 +6,7 @@ export default defineConfig({
   // since mutation-api imports from server/core which uses @common/ paths
   plugins: [
     tsconfigPaths({
-      projects: [
-        "tsconfig.json",
-        "../core/tsconfig.json",
-        "../../common/tsconfig.json",
-      ],
+      projects: ["tsconfig.json", "../core/tsconfig.json", "../../common/tsconfig.json"],
       // biome-ignore lint/suspicious/noExplicitAny: plugin compatibility
     }) as any,
   ],

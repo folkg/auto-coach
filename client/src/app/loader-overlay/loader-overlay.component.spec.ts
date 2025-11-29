@@ -1,5 +1,5 @@
-import { render, screen } from "@testing-library/angular";
 import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/angular";
 import { LoaderComponent } from "../loader/loader.component";
 import { LoaderOverlayComponent } from "./loader-overlay.component";
 
@@ -24,8 +24,6 @@ describe("LoaderOverlayComponent", () => {
       imports: [LoaderComponent],
     });
 
-    expect(
-      screen.queryByTestId("loader-overlay-container"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId("loader-overlay-container")).not.toBeInTheDocument();
   });
 });

@@ -65,21 +65,15 @@ function calculateOwnershipDelta(player: Player): number {
   return Math.min(player.percent_owned_delta, OWNERSHIP_DELTA_ADJUSTMENT_BOUND);
 }
 
-function calculateRankScore(
-  numPlayersInLeague: number,
-  player: Player,
-): number {
-  const scoreOutOfTwenty = Object.entries(player.ranks).reduce(
-    (acc, [rankType, rank]) =>
-      rank === -1
-        ? acc
-        : acc +
-          Math.min(
-            numPlayersInLeague / rank,
-            RANK_WEIGHTS[rankType as keyof PlayerRanks] / 5,
-          ),
-    0,
-  );
+function calculateRankScore(numPlayersInLeague: number, player: Player): number {
+  const rankEntries = Object.entries(player.ranks) as [keyof PlayerRanks, number][];
+  const scoreOutOfTwenty = rankEntries.reduce((acc, [rankType, rank]) => {
+    const weight = RANK_WEIGHTS[rankType];
+    if (rank === -1 || weight === undefined) {
+      return acc;
+    }
+    return acc + Math.min(numPlayersInLeague / rank, weight / 5);
+  }, 0);
 
   return 5 * scoreOutOfTwenty;
 }

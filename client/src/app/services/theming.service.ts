@@ -1,7 +1,6 @@
-// biome-ignore lint/style/useImportType: This is an injection token
-import { ApplicationRef, Injectable } from "@angular/core";
 import { type } from "arktype";
 import { BehaviorSubject } from "rxjs";
+import { ApplicationRef, Injectable } from "@angular/core";
 
 @Injectable({
   providedIn: "root",
@@ -23,9 +22,7 @@ export class ThemingService {
     const darkMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
     if (localStorage.getItem("darkModeOn") !== null) {
-      const storedValue = JSON.parse(
-        localStorage.getItem("darkModeOn") ?? "false",
-      );
+      const storedValue = JSON.parse(localStorage.getItem("darkModeOn") ?? "false");
       const darkMode = type("boolean").assert(storedValue);
       this._darkModeOn = darkMode;
     } else {

@@ -1,8 +1,8 @@
-import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth, type UserRecord } from "firebase-admin/auth";
 import { logger } from "firebase-functions";
+import sgMail from "@sendgrid/mail";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
@@ -101,9 +101,7 @@ export async function sendUserEmail(
   }
 }
 
-export async function sendCustomVerificationEmail(
-  user: UserRecord,
-): Promise<boolean> {
+export async function sendCustomVerificationEmail(user: UserRecord): Promise<boolean> {
   const userEmailAddress = user?.email;
   if (!userEmailAddress) {
     throw new Error("Not a valid user");
@@ -111,8 +109,7 @@ export async function sendCustomVerificationEmail(
 
   let verificationLink: string;
   try {
-    verificationLink =
-      await getAuth().generateEmailVerificationLink(userEmailAddress);
+    verificationLink = await getAuth().generateEmailVerificationLink(userEmailAddress);
   } catch (error) {
     throw new Error(`Failed to generate email verification link ${error}`);
   }

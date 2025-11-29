@@ -1,0 +1,96 @@
+{
+	"$schema": "./node_modules/oxlint/configuration_schema.json",
+	"plugins": ["typescript", "unicorn", "vitest"],
+	"categories": {
+		"correctness": "error"
+	},
+	"rules": {
+		"no-restricted-globals": [
+			"error",
+			{
+				"deniedGlobals": [
+					"event",
+					"length",
+					"stop",
+					"toString",
+					"alert",
+					"origin"
+				]
+			}
+		],
+		"curly": "error",
+		"no-else-return": "error",
+		"prefer-for-of": "error",
+		"no-param-reassign": "error",
+		"prefer-as-const": "error",
+		"default-param-last": "error",
+		"prefer-enum-initializers": "error",
+		"self-closing-comp": "error",
+		"no-unnecessary-template-expression": "error",
+		"prefer-number-properties": "error",
+		"no-inferrable-types": "error",
+		"no-useless-constructor": "error",
+		"no-unused-private-class-members": "error",
+		"no-unused-vars": [
+			"error",
+			{
+				"argsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_",
+				"destructuredArrayIgnorePattern": "^_",
+				"varsIgnorePattern": "^_"
+			}
+		],
+		"require-await": "error",
+		"no-empty": "error",
+		"no-explicit-any": "error",
+		"no-floating-promises": "error",
+		"no-disabled-tests": "error",
+		"no-this-alias": "off",
+		"no-conditional-expect": "off",
+		"no-standalone-expect": "off",
+		"expect-expect": "off",
+		"valid-title": "off",
+		"require-to-throw-message": "off",
+		"no-useless-length-check": "off",
+		"no-unused-expressions": "off",
+		"unbound-method": "off",
+		"restrict-template-expressions": "off",
+		"no-redundant-type-constituents": "off",
+		"no-duplicate-type-constituents": "off",
+		"await-thenable": "off"
+	},
+	"ignorePatterns": [
+		"**/node_modules/**/*",
+		"**/client/.angular/**/*",
+		"**/dist/**/*",
+		"**/lib/**/*",
+		"**/client/vitest.config.ts",
+		"**/server/functions/vite.config.js",
+		"**/server/core/vite.config.js",
+		"**/client/src/env.types.ts"
+	],
+	"overrides": [
+		{
+			"files": [
+				"**/*.test.ts",
+				"**/*.spec.ts",
+				"**/vitest.config.ts",
+				"**/vitest.config.mts"
+			],
+			"rules": {
+				"no-explicit-any": "off"
+			}
+		},
+		{
+			"files": ["ops/**/*"],
+			"rules": {
+				"no-floating-promises": "off"
+			}
+		}
+	],
+	"settings": {
+		"vitest": {
+			"typecheck": true
+		}
+	}
+}

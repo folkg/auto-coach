@@ -1,11 +1,8 @@
-import { Injectable, inject } from "@angular/core";
 import type { FeedbackData } from "@common/types/feedback";
-import { Schedule } from "@common/types/Schedule";
 import type { ClientTeam, FirestoreTeam } from "@common/types/team";
-import type {
-  PostTransactionsResult,
-  TransactionsData,
-} from "@common/types/transactions";
+import type { PostTransactionsResult, TransactionsData } from "@common/types/transactions";
+import { Injectable, inject } from "@angular/core";
+import { Schedule } from "@common/types/Schedule";
 import { isType } from "@common/utilities/checks";
 import { HONO_CLIENT } from "../hono-client-config";
 
@@ -81,9 +78,7 @@ export class APIService {
     }
   }
 
-  async postTransactions(
-    transactions: TransactionsData,
-  ): Promise<PostTransactionsResult> {
+  async postTransactions(transactions: TransactionsData): Promise<PostTransactionsResult> {
     try {
       const response = await this.client.api.transactions.$post({
         json: transactions,
@@ -116,16 +111,12 @@ export class APIService {
 
   async setLineupsBoolean(teamKey: string, value: boolean): Promise<void> {
     try {
-      const response = await this.client.api.teams[
-        ":teamKey"
-      ].lineup.setting.$put({
+      const response = await this.client.api.teams[":teamKey"].lineup.setting.$put({
         param: { teamKey },
         json: { value },
       });
       if (!response.ok) {
-        throw new Error(
-          `Failed to update lineup setting: ${response.statusText}`,
-        );
+        throw new Error(`Failed to update lineup setting: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error setting lineups boolean:", error);
@@ -135,16 +126,12 @@ export class APIService {
 
   async setPauseLineupActions(teamKey: string, value: boolean): Promise<void> {
     try {
-      const response = await this.client.api.teams[
-        ":teamKey"
-      ].lineup.paused.$put({
+      const response = await this.client.api.teams[":teamKey"].lineup.paused.$put({
         param: { teamKey },
         json: { value },
       });
       if (!response.ok) {
-        throw new Error(
-          `Failed to update lineup pause: ${response.statusText}`,
-        );
+        throw new Error(`Failed to update lineup pause: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error setting pause lineup:", error);

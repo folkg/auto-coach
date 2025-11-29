@@ -49,10 +49,7 @@ export function createMock<T>(partial?: Partial<T>): T {
     },
   };
 
-  return new Proxy(
-    (partial ?? {}) as T & { [key: PropertyKey]: unknown },
-    handler,
-  );
+  return new Proxy((partial ?? {}) as T & { [key: PropertyKey]: unknown }, handler);
 }
 
 // This allows async operations to work with the mock object

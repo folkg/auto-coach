@@ -1,17 +1,12 @@
-import type { FirestoreTeam } from "@common/types/team.js";
-import { Data, Effect } from "effect";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { Data, Effect } from "effect";
+import type { FirestoreTeam } from "@common/types/team.js";
 import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
 import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
-import {
-  enqueueUsersTeams,
-  mapUsersToActiveTeams,
-} from "./scheduling.service.js";
+import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";
 import { processTomorrowsTransactions } from "./set-lineup.service.js";
 
-export class WeeklyTransactionsError extends Data.TaggedError(
-  "WeeklyTransactionsError",
-)<{
+export class WeeklyTransactionsError extends Data.TaggedError("WeeklyTransactionsError")<{
   readonly message: string;
   readonly uid?: string;
 }> {}
@@ -30,21 +25,16 @@ function toErrorMessage(error: unknown): string {
  * This fetches teams from Firestore, groups them by user, and enqueues
  * Cloud Tasks for processing each user's teams.
  */
-export function scheduleWeeklyLeagueTransactions(): Effect.Effect<
-  void,
-  WeeklyTransactionsError
-> {
+export function scheduleWeeklyLeagueTransactions(): Effect.Effect<void, WeeklyTransactionsError> {
   return Effect.gen(function* () {
     // Step 1: Fetch teams with tomorrow's weekly deadline
-    const teamsSnapshot: QuerySnapshot<DocumentData> = yield* Effect.tryPromise(
-      {
-        try: () => getTomorrowsActiveWeeklyTeams(),
-        catch: (error: unknown) =>
-          new WeeklyTransactionsError({
-            message: `Failed to fetch weekly teams from Firestore: ${toErrorMessage(error)}`,
-          }),
-      },
-    );
+    const teamsSnapshot: QuerySnapshot<DocumentData> = yield* Effect.tryPromise({
+      try: () => getTomorrowsActiveWeeklyTeams(),
+      catch: (error: unknown) =>
+        new WeeklyTransactionsError({
+          message: `Failed to fetch weekly teams from Firestore: ${toErrorMessage(error)}`,
+        }),
+    });
 
     // Step 2: Map users to their active teams
     const activeUsers = mapUsersToActiveTeams(teamsSnapshot);
@@ -65,9 +55,7 @@ export function scheduleWeeklyLeagueTransactions(): Effect.Effect<
       ),
     );
 
-    console.log(
-      `Successfully enqueued weekly transaction tasks for ${activeUsers.size} users`,
-    );
+    console.log(`Successfully enqueued weekly transaction tasks for ${activeUsers.size} users`);
   });
 }
 
@@ -83,15 +71,11 @@ export function performWeeklyLeagueTransactions(
 ): Effect.Effect<void, WeeklyTransactionsError> {
   return Effect.gen(function* () {
     if (!uid) {
-      return yield* Effect.fail(
-        new WeeklyTransactionsError({ message: "No uid provided" }),
-      );
+      return yield* Effect.fail(new WeeklyTransactionsError({ message: "No uid provided" }));
     }
 
     if (!firestoreTeams) {
-      return yield* Effect.fail(
-        new WeeklyTransactionsError({ message: "No teams provided", uid }),
-      );
+      return yield* Effect.fail(new WeeklyTransactionsError({ message: "No teams provided", uid }));
     }
 
     if (firestoreTeams.length === 0) {

@@ -1,14 +1,14 @@
-import type { Leagues } from "@common/types/Leagues.js";
-import { Context, Data, Effect, Fiber, Layer } from "effect";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { getActiveTeamsForLeagues } from "../../../core/src/common/services/firebase/firestore.service.js";
-import { getCurrentPacificHour } from "../../../core/src/common/services/utilities.service.js";
+import { Context, Data, Effect, Fiber, Layer } from "effect";
+import type { Leagues } from "@common/types/Leagues.js";
 import type {
   CalcPositionalScarcityRequest as CalcPositionalScarcityRequestType,
   DispatchResponse,
   SetLineupRequest as SetLineupRequestType,
   WeeklyTransactionsRequest as WeeklyTransactionsRequestType,
 } from "../types/api-schemas";
+import { getActiveTeamsForLeagues } from "../../../core/src/common/services/firebase/firestore.service.js";
+import { getCurrentPacificHour } from "../../../core/src/common/services/utilities.service.js";
 import {
   type PositionalScarcityError,
   recalculateScarcityOffsetsForAll,
@@ -59,10 +59,7 @@ export class TimeService extends Context.Tag("TimeService")<
 export class SchedulingService extends Context.Tag("SchedulingService")<
   SchedulingService,
   {
-    readonly leaguesToSetLineupsFor: () => Effect.Effect<
-      readonly Leagues[],
-      SchedulingError
-    >;
+    readonly leaguesToSetLineupsFor: () => Effect.Effect<readonly Leagues[], SchedulingError>;
     readonly setTodaysPostponedTeams: (
       leagues: readonly Leagues[],
     ) => Effect.Effect<void, SchedulingError>;
@@ -94,9 +91,7 @@ export class SchedulingService extends Context.Tag("SchedulingService")<
 export class FirestoreService extends Context.Tag("FirestoreService")<
   FirestoreService,
   {
-    readonly getActiveTeamsForLeagues: (
-      leagues: Leagues[],
-    ) => Promise<QuerySnapshot<DocumentData>>;
+    readonly getActiveTeamsForLeagues: (leagues: Leagues[]) => Promise<QuerySnapshot<DocumentData>>;
   }
 >() {
   static readonly live = Layer.succeed(FirestoreService, {
@@ -108,15 +103,10 @@ export class FirestoreService extends Context.Tag("FirestoreService")<
  * Service for weekly transactions.
  * Abstracted for testability.
  */
-export class WeeklyTransactionsService extends Context.Tag(
-  "WeeklyTransactionsService",
-)<
+export class WeeklyTransactionsService extends Context.Tag("WeeklyTransactionsService")<
   WeeklyTransactionsService,
   {
-    readonly scheduleWeeklyLeagueTransactions: () => Effect.Effect<
-      void,
-      WeeklyTransactionsError
-    >;
+    readonly scheduleWeeklyLeagueTransactions: () => Effect.Effect<void, WeeklyTransactionsError>;
   }
 >() {
   static readonly live = Layer.succeed(WeeklyTransactionsService, {
@@ -128,15 +118,10 @@ export class WeeklyTransactionsService extends Context.Tag(
  * Service for positional scarcity calculations.
  * Abstracted for testability.
  */
-export class PositionalScarcityService extends Context.Tag(
-  "PositionalScarcityService",
-)<
+export class PositionalScarcityService extends Context.Tag("PositionalScarcityService")<
   PositionalScarcityService,
   {
-    readonly recalculateScarcityOffsetsForAll: () => Effect.Effect<
-      void,
-      PositionalScarcityError
-    >;
+    readonly recalculateScarcityOffsetsForAll: () => Effect.Effect<void, PositionalScarcityError>;
   }
 >() {
   static readonly live = Layer.succeed(PositionalScarcityService, {
@@ -154,18 +139,10 @@ export interface DispatchService {
   >;
   dispatchWeeklyTransactions(
     request: WeeklyTransactionsRequestType,
-  ): Effect.Effect<
-    DispatchResponse,
-    DispatchServiceError,
-    WeeklyTransactionsService
-  >;
+  ): Effect.Effect<DispatchResponse, DispatchServiceError, WeeklyTransactionsService>;
   dispatchCalcPositionalScarcity(
     request: CalcPositionalScarcityRequestType,
-  ): Effect.Effect<
-    DispatchResponse,
-    DispatchServiceError,
-    PositionalScarcityService
-  >;
+  ): Effect.Effect<DispatchResponse, DispatchServiceError, PositionalScarcityService>;
 }
 
 export class DispatchServiceImpl implements DispatchService {
@@ -214,14 +191,13 @@ export class DispatchServiceImpl implements DispatchService {
       );
 
       // Step 5: Fetch active teams from Firestore
-      const teamsSnapshot: QuerySnapshot<DocumentData> =
-        yield* Effect.tryPromise({
-          try: () => firestoreService.getActiveTeamsForLeagues([...leagues]),
-          catch: (error: unknown) =>
-            new DispatchError({
-              message: `Failed to fetch teams from Firebase for Leagues: ${leagues.join(", ")}: ${error instanceof Error ? error.message : String(error)}`,
-            }),
-        });
+      const teamsSnapshot: QuerySnapshot<DocumentData> = yield* Effect.tryPromise({
+        try: () => firestoreService.getActiveTeamsForLeagues([...leagues]),
+        catch: (error: unknown) =>
+          new DispatchError({
+            message: `Failed to fetch teams from Firebase for Leagues: ${leagues.join(", ")}: ${error instanceof Error ? error.message : String(error)}`,
+          }),
+      });
 
       // Step 6: Start parallel: setStartingPlayersForToday(teamsSnapshot)
       const startingPlayersFiber = yield* Effect.fork(
@@ -234,8 +210,7 @@ export class DispatchServiceImpl implements DispatchService {
       );
 
       // Step 7: Call mapUsersToActiveTeams(teamsSnapshot)
-      const activeUsers =
-        schedulingService.mapUsersToActiveTeams(teamsSnapshot);
+      const activeUsers = schedulingService.mapUsersToActiveTeams(teamsSnapshot);
 
       if (activeUsers.size === 0) {
         return {
@@ -246,17 +221,11 @@ export class DispatchServiceImpl implements DispatchService {
       }
 
       // Step 8: Wait for parallel operations to complete
-      yield* Effect.all([
-        Fiber.join(postponedTeamsFiber),
-        Fiber.join(startingPlayersFiber),
-      ]);
+      yield* Effect.all([Fiber.join(postponedTeamsFiber), Fiber.join(startingPlayersFiber)]);
 
       // Step 9: Enqueue tasks - let Effect fail naturally
       const queueName = "set-lineup-queue";
-      const enqueuedTasks = yield* schedulingService.enqueueUsersTeams(
-        activeUsers,
-        queueName,
-      );
+      const enqueuedTasks = yield* schedulingService.enqueueUsersTeams(activeUsers, queueName);
 
       // Step 10: Return success with count of tasks created
       return {
@@ -269,11 +238,7 @@ export class DispatchServiceImpl implements DispatchService {
 
   dispatchWeeklyTransactions(
     _request: WeeklyTransactionsRequestType,
-  ): Effect.Effect<
-    DispatchResponse,
-    DispatchServiceError,
-    WeeklyTransactionsService
-  > {
+  ): Effect.Effect<DispatchResponse, DispatchServiceError, WeeklyTransactionsService> {
     return Effect.gen(function* () {
       const weeklyTransactionsService = yield* WeeklyTransactionsService;
 
@@ -289,11 +254,7 @@ export class DispatchServiceImpl implements DispatchService {
 
   dispatchCalcPositionalScarcity(
     request: CalcPositionalScarcityRequestType,
-  ): Effect.Effect<
-    DispatchResponse,
-    DispatchServiceError,
-    PositionalScarcityService
-  > {
+  ): Effect.Effect<DispatchResponse, DispatchServiceError, PositionalScarcityService> {
     return Effect.gen(function* () {
       const positionalScarcityService = yield* PositionalScarcityService;
 

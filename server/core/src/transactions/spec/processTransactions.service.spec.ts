@@ -1,7 +1,7 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { afterEach, describe, expect, it, test, vi } from "vitest";
-import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
+import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
 import * as yahooTopAvailablePlayersBuilder from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
 import {
   createPlayersTransactions,
@@ -58,11 +58,7 @@ describe("generateTopAvailablePlayerPromises", () => {
       { allow_adding: false, game_code: "nfl" },
       { allow_adding: false, game_code: "nhl" },
     ] as FirestoreTeam[];
-    const expectedOutput = [
-      Promise.resolve({}),
-      Promise.resolve({}),
-      Promise.resolve({}),
-    ];
+    const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
     expect(result).toEqual(expectedOutput);
   });
@@ -72,17 +68,10 @@ describe("generateTopAvailablePlayerPromises", () => {
       { allow_adding: true, game_code: "mlb" },
       { allow_adding: true, game_code: "nfl" },
     ] as FirestoreTeam[];
-    const expectedOutput = [
-      Promise.resolve({}),
-      Promise.resolve({}),
-      Promise.resolve({}),
-    ];
+    const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
 
     const fetchSpy = vi
-      .spyOn(
-        yahooTopAvailablePlayersBuilder,
-        "fetchTopAvailablePlayersFromYahoo",
-      )
+      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
       .mockResolvedValue({});
 
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
@@ -96,17 +85,10 @@ describe("generateTopAvailablePlayerPromises", () => {
       { allow_adding: true, game_code: "mlb" },
       { allow_adding: true, game_code: "nhl" },
     ] as FirestoreTeam[];
-    const expectedOutput = [
-      Promise.resolve({}),
-      Promise.resolve({}),
-      Promise.resolve({}),
-    ];
+    const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
 
     const fetchSpy = vi
-      .spyOn(
-        yahooTopAvailablePlayersBuilder,
-        "fetchTopAvailablePlayersFromYahoo",
-      )
+      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
       .mockResolvedValue({});
 
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
@@ -120,17 +102,10 @@ describe("generateTopAvailablePlayerPromises", () => {
       { allow_adding: true, game_code: "nfl" },
       { allow_adding: true, game_code: "nfl" },
     ] as FirestoreTeam[];
-    const expectedOutput = [
-      Promise.resolve({}),
-      Promise.resolve({}),
-      Promise.resolve({}),
-    ];
+    const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
 
     const fetchSpy = vi
-      .spyOn(
-        yahooTopAvailablePlayersBuilder,
-        "fetchTopAvailablePlayersFromYahoo",
-      )
+      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
       .mockResolvedValue({});
 
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
@@ -164,14 +139,10 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(dropTransactionsPlayers?.length).toEqual(1);
-    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).contain(
-      "D",
-    );
+    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).contain("D");
     expect(dropTransactionsPlayers?.[0]).toMatchObject({
       transactionType: "drop",
     });
@@ -200,14 +171,10 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(dropTransactionsPlayers?.length).toEqual(1);
-    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).not.contain(
-      "D",
-    );
+    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).not.contain("D");
     expect(dropTransactionsPlayers?.[0]).toMatchObject({
       transactionType: "drop",
     });
@@ -230,9 +197,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(resultDropTransactions).toBeNull();
 
@@ -244,9 +209,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     });
 
     expect(addSwapTransactionsPlayers?.length).toEqual(1);
-    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).contain(
-      "SS",
-    );
+    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).contain("SS");
     expect(addSwapTransactionsPlayers?.[0]).toMatchObject({
       transactionType: "add",
     });
@@ -276,9 +239,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(resultDropTransactions).toBeNull();
 
@@ -290,9 +251,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     });
 
     expect(addSwapTransactionsPlayers?.length).toEqual(1);
-    expect(
-      addSwapTransactionsPlayers?.[0]?.player.eligible_positions,
-    ).not.contain("SS");
+    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).not.contain("SS");
     expect(addSwapTransactionsPlayers?.[0]).toMatchObject({
       transactionType: "add",
     });
@@ -312,17 +271,11 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
-    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap((t) => t.players);
+    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(dropTransactionsPlayers?.length).toEqual(1);
-    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).contain(
-      "1B",
-    );
+    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).contain("1B");
 
     expect(resultLineupChanges?.length).toEqual(1);
     expect(resultLineupChanges?.[0]).toMatchObject({
@@ -332,9 +285,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     });
 
     expect(addSwapTransactionsPlayers?.length).toBeGreaterThan(1);
-    expect(
-      addSwapTransactionsPlayers?.[0]?.player.eligible_positions,
-    ).not.contain("1B");
+    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).not.contain("1B");
   });
 
   it("should drop for returning-IL and swap multiple players for a better player in free agency (with positional scarcity enabled, 1B)", async () => {
@@ -361,17 +312,11 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       addSwapTransactions: resultAddSwapTransactions,
     } = await createPlayersTransactions(rosters, addCandidates);
 
-    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
-    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap(
-      (t) => t.players,
-    );
+    const dropTransactionsPlayers = resultDropTransactions?.[0]?.flatMap((t) => t.players);
+    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap((t) => t.players);
 
     expect(dropTransactionsPlayers?.length).toEqual(1);
-    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).not.contain(
-      "1B",
-    );
+    expect(dropTransactionsPlayers?.[0]?.player.eligible_positions).not.contain("1B");
 
     expect(resultLineupChanges?.length).toEqual(1);
     expect(resultLineupChanges?.[0]).toMatchObject({
@@ -381,9 +326,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     });
 
     expect(addSwapTransactionsPlayers?.length).toBeGreaterThan(1);
-    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).contain(
-      "1B",
-    );
+    expect(addSwapTransactionsPlayers?.[0]?.player.eligible_positions).contain("1B");
   });
 
   it("should return the add / drop/ position lists as expected", async () => {
@@ -394,11 +337,8 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     ];
     const addCandidates: TopAvailablePlayers = require("../../dispatchSetLineup/spec/problematicAddDrop/healthyOnILShouldBeIllegal-addcandidates.json");
 
-    const {
-      topAddCandidatesList,
-      topDropCandidatesList,
-      playersAtPositionList,
-    } = await createPlayersTransactions(rosters, addCandidates);
+    const { topAddCandidatesList, topDropCandidatesList, playersAtPositionList } =
+      await createPlayersTransactions(rosters, addCandidates);
 
     // Expect all add candidates to be better than all drop candidates
     expect(topAddCandidatesList?.[teamKey]?.length).toBeGreaterThan(0);
@@ -411,9 +351,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     );
 
     // Expect all players on the roster to be counted as BN eligible
-    expect(playersAtPositionList?.[teamKey]?.BN).toEqual(
-      rosters[0]?.players.length,
-    );
+    expect(playersAtPositionList?.[teamKey]?.BN).toEqual(rosters[0]?.players.length);
   });
 
   it("should return the players added and dropped as the only candidates when applicable", async () => {
@@ -432,9 +370,7 @@ describe("createPlayersTransactions with positionalScarcity", () => {
     } = await createPlayersTransactions(rosters, addCandidates);
 
     const droppedPlayers1 =
-      dropPlayerTransactions?.[0]
-        ?.flatMap((t) => t.players)
-        .map((p) => p.playerKey) ?? [];
+      dropPlayerTransactions?.[0]?.flatMap((t) => t.players).map((p) => p.playerKey) ?? [];
     const droppedPlayers2 =
       addSwapTransactions?.[0]
         ?.flatMap((t) => t.players)
@@ -447,10 +383,8 @@ describe("createPlayersTransactions with positionalScarcity", () => {
         .filter((p) => p.transactionType === "add")
         .map((p) => p.playerKey) ?? [];
 
-    const topDropCandidateKeys =
-      topDropCandidatesList?.[teamKey]?.map((p) => p.player_key) ?? [];
-    const topAddCandidateKeys =
-      topAddCandidatesList?.[teamKey]?.map((p) => p.player_key) ?? [];
+    const topDropCandidateKeys = topDropCandidatesList?.[teamKey]?.map((p) => p.player_key) ?? [];
+    const topAddCandidateKeys = topAddCandidatesList?.[teamKey]?.map((p) => p.player_key) ?? [];
 
     expect(droppedPlayerKeys).toEqual(topDropCandidateKeys);
     expect(addedPlayerKeys).toEqual(topAddCandidateKeys);
@@ -475,17 +409,16 @@ describe("createPlayersTransactions with positionalScarcity", () => {
       ?.filter((p) => p.display_positions.includes("QB"))
       .map((p) => p.player_key);
 
-    const { addSwapTransactions: resultAddSwapTransactions } =
-      await createPlayersTransactions(rosters, addCandidates);
-
-    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap(
-      (t) => t.players,
+    const { addSwapTransactions: resultAddSwapTransactions } = await createPlayersTransactions(
+      rosters,
+      addCandidates,
     );
+
+    const addSwapTransactionsPlayers = resultAddSwapTransactions?.[0]?.flatMap((t) => t.players);
 
     // expect that we do not add any QB players since we already have 2 on the roster (max capacity is 1)
     const areQBsAdded = addSwapTransactionsPlayers?.some(
-      (t) =>
-        t.transactionType === "add" && qbAddCandidates?.includes(t.playerKey),
+      (t) => t.transactionType === "add" && qbAddCandidates?.includes(t.playerKey),
     );
     expect(areQBsAdded).toBeFalsy();
   });

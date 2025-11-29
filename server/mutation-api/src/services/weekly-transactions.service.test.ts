@@ -1,22 +1,16 @@
-import type { FirestoreTeam } from "@common/types/team.js";
-import { Effect, Exit } from "effect";
 import type { Mock } from "vitest";
+import { Effect, Exit } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { FirestoreTeam } from "@common/types/team.js";
 
 // Only mock external dependencies, not local scheduling service
-vi.mock(
-  "../../../core/src/common/services/firebase/firestore.service.js",
-  () => ({
-    getTomorrowsActiveWeeklyTeams: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/common/services/firebase/firestore.service.js", () => ({
+  getTomorrowsActiveWeeklyTeams: vi.fn(),
+}));
 
-vi.mock(
-  "../../../core/src/transactions/services/processTransactions.service.js",
-  () => ({
-    getTopAvailablePlayers: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/transactions/services/processTransactions.service.js", () => ({
+  getTopAvailablePlayers: vi.fn(),
+}));
 
 vi.mock("./set-lineup.service.js", () => ({
   processTomorrowsTransactions: vi.fn(() => Effect.void),
@@ -39,14 +33,10 @@ import {
   WeeklyTransactionsError,
 } from "./weekly-transactions.service.js";
 
-const mockGetTopAvailablePlayers =
-  coreTransactions.getTopAvailablePlayers as Mock;
-const mockProcessTomorrowsTransactions =
-  setLineupService.processTomorrowsTransactions as Mock;
+const mockGetTopAvailablePlayers = coreTransactions.getTopAvailablePlayers as Mock;
+const mockProcessTomorrowsTransactions = setLineupService.processTomorrowsTransactions as Mock;
 
-function createMockFirestoreTeam(
-  overrides: Partial<FirestoreTeam> = {},
-): FirestoreTeam {
+function createMockFirestoreTeam(overrides: Partial<FirestoreTeam> = {}): FirestoreTeam {
   return {
     team_key: "123.l.456.t.1",
     game_code: "mlb",
@@ -109,9 +99,7 @@ describe("performWeeklyLeagueTransactions", () => {
     // Arrange
     const uid = "test-user-123";
     const firestoreTeams: FirestoreTeam[] = [];
-    const consoleSpy = vi
-      .spyOn(console, "log")
-      .mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
     // Act
     const result = await Effect.runPromiseExit(
@@ -163,10 +151,7 @@ describe("performWeeklyLeagueTransactions", () => {
 
     // Assert
     expect(Exit.isSuccess(result)).toBe(true);
-    expect(mockGetTopAvailablePlayers).toHaveBeenCalledWith(
-      firestoreTeams,
-      uid,
-    );
+    expect(mockGetTopAvailablePlayers).toHaveBeenCalledWith(firestoreTeams, uid);
     expect(mockProcessTomorrowsTransactions).toHaveBeenCalledWith(
       firestoreTeams,
       firestoreTeams,
@@ -212,9 +197,6 @@ describe("performWeeklyLeagueTransactions", () => {
 
     // Assert
     expect(Exit.isSuccess(result)).toBe(true);
-    expect(mockGetTopAvailablePlayers).toHaveBeenCalledWith(
-      firestoreTeams,
-      uid,
-    );
+    expect(mockGetTopAvailablePlayers).toHaveBeenCalledWith(firestoreTeams, uid);
   });
 });

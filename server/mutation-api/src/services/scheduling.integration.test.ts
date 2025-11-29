@@ -5,9 +5,9 @@
  * when interacting with Yahoo and Sportsnet APIs.
  */
 
-import { describe, expect, it, vi } from "@effect/vitest";
 import { Effect } from "effect";
 import { HttpResponse, http } from "msw";
+import { describe, expect, it, vi } from "@effect/vitest";
 import {
   createYahooGame,
   createYahooGamesResponse,
@@ -15,10 +15,7 @@ import {
   yahooHandlers,
 } from "../test/msw-handlers.js";
 import { server } from "../test/msw-server.js";
-import {
-  getPostponedTeamsYahoo,
-  getTodaysGames,
-} from "./scheduling.service.js";
+import { getPostponedTeamsYahoo, getTodaysGames } from "./scheduling.service.js";
 
 // We need to re-export since the function is not exported
 // For testing we'll test the public API that uses it
@@ -33,38 +30,22 @@ describe("SchedulingService Integration Tests", () => {
         gameTime.setMinutes(gameTime.getMinutes() + 30);
 
         server.use(
-          http.get(
-            "https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*",
-            () => {
-              return HttpResponse.json(
-                createYahooGamesResponse([
-                  createYahooGame({ startTime: gameTime.toISOString() }),
-                ]),
-              );
-            },
-          ),
-          http.get(
-            "https://api-secure.sports.yahoo.com/v1/editorial/league/nhl/games*",
-            () => {
-              return HttpResponse.json(
-                createYahooGamesResponse([
-                  createYahooGame({ startTime: gameTime.toISOString() }),
-                ]),
-              );
-            },
-          ),
-          http.get(
-            "https://api-secure.sports.yahoo.com/v1/editorial/league/nfl/games*",
-            () => {
-              return HttpResponse.json(createYahooGamesResponse([]));
-            },
-          ),
-          http.get(
-            "https://api-secure.sports.yahoo.com/v1/editorial/league/mlb/games*",
-            () => {
-              return HttpResponse.json(createYahooGamesResponse([]));
-            },
-          ),
+          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*", () => {
+            return HttpResponse.json(
+              createYahooGamesResponse([createYahooGame({ startTime: gameTime.toISOString() })]),
+            );
+          }),
+          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nhl/games*", () => {
+            return HttpResponse.json(
+              createYahooGamesResponse([createYahooGame({ startTime: gameTime.toISOString() })]),
+            );
+          }),
+          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nfl/games*", () => {
+            return HttpResponse.json(createYahooGamesResponse([]));
+          }),
+          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/mlb/games*", () => {
+            return HttpResponse.json(createYahooGamesResponse([]));
+          }),
         );
 
         // Act
@@ -156,16 +137,11 @@ describe("SchedulingService Integration Tests", () => {
         const todayDate = "2024-01-15";
 
         server.use(
-          http.get(
-            "https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*",
-            () => {
-              return HttpResponse.json(
-                createYahooGamesResponse([
-                  createYahooGame({ status: "status.type.scheduled" }),
-                ]),
-              );
-            },
-          ),
+          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*", () => {
+            return HttpResponse.json(
+              createYahooGamesResponse([createYahooGame({ status: "status.type.scheduled" })]),
+            );
+          }),
         );
 
         // Act
@@ -183,9 +159,7 @@ describe("SchedulingService Integration Tests", () => {
         server.use(yahooHandlers.error("nba", 500));
 
         // Act & Assert
-        const result = yield* Effect.either(
-          getPostponedTeamsYahoo("nba", todayDate),
-        );
+        const result = yield* Effect.either(getPostponedTeamsYahoo("nba", todayDate));
         expect(result._tag).toBe("Left");
       }));
   });
@@ -196,10 +170,7 @@ import { Context, Layer } from "effect";
 
 // Simple mock layer for Firestore schedule collection
 const mockFirestoreLayer = Layer.succeed(
-  Context.Tag("MockFirestore")<
-    Context.Tag<"MockFirestore", unknown>,
-    unknown
-  >(),
+  Context.Tag("MockFirestore")<Context.Tag<"MockFirestore", unknown>, unknown>(),
   {
     collection: vi.fn().mockReturnValue({
       doc: vi.fn().mockReturnValue({

@@ -5,9 +5,9 @@
  * including rate limiting, circuit breaker, and task status updates.
  */
 
-import { describe, expect, it, vi } from "@effect/vitest";
-import type { Firestore } from "@google-cloud/firestore";
 import { Effect } from "effect";
+import type { Firestore } from "@google-cloud/firestore";
+import { describe, expect, it, vi } from "@effect/vitest";
 import type { MutationTask } from "../types/schemas.js";
 import { ExecutionServiceImpl } from "./execution.service.js";
 import {
@@ -17,9 +17,7 @@ import {
 } from "./rate-limiter.service.js";
 
 // Mock RateLimiter for testing
-function createMockRateLimiter(
-  overrides: Partial<RateLimiterService> = {},
-): RateLimiterService {
+function createMockRateLimiter(overrides: Partial<RateLimiterService> = {}): RateLimiterService {
   return {
     checkRateLimit: () => Effect.void,
     consumeToken: () => Effect.void,
@@ -65,10 +63,7 @@ describe("ExecutionService Integration Tests", () => {
         // Arrange
         const mockFirestore = createMockFirestore();
         const mockRateLimiter = createMockRateLimiter();
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask({
           type: "SET_LINEUP",
@@ -97,17 +92,12 @@ describe("ExecutionService Integration Tests", () => {
               }),
             ),
         });
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask();
 
         // Act
-        const result = yield* Effect.either(
-          executionService.executeMutation({ task }),
-        );
+        const result = yield* Effect.either(executionService.executeMutation({ task }));
 
         // Assert
         expect(result._tag).toBe("Left");
@@ -129,17 +119,12 @@ describe("ExecutionService Integration Tests", () => {
               }),
             ),
         });
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask();
 
         // Act
-        const result = yield* Effect.either(
-          executionService.executeMutation({ task }),
-        );
+        const result = yield* Effect.either(executionService.executeMutation({ task }));
 
         // Assert
         expect(result._tag).toBe("Left");
@@ -154,10 +139,7 @@ describe("ExecutionService Integration Tests", () => {
         // Arrange
         const mockFirestore = createMockFirestore();
         const mockRateLimiter = createMockRateLimiter();
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask({
           type: "SET_LINEUP",
@@ -165,9 +147,7 @@ describe("ExecutionService Integration Tests", () => {
         });
 
         // Act
-        const result = yield* Effect.either(
-          executionService.executeMutation({ task }),
-        );
+        const result = yield* Effect.either(executionService.executeMutation({ task }));
 
         // Assert
         expect(result._tag).toBe("Left");
@@ -195,10 +175,7 @@ describe("ExecutionService Integration Tests", () => {
         } as unknown as Firestore;
 
         const mockRateLimiter = createMockRateLimiter();
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask({
           type: "SET_LINEUP",
@@ -224,10 +201,7 @@ describe("ExecutionService Integration Tests", () => {
             return Effect.void;
           },
         });
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         const task = createMockTask({
           type: "SET_LINEUP",
@@ -259,10 +233,7 @@ describe("ExecutionService Integration Tests", () => {
         } as unknown as Firestore;
 
         const mockRateLimiter = createMockRateLimiter();
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         // Act
         yield* executionService.updateTaskStatus({
@@ -288,10 +259,7 @@ describe("ExecutionService Integration Tests", () => {
         } as unknown as Firestore;
 
         const mockRateLimiter = createMockRateLimiter();
-        const executionService = new ExecutionServiceImpl(
-          mockFirestore,
-          mockRateLimiter,
-        );
+        const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
         // Act - should not throw
         yield* executionService.updateTaskStatus({

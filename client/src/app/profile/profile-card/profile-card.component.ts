@@ -1,3 +1,5 @@
+import type { User } from "firebase/auth";
+import { distinctUntilChanged, map, Subscription } from "rxjs";
 import { AsyncPipe, NgIf } from "@angular/common";
 import {
   Component,
@@ -7,12 +9,7 @@ import {
   Output,
   signal,
 } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
   MatCard,
@@ -22,18 +19,13 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from "@angular/material/card";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { assertDefined } from "@common/utilities/checks";
 import { getErrorMessage } from "@common/utilities/error";
-import type { User } from "firebase/auth";
-import { distinctUntilChanged, map, Subscription } from "rxjs";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../../services/app-status.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../../services/auth.service";
 import {
   ConfirmDialogComponent,
@@ -167,10 +159,7 @@ export class ProfileCardComponent implements OnInit, OnDestroy {
         "Verification Email Sent",
       );
     } catch (err) {
-      this.errorDialog(
-        getErrorMessage(err),
-        "Error sending verification email",
-      );
+      this.errorDialog(getErrorMessage(err), "Error sending verification email");
     } finally {
       this.resendInProgress.set(false);
     }

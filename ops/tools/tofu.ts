@@ -1,7 +1,7 @@
-import { resolve } from "node:path";
 import { $ } from "bun";
-import { logStep } from "./log";
+import { resolve } from "node:path";
 import type { EnvironmentConfig } from "./types";
+import { logStep } from "./log";
 
 export async function applyInfrastructure(
   env: EnvironmentConfig,
@@ -9,10 +9,7 @@ export async function applyInfrastructure(
   projectId: string,
   firebaseProjectId: string,
 ): Promise<void> {
-  logStep(
-    "OpenTofu",
-    `Applying infrastructure for ${env.name} with tag ${containerTag}...`,
-  );
+  logStep("OpenTofu", `Applying infrastructure for ${env.name} with tag ${containerTag}...`);
 
   const projectRoot = resolve(import.meta.dir, "../..");
   const varsFile = `environments/${env.name}.tfvars`;

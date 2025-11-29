@@ -20,9 +20,7 @@ describe("Test fetchTopAvailablePlayersFromYahoo", () => {
     const uid = "mzJVgridDRSG3zwFQxAuIhNro9V2";
     const yahooJSON = require("./testYahooPlayersJSON/yahooJSON/free-agents.json");
 
-    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(
-      yahooJSON,
-    );
+    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(yahooJSON);
 
     const result = await fetchTopAvailablePlayersFromYahoo(teamKeys, uid);
 
@@ -34,9 +32,7 @@ describe("Test fetchTopAvailablePlayersFromYahoo", () => {
     const uid = "mzJVgridDRSG3zwFQxAuIhNro9V2";
     const yahooJSON = require("./testYahooPlayersJSON/yahooJSON/yahooJSONWaivers.json");
 
-    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(
-      yahooJSON,
-    );
+    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(yahooJSON);
 
     const result = await fetchTopAvailablePlayersFromYahoo(teamKeys, uid);
 
@@ -48,9 +44,7 @@ describe("Test fetchTopAvailablePlayersFromYahoo", () => {
     const uid = "test";
     const yahooJSON = require("./testYahooPlayersJSON/yahooJSON/NFL.json");
 
-    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(
-      yahooJSON,
-    );
+    vi.spyOn(yahooAPIService, "getTopAvailablePlayers").mockReturnValue(yahooJSON);
 
     const result = await fetchTopAvailablePlayersFromYahoo(teamKeys, uid);
 

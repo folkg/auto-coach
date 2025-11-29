@@ -1,6 +1,6 @@
-import type { FirestoreTeam } from "@common/types/team.js";
 import { Effect, Either } from "effect";
 import { describe, expect, it, vi } from "vitest";
+import type { FirestoreTeam } from "@common/types/team.js";
 import {
   RateLimitError as ApiRateLimitError,
   DomainError,
@@ -8,10 +8,7 @@ import {
   SystemError,
 } from "../types/api-schemas.js";
 import { ExecutionServiceImpl } from "./execution.service.js";
-import {
-  CircuitBreakerError,
-  type RateLimiterService,
-} from "./rate-limiter.service.js";
+import { CircuitBreakerError, type RateLimiterService } from "./rate-limiter.service.js";
 
 // Mock set-lineup service
 const mockSetUsersLineup = vi.fn();
@@ -47,8 +44,7 @@ vi.mock("./weekly-transactions.service.js", () => ({
 // Mock positional-scarcity service
 const mockRecalculateScarcityOffsetsForAll = vi.fn();
 vi.mock("./positional-scarcity.service.js", () => ({
-  recalculateScarcityOffsetsForAll: () =>
-    mockRecalculateScarcityOffsetsForAll(),
+  recalculateScarcityOffsetsForAll: () => mockRecalculateScarcityOffsetsForAll(),
 }));
 
 // Mock Firestore
@@ -56,9 +52,7 @@ vi.mock("@google-cloud/firestore", () => ({
   Firestore: vi.fn(),
 }));
 
-function createMockFirestoreTeam(
-  overrides?: Partial<FirestoreTeam>,
-): FirestoreTeam {
+function createMockFirestoreTeam(overrides?: Partial<FirestoreTeam>): FirestoreTeam {
   return {
     team_key: "test.team.1",
     game_code: "nfl",
@@ -153,9 +147,7 @@ describe("ExecutionService", () => {
         expect(result.right.taskId).toBe("test-task-id");
         expect(result.right.status).toBe("COMPLETED");
       }
-      expect(mockSetUsersLineup).toHaveBeenCalledWith("test-user-id", [
-        mockTeam,
-      ]);
+      expect(mockSetUsersLineup).toHaveBeenCalledWith("test-user-id", [mockTeam]);
     });
 
     it("handles RevokedRefreshTokenError gracefully without failing", async () => {
@@ -274,9 +266,7 @@ describe("ExecutionService", () => {
       const { executionService } = setupTest();
       const mockTeam = createMockFirestoreTeam();
 
-      mockPerformWeeklyLeagueTransactions.mockReturnValue(
-        Effect.succeed(undefined),
-      );
+      mockPerformWeeklyLeagueTransactions.mockReturnValue(Effect.succeed(undefined));
 
       const request: ExecuteMutationRequest = {
         task: {
@@ -303,10 +293,7 @@ describe("ExecutionService", () => {
         expect(result.right.success).toBe(true);
         expect(result.right.status).toBe("COMPLETED");
       }
-      expect(mockPerformWeeklyLeagueTransactions).toHaveBeenCalledWith(
-        "test-user-id",
-        [mockTeam],
-      );
+      expect(mockPerformWeeklyLeagueTransactions).toHaveBeenCalledWith("test-user-id", [mockTeam]);
     });
 
     it("handles WeeklyTransactionsError as system error", async () => {
@@ -353,9 +340,7 @@ describe("ExecutionService", () => {
       // Arrange
       const { executionService } = setupTest();
 
-      mockRecalculateScarcityOffsetsForAll.mockReturnValue(
-        Effect.succeed(undefined),
-      );
+      mockRecalculateScarcityOffsetsForAll.mockReturnValue(Effect.succeed(undefined));
 
       const request: ExecuteMutationRequest = {
         task: {
@@ -404,14 +389,10 @@ describe("ExecutionService", () => {
       };
 
       // Act
-      await Effect.runPromise(
-        Effect.either(executionService.executeMutation(request)),
-      );
+      await Effect.runPromise(Effect.either(executionService.executeMutation(request)));
 
       // Assert
-      expect(mockRateLimiter.checkRateLimit).toHaveBeenCalledWith(
-        "test-user-id",
-      );
+      expect(mockRateLimiter.checkRateLimit).toHaveBeenCalledWith("test-user-id");
       expect(mockRateLimiter.consumeToken).toHaveBeenCalledWith("test-user-id");
     });
 
@@ -419,9 +400,7 @@ describe("ExecutionService", () => {
       // Arrange
       const { executionService, mockRateLimiter } = setupTest();
 
-      (
-        mockRateLimiter.checkRateLimit as ReturnType<typeof vi.fn>
-      ).mockReturnValue(
+      (mockRateLimiter.checkRateLimit as ReturnType<typeof vi.fn>).mockReturnValue(
         Effect.fail(
           new ApiRateLimitError({
             message: "Rate limit exceeded",
@@ -462,9 +441,7 @@ describe("ExecutionService", () => {
       // Arrange
       const { executionService, mockRateLimiter } = setupTest();
 
-      (
-        mockRateLimiter.checkCircuitBreaker as ReturnType<typeof vi.fn>
-      ).mockReturnValue(
+      (mockRateLimiter.checkCircuitBreaker as ReturnType<typeof vi.fn>).mockReturnValue(
         Effect.fail(
           new CircuitBreakerError({
             message: "Circuit breaker is open",
@@ -520,9 +497,7 @@ describe("ExecutionService", () => {
       };
 
       // Act
-      await Effect.runPromise(
-        Effect.either(executionService.executeMutation(request)),
-      );
+      await Effect.runPromise(Effect.either(executionService.executeMutation(request)));
 
       // Assert
       expect(mockRateLimiter.recordSuccess).toHaveBeenCalled();

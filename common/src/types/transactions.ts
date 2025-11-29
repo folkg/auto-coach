@@ -96,8 +96,5 @@ const TransactionPlayers = type({
   },
 });
 
-export const TransactionDetailsSchema = type([
-  TransactionInfo,
-  TransactionPlayers,
-]);
+export const TransactionDetailsSchema = type([TransactionInfo, TransactionPlayers]);
 export type TransactionDetails = typeof TransactionDetailsSchema.infer;

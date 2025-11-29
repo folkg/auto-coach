@@ -1,6 +1,6 @@
+import { logger } from "firebase-functions";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import { deepEqual } from "@common/utilities/checks.js";
-import { logger } from "firebase-functions";
 import { updateTeamFirestore } from "./firestore.service.js";
 
 export function enrichTeamsWithFirestoreSettings(
@@ -18,8 +18,7 @@ export function enrichTeamsWithFirestoreSettings(
       allow_add_drops: firestoreTeam?.allow_add_drops ?? false,
       allow_waiver_adds: firestoreTeam?.allow_waiver_adds ?? false,
       allow_transactions: firestoreTeam?.allow_transactions ?? false,
-      automated_transaction_processing:
-        firestoreTeam?.automated_transaction_processing ?? false,
+      automated_transaction_processing: firestoreTeam?.automated_transaction_processing ?? false,
       last_updated: firestoreTeam?.last_updated ?? -1,
       ...yahooTeam,
     };
@@ -35,14 +34,10 @@ export async function patchTeamChangesInFirestore(
   if (!(firstFirestoreTeam && firstYahooTeam)) {
     return;
   }
-  const sharedKeys = Object.keys(firstFirestoreTeam).filter(
-    (key) => key in firstYahooTeam,
-  );
+  const sharedKeys = Object.keys(firstFirestoreTeam).filter((key) => key in firstYahooTeam);
 
   for (const firestoreTeam of firestoreTeams) {
-    const yahooTeam = yahooTeams.find(
-      (yahooTeam) => firestoreTeam.team_key === yahooTeam.team_key,
-    );
+    const yahooTeam = yahooTeams.find((yahooTeam) => firestoreTeam.team_key === yahooTeam.team_key);
     if (!yahooTeam) {
       return;
     }
@@ -61,11 +56,7 @@ export async function patchTeamChangesInFirestore(
         `different values between yahoo and firestore teams for team ${yahooTeam.team_key}`,
         differences,
       );
-      await updateTeamFirestore(
-        firestoreTeam.uid,
-        yahooTeam.team_key,
-        differences,
-      );
+      await updateTeamFirestore(firestoreTeam.uid, yahooTeam.team_key, differences);
     }
   }
 }

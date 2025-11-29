@@ -1,12 +1,9 @@
-import { getApps, initializeApp } from "firebase-admin/app";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+import { getApps, initializeApp } from "firebase-admin/app";
 import { getFunctions, type TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
 import { getActiveTeamsForLeagues } from "../../common/services/firebase/firestore.service.js";
-import {
-  getCurrentPacificHour,
-  getFunctionUrl,
-} from "../../common/services/utilities.service.js";
+import { getCurrentPacificHour, getFunctionUrl } from "../../common/services/utilities.service.js";
 import {
   enqueueUsersTeams,
   leaguesToSetLineupsFor,
@@ -44,17 +41,13 @@ export async function scheduleSetLineup() {
   try {
     teamsSnapshot = await getActiveTeamsForLeagues(leagues);
   } catch (error) {
-    logger.error(
-      `Error fetching teams from Firebase for Leagues: ${leagues.join(", ")}`,
-      error,
-    );
+    logger.error(`Error fetching teams from Firebase for Leagues: ${leagues.join(", ")}`, error);
     return;
   }
 
   initializeGlobalDataPromises.push(setStartingPlayersForToday(teamsSnapshot));
 
-  const activeUsers: Map<string, DocumentData> =
-    mapUsersToActiveTeams(teamsSnapshot);
+  const activeUsers: Map<string, DocumentData> = mapUsersToActiveTeams(teamsSnapshot);
   if (activeUsers.size === 0) {
     logger.log("No users to set lineups for");
     return;

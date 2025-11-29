@@ -1,6 +1,6 @@
-import { TestBed } from "@angular/core/testing";
 import { bufferCount, firstValueFrom } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { TestBed } from "@angular/core/testing";
 import { AppStatusService } from "./app-status.service";
 
 describe("AppStatusService", () => {
@@ -47,8 +47,9 @@ describe("AppStatusService", () => {
         originalDispatchEvent.call(window, event);
 
         // Also call our mocked listeners
-        if (eventListeners[event.type]) {
-          eventListeners[event.type].forEach((handler) => {
+        const listeners = eventListeners[event.type];
+        if (listeners) {
+          listeners.forEach((handler) => {
             try {
               handler(event);
             } catch (error) {
@@ -76,9 +77,7 @@ describe("AppStatusService", () => {
   describe("online$ observable", () => {
     it("emits initial online status", async () => {
       // Arrange
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(1)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(1)));
 
       // Act
 
@@ -90,9 +89,7 @@ describe("AppStatusService", () => {
 
     it("emits true when window comes online", async () => {
       // Arrange
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(2)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(2)));
 
       // Act
       window.dispatchEvent(new Event("online"));
@@ -104,9 +101,7 @@ describe("AppStatusService", () => {
 
     it("emits false when window goes offline", async () => {
       // Arrange
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(2)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(2)));
 
       // Act
       Object.defineProperty(navigator, "onLine", {
@@ -126,9 +121,7 @@ describe("AppStatusService", () => {
         writable: true,
         value: true,
       });
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(3)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(3)));
 
       // Act
       window.dispatchEvent(new Event("online"));
@@ -146,9 +139,7 @@ describe("AppStatusService", () => {
 
     it("handles multiple online/offline transitions", async () => {
       // Arrange
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(4)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(4)));
 
       // Act
       Object.defineProperty(navigator, "onLine", {
@@ -235,9 +226,7 @@ describe("AppStatusService", () => {
   describe("event listener setup", () => {
     it("sets up event listeners for online/offline events", async () => {
       // Arrange
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(2)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(2)));
       const focusPromise = firstValueFrom(service.focus$.pipe(bufferCount(2)));
 
       // Act
@@ -285,9 +274,7 @@ describe("AppStatusService", () => {
       TestBed.configureTestingModule({});
       service = TestBed.inject(AppStatusService);
 
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(1)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(1)));
 
       // Act
 
@@ -307,9 +294,7 @@ describe("AppStatusService", () => {
       TestBed.configureTestingModule({});
       service = TestBed.inject(AppStatusService);
 
-      const onlinePromise = firstValueFrom(
-        service.online$.pipe(bufferCount(1)),
-      );
+      const onlinePromise = firstValueFrom(service.online$.pipe(bufferCount(1)));
 
       // Act
 

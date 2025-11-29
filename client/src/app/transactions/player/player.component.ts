@@ -1,9 +1,8 @@
+import type { IPlayer } from "@common/types/Player";
 import { DecimalPipe, NgClass } from "@angular/common";
 import { Component, Input, signal } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
-
-import type { IPlayer } from "@common/types/Player";
 
 @Component({
   selector: "app-player[player]",

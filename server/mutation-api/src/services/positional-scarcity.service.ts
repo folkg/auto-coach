@@ -1,14 +1,12 @@
-import type { CommonTeam } from "@common/types/team.js";
 import { Data, Effect } from "effect";
+import type { CommonTeam } from "@common/types/team.js";
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import {
   getScarcityOffsetsForTeam as coreGetScarcityOffsetsForTeam,
   recalculateScarcityOffsetsForAll as coreRecalculateScarcityOffsetsForAll,
 } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 
-export class PositionalScarcityError extends Data.TaggedError(
-  "PositionalScarcityError",
-)<{
+export class PositionalScarcityError extends Data.TaggedError("PositionalScarcityError")<{
   readonly message: string;
 }> {}
 
@@ -24,10 +22,7 @@ export function getScarcityOffsetsForTeam(
   });
 }
 
-export function recalculateScarcityOffsetsForAll(): Effect.Effect<
-  void,
-  PositionalScarcityError
-> {
+export function recalculateScarcityOffsetsForAll(): Effect.Effect<void, PositionalScarcityError> {
   return Effect.tryPromise({
     try: () => coreRecalculateScarcityOffsetsForAll(),
     catch: (error) =>

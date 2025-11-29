@@ -1,6 +1,6 @@
-import type { Leagues } from "@common/types/Leagues.js";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Leagues } from "@common/types/Leagues.js";
 import {
   findLeaguesPlayingNextHour,
   type GameStartTimes,

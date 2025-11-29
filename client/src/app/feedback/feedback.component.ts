@@ -7,11 +7,8 @@ import { MatChipListbox, MatChipOption } from "@angular/material/chips";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { LoaderComponent } from "../loader/loader.component";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../services/app-status.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
 

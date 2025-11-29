@@ -1,8 +1,8 @@
+import type { Subscription } from "rxjs";
 import { CdkScrollable } from "@angular/cdk/scrolling";
 import { NgIf } from "@angular/common";
 import { Component, Inject, type OnDestroy, type OnInit } from "@angular/core";
 import { MatButton } from "@angular/material/button";
-// biome-ignore lint/style/useImportType: This is an injection token
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
@@ -10,20 +10,12 @@ import {
   MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
-import type { Subscription } from "rxjs";
 
 @Component({
   selector: "app-confirm-dialog",
   templateUrl: "./confirm-dialog.component.html",
   styleUrls: ["./confirm-dialog.component.scss"],
-  imports: [
-    MatDialogTitle,
-    CdkScrollable,
-    MatDialogContent,
-    MatDialogActions,
-    NgIf,
-    MatButton,
-  ],
+  imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, NgIf, MatButton],
 })
 export class ConfirmDialogComponent implements OnInit, OnDestroy {
   title: string;
@@ -50,9 +42,7 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.clickSubscription = this.dialogRef
-      .backdropClick()
-      .subscribe(() => this.onDismiss());
+    this.clickSubscription = this.dialogRef.backdropClick().subscribe(() => this.onDismiss());
   }
 
   ngOnDestroy(): void {

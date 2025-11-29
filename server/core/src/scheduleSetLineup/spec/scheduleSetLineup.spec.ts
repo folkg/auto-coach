@@ -1,7 +1,4 @@
-import type {
-  QueryDocumentSnapshot,
-  QuerySnapshot,
-} from "firebase-admin/firestore";
+import type { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import * as firestoreService from "../../common/services/firebase/firestore.service.js";
@@ -19,14 +16,9 @@ vi.mock("firebase-admin/app", () => ({
 }));
 
 // set up mocks
-const mockLeaguesToSetLineupsFor = vi.spyOn(
-  schedulingService,
-  "leaguesToSetLineupsFor",
-);
+const mockLeaguesToSetLineupsFor = vi.spyOn(schedulingService, "leaguesToSetLineupsFor");
 
-vi.spyOn(schedulingService, "setTodaysPostponedTeams").mockResolvedValue(
-  undefined,
-);
+vi.spyOn(schedulingService, "setTodaysPostponedTeams").mockResolvedValue(undefined);
 
 const mockQueue = {
   enqueue: vi.fn(() => Promise.resolve()),
@@ -54,19 +46,14 @@ vi.mock("firebase-admin/functions", () => {
 
 describe("scheduleSetLineup", () => {
   beforeEach(() => {
-    mockLeaguesToSetLineupsFor.mockReturnValue(
-      Promise.resolve(["nhl", "mlb", "nba"]),
-    );
+    mockLeaguesToSetLineupsFor.mockReturnValue(Promise.resolve(["nhl", "mlb", "nba"]));
   });
 
   afterEach(() => {
     vi.clearAllMocks();
   });
 
-  const mockGetActiveTeamsForLeagues = vi.spyOn(
-    firestoreService,
-    "getActiveTeamsForLeagues",
-  );
+  const mockGetActiveTeamsForLeagues = vi.spyOn(firestoreService, "getActiveTeamsForLeagues");
 
   function mockTeamsSnapshot(teams: { team_key: string }[]) {
     return createMock<QuerySnapshot>({
@@ -102,9 +89,7 @@ describe("scheduleSetLineup", () => {
     // mock the querySnapshot object
     const teamsSnapshot = mockTeamsSnapshot(teams);
 
-    mockGetActiveTeamsForLeagues.mockReturnValue(
-      Promise.resolve(teamsSnapshot),
-    );
+    mockGetActiveTeamsForLeagues.mockReturnValue(Promise.resolve(teamsSnapshot));
 
     await scheduleSetLineup();
 
@@ -151,9 +136,7 @@ describe("scheduleSetLineup", () => {
 
     // mock the querySnapshot object
     const teamsSnapshot = mockTeamsSnapshot(teams);
-    mockGetActiveTeamsForLeagues.mockReturnValue(
-      Promise.resolve(teamsSnapshot),
-    );
+    mockGetActiveTeamsForLeagues.mockReturnValue(Promise.resolve(teamsSnapshot));
 
     const spyFetchStartingPlayers = vi
       .spyOn(
@@ -193,9 +176,7 @@ describe("scheduleSetLineup", () => {
     // mock the querySnapshot object
     const teamsSnapshot = mockTeamsSnapshot(teams);
 
-    mockGetActiveTeamsForLeagues.mockReturnValue(
-      Promise.resolve(teamsSnapshot),
-    );
+    mockGetActiveTeamsForLeagues.mockReturnValue(Promise.resolve(teamsSnapshot));
 
     await scheduleSetLineup();
 

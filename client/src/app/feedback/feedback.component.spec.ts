@@ -1,7 +1,7 @@
-import { render, screen } from "@testing-library/angular";
-import userEvent from "@testing-library/user-event";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/angular";
+import userEvent from "@testing-library/user-event";
 import { APIService } from "../services/api.service";
 import { AppStatusService } from "../services/app-status.service";
 import { AuthService } from "../services/auth.service";
@@ -130,15 +130,11 @@ describe("FeedbackComponent", () => {
     const submitButton = screen.getByText("Submit");
     await user.click(submitButton);
 
-    expect(
-      screen.getByText("Thank you for your feedback!"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Thank you for your feedback!")).toBeInTheDocument();
   });
 
   it("shows error message after failed submission", async () => {
-    mockAPIService.sendFeedbackEmail.mockRejectedValueOnce(
-      new Error("Failed to send feedback"),
-    );
+    mockAPIService.sendFeedbackEmail.mockRejectedValueOnce(new Error("Failed to send feedback"));
 
     const user = userEvent.setup();
     await render(FeedbackComponent, {
@@ -155,9 +151,7 @@ describe("FeedbackComponent", () => {
     await user.click(submitButton);
 
     expect(
-      screen.getByText(
-        "There was an error with your submission. Please try again later.",
-      ),
+      screen.getByText("There was an error with your submission. Please try again later."),
     ).toBeInTheDocument();
   });
 
@@ -179,9 +173,7 @@ describe("FeedbackComponent", () => {
     await user.click(submitButton);
 
     expect(
-      screen.getByText(
-        "There was an error with your submission. Please try again later.",
-      ),
+      screen.getByText("There was an error with your submission. Please try again later."),
     ).toBeInTheDocument();
   });
 

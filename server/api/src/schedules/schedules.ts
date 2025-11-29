@@ -1,6 +1,6 @@
+import { Hono } from "hono";
 import { getErrorMessage } from "@common/utilities/error";
 import { getSchedule } from "@core/scheduleSetLineup/services/getSchedule.service.js";
-import { Hono } from "hono";
 import type { AuthContext } from "../index";
 
 const schedulesRouter = new Hono<AuthContext>()

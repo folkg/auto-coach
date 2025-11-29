@@ -1,7 +1,7 @@
-import type { CommonTeam } from "@common/types/team.js";
-import { Effect } from "effect";
 import type { Mock } from "vitest";
+import { Effect } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { CommonTeam } from "@common/types/team.js";
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import * as coreScarcity from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import {
@@ -9,16 +9,12 @@ import {
   recalculateScarcityOffsetsForAll,
 } from "./positional-scarcity.service.js";
 
-vi.mock(
-  "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js",
-  () => ({
-    getScarcityOffsetsForTeam: vi.fn(),
-    recalculateScarcityOffsetsForAll: vi.fn(),
-  }),
-);
+vi.mock("../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js", () => ({
+  getScarcityOffsetsForTeam: vi.fn(),
+  recalculateScarcityOffsetsForAll: vi.fn(),
+}));
 
-const mockCoreGetScarcityOffsetsForTeam =
-  coreScarcity.getScarcityOffsetsForTeam as Mock;
+const mockCoreGetScarcityOffsetsForTeam = coreScarcity.getScarcityOffsetsForTeam as Mock;
 const mockCoreRecalculateScarcityOffsetsForAll =
   coreScarcity.recalculateScarcityOffsetsForAll as Mock;
 
@@ -65,9 +61,7 @@ describe("PositionalScarcityService", () => {
       mockCoreGetScarcityOffsetsForTeam.mockResolvedValue(mockScarcityOffsets);
 
       // Act
-      const result = await Effect.runPromise(
-        getScarcityOffsetsForTeam(mockTeam),
-      );
+      const result = await Effect.runPromise(getScarcityOffsetsForTeam(mockTeam));
 
       // Assert
       expect(result).toEqual(mockScarcityOffsets);
@@ -76,14 +70,10 @@ describe("PositionalScarcityService", () => {
 
     it("returns PositionalScarcityError when core function throws", async () => {
       // Arrange
-      mockCoreGetScarcityOffsetsForTeam.mockRejectedValue(
-        new Error("API connection failed"),
-      );
+      mockCoreGetScarcityOffsetsForTeam.mockRejectedValue(new Error("API connection failed"));
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.flip(getScarcityOffsetsForTeam(mockTeam)),
-      );
+      const result = await Effect.runPromise(Effect.flip(getScarcityOffsetsForTeam(mockTeam)));
 
       // Assert
       expect(result).toBeDefined();
@@ -98,9 +88,7 @@ describe("PositionalScarcityService", () => {
       mockCoreRecalculateScarcityOffsetsForAll.mockResolvedValue(undefined);
 
       // Act
-      const result = await Effect.runPromise(
-        recalculateScarcityOffsetsForAll(),
-      );
+      const result = await Effect.runPromise(recalculateScarcityOffsetsForAll());
 
       // Assert
       expect(result).toBeUndefined();
@@ -109,14 +97,10 @@ describe("PositionalScarcityService", () => {
 
     it("returns PositionalScarcityError when core function throws", async () => {
       // Arrange
-      mockCoreRecalculateScarcityOffsetsForAll.mockRejectedValue(
-        new Error("Database unavailable"),
-      );
+      mockCoreRecalculateScarcityOffsetsForAll.mockRejectedValue(new Error("Database unavailable"));
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.flip(recalculateScarcityOffsetsForAll()),
-      );
+      const result = await Effect.runPromise(Effect.flip(recalculateScarcityOffsetsForAll()));
 
       // Assert
       expect(result).toBeDefined();

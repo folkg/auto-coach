@@ -1,7 +1,7 @@
-import type { Firestore } from "@google-cloud/firestore";
-import type { CloudTasksClient } from "@google-cloud/tasks";
 import { Effect } from "effect";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { Firestore } from "@google-cloud/firestore";
+import type { CloudTasksClient } from "@google-cloud/tasks";
 import { MutationTaskService } from "./mutation-task.service.js";
 
 interface MockFirestoreDocRef {
@@ -13,9 +13,7 @@ interface MockFirestoreCollection {
 }
 
 interface MockFirestore {
-  readonly collection: ReturnType<
-    typeof vi.fn<(name: string) => MockFirestoreCollection>
-  >;
+  readonly collection: ReturnType<typeof vi.fn<(name: string) => MockFirestoreCollection>>;
 }
 
 interface MockCloudTasksClient {
@@ -47,14 +45,10 @@ function setupMutationTaskService(): {
 
   // Arrange - Mock Cloud Tasks Client
   const mockTasksClient: MockCloudTasksClient = {
-    queuePath: vi
-      .fn()
-      .mockReturnValue("projects/test/locations/us-central1/queues/test-queue"),
+    queuePath: vi.fn().mockReturnValue("projects/test/locations/us-central1/queues/test-queue"),
     taskPath: vi
       .fn()
-      .mockReturnValue(
-        "projects/test/locations/us-central1/queues/test-queue/tasks/test-task",
-      ),
+      .mockReturnValue("projects/test/locations/us-central1/queues/test-queue/tasks/test-task"),
     createTask: vi.fn().mockResolvedValue({}),
     deleteTask: vi.fn().mockResolvedValue({}),
   };
@@ -98,9 +92,7 @@ describe("MutationTaskService", () => {
       };
 
       // Act
-      const result = await Effect.runPromise(
-        service.createMutationTask(taskRequest),
-      );
+      const result = await Effect.runPromise(service.createMutationTask(taskRequest));
 
       // Assert
       expect(result).toBeDefined();
@@ -124,9 +116,7 @@ describe("MutationTaskService", () => {
         userId: "test-user-123",
         queueName: "test-queue",
       };
-      mockTasksClient.createTask.mockRejectedValue(
-        new Error("Cloud Tasks error"),
-      );
+      mockTasksClient.createTask.mockRejectedValue(new Error("Cloud Tasks error"));
 
       // Act
       const errorResult = await Effect.runPromise(
@@ -173,9 +163,7 @@ describe("MutationTaskService", () => {
       const queueName = "test-queue";
 
       // Act
-      const result = await Effect.runPromise(
-        service.cancelMutationTask(taskId, queueName),
-      );
+      const result = await Effect.runPromise(service.cancelMutationTask(taskId, queueName));
 
       // Assert
       expect(result).toBeUndefined();
@@ -208,9 +196,7 @@ describe("MutationTaskService", () => {
       const taskId = "non-existent-task";
 
       // Act
-      const result = await Effect.runPromise(
-        Effect.flip(service.getMutationTask(taskId)),
-      );
+      const result = await Effect.runPromise(Effect.flip(service.getMutationTask(taskId)));
 
       // Assert
       expect(result).toBeDefined();

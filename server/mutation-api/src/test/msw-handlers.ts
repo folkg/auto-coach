@@ -30,9 +30,7 @@ function createGameTime(minutesFromNow: number): string {
 }
 
 // Factory functions for creating mock responses
-export function createYahooGamesResponse(
-  games: readonly YahooGame[],
-): YahooGamesResponse {
+export function createYahooGamesResponse(games: readonly YahooGame[]): YahooGamesResponse {
   return {
     league: {
       games: {
@@ -169,10 +167,7 @@ export const yahooHandlers = {
   /**
    * Creates a handler that returns games at specific times
    */
-  gamesAtTimes: (
-    league: string,
-    gameTimesMinutesFromNow: readonly number[],
-  ) => {
+  gamesAtTimes: (league: string, gameTimesMinutesFromNow: readonly number[]) => {
     const games = gameTimesMinutesFromNow.map((minutes) =>
       createYahooGame({
         startTime: createGameTime(minutes),
@@ -190,10 +185,7 @@ export const yahooHandlers = {
   /**
    * Creates a handler that returns postponed games
    */
-  postponedGames: (
-    league: string,
-    postponedTeamIds: readonly { away: string; home: string }[],
-  ) => {
+  postponedGames: (league: string, postponedTeamIds: readonly { away: string; home: string }[]) => {
     const games = postponedTeamIds.map(({ away, home }) =>
       createYahooGame({
         status: "status.type.postponed",
@@ -229,10 +221,7 @@ export const yahooHandlers = {
     return http.get(
       `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games*`,
       () => {
-        return HttpResponse.json(
-          { error: "Internal Server Error" },
-          { status: statusCode },
-        );
+        return HttpResponse.json({ error: "Internal Server Error" }, { status: statusCode });
       },
     );
   },
@@ -243,9 +232,7 @@ export const sportsnetHandlers = {
    * Creates a handler that returns games at specific times
    */
   gamesAtTimes: (_league: string, timestampsSeconds: readonly number[]) => {
-    const games = timestampsSeconds.map((timestamp) =>
-      createSportsnetGame({ timestamp }),
-    );
+    const games = timestampsSeconds.map((timestamp) => createSportsnetGame({ timestamp }));
 
     return http.get("https://mobile-statsv2.sportsnet.ca/scores*", () => {
       return HttpResponse.json(createSportsnetGamesResponse(games));
@@ -257,10 +244,7 @@ export const sportsnetHandlers = {
    */
   error: (statusCode = 500) => {
     return http.get("https://mobile-statsv2.sportsnet.ca/scores*", () => {
-      return HttpResponse.json(
-        { error: "Internal Server Error" },
-        { status: statusCode },
-      );
+      return HttpResponse.json({ error: "Internal Server Error" }, { status: statusCode });
     });
   },
 };

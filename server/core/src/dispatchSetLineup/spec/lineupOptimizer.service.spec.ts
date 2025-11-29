@@ -1,7 +1,7 @@
-import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
-import type { LineupChanges } from "@common/types/transactions.js";
 import spacetime from "spacetime";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
+import type { LineupChanges } from "@common/types/transactions.js";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
 import * as firestoreService from "../../common/services/firebase/firestore.service.js";
 import * as yahooAPI from "../../common/services/yahooAPI/yahooAPI.service.js";
@@ -10,10 +10,7 @@ import * as TopAvailablePlayersService from "../../common/services/yahooAPI/yaho
 import { createMock } from "../../common/spec/createMock";
 import * as ScheduleSetLineupService from "../../scheduleSetLineup/services/scheduleSetLineup.service.js";
 import * as processTransactionsService from "../../transactions/services/processTransactions.service";
-import {
-  performWeeklyLeagueTransactions,
-  setUsersLineup,
-} from "../services/setLineups.service.js";
+import { performWeeklyLeagueTransactions, setUsersLineup } from "../services/setLineups.service.js";
 
 // mock firebase-admin
 vi.mock("firebase-admin/firestore", () => ({
@@ -40,18 +37,10 @@ const spyUpdateTeamFirestore = vi
 
 vi.spyOn(firestoreService, "updateFirestoreTimestamp").mockResolvedValue();
 
-vi.spyOn(firestoreService, "getPositionalScarcityOffsets").mockResolvedValue(
-  {},
-);
+vi.spyOn(firestoreService, "getPositionalScarcityOffsets").mockResolvedValue({});
 vi.spyOn(firestoreService, "getRandomUID").mockResolvedValue("1");
-vi.spyOn(
-  firestoreService,
-  "updatePositionalScarcityOffset",
-).mockResolvedValue();
-vi.spyOn(
-  positionalScarcityService,
-  "getScarcityOffsetsForTeam",
-).mockResolvedValue(createMock({}));
+vi.spyOn(firestoreService, "updatePositionalScarcityOffset").mockResolvedValue();
+vi.spyOn(positionalScarcityService, "getScarcityOffsetsForTeam").mockResolvedValue(createMock({}));
 
 vi.spyOn(yahooAPI, "getTopPlayersGeneral").mockResolvedValue(createMock({}));
 
@@ -81,9 +70,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       }),
     ];
 
-    const rosters: TeamOptimizer[] = [
-      require("./testRosters/NHL/Daily/optimalRoster.json"),
-    ];
+    const rosters: TeamOptimizer[] = [require("./testRosters/NHL/Daily/optimalRoster.json")];
 
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
@@ -92,9 +79,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     // mock the API calls
     vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
@@ -110,22 +95,16 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     const uid = "testUID";
     const teams = [{ team_key: "test1" }].map(mapFirestoreTeams);
 
-    const rosters: TeamOptimizer[] = [
-      require("./testRosters/NHL/Daily/optimalRoster.json"),
-    ];
+    const rosters: TeamOptimizer[] = [require("./testRosters/NHL/Daily/optimalRoster.json")];
 
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
       .mockResolvedValue(rosters);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
     expect(spyPutLineupChanges).not.toHaveBeenCalled();
@@ -136,9 +115,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
   // user with multiple teams, no changes
   it("should do nothing for two already optimal lineup", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     const rosters: TeamOptimizer[] = [
       require("./testRosters/NHL/DailyDrops/noDropsRequired.json"),
@@ -148,15 +125,11 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
       .mockResolvedValue(rosters);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
     expect(spyPutLineupChanges).not.toHaveBeenCalled();
@@ -167,9 +140,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
   // user with multiple teams, rosterModifications only
   it("should have two roster changes, no transactions", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     const rosters: TeamOptimizer[] = [
       require("./testRosters/NHL/Daily/oneSwapRequired.json"),
@@ -199,21 +170,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
       .mockResolvedValue(rosters);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedRosterModifications,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedRosterModifications, uid);
     expect(spyPostRosterAddDropTransaction).not.toHaveBeenCalled();
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
   });
@@ -264,31 +228,21 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(updatedRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(2);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalledTimes(2);
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalledWith(
@@ -327,31 +281,21 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(tomorrowRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(2);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalled();
   });
@@ -390,21 +334,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(tomorrowRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -417,9 +354,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
 
   it("should drop none, since the worst player is the healthy player on IL", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     // Set up mock data
     const initialRosters: TeamOptimizer[] = [
@@ -430,21 +365,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(tomorrowRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -480,31 +408,21 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(tomorrowRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(2);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalled();
   });
@@ -512,9 +430,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
   // user with multiple teams, playerTransactions and multiple calls to postRosterModifications (one intraday, one next day)
   it("should have one drop, refetch, two lineup changes, then refetch and drop (again)", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     // Set up mock data
     const initialRosters: TeamOptimizer[] = [
@@ -551,10 +467,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(updatedRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce(tomorrowRosters);
@@ -562,31 +475,22 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValueOnce(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(3);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalled();
   });
 
   it("should have two lineup changes, and no add drops because prop doesn't exist (legacy teams)", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     // Set up mock data
     const initialRosters: TeamOptimizer[] = [
@@ -607,30 +511,20 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).not.toHaveBeenCalled();
   });
@@ -681,14 +575,9 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ];
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
-    const initialRosters: TeamOptimizer[] = [
-      require("./testRosters/MLB/AddBestPlayer.json"),
-    ];
+    const initialRosters: TeamOptimizer[] = [require("./testRosters/MLB/AddBestPlayer.json")];
     const updatedRosters: TeamOptimizer[] = [
       require("./testRosters/MLB/AddBestPlayer-refetched.json"),
     ];
@@ -701,22 +590,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./topAvailablePlayers/promises/topAvailablePlayersPromise1.json");
     const restTopAvailablePlayersPromise = require("./topAvailablePlayers/promises/restTopAvailablePlayersPromise1.json");
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      restTopAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(restTopAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
     const sendPotentialTransactionEmailSpy = vi
       .spyOn(processTransactionsService, "sendPotentialTransactionEmail")
       .mockResolvedValue();
@@ -734,14 +615,8 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(2);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      addPlayerLineupChanges,
-      uid,
-    );
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      optimizationLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(addPlayerLineupChanges, uid);
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(optimizationLineupChanges, uid);
     expect(sendPotentialTransactionEmailSpy).toHaveBeenCalledTimes(0);
   });
 
@@ -785,14 +660,9 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ];
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
-    const initialRosters: TeamOptimizer[] = [
-      require("./testRosters/MLB/free1spotILswap.json"),
-    ];
+    const initialRosters: TeamOptimizer[] = [require("./testRosters/MLB/free1spotILswap.json")];
     const updatedRosters: TeamOptimizer[] = [
       require("./testRosters/MLB/free1spotILswap-refetched.json"),
     ];
@@ -805,22 +675,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./topAvailablePlayers/promises/topAvailablePlayersPromise2.json");
     const restTopAvailablePlayersPromise = require("./topAvailablePlayers/promises/restTopAvailablePlayersPromise2.json");
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      restTopAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(restTopAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -831,14 +693,8 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalled();
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(2);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      addPlayerLineupChanges,
-      uid,
-    );
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      optimizationLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(addPlayerLineupChanges, uid);
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(optimizationLineupChanges, uid);
   });
 
   it("should drop one player to make room for healthy on IL, post the lineup changes, then perform some swaps", async () => {
@@ -869,10 +725,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ];
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
     const initialRosters: TeamOptimizer[] = [
       require("./problematicAddDrop/moveILtoBN-lineup.json"),
@@ -890,19 +743,13 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./problematicAddDrop/healthyOnILShouldBeIllegal-addcandidates.json");
     spyFetchTopAvailablePlayers.mockResolvedValue(createMock({}));
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -910,10 +757,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalled();
 
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      dropPlayerLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(dropPlayerLineupChanges, uid);
   });
 
   it("should add one player and then move them to the active roster (Next Day)", async () => {
@@ -971,14 +815,9 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ];
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
-    const initialRosters: TeamOptimizer[] = [
-      require("./testRosters/MLB/AddBestPlayerDaily.json"),
-    ];
+    const initialRosters: TeamOptimizer[] = [require("./testRosters/MLB/AddBestPlayerDaily.json")];
     const tomorrowRosters: TeamOptimizer[] = [
       require("./testRosters/MLB/AddBestPlayerDaily-refetched.json"),
     ];
@@ -991,22 +830,14 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./topAvailablePlayers/promises/topAvailablePlayersPromise1.json");
     const restTopAvailablePlayersPromise = require("./topAvailablePlayers/promises/restTopAvailablePlayersPromise1.json");
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      restTopAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(restTopAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -1021,14 +852,8 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(2);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      optimizationLineupChanges,
-      uid,
-    );
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      addPlayerLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(optimizationLineupChanges, uid);
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(addPlayerLineupChanges, uid);
   });
 
   it("should not add anyone (but still optimize) since user setting does not allow for adds", async () => {
@@ -1055,14 +880,9 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ];
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
-    const initialRosters: TeamOptimizer[] = [
-      require("./testRosters/MLB/AddBestPlayer.json"),
-    ];
+    const initialRosters: TeamOptimizer[] = [require("./testRosters/MLB/AddBestPlayer.json")];
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
 
     const spyFetchTopAvailablePlayers = vi.spyOn(
@@ -1073,22 +893,15 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await setUsersLineup(uid, teams);
 
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      optimizationLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(optimizationLineupChanges, uid);
 
     expect(spyFetchTopAvailablePlayers).toHaveBeenCalledTimes(0);
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalledTimes(0);
@@ -1104,10 +917,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ].map(mapFirestoreTeams);
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
     const initialRosters: TeamOptimizer[] = [
       require("./testRosters/MLB/AddBestPlayer-ManualTransaction.json"),
@@ -1124,28 +934,18 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./topAvailablePlayers/promises/topAvailablePlayersPromise1.json");
     const restTopAvailablePlayersPromise = require("./topAvailablePlayers/promises/restTopAvailablePlayersPromise1.json");
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      restTopAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(restTopAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
     const sendPotentialTransactionEmailSpy = vi
       .spyOn(processTransactionsService, "sendPotentialTransactionEmail")
       .mockResolvedValue();
-    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(
-      true,
-    );
+    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(true);
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -1165,10 +965,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
       },
     ].map(mapFirestoreTeams);
 
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
     const initialRosters: TeamOptimizer[] = [
       require("./testRosters/MLB/AddBestPlayer-ManualTransaction.json"),
@@ -1185,28 +982,18 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
     );
     const topAvailablePlayersPromise = require("./topAvailablePlayers/promises/topAvailablePlayersPromise1.json");
     const restTopAvailablePlayersPromise = require("./topAvailablePlayers/promises/restTopAvailablePlayersPromise1.json");
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      topAvailablePlayersPromise,
-    );
-    spyFetchTopAvailablePlayers.mockResolvedValueOnce(
-      restTopAvailablePlayersPromise,
-    );
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(topAvailablePlayersPromise);
+    spyFetchTopAvailablePlayers.mockResolvedValueOnce(restTopAvailablePlayersPromise);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
     const sendPotentialTransactionEmailSpy = vi
       .spyOn(processTransactionsService, "sendPotentialTransactionEmail")
       .mockResolvedValue();
-    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(
-      false,
-    );
+    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(false);
 
     // Run test
     await setUsersLineup(uid, teams);
@@ -1220,9 +1007,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
 describe("Full stack performTransactionsForWeeklyLeagues()", () => {
   it("should call performTransactionsForWeeklyLeagues() for each transaction", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     const rosters = [
       require("./testRosters/NBA/WeeklyDrops/oneDropRequiredWithOptimization.json"),
@@ -1251,18 +1036,13 @@ describe("Full stack performTransactionsForWeeklyLeagues()", () => {
     };
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(rosters);
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
     const sendPotentialTransactionEmailSpy = vi
       .spyOn(processTransactionsService, "sendPotentialTransactionEmail")
       .mockResolvedValue();
@@ -1284,9 +1064,7 @@ describe("Full stack performTransactionsForWeeklyLeagues()", () => {
 
   it("should send an email ONLY for one, and action for one", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     const rosters = [
       require("./testRosters/NBA/WeeklyDrops/oneDropRequiredWithOptimization-ManualTransaction.json"),
@@ -1294,9 +1072,7 @@ describe("Full stack performTransactionsForWeeklyLeagues()", () => {
     ];
 
     // Set up spies and mocks
-    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(
-      true,
-    );
+    vi.spyOn(ScheduleSetLineupService, "isFirstRunOfTheDay").mockReturnValue(true);
 
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
@@ -1306,9 +1082,7 @@ describe("Full stack performTransactionsForWeeklyLeagues()", () => {
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
 
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     const sendPotentialTransactionEmailSpy = vi
       .spyOn(processTransactionsService, "sendPotentialTransactionEmail")
@@ -1326,18 +1100,10 @@ describe("Full stack performTransactionsForWeeklyLeagues()", () => {
     const teams: FirestoreTeam[] = [];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
 
-    const spyPostRosterAddDropTransaction = vi.spyOn(
-      yahooAPI,
-      "postRosterAddDropTransaction",
-    );
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPostRosterAddDropTransaction = vi.spyOn(yahooAPI, "postRosterAddDropTransaction");
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     await performWeeklyLeagueTransactions(uid, teams);
@@ -1352,31 +1118,22 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     const teams = [{ team_key: "test1" }].map(mapFirestoreTeams);
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockImplementationOnce(() => {
       throw new Error("Error from fetchRostersFromYahoo() test 1");
     });
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     expect.assertions(4);
     try {
       await setUsersLineup(uid, teams);
     } catch (error) {
-      expect(error).toEqual(
-        new Error("Error from fetchRostersFromYahoo() test 1"),
-      );
+      expect(error).toEqual(new Error("Error from fetchRostersFromYahoo() test 1"));
     }
 
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
@@ -1389,10 +1146,7 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     const teams = [{ team_key: "test1" }].map(mapFirestoreTeams);
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockImplementationOnce(() => {
       console.log("throwing error");
       throw new Error("Error from fetchRostersFromYahoo() test 2");
@@ -1403,17 +1157,13 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     try {
       await setUsersLineup(uid, teams);
     } catch (error) {
-      expect(error).toEqual(
-        new Error("Error from fetchRostersFromYahoo() test 2"),
-      );
+      expect(error).toEqual(new Error("Error from fetchRostersFromYahoo() test 2"));
     }
   });
 
   it("should have two roster changes, and then fail to put changes", async () => {
     const uid = "testUID";
-    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(
-      mapFirestoreTeams,
-    );
+    const teams = [{ team_key: "test1" }, { team_key: "test2" }].map(mapFirestoreTeams);
 
     const rosters: TeamOptimizer[] = [
       require("./testRosters/NHL/Daily/oneSwapRequired.json"),
@@ -1443,17 +1193,13 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
       .mockResolvedValue(rosters);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockImplementation(() => {
-        throw new Error("Error from putLineupChanges() test 3");
-      });
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockImplementation(() => {
+      throw new Error("Error from putLineupChanges() test 3");
+    });
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // test
     expect.assertions(4);
@@ -1462,10 +1208,7 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     } catch (error) {
       expect(error).toEqual(new Error("Error from putLineupChanges() test 3"));
     }
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedRosterModifications,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedRosterModifications, uid);
     expect(spyPostRosterAddDropTransaction).not.toHaveBeenCalled();
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
   });
@@ -1493,23 +1236,16 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     ];
 
     // Set up spies and mocks
-    const spyFetchRostersFromYahoo = vi.spyOn(
-      LineupBuilderService,
-      "fetchRostersFromYahoo",
-    );
+    const spyFetchRostersFromYahoo = vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo");
     spyFetchRostersFromYahoo.mockResolvedValueOnce(initialRosters);
     spyFetchRostersFromYahoo.mockResolvedValueOnce([]);
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
       .mockResolvedValue(null);
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockImplementation(() => {
-        throw new Error("Error from putLineupChanges() test 5");
-      });
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockImplementation(() => {
+      throw new Error("Error from putLineupChanges() test 5");
+    });
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     // Run test
     expect.assertions(5);
@@ -1522,10 +1258,7 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledTimes(1);
 
     expect(spyPutLineupChanges).toHaveBeenCalledTimes(1);
-    expect(spyPutLineupChanges).toHaveBeenCalledWith(
-      expectedLineupChanges,
-      uid,
-    );
+    expect(spyPutLineupChanges).toHaveBeenCalledWith(expectedLineupChanges, uid);
 
     expect(spyPostRosterAddDropTransaction).toHaveBeenCalledTimes(0);
   });
@@ -1534,9 +1267,7 @@ describe("Test Errors thrown in LineupBuilderService by API service", () => {
 describe("Paused teams", () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.setSystemTime(
-      spacetime.now("Canada/Pacific").hour(11).minute(0).second(0).epoch,
-    );
+    vi.setSystemTime(spacetime.now("Canada/Pacific").hour(11).minute(0).second(0).epoch);
 
     return () => {
       vi.useRealTimers();
@@ -1553,9 +1284,7 @@ describe("Paused teams", () => {
     const spyFetchRostersFromYahoo = vi
       .spyOn(LineupBuilderService, "fetchRostersFromYahoo")
       .mockResolvedValue([]);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
     expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
@@ -1568,11 +1297,7 @@ describe("Paused teams", () => {
 
   it("does not set any lineups if paused is today for all", async () => {
     const uid = "testUID";
-    const noonToday = spacetime
-      .now("Canada/Pacific")
-      .hour(12)
-      .minute(0)
-      .second(0).epoch;
+    const noonToday = spacetime.now("Canada/Pacific").hour(12).minute(0).second(0).epoch;
 
     const teams = [
       { team_key: "419.l.28340.t.1", lineup_paused_at: noonToday },
@@ -1589,11 +1314,7 @@ describe("Paused teams", () => {
 
   it("sets only the lineups that are not paused", async () => {
     const uid = "testUID";
-    const noonToday = spacetime
-      .now("Canada/Pacific")
-      .hour(12)
-      .minute(0)
-      .second(0).epoch;
+    const noonToday = spacetime.now("Canada/Pacific").hour(12).minute(0).second(0).epoch;
 
     const teams = [
       { team_key: "419.l.28340.t.1", lineup_paused_at: noonToday },
@@ -1604,21 +1325,12 @@ describe("Paused teams", () => {
       .mockResolvedValue([]);
 
     await setUsersLineup(uid, teams);
-    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[1]?.team_key],
-      uid,
-      "",
-      new Set(),
-    );
+    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith([teams[1]?.team_key], uid, "", new Set());
   });
 
   it("sets only the lineups that have not specified a paused date", async () => {
     const uid = "testUID";
-    const noonToday = spacetime
-      .now("Canada/Pacific")
-      .hour(12)
-      .minute(0)
-      .second(0).epoch;
+    const noonToday = spacetime.now("Canada/Pacific").hour(12).minute(0).second(0).epoch;
 
     const teams = [
       { team_key: "419.l.28340.t.1" },
@@ -1629,21 +1341,12 @@ describe("Paused teams", () => {
       .mockResolvedValue([]);
 
     await setUsersLineup(uid, teams);
-    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[0]?.team_key],
-      uid,
-      "",
-      new Set(),
-    );
+    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith([teams[0]?.team_key], uid, "", new Set());
   });
 
   it("doesn't set the linup if paused late in another timezone", async () => {
     const uid = "testUID";
-    const noonEastern = spacetime
-      .now("Canada/Eastern")
-      .hour(12)
-      .minute(0)
-      .second(0);
+    const noonEastern = spacetime.now("Canada/Eastern").hour(12).minute(0).second(0);
     const midnightEastern = noonEastern.add(14, "hours");
 
     const teams = [
@@ -1660,11 +1363,7 @@ describe("Paused teams", () => {
 
   it("sets the lineup if it was paused early in another timezone", async () => {
     const uid = "testUID";
-    const noonEastern = spacetime
-      .now("Canada/Eastern")
-      .hour(12)
-      .minute(0)
-      .second(0);
+    const noonEastern = spacetime.now("Canada/Eastern").hour(12).minute(0).second(0);
     const twoAmEastern = noonEastern.subtract(10, "hours");
 
     const teams = [
@@ -1676,21 +1375,12 @@ describe("Paused teams", () => {
       .mockResolvedValue([]);
 
     await setUsersLineup(uid, teams);
-    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[0]?.team_key],
-      uid,
-      "",
-      new Set(),
-    );
+    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith([teams[0]?.team_key], uid, "", new Set());
   });
 
   it("sets the lineups if paused was yesterday", async () => {
     const uid = "testUID";
-    const noonToday = spacetime
-      .now("Canada/Pacific")
-      .hour(12)
-      .minute(0)
-      .second(0).epoch;
+    const noonToday = spacetime.now("Canada/Pacific").hour(12).minute(0).second(0).epoch;
 
     const yesterday = spacetime
       .now("Canada/Pacific")
@@ -1709,12 +1399,7 @@ describe("Paused teams", () => {
       .mockResolvedValue([]);
 
     await setUsersLineup(uid, teams);
-    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith(
-      [teams[1]?.team_key],
-      uid,
-      "",
-      new Set(),
-    );
+    expect(spyFetchRostersFromYahoo).toHaveBeenCalledWith([teams[1]?.team_key], uid, "", new Set());
   });
 });
 
@@ -1727,16 +1412,10 @@ describe("Skipping meaningless lineup changes", () => {
       require("./testRosters/NHL/Daily/startersShuffleNoGames.json"),
     ];
 
-    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
-      rosters,
-    );
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(rosters);
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
 
@@ -1751,16 +1430,10 @@ describe("Skipping meaningless lineup changes", () => {
       require("./testRosters/NHL/Daily/startersShuffleWithGames.json"),
     ];
 
-    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
-      rosters,
-    );
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(rosters);
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
 
@@ -1775,16 +1448,10 @@ describe("Skipping meaningless lineup changes", () => {
       require("./testRosters/NHL/Daily/benchToStartingNoGames.json"),
     ];
 
-    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
-      rosters,
-    );
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(rosters);
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
 
@@ -1799,16 +1466,10 @@ describe("Skipping meaningless lineup changes", () => {
       require("./testRosters/NHL/Daily/benchToStartingWithGames.json"),
     ];
 
-    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(
-      rosters,
-    );
-    const spyPutLineupChanges = vi
-      .spyOn(yahooAPI, "putLineupChanges")
-      .mockResolvedValue();
+    vi.spyOn(LineupBuilderService, "fetchRostersFromYahoo").mockResolvedValue(rosters);
+    const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "postRosterAddDropTransaction").mockResolvedValue(null);
-    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(
-      createMock({}),
-    );
+    vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 
     await setUsersLineup(uid, teams);
 

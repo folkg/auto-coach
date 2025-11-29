@@ -1,8 +1,8 @@
 {
-  "language_servers": ["...", "biome"],
+  "language_servers": ["...", "oxc"],
   "languages": {
     "TypeScript": {
-      "language_servers": ["angular", "...", "biome"]
+      "language_servers": ["angular", "...", "oxc"]
     },
     "HTML": {
       "language_servers": ["angular", "..."]
@@ -10,11 +10,20 @@
   },
   "formatter": {
     "language_server": {
-      "name": "biome"
+      "name": "oxc"
     }
   },
+  "lsp": {
+     "oxc": {
+       "initialization_options": {
+         "options": {
+           "typeAware": true,
+           "fmt.experimental": true
+         }
+       }
+     }
+   },
   "code_actions_on_format": {
-    "source.fixAll.biome": true,
-    "source.organizeImports.biome": true
+    "source.fixAll": true,
   }
 }

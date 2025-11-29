@@ -5,13 +5,10 @@
  * and circuit breaker functionality.
  */
 
-import { describe, expect, it, vi } from "@effect/vitest";
-import type { Firestore } from "@google-cloud/firestore";
 import { Effect } from "effect";
-import {
-  type RateLimitConfig,
-  RateLimiterServiceImpl,
-} from "./rate-limiter.service.js";
+import type { Firestore } from "@google-cloud/firestore";
+import { describe, expect, it, vi } from "@effect/vitest";
+import { type RateLimitConfig, RateLimiterServiceImpl } from "./rate-limiter.service.js";
 
 function createMockFirestore(
   overrides: {
@@ -81,10 +78,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.checkRateLimit("test-user");
@@ -105,10 +99,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.checkRateLimit("test-user");
@@ -129,15 +120,10 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
-        const result = yield* Effect.either(
-          service.checkRateLimit("test-user"),
-        );
+        const result = yield* Effect.either(service.checkRateLimit("test-user"));
 
         // Assert
         expect(result._tag).toBe("Left");
@@ -158,10 +144,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.checkRateLimit("test-user");
@@ -176,10 +159,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.consumeToken("test-user");
@@ -202,10 +182,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.checkCircuitBreaker();
@@ -226,10 +203,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         const result = yield* Effect.either(service.checkCircuitBreaker());
@@ -255,10 +229,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         const result = yield* Effect.either(service.checkCircuitBreaker());
@@ -285,10 +256,7 @@ describe("RateLimiterService Integration Tests", () => {
             },
           },
         });
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.checkCircuitBreaker();
@@ -303,10 +271,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.recordSuccess();
@@ -321,10 +286,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.recordFailure(new Error("HTTP 429 Too Many Requests"));
@@ -337,10 +299,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.recordFailure(new Error("Some other error"));
@@ -355,10 +314,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.triggerGlobalPause("Test pause reason", 60000);
@@ -373,10 +329,7 @@ describe("RateLimiterService Integration Tests", () => {
       Effect.gen(function* () {
         // Arrange
         const mockFirestore = createMockFirestore();
-        const service = new RateLimiterServiceImpl(
-          mockFirestore,
-          defaultConfig,
-        );
+        const service = new RateLimiterServiceImpl(mockFirestore, defaultConfig);
 
         // Act
         yield* service.clearGlobalPause();

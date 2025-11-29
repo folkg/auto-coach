@@ -39,14 +39,10 @@ vi.mock("@google-cloud/firestore", () => ({
 // Mock Google Cloud Tasks
 vi.mock("@google-cloud/tasks", () => ({
   CloudTasksClient: vi.fn().mockImplementation(() => ({
-    queuePath: vi
-      .fn()
-      .mockReturnValue("projects/test/locations/us-central1/queues/test-queue"),
+    queuePath: vi.fn().mockReturnValue("projects/test/locations/us-central1/queues/test-queue"),
     taskPath: vi
       .fn()
-      .mockReturnValue(
-        "projects/test/locations/us-central1/queues/test-queue/tasks/test-task",
-      ),
+      .mockReturnValue("projects/test/locations/us-central1/queues/test-queue/tasks/test-task"),
     createTask: vi.fn().mockResolvedValue({}),
     deleteTask: vi.fn().mockResolvedValue({}),
   })),

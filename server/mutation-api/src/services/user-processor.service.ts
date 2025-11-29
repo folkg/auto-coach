@@ -43,9 +43,7 @@ export class UserProcessorService {
         try: async () => {
           // Get users from Firestore
           const usersSnapshot = await db.collection("users").get();
-          const users = usersSnapshot.docs.map(
-            (doc) => doc.data() as UserDocument,
-          );
+          const users = usersSnapshot.docs.map((doc) => doc.data() as UserDocument);
 
           // Apply filter if provided
           const filteredUsers = opts.filter ? users.filter(opts.filter) : users;
@@ -60,9 +58,7 @@ export class UserProcessorService {
     ).pipe(Stream.flatMap(Stream.fromIterable));
   }
 
-  processUserForMutations(
-    user: UserDocument,
-  ): Effect.Effect<void, UserProcessorError> {
+  processUserForMutations(user: UserDocument): Effect.Effect<void, UserProcessorError> {
     return Effect.tryPromise({
       try: async () => {
         // Refresh Yahoo access token if needed
@@ -71,11 +67,7 @@ export class UserProcessorService {
         }
 
         // Get user's teams
-        const teamsSnapshot = await db
-          .collection("users")
-          .doc(user.uid)
-          .collection("teams")
-          .get();
+        const teamsSnapshot = await db.collection("users").doc(user.uid).collection("teams").get();
 
         // Process each team
         for (const teamDoc of teamsSnapshot.docs) {
@@ -98,8 +90,7 @@ export class UserProcessorService {
     options: Partial<UserProcessingOptions> = {},
   ): Effect.Effect<void, UserProcessorError> {
     return Effect.gen(function* () {
-      const userStream =
-        new UserProcessorService().processUsersWithBoundedConcurrency(options);
+      const userStream = new UserProcessorService().processUsersWithBoundedConcurrency(options);
 
       yield* Stream.runForEach(userStream, (user) =>
         new UserProcessorService().processUserForMutations(user),
@@ -109,9 +100,7 @@ export class UserProcessorService {
 
   // Helper method to filter active users
   filterActiveUsers(user: UserDocument): boolean {
-    return Boolean(
-      user.accessToken && user.refreshToken && user.isActive !== false,
-    );
+    return Boolean(user.accessToken && user.refreshToken && user.isActive !== false);
   }
 
   // Helper method to filter users by league

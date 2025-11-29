@@ -1,6 +1,8 @@
+import { Effect, Schema } from "effect";
 import type { FirestoreTeam } from "@common/types/team.js";
 import type { Firestore } from "@google-cloud/firestore";
-import { Effect, Schema } from "effect";
+import type { MutationTask } from "../types/schemas.js";
+import type { RateLimiterService } from "./rate-limiter.service.js";
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
 import {
   RateLimitError as ApiRateLimitError,
@@ -11,9 +13,7 @@ import {
   SystemError,
   type TaskStatusUpdate,
 } from "../types/api-schemas.js";
-import type { MutationTask } from "../types/schemas.js";
 import { recalculateScarcityOffsetsForAll } from "./positional-scarcity.service.js";
-import type { RateLimiterService } from "./rate-limiter.service.js";
 import { setUsersLineup } from "./set-lineup.service.js";
 import { performWeeklyLeagueTransactions } from "./weekly-transactions.service.js";
 
@@ -109,10 +109,7 @@ export class ExecutionServiceImpl implements ExecutionService {
 
     return Effect.gen(function* () {
       // Handle RevokedRefreshTokenError specially - log but don't fail
-      if (
-        error._tag === "DomainError" &&
-        error.code === "REVOKED_REFRESH_TOKEN"
-      ) {
+      if (error._tag === "DomainError" && error.code === "REVOKED_REFRESH_TOKEN") {
         yield* self.updateTaskStatus({
           taskId: task.id,
           status: "COMPLETED",
@@ -161,9 +158,7 @@ export class ExecutionServiceImpl implements ExecutionService {
     });
   }
 
-  private handleTaskSuccess(
-    task: MutationTask,
-  ): Effect.Effect<ExecuteMutationResponse, never> {
+  private handleTaskSuccess(task: MutationTask): Effect.Effect<ExecuteMutationResponse, never> {
     const self = this;
 
     return Effect.gen(function* () {
@@ -195,14 +190,10 @@ export class ExecutionServiceImpl implements ExecutionService {
     }
   }
 
-  private executeSetLineup(
-    task: MutationTask,
-  ): Effect.Effect<void, MutationError> {
+  private executeSetLineup(task: MutationTask): Effect.Effect<void, MutationError> {
     return Effect.gen(function* () {
       // Decode and validate payload
-      const { uid, teams } = yield* Schema.decodeUnknown(
-        SetLineupPayloadSchema,
-      )(task.payload).pipe(
+      const { uid, teams } = yield* Schema.decodeUnknown(SetLineupPayloadSchema)(task.payload).pipe(
         Effect.mapError(
           (parseError) =>
             new DomainError({
@@ -227,8 +218,7 @@ export class ExecutionServiceImpl implements ExecutionService {
             );
           }
 
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
+          const errorMessage = error instanceof Error ? error.message : String(error);
 
           if (errorMessage.includes("RevokedRefreshTokenError")) {
             return Effect.fail(
@@ -252,14 +242,12 @@ export class ExecutionServiceImpl implements ExecutionService {
     });
   }
 
-  private executeWeeklyTransactions(
-    task: MutationTask,
-  ): Effect.Effect<void, MutationError> {
+  private executeWeeklyTransactions(task: MutationTask): Effect.Effect<void, MutationError> {
     return Effect.gen(function* () {
       // Decode and validate payload
-      const { uid, teams } = yield* Schema.decodeUnknown(
-        WeeklyTransactionsPayloadSchema,
-      )(task.payload).pipe(
+      const { uid, teams } = yield* Schema.decodeUnknown(WeeklyTransactionsPayloadSchema)(
+        task.payload,
+      ).pipe(
         Effect.mapError(
           (parseError) =>
             new DomainError({
@@ -271,10 +259,7 @@ export class ExecutionServiceImpl implements ExecutionService {
       );
 
       // Call the weekly-transactions service
-      yield* performWeeklyLeagueTransactions(
-        uid,
-        teams as readonly FirestoreTeam[],
-      ).pipe(
+      yield* performWeeklyLeagueTransactions(uid, teams as readonly FirestoreTeam[]).pipe(
         Effect.mapError(
           (error) =>
             new SystemError({
@@ -304,9 +289,7 @@ export class ExecutionServiceImpl implements ExecutionService {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
-          const docRef = this.firestore
-            .collection("mutationTasks")
-            .doc(update.taskId);
+          const docRef = this.firestore.collection("mutationTasks").doc(update.taskId);
           await docRef.update({
             status: update.status,
             message: update.message,

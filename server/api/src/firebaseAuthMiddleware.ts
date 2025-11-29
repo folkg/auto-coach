@@ -15,32 +15,27 @@ const firebaseConfig = firebaseConfigSchema.assert({
   projectId: FIREBASE_PROJECT_ID,
 });
 
-const firebaseApp =
-  getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
+const firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 const firebaseAuth = getAuth(firebaseApp);
 
-export const firebaseAuthMiddleware = createMiddleware<AuthContext>(
-  async (c, next) => {
-    const authHeader = c.req.raw.headers.get("Authorization");
-    const jwt = extractBearerToken(authHeader);
+export const firebaseAuthMiddleware = createMiddleware<AuthContext>(async (c, next) => {
+  const authHeader = c.req.raw.headers.get("Authorization");
+  const jwt = extractBearerToken(authHeader);
 
-    if (!jwt) {
-      return c.json({ error: "Missing or invalid Authorization header" }, 401);
-    }
+  if (!jwt) {
+    return c.json({ error: "Missing or invalid Authorization header" }, 401);
+  }
 
-    try {
-      const decodedToken = await firebaseAuth.verifyIdToken(jwt);
-      c.set("uid", decodedToken.uid);
-      return next();
-    } catch (error) {
-      console.error("Firebase Auth failed", { error });
-      return c.json({ error: "Invalid or expired Firebase token" }, 401);
-    }
-  },
-);
+  try {
+    const decodedToken = await firebaseAuth.verifyIdToken(jwt);
+    c.set("uid", decodedToken.uid);
+    return next();
+  } catch (error) {
+    console.error("Firebase Auth failed", { error });
+    return c.json({ error: "Invalid or expired Firebase token" }, 401);
+  }
+});
 
 function extractBearerToken(authHeader: string | null): string | null {
-  return authHeader?.startsWith("Bearer ")
-    ? authHeader.replace(/^Bearer\s+/i, "")
-    : null;
+  return authHeader?.startsWith("Bearer ") ? authHeader.replace(/^Bearer\s+/i, "") : null;
 }

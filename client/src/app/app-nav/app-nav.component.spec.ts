@@ -1,10 +1,10 @@
-import { BreakpointObserver } from "@angular/cdk/layout";
-import type { ClientTeam } from "@common/types/team";
-import { render, screen } from "@testing-library/angular";
-import userEvent from "@testing-library/user-event";
 import type { User } from "firebase/auth";
 import { BehaviorSubject, Observable } from "rxjs";
 import { beforeEach, describe, expect, it } from "vitest";
+import type { ClientTeam } from "@common/types/team";
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { render, screen } from "@testing-library/angular";
+import userEvent from "@testing-library/user-event";
 import { mockRoutes } from "../../__mocks__/routes/routes";
 import { createMock } from "../../__mocks__/utils/createMock";
 import { AuthService } from "../services/auth.service";
@@ -155,9 +155,7 @@ describe("AppNavComponent", () => {
       expect(screen.getByText("Mock Teams Page")).toBeInTheDocument();
 
       const transactionsLink = screen.getByText("Transactions");
-      expect(
-        screen.queryByText("Mock Transactions Page"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Transactions Page")).not.toBeInTheDocument();
       await user.click(transactionsLink);
       expect(screen.getByText("Mock Transactions Page")).toBeInTheDocument();
 
@@ -252,9 +250,7 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(
-        screen.queryByTestId("toggle-sidenav-button"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByTestId("toggle-sidenav-button")).not.toBeInTheDocument();
     });
   });
 });

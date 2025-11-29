@@ -1,12 +1,7 @@
+import { type Auth, signInWithPopup, type User, type UserCredential } from "firebase/auth";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
-import {
-  type Auth,
-  signInWithPopup,
-  type User,
-  type UserCredential,
-} from "firebase/auth";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createMock } from "../../__mocks__/utils/createMock";
 import { AUTH } from "../shared/firebase-tokens";
 import { AuthService } from "./auth.service";
@@ -62,9 +57,7 @@ describe("AuthService", () => {
     it("handles popup-closed-by-user error when user is not authenticated", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const popupError = new Error(
-        "Firebase: Error (auth/popup-closed-by-user)",
-      );
+      const popupError = new Error("Firebase: Error (auth/popup-closed-by-user)");
       mockSignInWithPopup.mockRejectedValue(popupError);
 
       // Act & Assert
@@ -75,9 +68,7 @@ describe("AuthService", () => {
         errorThrown = err as Error;
       }
 
-      expect(errorThrown?.message).toBe(
-        "Authentication was cancelled. Please try again.",
-      );
+      expect(errorThrown?.message).toBe("Authentication was cancelled. Please try again.");
       expect(mockRouter.navigate).not.toHaveBeenCalled();
       expect(service.loading$.value).toBe(false);
     });
@@ -85,9 +76,7 @@ describe("AuthService", () => {
     it("navigates to teams when popup-closed-by-user error occurs but user is authenticated", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const popupError = new Error(
-        "Firebase: Error (auth/popup-closed-by-user)",
-      );
+      const popupError = new Error("Firebase: Error (auth/popup-closed-by-user)");
       mockSignInWithPopup.mockRejectedValue(popupError);
 
       // Mock the auth to have a current user
@@ -107,9 +96,7 @@ describe("AuthService", () => {
     it("retries on popup-closed-by-user error up to max retries", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const popupError = new Error(
-        "Firebase: Error (auth/popup-closed-by-user)",
-      );
+      const popupError = new Error("Firebase: Error (auth/popup-closed-by-user)");
       mockSignInWithPopup.mockRejectedValue(popupError);
 
       // Mock the auth to have no current user
@@ -132,9 +119,7 @@ describe("AuthService", () => {
         errorThrown = err as Error;
       }
 
-      expect(errorThrown?.message).toBe(
-        "Authentication was cancelled. Please try again.",
-      );
+      expect(errorThrown?.message).toBe("Authentication was cancelled. Please try again.");
       expect(mockSignInWithPopup).toHaveBeenCalledTimes(3); // Initial attempt + 2 retries
       expect(service.loading$.value).toBe(false);
     });
@@ -142,9 +127,7 @@ describe("AuthService", () => {
     it("does not retry on non-retryable errors", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const nonRetryableError = new Error(
-        "Firebase: Error (auth/popup-blocked)",
-      );
+      const nonRetryableError = new Error("Firebase: Error (auth/popup-blocked)");
       mockSignInWithPopup.mockRejectedValue(nonRetryableError);
 
       // Act & Assert
@@ -165,13 +148,9 @@ describe("AuthService", () => {
     it("succeeds on retry after initial popup failure", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const popupError = new Error(
-        "Firebase: Error (auth/popup-closed-by-user)",
-      );
+      const popupError = new Error("Firebase: Error (auth/popup-closed-by-user)");
       const mockCredential = createMock<UserCredential>();
-      mockSignInWithPopup
-        .mockRejectedValueOnce(popupError)
-        .mockResolvedValueOnce(mockCredential);
+      mockSignInWithPopup.mockRejectedValueOnce(popupError).mockResolvedValueOnce(mockCredential);
 
       // Mock delay to speed up test
       vi.spyOn(

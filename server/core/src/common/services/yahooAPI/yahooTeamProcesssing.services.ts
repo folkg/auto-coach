@@ -1,13 +1,9 @@
-import { Leagues } from "@common/types/Leagues.js";
-import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
-import {
-  type TransactionDetails,
-  TransactionDetailsSchema,
-} from "@common/types/transactions.js";
-
 import { type } from "arktype";
-import { flattenArray, parseToInt } from "../utilities.service.js";
+import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
+import { Leagues } from "@common/types/Leagues.js";
+import { type TransactionDetails, TransactionDetailsSchema } from "@common/types/transactions.js";
 import type { LeagueDetails } from "./interfaces/YahooAPIResponse.js";
+import { flattenArray, parseToInt } from "../utilities.service.js";
 
 const LeagueSettingsSchema = type({
   settings: "Record<string, unknown>[]",
@@ -26,10 +22,7 @@ const LeagueTeamsSchema = type({
 
 const ExtendedLeagueSchema = LeagueSettingsSchema.and(LeagueTeamsSchema);
 
-export function getLeagueSettingsAnduserTeam(
-  leaguesJSON: LeagueDetails,
-  leagueKey: string,
-) {
+export function getLeagueSettingsAnduserTeam(leaguesJSON: LeagueDetails, leagueKey: string) {
   const leagueData = leaguesJSON[leagueKey];
   if (!leagueData || typeof leagueData === "number") {
     throw new Error(`Invalid league data for key: ${leagueKey}`);
@@ -37,9 +30,7 @@ export function getLeagueSettingsAnduserTeam(
   const league = leagueData.league;
   const [baseLeague, ...extendedLeague] = league;
   const leagueDetails = LeagueDetailsSchema.assert(baseLeague);
-  const extendedLeagueDetails = ExtendedLeagueSchema.assert(
-    flattenArray(extendedLeague),
-  );
+  const extendedLeagueDetails = ExtendedLeagueSchema.assert(flattenArray(extendedLeague));
 
   const leagueSettings = FlatLeagueSettingsSchema.assert(
     flattenArray(extendedLeagueDetails.settings),
@@ -112,9 +103,7 @@ export function getGamesPlayedArray(
   gamesPlayed: GamesPlayedDetails | undefined,
 ): GamesPlayed[] | undefined {
   return gamesPlayed
-    ?.find(
-      (element) => element.games_played_by_position_type.position_type !== "P",
-    )
+    ?.find((element) => element.games_played_by_position_type.position_type !== "P")
     ?.games_played_by_position_type.games_played?.map(
       (element) => element.games_played_by_position,
     );
@@ -199,9 +188,7 @@ export function getPositionCounts(rosterPositions: RosterPositionsDetails) {
   const result: { [position: string]: number } = {};
 
   for (const position of rosterPositions) {
-    result[position.roster_position.position] = parseToInt(
-      position.roster_position.count,
-    );
+    result[position.roster_position.position] = parseToInt(position.roster_position.count);
   }
 
   return result;

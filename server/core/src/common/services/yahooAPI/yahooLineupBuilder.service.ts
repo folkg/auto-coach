@@ -1,7 +1,6 @@
+import { type } from "arktype";
 import type { IPlayer } from "@common/types/Player.js";
 import type { TeamOptimizer } from "@common/types/team.js";
-
-import { type } from "arktype";
 import {
   flattenArray,
   getPacificEndOfDay,
@@ -33,9 +32,7 @@ const TeamRosterSchema = type({
   },
 });
 
-const ExtendedTeamSchema = TeamRosterSchema.and(TeamTransactionSchema).and(
-  GamesPlayedSchema,
-);
+const ExtendedTeamSchema = TeamRosterSchema.and(TeamTransactionSchema).and(GamesPlayedSchema);
 
 /**
  * Get the roster objects for the given teams
@@ -86,14 +83,14 @@ export async function fetchRostersFromYahoo(
         continue;
       }
 
-      const { leagueDetails, leagueSettings, usersTeam } =
-        getLeagueSettingsAnduserTeam(leaguesJSON, leagueKey);
+      const { leagueDetails, leagueSettings, usersTeam } = getLeagueSettingsAnduserTeam(
+        leaguesJSON,
+        leagueKey,
+      );
 
       const [baseTeam, ...extendedTeam] = usersTeam;
       const flatTeam = FlatTeamSchema.assert(flattenArray(baseTeam));
-      const flatExtendedTeam = ExtendedTeamSchema.assert(
-        flattenArray(extendedTeam),
-      );
+      const flatExtendedTeam = ExtendedTeamSchema.assert(flattenArray(extendedTeam));
       const usersTeamRoster = flatExtendedTeam.roster;
 
       const isEditable = usersTeamRoster.is_editable;
@@ -104,19 +101,10 @@ export async function fetchRostersFromYahoo(
 
       const coverageType = usersTeamRoster.coverage_type;
       // save the position counts to a map
-      const rosterPositions = getPositionCounts(
-        leagueSettings.roster_positions,
-      );
-      const players: IPlayer[] = buildPlayers(
-        usersTeamRoster[0],
-        postponedTeams,
-      );
-      const gamesPlayedArray = getGamesPlayedArray(
-        flatExtendedTeam.games_played,
-      );
-      const inningsPitchedArray = getInningsPitchedArray(
-        flatExtendedTeam.games_played,
-      );
+      const rosterPositions = getPositionCounts(leagueSettings.roster_positions);
+      const players: IPlayer[] = buildPlayers(usersTeamRoster[0], postponedTeams);
+      const gamesPlayedArray = getGamesPlayedArray(flatExtendedTeam.games_played);
+      const inningsPitchedArray = getInningsPitchedArray(flatExtendedTeam.games_played);
 
       // TODO: Could add max/current adds condtionally as well
       const rosterObject: TeamOptimizer = {

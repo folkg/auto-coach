@@ -1,9 +1,7 @@
-import { Injectable } from "@angular/core";
-// biome-ignore lint/style/useImportType: This is an injection token
-import { MatDialog } from "@angular/material/dialog";
-import type { UrlTree } from "@angular/router";
 import { lastValueFrom, type Observable } from "rxjs";
-
+import type { UrlTree } from "@angular/router";
+import { Injectable } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmDialogComponent,
   type DialogData,
@@ -41,11 +39,7 @@ export class DirtyFormGuard {
 
   canDeactivate(
     component: ComponentCanDeactivate,
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     //TODO:Make it a dialog
     return component.canDeactivate() ? true : this.confirmDialog();
   }

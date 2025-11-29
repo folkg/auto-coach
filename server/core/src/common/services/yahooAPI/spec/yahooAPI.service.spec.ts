@@ -1,7 +1,7 @@
-import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
 import type { AxiosError, AxiosResponse } from "axios";
 import { parse } from "js2xmlparser";
 import { describe, expect, it, vi } from "vitest";
+import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
 import { createMock } from "../../../spec/createMock.js";
 import { postRosterAddDropTransaction } from "../yahooAPI.service.js";
 import * as yahooHttpService from "../yahooHttp.service.js";
@@ -47,10 +47,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
+    const spyHttpPostAxiosAuth = vi.spyOn(yahooHttpService, "httpPostAxiosAuth");
     spyHttpPostAxiosAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -96,10 +93,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
+    const spyHttpPostAxiosAuth = vi.spyOn(yahooHttpService, "httpPostAxiosAuth");
     spyHttpPostAxiosAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -147,10 +141,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
+    const spyHttpPostAxiosAuth = vi.spyOn(yahooHttpService, "httpPostAxiosAuth");
     spyHttpPostAxiosAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -214,10 +205,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
+    const spyHttpPostAxiosAuth = vi.spyOn(yahooHttpService, "httpPostAxiosAuth");
     spyHttpPostAxiosAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -261,10 +249,7 @@ describe("YahooAPI Service", () => {
     const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction: ${JSON.stringify(
       transaction,
     )}`;
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
+    const spyHttpPostAxiosAuth = vi.spyOn(yahooHttpService, "httpPostAxiosAuth");
     spyHttpPostAxiosAuth.mockImplementation(() => {
       return Promise.reject(axiosError);
     });
