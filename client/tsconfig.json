@@ -4,7 +4,7 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "exactOptionalPropertyTypes": false,
     "moduleDetection": "force",
     "moduleResolution": "bundler",
@@ -18,7 +18,8 @@
     "lib": ["ES2022", "DOM"],
     "paths": {
       "@common/*": ["../common/src/*"],
-      "@server/api/*": ["../server/api/*"]
+      "@server/api/*": ["../server/api/*"],
+      "@core/*": ["../server/core/src/*"]
     }
   },
   "angularCompilerOptions": {

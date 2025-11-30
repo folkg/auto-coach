@@ -2,10 +2,9 @@
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist/build",
-    "rootDir": "./src",
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
     "sourceMap": true,
     "lib": ["ES2022", "dom"],
     "verbatimModuleSyntax": false,
@@ -24,6 +23,5 @@
     "**/*.spec.ts",
     "**/*.test.ts",
     "src/test-setup.ts"
-  ],
-  "references": [{ "path": "../common" }, { "path": "../server/api" }]
+  ]
 }

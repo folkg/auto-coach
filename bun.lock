@@ -41,7 +41,6 @@
         "@angular/ssr": "21.0.1",
         "arktype": "catalog:",
         "firebase": "12.4.0",
-        "firebase-admin": "catalog:",
         "hono": "catalog:",
         "rxjs": "7.8.2",
         "spacetime": "catalog:",

@@ -1,17 +1,10 @@
 {
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
     "sourceMap": true
   },
-  "files": [],
-  "references": [
-    { "path": "./common" },
-    { "path": "./server/core" },
-    { "path": "./server/api" },
-    { "path": "./server/functions" },
-    { "path": "./client/tsconfig.build.json" }
-  ]
+  "files": []
 }

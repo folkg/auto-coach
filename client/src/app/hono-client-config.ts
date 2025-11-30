@@ -1,6 +1,6 @@
 import { getAuth, getIdToken } from "firebase/auth";
 import { hc } from "hono/client";
-import type { HonoAppType } from "@server/api/dist/types/hono-app-type";
+import type { HonoAppType } from "@server/api/src/types/hono-app-type";
 import { InjectionToken } from "@angular/core";
 
 const getApiBaseUrl = (): string => {
