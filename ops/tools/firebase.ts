@@ -27,7 +27,7 @@ export async function deployHosting(env: EnvironmentConfig, channel?: string): P
   logStep("Hosting", `Deploying to live site: ${env.hostingSite}...`);
   try {
     const shell = $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`;
-    shell.env({
+    await shell.env({
       ...process.env,
       GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || "",
     });

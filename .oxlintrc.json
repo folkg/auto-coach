@@ -81,12 +81,6 @@
 				"no-explicit-any": "off"
 			}
 		},
-		{
-			"files": ["ops/**/*"],
-			"rules": {
-				"no-floating-promises": "off"
-			}
-		}
 	],
 	"settings": {
 		"vitest": {
