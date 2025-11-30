@@ -16,11 +16,11 @@
     "deploy": "bun run --cwd ../../ops deploy mutation-api",
     "deploy:dev": "bun run deploy --env dev",
     "deploy:prod": "bun run deploy --env prod",
-    "deploy:dry": "bun run deploy --dry-run"
+    "deploy:dry": "bun run deploy --dry-run",
+    "prepare": "effect-language-service patch --dir ../../node_modules/typescript"
   },
   "dependencies": {
     "@effect/platform": "0.93.5",
-    "@effect/schema": "0.75.5",
     "@google-cloud/tasks": "6.2.1",
     "@hono/effect-validator": "1.2.0",
     "arktype": "2.1.27",
@@ -31,11 +31,12 @@
     "hono": "catalog:"
   },
   "devDependencies": {
+    "@effect/language-service": "0.57.1",
     "@effect/vitest": "0.27.0",
     "@types/bun": "catalog:",
     "msw": "2.12.3",
     "typescript": "catalog:",
-    "vitest": "catalog:",
-    "vite-tsconfig-paths": "catalog:"
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
   }
 }
