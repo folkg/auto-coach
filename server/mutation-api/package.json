@@ -19,21 +19,21 @@
     "deploy:dry": "bun run deploy --dry-run"
   },
   "dependencies": {
-    "@effect/platform": "0.93.3",
+    "@effect/platform": "0.93.5",
     "@effect/schema": "0.75.5",
     "@google-cloud/tasks": "6.2.1",
     "@hono/effect-validator": "1.2.0",
     "arktype": "2.1.27",
     "axios": "1.13.2",
     "dotenv": "17.2.3",
-    "effect": "3.19.4",
+    "effect": "3.19.8",
     "firebase-admin": "13.6.0",
     "hono": "catalog:"
   },
   "devDependencies": {
     "@effect/vitest": "0.27.0",
-    "@types/node": "24.7.2",
-    "msw": "2.12.2",
+    "@types/bun": "catalog:",
+    "msw": "2.12.3",
     "typescript": "catalog:",
     "vitest": "catalog:",
     "vite-tsconfig-paths": "catalog:"
