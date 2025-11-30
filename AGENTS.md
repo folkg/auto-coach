@@ -7,6 +7,16 @@ The command should be run at the workspace root.
 bun add @tanstack/query-core
 ```
 
+## Effect Solutions Usage
+
+The Effect Solutions CLI provides curated best practices and patterns for Effect TypeScript. Before working on Effect code, check if there's a relevant topic that covers your use case.
+
+- `effect-solutions list` - List all available topics
+- `effect-solutions show <slug...>` - Read one or more topics
+- `effect-solutions search <term>` - Search topics by keyword
+
+**Local Effect Source:** The Effect repository is cloned to `~/.local/share/effect-solutions/effect` for reference. Use this to explore APIs, find usage examples, and understand implementation details when the documentation isn't enough.
+
 # Automated Testing
 
 We practice Test Driven Development (TDD), this means that you should always write failing tests before you begin writing the implementation. Run the tests before you begin to ensure they run (no compliation errors), but fail for the expected reasons.
