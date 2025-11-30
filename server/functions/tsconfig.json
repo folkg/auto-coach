@@ -3,11 +3,13 @@
   "compilerOptions": {
     "lib": ["ES2022"],
     "outDir": "./lib",
-    "rootDir": "./",
     "types": ["vitest/globals", "node"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "verbatimModuleSyntax": false,
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
 
     "paths": {
       "@common/*": ["../../common/src/*"],
@@ -15,6 +17,5 @@
     }
   },
   "exclude": ["node_modules", "lib"],
-  "include": ["*.ts"],
-  "references": [{ "path": "../../common" }, { "path": "../core" }]
+  "include": ["*.ts"]
 }
