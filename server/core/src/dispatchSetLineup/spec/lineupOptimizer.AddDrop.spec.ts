@@ -769,7 +769,9 @@ describe("Combination Drops or Adds", () => {
 
     if (droppedPlayers) {
       for (const playerKey of droppedPlayers) {
-        playerKey && expect(lineupChanges?.newPlayerPositions[playerKey]).not.toEqual("IL");
+        if (playerKey) {
+          expect(lineupChanges?.newPlayerPositions[playerKey]).not.toEqual("IL");
+        }
       }
     }
   });

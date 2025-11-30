@@ -428,8 +428,9 @@ export class LineupOptimizer {
       if (playerToDrop.isInactiveList()) {
         this.logInfo("attempting to resolve IL player");
         // attempts to swap with a player on the active roster, removing them from the inactive list
-        this.moveILPlayerToUnfilledALPosition(playerToDrop) ||
+        if (!this.moveILPlayerToUnfilledALPosition(playerToDrop)) {
           this.attemptIllegalPlayerSwaps(playerToDrop);
+        }
       }
 
       this.logInfo("areCriticalPositionsReplaced", areCriticalPositionsReplaced);

@@ -140,9 +140,11 @@ export class Team extends PlayerCollection implements TeamOptimizer {
     }
     if (this.innings_pitched !== undefined) {
       if (this.innings_pitched.projected > this.innings_pitched.max * (1 + BUFFER)) {
-        this.reduceAvailableRosterSpots("P", 1) ||
-          this.reduceAvailableRosterSpots("RP", 1) ||
-          this.reduceAvailableRosterSpots("SP", 1);
+        if (!this.reduceAvailableRosterSpots("P", 1)) {
+          if (!this.reduceAvailableRosterSpots("RP", 1)) {
+            this.reduceAvailableRosterSpots("SP", 1);
+          }
+        }
       }
     }
   }

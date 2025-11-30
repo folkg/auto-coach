@@ -386,7 +386,9 @@ async function postTransactionsHelper(
   for (const result of results) {
     if (result.status === "fulfilled") {
       const transaction = result.value;
-      transaction && postedTransactions.push(transaction);
+      if (transaction) {
+        postedTransactions.push(transaction);
+      }
     } else if (result.status === "rejected") {
       error = true;
       const { reason } = result;

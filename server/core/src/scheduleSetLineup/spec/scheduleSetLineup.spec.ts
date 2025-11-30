@@ -143,9 +143,7 @@ describe("scheduleSetLineup", () => {
         require("../../common/services/yahooAPI/yahooStartingPlayer.service"),
         "fetchStartingPlayers",
       )
-      .mockImplementation(() => {
-        return Promise.resolve();
-      });
+      .mockResolvedValue(undefined);
 
     await scheduleSetLineup();
 

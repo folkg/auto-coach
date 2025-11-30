@@ -257,9 +257,8 @@ export class RateLimiterServiceImpl implements RateLimiterService {
 
           // Trigger global pause on circuit breaker open
           if (finalFailureCount >= 3) {
-            await this.triggerGlobalPause(
-              "Circuit breaker opened due to rate limit errors",
-              300000,
+            await Effect.runPromise(
+              this.triggerGlobalPause("Circuit breaker opened due to rate limit errors", 300000),
             );
           }
         },
