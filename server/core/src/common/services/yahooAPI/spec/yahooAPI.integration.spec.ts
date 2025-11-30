@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from "vitest";
 import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
-import { createMock } from "../../../spec/createMock.js";
+import { createMock } from "@common/utilities/createMock";
 import {
   getRostersByTeamID,
   getTopAvailablePlayers,

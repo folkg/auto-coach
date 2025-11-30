@@ -4,7 +4,6 @@ import { getAuth } from "firebase-admin/auth";
 import { createMiddleware } from "hono/factory";
 import type { AuthContext } from ".";
 
-// biome-ignore lint/complexity/useLiteralKeys: Angular build complains about this since it doesn't know about the server side env types
 const FIREBASE_PROJECT_ID = process.env["FIREBASE_PROJECT_ID"];
 
 const firebaseConfigSchema = type({

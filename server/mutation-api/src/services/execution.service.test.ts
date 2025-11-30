@@ -1,6 +1,8 @@
 import { Effect, Either } from "effect";
 import { describe, expect, it, vi } from "vitest";
 import type { FirestoreTeam } from "@common/types/team.js";
+import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
+import { createMock } from "@common/utilities/createMock.js";
 import {
   RateLimitError as ApiRateLimitError,
   DomainError,
@@ -81,13 +83,17 @@ function setupTest() {
   mockPerformWeeklyLeagueTransactions.mockClear();
   mockRecalculateScarcityOffsetsForAll.mockClear();
 
-  const mockFirestore = {
-    collection: vi.fn(() => ({
-      doc: vi.fn(() => ({
-        update: vi.fn().mockResolvedValue(undefined),
-      })),
-    })),
-  };
+  const mockFirestore = createMock<Firestore>({
+    collection: vi.fn(() =>
+      createMock<CollectionReference>({
+        doc: vi.fn(() =>
+          createMock<DocumentReference>({
+            update: vi.fn().mockResolvedValue(undefined),
+          }),
+        ),
+      }),
+    ),
+  });
 
   const mockRateLimiter: RateLimiterService = {
     checkRateLimit: vi.fn().mockReturnValue(Effect.succeed(undefined)),
@@ -99,11 +105,7 @@ function setupTest() {
     clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
   };
 
-  const executionService = new ExecutionServiceImpl(
-    // biome-ignore lint/suspicious/noExplicitAny: Firestore mock for testing
-    mockFirestore as any,
-    mockRateLimiter,
-  );
+  const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
   return {
     executionService,
@@ -508,13 +510,17 @@ describe("ExecutionService", () => {
     it("updates task status in Firestore", async () => {
       // Arrange
       const mockUpdate = vi.fn().mockResolvedValue(undefined);
-      const mockFirestore = {
-        collection: vi.fn(() => ({
-          doc: vi.fn(() => ({
-            update: mockUpdate,
-          })),
-        })),
-      };
+      const mockFirestore = createMock<Firestore>({
+        collection: vi.fn(() =>
+          createMock<CollectionReference>({
+            doc: vi.fn(() =>
+              createMock<DocumentReference>({
+                update: mockUpdate,
+              }),
+            ),
+          }),
+        ),
+      });
 
       const mockRateLimiter: RateLimiterService = {
         checkRateLimit: vi.fn().mockReturnValue(Effect.succeed(undefined)),
@@ -526,11 +532,7 @@ describe("ExecutionService", () => {
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
       };
 
-      const executionService = new ExecutionServiceImpl(
-        // biome-ignore lint/suspicious/noExplicitAny: Firestore mock for testing
-        mockFirestore as any,
-        mockRateLimiter,
-      );
+      const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
       const update = {
         taskId: "test-task-id",
@@ -553,13 +555,17 @@ describe("ExecutionService", () => {
 
     it("ignores errors in status updates", async () => {
       // Arrange
-      const mockFirestore = {
-        collection: vi.fn(() => ({
-          doc: vi.fn(() => ({
-            update: vi.fn().mockRejectedValue(new Error("Firestore error")),
-          })),
-        })),
-      };
+      const mockFirestore = createMock<Firestore>({
+        collection: vi.fn(() =>
+          createMock<CollectionReference>({
+            doc: vi.fn(() =>
+              createMock<DocumentReference>({
+                update: vi.fn().mockRejectedValue(new Error("Firestore error")),
+              }),
+            ),
+          }),
+        ),
+      });
 
       const mockRateLimiter: RateLimiterService = {
         checkRateLimit: vi.fn().mockReturnValue(Effect.succeed(undefined)),
@@ -571,11 +577,7 @@ describe("ExecutionService", () => {
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
       };
 
-      const executionService = new ExecutionServiceImpl(
-        // biome-ignore lint/suspicious/noExplicitAny: Firestore mock for testing
-        mockFirestore as any,
-        mockRateLimiter,
-      );
+      const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
 
       const update = {
         taskId: "test-task-id",

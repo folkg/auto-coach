@@ -2,7 +2,7 @@ import type { User } from "firebase/auth";
 import { type Observable, of } from "rxjs";
 import type { ClientTeam } from "@common/types/team";
 import { Injectable } from "@angular/core";
-import { createMock } from "../../../__mocks__/utils/createMock";
+import { createMock } from "@common/utilities/createMock";
 
 @Injectable({
   providedIn: "root",

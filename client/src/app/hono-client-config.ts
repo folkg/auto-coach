@@ -4,7 +4,6 @@ import type { HonoAppType } from "@server/api/src/types/hono-app-type";
 import { InjectionToken } from "@angular/core";
 
 const getApiBaseUrl = (): string => {
-  // biome-ignore lint/complexity/useLiteralKeys: Angular TypeScript compiler requires bracket notation for env vars
   const envUrl = import.meta.env["NG_APP_API_BASE_URL"];
   // If env URL is explicitly set to empty string, use same origin (production)
   if (envUrl === "") {

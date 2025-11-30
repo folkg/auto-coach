@@ -1,10 +1,21 @@
+import { isPlainObject } from "./object";
+
+export type PartialDeep<T> = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [K in keyof T]?: T[K] extends (...args: any[]) => any
+    ? T[K] // Return the function as-is
+    : T[K] extends object
+      ? PartialDeep<T[K]> // Recursively wrap objects
+      : T[K]; // Else return the value as-is
+};
+
 /**
  * Creates a mock object of type T that will throw an error for any property
  * not provided in the partial object. This is useful for creating mock
  * implementations of types and interfaces for testing.
  *
- * @param {Partial<T>}partial - Optional partial object to provide mock implementations
- * @return {T} A mock object of type T.
+ * @param partial - Optional partial object to provide mock implementations
+ * @returns A mock object of type T.
  *
  * @example
  *
@@ -17,9 +28,9 @@
  * console.log(mock.field); // Outputs: 1
  * console.log(mock.method()); // Throws an error
  */
-export function createMock<T>(partial?: Partial<T>): T {
+export function createMock<T>(partial?: PartialDeep<T>): T {
   const handler = {
-    get: (target: T & { [key: PropertyKey]: unknown }, prop: PropertyKey) => {
+    get(target: T & { [key: PropertyKey]: unknown }, prop: PropertyKey): unknown {
       if (!(prop in target)) {
         if (IGNORED_PROPS.includes(String(prop))) {
           return undefined;
@@ -45,11 +56,18 @@ export function createMock<T>(partial?: Partial<T>): T {
         );
       }
 
-      return target[prop];
+      const value = target[prop];
+      if (isPlainObject(value)) {
+        // Recursively wrap only plain objects (ie. not Maps, Sets, Dates, Arrays, etc)
+        return new Proxy(value, handler);
+      }
+      return value;
     },
   };
 
-  return new Proxy((partial ?? {}) as T & { [key: PropertyKey]: unknown }, handler);
+  // Must use as assertion here (this is the purpose of the utility)
+  const typedResult = (partial ?? {}) as T & { [key: PropertyKey]: unknown };
+  return new Proxy(typedResult, handler);
 }
 
 // This allows async operations to work with the mock object
