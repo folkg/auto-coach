@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
-import { createMock } from "../../../spec/createMock";
+import { createMock } from "@common/utilities/createMock";
 import * as firestoreService from "../firestore.service";
 import { patchTeamChangesInFirestore } from "../firestoreUtils.service";
 

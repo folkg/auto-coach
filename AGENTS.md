@@ -35,7 +35,21 @@ We practice Test Driven Development (TDD), this means that you should always wri
 ## Test Type Safety
 - Type safety is enforced by TypeScript's type system. Do not use `any` types or cast using `as` type assertions. Type safety in test code is as important as in production code.
 - Use type guards and assertions (`assert` from vitest) to ensure type safety in tests
-- helper function `createMock<T>(partialObject)` from services/web/imports/lib/test/createMock.ts shall be used to create a type safe mock object with partial properties. This is very useful for creating partial mocks of service classes that you can inject or partial mocks of objects to be returned from mock functions.
+- helper function `createMock<T>(partialObject)` from @common/utilities/createMock shall be used to create a type safe mock object with partial properties. This is very useful for creating partial mocks of service classes that you can inject or partial mocks of objects to be returned from mock functions. An example of mocking the Firestore module is below:
+
+```ts
+const mockFirestore = createMock<Firestore>({
+  collection: vi.fn(() =>
+    createMock<CollectionReference>({
+      doc: vi.fn(() =>
+        createMock<DocumentReference>({
+          update: vi.fn().mockRejectedValue(new Error("Firestore error")),
+        }),
+      ),
+    }),
+  ),
+});
+````
 
 ## Test Container Initialization
 - If the code under test is in the `services/web/imports/xm/server/**` folder and  depends on server infrastructure (e.g., Postgres, MongoDB, NATS), initialize test containers using the `initTestContainers` helper.
@@ -95,7 +109,7 @@ describe('add', () => {
 import { TestScheduler } from "rxjs/testing";
 import { assert, describe, expect, it, vi } from "vitest";
 
-import { createMock } from "../../../lib/test/createMock.js";
+import { createMock } from "@common/utilities/createMock";
 import { XenPreferences } from "../../../lib/xen/util/preferences/XenPreferences.js";
 import { MockRouterService } from "../services/router/mock/MockRouterService.js";
 import { DrawingBoardViewService } from "./DrawingBoardViewService.js";

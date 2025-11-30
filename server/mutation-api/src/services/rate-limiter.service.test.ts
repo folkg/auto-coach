@@ -1,5 +1,7 @@
 import { Effect, Either } from "effect";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
+import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
+import { createMock } from "@common/utilities/createMock";
 import {
   CircuitBreakerError,
   type RateLimitConfig,
@@ -16,40 +18,45 @@ vi.mock("@google-cloud/firestore", () => ({
 }));
 
 describe("RateLimiterService", () => {
-  let mockFirestore: // biome-ignore lint/suspicious/noExplicitAny: Firestore mock requires complex typing
-  any;
-  let mockCollection: ReturnType<typeof vi.fn>;
-  let mockDoc: ReturnType<typeof vi.fn>;
-  let mockGet: ReturnType<typeof vi.fn>;
-  let mockUpdate: ReturnType<typeof vi.fn>;
-  let mockSet: ReturnType<typeof vi.fn>;
-  let mockRunTransaction: ReturnType<typeof vi.fn>;
+  let mockFirestore: Firestore;
+  let mockCollection: Mock;
+  let mockDoc: Mock;
+  let mockGet: Mock;
+  let mockUpdate: Mock;
+  let mockSet: Mock;
+  let mockRunTransaction: Mock;
   let rateLimiter: RateLimiterServiceImpl;
-  let config: RateLimitConfig;
 
   beforeEach(() => {
     // Setup mocks
-    mockGet = vi.fn();
-    mockUpdate = vi.fn();
-    mockSet = vi.fn();
-    mockRunTransaction = vi.fn();
+    const get = vi.fn();
+    const update = vi.fn();
+    const set = vi.fn();
+    const runTransaction = vi.fn();
 
-    mockDoc = vi.fn(() => ({
-      get: mockGet,
-      update: mockUpdate,
-      set: mockSet,
-    }));
+    const doc = vi.fn().mockReturnValue(
+      createMock<DocumentReference>({
+        get: get,
+        update: update,
+        set: set,
+      }),
+    );
 
-    mockCollection = vi.fn(() => ({
-      doc: mockDoc,
-    }));
+    const collection = vi.fn().mockReturnValue(createMock<CollectionReference>({ doc: doc }));
 
-    mockFirestore = {
-      collection: mockCollection,
-      runTransaction: mockRunTransaction,
-    } as unknown;
+    mockFirestore = createMock<Firestore>({
+      collection: collection,
+      runTransaction: runTransaction,
+    });
 
-    config = {
+    mockGet = get;
+    mockUpdate = update;
+    mockSet = set;
+    mockDoc = doc;
+    mockCollection = collection;
+    mockRunTransaction = runTransaction;
+
+    const config: RateLimitConfig = {
       maxTokens: 10,
       refillRate: 1,
       windowSizeMs: 60000, // 1 minute

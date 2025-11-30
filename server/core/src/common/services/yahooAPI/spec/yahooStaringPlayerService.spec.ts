@@ -1,6 +1,6 @@
 import type { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { createMock } from "../../../spec/createMock.js";
+import { createMock } from "@common/utilities/createMock";
 import * as firestoreService from "../../firebase/firestore.service.js";
 import * as yahooAPI from "../yahooAPI.service.js";
 import { fetchStartingPlayers } from "../yahooStartingPlayer.service.js";

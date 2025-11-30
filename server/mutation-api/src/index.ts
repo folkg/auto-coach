@@ -6,7 +6,6 @@ console.log("Starting Mutation API server...");
 
 const app = new Hono();
 
-// biome-ignore lint/complexity/useLiteralKeys: Angular build complains about this since it doesn't know about the server side env types
 const allowedOrigins = (process.env["ALLOWED_ORIGINS"] ?? "")
   .split(",")
   .map((origin) => origin.trim())

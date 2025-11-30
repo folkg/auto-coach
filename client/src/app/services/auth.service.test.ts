@@ -2,7 +2,7 @@ import { type Auth, signInWithPopup, type User, type UserCredential } from "fire
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
-import { createMock } from "../../__mocks__/utils/createMock";
+import { createMock } from "@common/utilities/createMock";
 import { AUTH } from "../shared/firebase-tokens";
 import { AuthService } from "./auth.service";
 

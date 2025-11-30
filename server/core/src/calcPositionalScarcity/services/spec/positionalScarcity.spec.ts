@@ -9,11 +9,11 @@ import {
   vi,
 } from "vitest";
 import type { FirestoreTeam } from "@common/types/team.js";
+import { createMock } from "@common/utilities/createMock";
 import * as constants from "../../../common/helpers/constants";
 import * as firestoreService from "../../../common/services/firebase/firestore.service";
 import { YahooAPIPlayerResponseSchema } from "../../../common/services/yahooAPI/interfaces/YahooAPIResponse";
 import * as yahooAPI from "../../../common/services/yahooAPI/yahooAPI.service";
-import { createMock } from "../../../common/spec/createMock";
 import {
   clearScarcityOffsets,
   generateFetchPlayerPromises,
@@ -68,6 +68,7 @@ describe("getReplacementLevel", () => {
         IR: 2,
         "IR+": 2,
         NA: 2,
+        BN: 0,
       },
       num_teams: 12,
     });
@@ -95,6 +96,7 @@ describe("getReplacementLevel", () => {
         D: 4,
         G: 2,
         Util: 4,
+        BN: 0,
       },
       num_teams: 12,
     });
