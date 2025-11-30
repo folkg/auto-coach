@@ -664,6 +664,10 @@ describe("getScarcityOffsetsForTeam", () => {
 });
 
 describe("generateFetchPlayerPromises", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const uid = "testuid";
   const position = "F";
   const gameCode = "nhl";

@@ -6,6 +6,11 @@ import { createMock } from "../../__mocks__/utils/createMock";
 import { AUTH } from "../shared/firebase-tokens";
 import { AuthService } from "./auth.service";
 
+// Mock the delay function from common utilities
+vi.mock("../../../../common/src/utilities/delay", () => ({
+  delay: vi.fn().mockResolvedValue(undefined),
+}));
+
 describe("AuthService", () => {
   let service: AuthService;
   let mockAuth: Auth;
@@ -105,12 +110,6 @@ describe("AuthService", () => {
         writable: true,
       });
 
-      // Mock delay to speed up test
-      vi.spyOn(
-        service as AuthService & { delay: (ms: number) => Promise<void> },
-        "delay",
-      ).mockResolvedValue(undefined);
-
       // Act & Assert
       let errorThrown: Error | undefined;
       try {
@@ -127,7 +126,8 @@ describe("AuthService", () => {
     it("does not retry on non-retryable errors", async () => {
       // Arrange
       const mockSignInWithPopup = vi.mocked(signInWithPopup);
-      const nonRetryableError = new Error("Firebase: Error (auth/popup-blocked)");
+      // Use an error that is NOT in the retryable list (popup-blocked, cancelled-popup-request, popup-closed-by-user)
+      const nonRetryableError = new Error("Firebase: Error (auth/network-request-failed)");
       mockSignInWithPopup.mockRejectedValue(nonRetryableError);
 
       // Act & Assert
@@ -139,7 +139,7 @@ describe("AuthService", () => {
       }
 
       expect(errorThrown?.message).toBe(
-        "Couldn't sign in with Yahoo: Firebase: Error (auth/popup-blocked)",
+        "Couldn't sign in with Yahoo: Firebase: Error (auth/network-request-failed)",
       );
       expect(mockSignInWithPopup).toHaveBeenCalledTimes(1);
       expect(service.loading$.value).toBe(false);
@@ -151,12 +151,6 @@ describe("AuthService", () => {
       const popupError = new Error("Firebase: Error (auth/popup-closed-by-user)");
       const mockCredential = createMock<UserCredential>();
       mockSignInWithPopup.mockRejectedValueOnce(popupError).mockResolvedValueOnce(mockCredential);
-
-      // Mock delay to speed up test
-      vi.spyOn(
-        service as AuthService & { delay: (ms: number) => Promise<void> },
-        "delay",
-      ).mockResolvedValue(undefined);
 
       // Act
       await service.loginYahoo();

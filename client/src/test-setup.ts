@@ -1,6 +1,6 @@
-import "@testing-library/jest-dom/vitest";
+import { beforeEach } from "vitest";
 import { NgModule, provideZonelessChangeDetection } from "@angular/core";
-import { getTestBed } from "@angular/core/testing";
+import { getTestBed, TestBed } from "@angular/core/testing";
 import {
   BrowserDynamicTestingModule,
   platformBrowserDynamicTesting,
@@ -20,7 +20,15 @@ import { AUTH, FIRESTORE, FUNCTIONS } from "./app/shared/firebase-tokens";
 })
 class ZonelessModule {}
 
-getTestBed().initTestEnvironment(
-  [BrowserDynamicTestingModule, ZonelessModule],
-  platformBrowserDynamicTesting(),
-);
+const testBed = getTestBed();
+
+if (!testBed.platform) {
+  testBed.initTestEnvironment(
+    [BrowserDynamicTestingModule, ZonelessModule],
+    platformBrowserDynamicTesting(),
+  );
+}
+
+beforeEach(() => {
+  TestBed.resetTestingModule();
+});

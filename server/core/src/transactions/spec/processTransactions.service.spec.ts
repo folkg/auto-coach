@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, test, vi } from "vitest";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
@@ -52,6 +52,18 @@ describe("test mergeTopAvailabePlayers function", () => {
 });
 
 describe("generateTopAvailablePlayerPromises", () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    fetchSpy = vi
+      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
+      .mockResolvedValue({});
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
   test("no teams adding players", () => {
     const teams: FirestoreTeam[] = [
       { allow_adding: false, game_code: "mlb" },
@@ -70,10 +82,6 @@ describe("generateTopAvailablePlayerPromises", () => {
     ] as FirestoreTeam[];
     const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
 
-    const fetchSpy = vi
-      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
-      .mockResolvedValue({});
-
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
 
     expect(result).toEqual(expectedOutput);
@@ -87,10 +95,6 @@ describe("generateTopAvailablePlayerPromises", () => {
     ] as FirestoreTeam[];
     const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
 
-    const fetchSpy = vi
-      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
-      .mockResolvedValue({});
-
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
 
     expect(result).toEqual(expectedOutput);
@@ -103,10 +107,6 @@ describe("generateTopAvailablePlayerPromises", () => {
       { allow_adding: true, game_code: "nfl" },
     ] as FirestoreTeam[];
     const expectedOutput = [Promise.resolve({}), Promise.resolve({}), Promise.resolve({})];
-
-    const fetchSpy = vi
-      .spyOn(yahooTopAvailablePlayersBuilder, "fetchTopAvailablePlayersFromYahoo")
-      .mockResolvedValue({});
 
     const result = generateTopAvailablePlayerPromises(teams, "testuid");
 

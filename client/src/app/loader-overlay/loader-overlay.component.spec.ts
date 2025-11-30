@@ -11,7 +11,7 @@ describe("LoaderOverlayComponent", () => {
     });
 
     const overlay = screen.getByTestId("loader-overlay-container");
-    expect(overlay).toBeInTheDocument();
+    expect(overlay).toBeTruthy();
 
     // The loader should be present inside the overlay
     const loader = overlay.querySelector(".loading-animation");
@@ -24,6 +24,6 @@ describe("LoaderOverlayComponent", () => {
       imports: [LoaderComponent],
     });
 
-    expect(screen.queryByTestId("loader-overlay-container")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("loader-overlay-container")).toBeNull();
   });
 });
