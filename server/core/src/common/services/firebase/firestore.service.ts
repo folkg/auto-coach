@@ -184,7 +184,7 @@ export async function getActiveTeamsForLeagues(leagues: string[]) {
       .where("weekly_deadline", "in", ["", "intraday", getCurrentPacificNumDay().toString()])
       .get();
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 
   return result;
@@ -200,7 +200,7 @@ export async function getActiveTeamsForUser(uid: string) {
       .where("end_date", ">=", Date.now())
       .get();
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 
   return result;
@@ -226,7 +226,7 @@ export async function getTomorrowsActiveWeeklyTeams() {
       .where("weekly_deadline", "==", (getCurrentPacificNumDay() + 1).toString())
       .get();
   } catch (error) {
-    return Promise.reject(error);
+    return Promise.reject(error instanceof Error ? error : new Error(String(error)));
   }
 
   return result;
