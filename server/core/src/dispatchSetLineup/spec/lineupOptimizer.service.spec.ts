@@ -1,5 +1,5 @@
 import spacetime from "spacetime";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges } from "@common/types/transactions.js";
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
@@ -43,6 +43,15 @@ vi.spyOn(firestoreService, "updatePositionalScarcityOffset").mockResolvedValue()
 vi.spyOn(positionalScarcityService, "getScarcityOffsetsForTeam").mockResolvedValue(createMock({}));
 
 vi.spyOn(yahooAPI, "getTopPlayersGeneral").mockResolvedValue(createMock({}));
+
+afterEach(() => {
+  vi.clearAllMocks();
+  // Reset spies that tests override with mockImplementationOnce
+  vi.mocked(LineupBuilderService.fetchRostersFromYahoo).mockReset();
+  vi.mocked(yahooAPI.putLineupChanges).mockReset();
+  vi.mocked(yahooAPI.postRosterAddDropTransaction).mockReset();
+  vi.mocked(yahooAPI.getTopAvailablePlayers).mockReset();
+});
 
 describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
   // Notes:
@@ -474,7 +483,7 @@ describe("Full Stack Add Drop Tests in setUsersLineup()", () => {
 
     const spyPostRosterAddDropTransaction = vi
       .spyOn(yahooAPI, "postRosterAddDropTransaction")
-      .mockResolvedValueOnce(null);
+      .mockResolvedValue(null);
     const spyPutLineupChanges = vi.spyOn(yahooAPI, "putLineupChanges").mockResolvedValue();
     vi.spyOn(yahooAPI, "getTopAvailablePlayers").mockResolvedValue(createMock({}));
 

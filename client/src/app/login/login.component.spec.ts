@@ -33,9 +33,9 @@ describe("LoginComponent", () => {
       providers: defaultProviders,
     });
 
-    expect(screen.getByText("Automatically Optimize your Lineups")).toBeInTheDocument();
-    expect(screen.getByText("Sign in with Yahoo")).toBeInTheDocument();
-    expect(screen.getByText("Learn More")).toBeInTheDocument();
+    expect(screen.getByText("Automatically Optimize your Lineups")).toBeTruthy();
+    expect(screen.getByText("Sign in with Yahoo")).toBeTruthy();
+    expect(screen.getByText("Learn More")).toBeTruthy();
   });
 
   describe("Button Actions", () => {

@@ -15,7 +15,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:application",
+          "builder": "@angular/build:application",
           "options": {
             "outputPath": {
               "base": "dist/auto-gm"
@@ -86,7 +86,7 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "browsers": ["chromium"],
+            "browsers": ["ChromiumHeadless"],
             "runnerConfig": "vitest.config.ts"
           }
         }

@@ -30,7 +30,7 @@ describe("AboutComponent", () => {
       imports: [TeamComponent, RobotsComponent],
     });
 
-    expect(screen.getByText("About Fantasy AutoCoach")).toBeInTheDocument();
+    expect(screen.getByText("About Fantasy AutoCoach")).toBeTruthy();
   });
 
   it("displays all main section headers", async () => {
@@ -39,10 +39,10 @@ describe("AboutComponent", () => {
       imports: [TeamComponent, RobotsComponent],
     });
 
-    expect(screen.getByText("How it Works")).toBeInTheDocument();
-    expect(screen.getByText("Why?")).toBeInTheDocument();
-    expect(screen.getByText("How to Set Up")).toBeInTheDocument();
-    expect(screen.getByText("What it Won't Do")).toBeInTheDocument();
+    expect(screen.getByText("How it Works")).toBeTruthy();
+    expect(screen.getByText("Why?")).toBeTruthy();
+    expect(screen.getByText("How to Set Up")).toBeTruthy();
+    expect(screen.getByText("What it Won't Do")).toBeTruthy();
   });
 
   it("displays all key features under How it Works", async () => {
@@ -51,10 +51,10 @@ describe("AboutComponent", () => {
       imports: [TeamComponent, RobotsComponent],
     });
 
-    expect(screen.getByText("Optimized Lineups")).toBeInTheDocument();
-    expect(screen.getByText("Last Minute Lineup Changes")).toBeInTheDocument();
-    expect(screen.getByText("Intelligent Use of Injury Spaces")).toBeInTheDocument();
-    expect(screen.getByText("Easy to Use")).toBeInTheDocument();
+    expect(screen.getByText("Optimized Lineups")).toBeTruthy();
+    expect(screen.getByText("Last Minute Lineup Changes")).toBeTruthy();
+    expect(screen.getByText("Intelligent Use of Injury Spaces")).toBeTruthy();
+    expect(screen.getByText("Easy to Use")).toBeTruthy();
   });
 
   it("renders the TeamComponent", async () => {
@@ -64,8 +64,8 @@ describe("AboutComponent", () => {
       declarations: [RelativeDatePipe],
     });
 
-    expect(container.querySelector("app-team")).toBeInTheDocument();
-    expect(screen.getByText("Bat Attitudes")).toBeInTheDocument();
+    expect(container.querySelector("app-team")).toBeTruthy();
+    expect(screen.getByText("Bat Attitudes")).toBeTruthy();
   });
 
   it("updates sample timestamps based on focus changes", async () => {

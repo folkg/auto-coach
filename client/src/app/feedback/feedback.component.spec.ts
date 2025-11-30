@@ -40,22 +40,22 @@ describe("FeedbackComponent", () => {
 
   it("creates the component", async () => {
     await render(FeedbackComponent, { providers: defaultProviders });
-    expect(screen.getByText("Contact Us")).toBeInTheDocument();
+    expect(screen.getByText("Contact Us")).toBeTruthy();
   });
 
   it("displays all feedback types", async () => {
     await render(FeedbackComponent, { providers: defaultProviders });
 
-    expect(screen.getByText("General")).toBeInTheDocument();
-    expect(screen.getByText("Bug Report")).toBeInTheDocument();
-    expect(screen.getByText("Feature Request")).toBeInTheDocument();
+    expect(screen.getByText("General")).toBeTruthy();
+    expect(screen.getByText("Bug Report")).toBeTruthy();
+    expect(screen.getByText("Feature Request")).toBeTruthy();
   });
 
   it("disables submit button when form is invalid", async () => {
     await render(FeedbackComponent, { providers: defaultProviders });
 
-    const submitButton = screen.getByTestId("submit-button");
-    expect(submitButton).toBeDisabled();
+    const submitButton = screen.getByTestId("submit-button") as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
   });
 
   it("disables submit button when offline", async () => {
@@ -83,8 +83,8 @@ describe("FeedbackComponent", () => {
       feedbackType: "Feature Request",
     });
 
-    const submitButton = screen.getByTestId("submit-button");
-    expect(submitButton).toBeDisabled();
+    const submitButton = screen.getByTestId("submit-button") as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(true);
   });
 
   it("enables submit button when form is valid and online", async () => {
@@ -111,8 +111,8 @@ describe("FeedbackComponent", () => {
       feedbackType: "Bug Report",
     });
 
-    const submitButton = screen.getByTestId("submit-button");
-    expect(submitButton).not.toBeDisabled();
+    const submitButton = screen.getByTestId("submit-button") as HTMLButtonElement;
+    expect(submitButton.disabled).toBe(false);
   });
 
   it("shows success message after successful submission", async () => {
@@ -130,7 +130,7 @@ describe("FeedbackComponent", () => {
     const submitButton = screen.getByText("Submit");
     await user.click(submitButton);
 
-    expect(screen.getByText("Thank you for your feedback!")).toBeInTheDocument();
+    expect(screen.getByText("Thank you for your feedback!")).toBeTruthy();
   });
 
   it("shows error message after failed submission", async () => {
@@ -152,7 +152,7 @@ describe("FeedbackComponent", () => {
 
     expect(
       screen.getByText("There was an error with your submission. Please try again later."),
-    ).toBeInTheDocument();
+    ).toBeTruthy();
   });
 
   it("rejects submission if honeypot is filled", async () => {
@@ -174,7 +174,7 @@ describe("FeedbackComponent", () => {
 
     expect(
       screen.getByText("There was an error with your submission. Please try again later."),
-    ).toBeInTheDocument();
+    ).toBeTruthy();
   });
 
   it("shows loading state while submitting", async () => {
@@ -199,6 +199,6 @@ describe("FeedbackComponent", () => {
     const submitButton = screen.getByText("Submit");
     await user.click(submitButton);
 
-    expect(screen.getByText("Submitting Feedback...")).toBeInTheDocument();
+    expect(screen.getByText("Submitting Feedback...")).toBeTruthy();
   });
 });

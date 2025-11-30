@@ -57,6 +57,7 @@ Thumbs.db
 # Test
 __screenshots__/
 **/__screenshots__/
+**/__screenshots__/**
 
 # Ignore all Firebase service account keys
 firebase-adminsdk-*.json
