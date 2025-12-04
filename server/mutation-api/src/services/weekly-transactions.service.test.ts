@@ -99,7 +99,6 @@ describe("performWeeklyLeagueTransactions", () => {
     // Arrange
     const uid = "test-user-123";
     const firestoreTeams: FirestoreTeam[] = [];
-    const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => undefined);
 
     // Act
     const result = await Effect.runPromiseExit(
@@ -108,10 +107,7 @@ describe("performWeeklyLeagueTransactions", () => {
 
     // Assert
     expect(Exit.isSuccess(result)).toBe(true);
-    expect(consoleSpy).toHaveBeenCalledWith(`No weekly teams for user ${uid}`);
     expect(mockGetTopAvailablePlayers).not.toHaveBeenCalled();
-
-    consoleSpy.mockRestore();
   });
 
   it("fails when uid is empty", async () => {

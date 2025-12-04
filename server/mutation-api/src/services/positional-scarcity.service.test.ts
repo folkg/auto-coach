@@ -78,7 +78,8 @@ describe("PositionalScarcityService", () => {
       // Assert
       expect(result).toBeDefined();
       expect(result._tag).toBe("PositionalScarcityError");
-      expect(result.message).toContain("API connection failed");
+      expect(result.message).toBe("Failed to get scarcity offsets for team");
+      expect(result.error).toBeDefined();
     });
   });
 
@@ -105,7 +106,8 @@ describe("PositionalScarcityService", () => {
       // Assert
       expect(result).toBeDefined();
       expect(result._tag).toBe("PositionalScarcityError");
-      expect(result.message).toContain("Database unavailable");
+      expect(result.message).toBe("Failed to recalculate scarcity offsets for all");
+      expect(result.error).toBeDefined();
     });
   });
 });

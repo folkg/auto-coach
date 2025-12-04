@@ -1,5 +1,5 @@
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Context, Data, Effect, Fiber, Layer } from "effect";
+import { Context, Effect, Fiber, Layer, Schema } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
 import type {
   CalcPositionalScarcityRequest as CalcPositionalScarcityRequestType,
@@ -27,9 +27,9 @@ import {
   type WeeklyTransactionsError,
 } from "./weekly-transactions.service";
 
-export class DispatchError extends Data.TaggedError("DispatchError")<{
-  readonly message: string;
-}> {}
+export class DispatchError extends Schema.TaggedError<DispatchError>()("DispatchError", {
+  message: Schema.String,
+}) {}
 
 export type DispatchServiceError =
   | DispatchError
@@ -182,12 +182,13 @@ export class DispatchServiceImpl implements DispatchService {
 
       // Step 4: Start parallel: setTodaysPostponedTeams()
       const postponedTeamsFiber = yield* Effect.fork(
-        schedulingService.setTodaysPostponedTeams(leagues).pipe(
-          Effect.catchAll((error: SchedulingError) => {
-            console.error(`Failed to set postponed teams: ${error.message}`);
-            return Effect.void;
-          }),
-        ),
+        schedulingService
+          .setTodaysPostponedTeams(leagues)
+          .pipe(
+            Effect.catchAll((error: SchedulingError) =>
+              Effect.logError(`Failed to set postponed teams: ${error.message}`),
+            ),
+          ),
       );
 
       // Step 5: Fetch active teams from Firestore
@@ -201,12 +202,13 @@ export class DispatchServiceImpl implements DispatchService {
 
       // Step 6: Start parallel: setStartingPlayersForToday(teamsSnapshot)
       const startingPlayersFiber = yield* Effect.fork(
-        schedulingService.setStartingPlayersForToday(teamsSnapshot).pipe(
-          Effect.catchAll((error: SchedulingError) => {
-            console.error(`Failed to set starting players: ${error.message}`);
-            return Effect.void;
-          }),
-        ),
+        schedulingService
+          .setStartingPlayersForToday(teamsSnapshot)
+          .pipe(
+            Effect.catchAll((error: SchedulingError) =>
+              Effect.logError(`Failed to set starting players: ${error.message}`),
+            ),
+          ),
       );
 
       // Step 7: Call mapUsersToActiveTeams(teamsSnapshot)

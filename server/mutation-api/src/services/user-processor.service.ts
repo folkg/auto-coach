@@ -1,14 +1,17 @@
-import { Effect, Stream } from "effect";
+import { Effect, Schema } from "effect";
 import { db } from "../../../core/src/common/services/firebase/firestore.service.js";
 import {
   getTopPlayersGeneral,
   refreshYahooAccessToken,
 } from "../../../core/src/common/services/yahooAPI/yahooAPI.service.js";
 
-export interface UserProcessorError {
-  readonly _tag: "UserProcessorError";
-  readonly message: string;
-}
+export class UserProcessorError extends Schema.TaggedError<UserProcessorError>()(
+  "UserProcessorError",
+  {
+    message: Schema.String,
+    error: Schema.optional(Schema.Defect),
+  },
+) {}
 
 export interface UserProcessingOptions {
   readonly concurrency: number;
@@ -33,29 +36,57 @@ export class UserProcessorService {
     batchSize: 100,
   };
 
-  processUsersWithBoundedConcurrency(
+  /**
+   * Fetches users from Firestore and returns them as a stream.
+   */
+  fetchUsers(
     options: Partial<UserProcessingOptions> = {},
-  ): Stream.Stream<UserDocument, UserProcessorError> {
+  ): Effect.Effect<readonly UserDocument[], UserProcessorError> {
     const opts = { ...this.defaultOptions, ...options };
 
-    return Stream.fromEffect(
-      Effect.tryPromise({
-        try: async () => {
-          // Get users from Firestore
-          const usersSnapshot = await db.collection("users").get();
-          const users = usersSnapshot.docs.map((doc) => doc.data() as UserDocument);
+    return Effect.tryPromise({
+      try: async () => {
+        // Get users from Firestore
+        const usersSnapshot = await db.collection("users").get();
+        const users = usersSnapshot.docs.map((doc) => doc.data() as UserDocument);
 
-          // Apply filter if provided
-          const filteredUsers = opts.filter ? users.filter(opts.filter) : users;
-
-          return filteredUsers;
-        },
-        catch: (error) => ({
-          _tag: "UserProcessorError" as const,
-          message: `Failed to fetch users: ${error instanceof Error ? error.message : String(error)}`,
+        // Apply filter if provided
+        return opts.filter ? users.filter(opts.filter) : users;
+      },
+      catch: (error) =>
+        UserProcessorError.make({
+          message: "Failed to fetch users",
+          error,
         }),
-      }),
-    ).pipe(Stream.flatMap(Stream.fromIterable));
+    });
+  }
+
+  /**
+   * Processes users with bounded concurrency.
+   * Uses Effect.forEach with concurrency option for proper bounded processing.
+   */
+  processUsersWithBoundedConcurrency(
+    options: Partial<UserProcessingOptions> = {},
+  ): Effect.Effect<void, UserProcessorError> {
+    const opts = { ...this.defaultOptions, ...options };
+    const processUser = this.processUserForMutations.bind(this);
+
+    return Effect.gen(function* () {
+      const users = yield* Effect.tryPromise({
+        try: async () => {
+          const usersSnapshot = await db.collection("users").get();
+          const allUsers = usersSnapshot.docs.map((doc) => doc.data() as UserDocument);
+          return opts.filter ? allUsers.filter(opts.filter) : allUsers;
+        },
+        catch: (error) =>
+          UserProcessorError.make({
+            message: "Failed to fetch users",
+            error,
+          }),
+      });
+
+      yield* Effect.forEach(users, processUser, { concurrency: opts.concurrency });
+    });
   }
 
   processUserForMutations(user: UserDocument): Effect.Effect<void, UserProcessorError> {
@@ -79,23 +110,18 @@ export class UserProcessorService {
           }
         }
       },
-      catch: (error) => ({
-        _tag: "UserProcessorError" as const,
-        message: `Failed to process user ${user.uid}: ${error instanceof Error ? error.message : String(error)}`,
-      }),
+      catch: (error) =>
+        UserProcessorError.make({
+          message: `Failed to process user ${user.uid}`,
+          error,
+        }),
     });
   }
 
   createScheduledUserProcessor(
     options: Partial<UserProcessingOptions> = {},
   ): Effect.Effect<void, UserProcessorError> {
-    return Effect.gen(function* () {
-      const userStream = new UserProcessorService().processUsersWithBoundedConcurrency(options);
-
-      yield* Stream.runForEach(userStream, (user) =>
-        new UserProcessorService().processUserForMutations(user),
-      );
-    });
+    return this.processUsersWithBoundedConcurrency(options);
   }
 
   // Helper method to filter active users

@@ -1,4 +1,4 @@
-import { Effect, Schema } from "effect";
+import { Context, Effect, Layer, Schema } from "effect";
 import type { FirestoreTeam } from "@common/types/team.js";
 import type { Firestore } from "@google-cloud/firestore";
 import type { MutationTask } from "../types/schemas.js";
@@ -13,6 +13,7 @@ import {
   SystemError,
   type TaskStatusUpdate,
 } from "../types/api-schemas.js";
+import { SetLineupPayloadSchema, WeeklyTransactionsPayloadSchema } from "../types/schemas.js";
 import { recalculateScarcityOffsetsForAll } from "./positional-scarcity.service.js";
 import { setUsersLineup } from "./set-lineup.service.js";
 import { performWeeklyLeagueTransactions } from "./weekly-transactions.service.js";
@@ -23,16 +24,6 @@ export interface ExecutionService {
   ): Effect.Effect<ExecuteMutationResponse, MutationError>;
   updateTaskStatus(update: TaskStatusUpdate): Effect.Effect<void, never>;
 }
-
-const SetLineupPayloadSchema = Schema.Struct({
-  uid: Schema.String,
-  teams: Schema.Array(Schema.Unknown),
-});
-
-const WeeklyTransactionsPayloadSchema = Schema.Struct({
-  uid: Schema.String,
-  teams: Schema.Array(Schema.Unknown),
-});
 
 export class ExecutionServiceImpl implements ExecutionService {
   constructor(
@@ -302,5 +293,18 @@ export class ExecutionServiceImpl implements ExecutionService {
         },
       }),
     );
+  }
+}
+
+/**
+ * Context.Tag for the Execution service.
+ * Use `Execution.layer` for production or create test layers.
+ */
+export class Execution extends Context.Tag("@mutation-api/Execution")<
+  Execution,
+  ExecutionService
+>() {
+  static layer(firestore: Firestore, rateLimiter: RateLimiterService): Layer.Layer<Execution> {
+    return Layer.succeed(Execution, new ExecutionServiceImpl(firestore, rateLimiter));
   }
 }

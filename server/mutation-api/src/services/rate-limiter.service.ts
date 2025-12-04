@@ -1,15 +1,20 @@
-import { Data, Effect, Schema } from "effect";
+import { Context, Effect, Layer, Schema } from "effect";
 import { FieldValue, type Firestore } from "@google-cloud/firestore";
 
-export class RateLimitError extends Data.TaggedError("RateLimitError")<{
-  readonly message: string;
-  readonly retryAfter?: number;
-}> {}
+export class RateLimitError extends Schema.TaggedError<RateLimitError>()("RateLimitError", {
+  message: Schema.String,
+  retryAfter: Schema.optional(Schema.Number),
+  error: Schema.optional(Schema.Defect),
+}) {}
 
-export class CircuitBreakerError extends Data.TaggedError("CircuitBreakerError")<{
-  readonly message: string;
-  readonly isGlobalPause: boolean;
-}> {}
+export class CircuitBreakerError extends Schema.TaggedError<CircuitBreakerError>()(
+  "CircuitBreakerError",
+  {
+    message: Schema.String,
+    isGlobalPause: Schema.Boolean,
+    error: Schema.optional(Schema.Defect),
+  },
+) {}
 
 export const RateLimitConfigSchema = Schema.Struct({
   maxTokens: Schema.Number.pipe(Schema.greaterThan(0)),
@@ -64,7 +69,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
 
         // Check if rate limit exceeded
         if (count >= this.config.maxTokens) {
-          throw new RateLimitError({
+          throw RateLimitError.make({
             message: `Rate limit exceeded for user ${userId}`,
             retryAfter: Math.ceil(this.config.windowSizeMs / 1000),
           });
@@ -74,8 +79,9 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         if (error instanceof RateLimitError) {
           return error;
         }
-        return new RateLimitError({
-          message: `Failed to check rate limit: ${error instanceof Error ? error.message : String(error)}`,
+        return RateLimitError.make({
+          message: "Failed to check rate limit",
+          error,
         });
       },
     });
@@ -121,8 +127,9 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         });
       },
       catch: (error) =>
-        new RateLimitError({
-          message: `Failed to consume token: ${error instanceof Error ? error.message : String(error)}`,
+        RateLimitError.make({
+          message: "Failed to consume token",
+          error,
         }),
     });
   }
@@ -142,7 +149,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
             const now = Date.now();
 
             if (now - pausedAt < pauseDuration) {
-              throw new CircuitBreakerError({
+              throw CircuitBreakerError.make({
                 message: `Globally paused: ${globalData.pauseReason || "Unknown reason"}`,
                 isGlobalPause: true,
               });
@@ -166,7 +173,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
           const nextRetryTime = cbData.nextRetryTime?.toMillis?.() || 0;
 
           if (now < nextRetryTime) {
-            throw new CircuitBreakerError({
+            throw CircuitBreakerError.make({
               message: "Circuit breaker is open",
               isGlobalPause: false,
             });
@@ -182,9 +189,10 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         if (error instanceof CircuitBreakerError) {
           return error;
         }
-        return new CircuitBreakerError({
-          message: `Failed to check circuit breaker: ${error instanceof Error ? error.message : String(error)}`,
+        return CircuitBreakerError.make({
+          message: "Failed to check circuit breaker",
           isGlobalPause: false,
+          error,
         });
       },
     });
@@ -210,20 +218,23 @@ export class RateLimiterServiceImpl implements RateLimiterService {
   }
 
   recordFailure(error: Error): Effect.Effect<void, never> {
-    return Effect.ignore(
-      Effect.tryPromise({
+    const firestore = this.firestore;
+    const triggerPause = this.triggerGlobalPause.bind(this);
+
+    return Effect.gen(function* () {
+      const isRateLimitError = error.message.includes("429") || error.message.includes("999");
+
+      if (!isRateLimitError) {
+        return; // Only trigger on rate limit errors
+      }
+
+      const cbDocRef = firestore.collection("rateLimits").doc("circuitBreaker");
+      const now = new Date();
+      let finalFailureCount = 1;
+
+      yield* Effect.tryPromise({
         try: async () => {
-          const isRateLimitError = error.message.includes("429") || error.message.includes("999");
-
-          if (!isRateLimitError) {
-            return; // Only trigger on rate limit errors
-          }
-
-          const cbDocRef = this.firestore.collection("rateLimits").doc("circuitBreaker");
-          const now = new Date();
-          let finalFailureCount = 1;
-
-          await this.firestore.runTransaction(async (transaction) => {
+          await firestore.runTransaction(async (transaction) => {
             const doc = await transaction.get(cbDocRef);
             let failureCount = 1;
             let isOpen = false;
@@ -254,19 +265,17 @@ export class RateLimiterServiceImpl implements RateLimiterService {
 
             transaction.set(cbDocRef, cbData, { merge: true });
           });
-
-          // Trigger global pause on circuit breaker open
-          if (finalFailureCount >= 3) {
-            await Effect.runPromise(
-              this.triggerGlobalPause("Circuit breaker opened due to rate limit errors", 300000),
-            );
-          }
         },
         catch: () => {
           // Ignore errors in failure recording
         },
-      }),
-    );
+      });
+
+      // Trigger global pause on circuit breaker open
+      if (finalFailureCount >= 3) {
+        yield* triggerPause("Circuit breaker opened due to rate limit errors", 300000);
+      }
+    }).pipe(Effect.ignore);
   }
 
   triggerGlobalPause(reason: string, durationMs = 300000): Effect.Effect<void, never> {
@@ -302,5 +311,18 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         },
       }),
     );
+  }
+}
+
+/**
+ * Context.Tag for the RateLimiter service.
+ * Use `RateLimiter.layer` for production or create test layers.
+ */
+export class RateLimiter extends Context.Tag("@mutation-api/RateLimiter")<
+  RateLimiter,
+  RateLimiterService
+>() {
+  static layer(firestore: Firestore, config: RateLimitConfig): Layer.Layer<RateLimiter> {
+    return Layer.succeed(RateLimiter, new RateLimiterServiceImpl(firestore, config));
   }
 }

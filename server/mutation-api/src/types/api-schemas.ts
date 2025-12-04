@@ -1,4 +1,4 @@
-import { Data, Schema } from "effect";
+import { Schema } from "effect";
 import { MutationTaskSchema } from "./schemas";
 
 // Request schemas
@@ -63,23 +63,23 @@ export const ErrorResponseSchema = Schema.Struct({
 export type ErrorResponse = Schema.Schema.Type<typeof ErrorResponseSchema>;
 
 // Error classification
-export class DomainError extends Data.TaggedError("DomainError")<{
-  readonly message: string;
-  readonly code: string;
-  readonly userId?: string;
-}> {}
+export class DomainError extends Schema.TaggedError<DomainError>()("DomainError", {
+  message: Schema.String,
+  code: Schema.String,
+  userId: Schema.optional(Schema.String),
+}) {}
 
-export class SystemError extends Data.TaggedError("SystemError")<{
-  readonly message: string;
-  readonly code: string;
-  readonly retryable: boolean;
-}> {}
+export class SystemError extends Schema.TaggedError<SystemError>()("SystemError", {
+  message: Schema.String,
+  code: Schema.String,
+  retryable: Schema.Boolean,
+}) {}
 
-export class RateLimitError extends Data.TaggedError("RateLimitError")<{
-  readonly message: string;
-  readonly code: string;
-  readonly retryAfter?: number;
-}> {}
+export class RateLimitError extends Schema.TaggedError<RateLimitError>()("RateLimitError", {
+  message: Schema.String,
+  code: Schema.String,
+  retryAfter: Schema.optional(Schema.Number),
+}) {}
 
 export type MutationError = DomainError | SystemError | RateLimitError;
 

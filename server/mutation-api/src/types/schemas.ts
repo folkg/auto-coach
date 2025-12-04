@@ -1,4 +1,4 @@
-import { Data, Schema } from "effect";
+import { Schema } from "effect";
 
 export const MutationTaskType = Schema.Literal(
   "SET_LINEUP",
@@ -81,7 +81,7 @@ export const RateLimitStateSchema = Schema.Struct({
 
 export type RateLimitState = Schema.Schema.Type<typeof RateLimitStateSchema>;
 
-export class HttpError extends Data.TaggedError("HttpError")<{
-  readonly message: string;
-  readonly statusCode: number;
-}> {}
+export class HttpError extends Schema.TaggedError<HttpError>()("HttpError", {
+  message: Schema.String,
+  statusCode: Schema.Number,
+}) {}

@@ -1,4 +1,4 @@
-import { Data, Effect } from "effect";
+import { Effect, Schema } from "effect";
 import type { CommonTeam } from "@common/types/team.js";
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import {
@@ -6,9 +6,13 @@ import {
   recalculateScarcityOffsetsForAll as coreRecalculateScarcityOffsetsForAll,
 } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 
-export class PositionalScarcityError extends Data.TaggedError("PositionalScarcityError")<{
-  readonly message: string;
-}> {}
+export class PositionalScarcityError extends Schema.TaggedError<PositionalScarcityError>()(
+  "PositionalScarcityError",
+  {
+    message: Schema.String,
+    error: Schema.optional(Schema.Defect),
+  },
+) {}
 
 export function getScarcityOffsetsForTeam(
   team: CommonTeam,
@@ -16,8 +20,9 @@ export function getScarcityOffsetsForTeam(
   return Effect.tryPromise({
     try: () => coreGetScarcityOffsetsForTeam(team),
     catch: (error) =>
-      new PositionalScarcityError({
-        message: `Failed to get scarcity offsets for team: ${error instanceof Error ? error.message : String(error)}`,
+      PositionalScarcityError.make({
+        message: "Failed to get scarcity offsets for team",
+        error,
       }),
   });
 }
@@ -26,8 +31,9 @@ export function recalculateScarcityOffsetsForAll(): Effect.Effect<void, Position
   return Effect.tryPromise({
     try: () => coreRecalculateScarcityOffsetsForAll(),
     catch: (error) =>
-      new PositionalScarcityError({
-        message: `Failed to recalculate scarcity offsets for all: ${error instanceof Error ? error.message : String(error)}`,
+      PositionalScarcityError.make({
+        message: "Failed to recalculate scarcity offsets for all",
+        error,
       }),
   });
 }

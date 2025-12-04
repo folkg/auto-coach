@@ -1,12 +1,16 @@
-import { Data, Effect } from "effect";
+import { Context, Effect, Layer, Schema } from "effect";
 import type { Firestore } from "@google-cloud/firestore";
 import type { CloudTasksClient } from "@google-cloud/tasks";
 import type { MutationTask } from "../types/schemas";
 import { HttpError } from "../types/schemas";
 
-export class MutationTaskError extends Data.TaggedError("MutationTaskError")<{
-  readonly message: string;
-}> {}
+export class MutationTaskError extends Schema.TaggedError<MutationTaskError>()(
+  "MutationTaskError",
+  {
+    message: Schema.String,
+    error: Schema.optional(Schema.Defect),
+  },
+) {}
 
 export interface CreateMutationTaskRequest {
   readonly type: MutationTask["type"];
@@ -50,10 +54,9 @@ export class MutationTaskService {
         const location = process.env.GOOGLE_CLOUD_LOCATION;
 
         if (!(projectId && location)) {
-          throw new MutationTaskError({
-            message:
-              "Missing required environment variables: GOOGLE_CLOUD_PROJECT_ID or GOOGLE_CLOUD_LOCATION",
-          });
+          throw new Error(
+            "Missing required environment variables: GOOGLE_CLOUD_PROJECT_ID or GOOGLE_CLOUD_LOCATION",
+          );
         }
 
         const parent = this.tasksClient.queuePath(projectId, location, request.queueName);
@@ -80,19 +83,18 @@ export class MutationTaskService {
         return newTask;
       },
       catch: (error) =>
-        new MutationTaskError({
-          message: `Failed to create mutation task: ${error instanceof Error ? error.message : String(error)}`,
+        MutationTaskError.make({
+          message: "Failed to create mutation task",
+          error,
         }),
     });
   }
 
   getMutationTask(_id: string): Effect.Effect<MutationTask, HttpError> {
-    return Effect.fail(
-      new HttpError({
-        message: "Task not found",
-        statusCode: 404,
-      }),
-    );
+    return HttpError.make({
+      message: "Task not found",
+      statusCode: 404,
+    });
   }
 
   scheduleMutationTask(
@@ -112,10 +114,9 @@ export class MutationTaskService {
         const location = process.env.GOOGLE_CLOUD_LOCATION;
 
         if (!(projectId && location)) {
-          throw new MutationTaskError({
-            message:
-              "Missing required environment variables: GOOGLE_CLOUD_PROJECT_ID or GOOGLE_CLOUD_LOCATION",
-          });
+          throw new Error(
+            "Missing required environment variables: GOOGLE_CLOUD_PROJECT_ID or GOOGLE_CLOUD_LOCATION",
+          );
         }
 
         const name = this.tasksClient.taskPath(projectId, location, queueName, taskId);
@@ -123,9 +124,47 @@ export class MutationTaskService {
         await this.tasksClient.deleteTask({ name });
       },
       catch: (error) =>
-        new MutationTaskError({
-          message: `Failed to cancel mutation task: ${error instanceof Error ? error.message : String(error)}`,
+        MutationTaskError.make({
+          message: "Failed to cancel mutation task",
+          error,
         }),
+    });
+  }
+}
+
+/**
+ * Service interface for mutation task operations.
+ */
+export interface MutationTasksService {
+  readonly createMutationTask: (
+    request: CreateMutationTaskRequest,
+  ) => Effect.Effect<MutationTask, MutationTaskError>;
+  readonly getMutationTask: (id: string) => Effect.Effect<MutationTask, HttpError>;
+  readonly scheduleMutationTask: (
+    request: CreateMutationTaskRequest,
+    scheduledFor: Date,
+  ) => Effect.Effect<MutationTask, MutationTaskError>;
+  readonly cancelMutationTask: (
+    taskId: string,
+    queueName: string,
+  ) => Effect.Effect<void, MutationTaskError>;
+}
+
+/**
+ * Context.Tag for the MutationTasks service.
+ * Use `MutationTasks.layer` for production or create test layers.
+ */
+export class MutationTasks extends Context.Tag("@mutation-api/MutationTasks")<
+  MutationTasks,
+  MutationTasksService
+>() {
+  static layer(firestore: Firestore, tasksClient: CloudTasksClient): Layer.Layer<MutationTasks> {
+    const service = new MutationTaskService(firestore, tasksClient);
+    return Layer.succeed(MutationTasks, {
+      createMutationTask: service.createMutationTask.bind(service),
+      getMutationTask: service.getMutationTask.bind(service),
+      scheduleMutationTask: service.scheduleMutationTask.bind(service),
+      cancelMutationTask: service.cancelMutationTask.bind(service),
     });
   }
 }
