@@ -13,7 +13,6 @@
     "google-auth-library": "10.5.0",
     "hono": "catalog:",
     "js2xmlparser": "5.0.0",
-    "p-limit": "7.2.0",
     "spacetime": "catalog:"
   },
   "devDependencies": {

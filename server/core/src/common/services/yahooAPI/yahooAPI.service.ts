@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { XMLParser } from "fast-xml-parser";
 import { logger } from "firebase-functions";
 import js2xmlparser from "js2xmlparser";
-import pLimit from "p-limit";
 import type {
   LineupChanges,
   PlayerTransaction,
@@ -250,21 +249,16 @@ export async function getStartingPlayers(
   }
 }
 
-const MAX_CONCURRENT_PUT_CALLS = 2;
-
 /**
- * Post the roster changes to Yahoo
+ * Post the roster changes to Yahoo sequentially, continuing on errors
  *
  * @export
  * @async
  * @param {LineupChanges[]} lineupChanges
  * @param {string} uid The firebase uid of the user
- * @return {unknown}
  */
 export async function putLineupChanges(lineupChanges: LineupChanges[], uid: string): Promise<void> {
-  const limit = pLimit(MAX_CONCURRENT_PUT_CALLS);
-
-  const promises: Promise<void>[] = [];
+  const errors: Error[] = [];
 
   for (const lineupChange of lineupChanges) {
     const { newPlayerPositions, teamKey } = lineupChange;
@@ -285,17 +279,17 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
 
     const XML_NAMESPACE = "fantasy_content";
     const xmlBody = js2xmlparser.parse(XML_NAMESPACE, data);
-    promises.push(limit(() => putRosterChangePromise(uid, teamKey, xmlBody)));
-  }
 
-  const results = await Promise.allSettled(promises);
-  for (const result of results) {
-    if (result.status === "rejected") {
-      logger.error(JSON.stringify(result.reason));
+    try {
+      await putRosterChangePromise(uid, teamKey, xmlBody);
+    } catch (err) {
+      logger.error(JSON.stringify(err));
+      errors.push(err instanceof Error ? err : new Error(String(err)));
     }
   }
-  if (results.some((result) => result.status === "rejected")) {
-    throw new Error(`Error in putLineupChanges. User: ${uid}`);
+
+  if (errors.length > 0) {
+    throw new Error(`Error in putLineupChanges. User: ${uid}. ${errors.length} change(s) failed.`);
   }
 }
 
