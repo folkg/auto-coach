@@ -1,7 +1,7 @@
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import axios from "axios";
 import { Effect, Either, Schema } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
+import { ensureType } from "@common/utilities/checks.js";
 import { CloudTasksClient } from "@google-cloud/tasks";
 import {
   db,
@@ -12,6 +12,8 @@ import {
   todayPacific,
 } from "../../../core/src/common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js";
+import { SportsnetGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/SportsnetGamesResponse.js";
+import { YahooGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/YahooGamesReponse.js";
 
 export class SchedulingError extends Schema.TaggedError<SchedulingError>()("SchedulingError", {
   message: Schema.String,
@@ -30,42 +32,6 @@ export interface TeamData {
   readonly game_code: Leagues;
   readonly start_date: number;
   readonly team_key?: string;
-}
-
-interface YahooGame {
-  readonly game: {
-    readonly game_status: {
-      readonly type: string;
-    };
-    readonly start_time: string;
-    readonly team_ids: ReadonlyArray<{
-      readonly away_team_id?: string;
-      readonly home_team_id?: string;
-    }>;
-  };
-}
-
-interface YahooGamesResponse {
-  readonly league: {
-    readonly games: {
-      readonly 0: readonly YahooGame[];
-    };
-  };
-}
-
-interface SportsnetGame {
-  readonly details: {
-    readonly timestamp: number;
-    readonly status: string;
-  };
-}
-
-interface SportsnetGamesResponse {
-  readonly data: {
-    readonly 0: {
-      readonly games: readonly SportsnetGame[];
-    };
-  };
 }
 
 interface LoadTodaysGamesResult {
@@ -217,7 +183,12 @@ function getGameTimesYahoo(
   return Effect.tryPromise({
     try: async () => {
       const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-      const { data } = await axios.get<YahooGamesResponse>(url);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const json: unknown = await response.json();
+      const data = ensureType(json, YahooGamesResponseSchema);
 
       const gamesJSON = data.league.games[0];
       const gameTimesSet: number[] = [];
@@ -243,7 +214,12 @@ function getGameTimesSportsnet(
   return Effect.tryPromise({
     try: async () => {
       const url = `https://mobile-statsv2.sportsnet.ca/scores?league=${league}&team=&day=${todayDate}`;
-      const { data } = await axios.get<SportsnetGamesResponse>(url);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const json: unknown = await response.json();
+      const data = ensureType(json, SportsnetGamesResponseSchema);
 
       const gamesJSON = data.data[0].games;
       const gameTimesSet: number[] = [];
@@ -300,7 +276,12 @@ export function getPostponedTeamsYahoo(
   return Effect.tryPromise({
     try: async () => {
       const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-      const { data } = await axios.get<YahooGamesResponse>(url);
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const json: unknown = await response.json();
+      const data = ensureType(json, YahooGamesResponseSchema);
 
       const gamesJSON = data.league.games[0];
       const postponedTeams: string[] = [];

@@ -1,14 +1,14 @@
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import type { TaskQueue } from "firebase-admin/functions";
-import axios, { isAxiosError } from "axios";
 import { logger } from "firebase-functions";
 import type { Leagues } from "@common/types/Leagues.js";
+import { ensureType } from "@common/utilities/checks.js";
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
-import type { SportsnetGamesResponse } from "../interfaces/SportsnetGamesResponse.js";
-import type { YahooGamesReponse } from "../interfaces/YahooGamesReponse.js";
 import { db, storeTodaysPostponedTeams } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString, todayPacific } from "../../common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
+import { SportsnetGamesResponseSchema } from "../interfaces/SportsnetGamesResponse.js";
+import { YahooGamesResponseSchema } from "../interfaces/YahooGamesReponse.js";
 
 /**
  * Determine the leagues that we will set lineups for at this time
@@ -115,22 +115,12 @@ export async function getTodaysGames(todayDate: string): Promise<GameStartTimes>
       gameStartTimes[league] = await getGameTimesYahoo(league, todayDate);
     } catch (error: unknown) {
       logger.error("Error fetching games from Yahoo API", error);
-      if (isAxiosError(error) && error.response) {
-        logger.error(error.response.data);
-        logger.error(error.response.status);
-        logger.error(error.response.headers);
-      }
       // get gamestimes from Sportsnet as a backup plan
       logger.log("Trying to get games from Sportsnet API");
       try {
         gameStartTimes[league] = await getGameTimesSportsnet(league, todayDate);
       } catch (error: unknown) {
         logger.error("Error fetching games from Sportsnet API", error);
-        if (isAxiosError(error) && error.response) {
-          logger.error(error.response.data);
-          logger.error(error.response.status);
-          logger.error(error.response.headers);
-        }
       }
     }
   }
@@ -149,7 +139,12 @@ export async function getTodaysGames(todayDate: string): Promise<GameStartTimes>
  */
 async function getGameTimesYahoo(league: Leagues, todayDate: string): Promise<number[]> {
   const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-  const { data } = await axios.get<YahooGamesReponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, YahooGamesResponseSchema);
 
   // get the game timestamp for each game in the response
   const gamesJSON = data.league.games[0];
@@ -171,7 +166,12 @@ async function getGameTimesYahoo(league: Leagues, todayDate: string): Promise<nu
  */
 async function getGameTimesSportsnet(league: Leagues, todayDate: string): Promise<number[]> {
   const url = `https://mobile-statsv2.sportsnet.ca/scores?league=${league}&team=&day=${todayDate}`;
-  const { data } = await axios.get<SportsnetGamesResponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, SportsnetGamesResponseSchema);
 
   // get the game timestamp for each game in the response
   const gamesJSON = data.data[0].games;
@@ -209,7 +209,12 @@ export async function setTodaysPostponedTeams(leagues: Leagues[]): Promise<void>
 
 async function getPostponedTeamsYahoo(league: Leagues, todayDate: string): Promise<string[]> {
   const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-  const { data } = await axios.get<YahooGamesReponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, YahooGamesResponseSchema);
 
   const gamesJSON = data.league.games[0];
   const postponedTeams: string[] = [];

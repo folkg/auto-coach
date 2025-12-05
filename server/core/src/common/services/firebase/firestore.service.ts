@@ -1,4 +1,3 @@
-import { isAxiosError } from "axios";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {
   type DocumentData,
@@ -23,6 +22,7 @@ import {
   todayPacific,
 } from "../utilities.service.js";
 import { refreshYahooAccessToken } from "../yahooAPI/yahooAPI.service.js";
+import { isHttpError } from "../yahooAPI/yahooHttp.service.js";
 import { fetchStartingPlayers } from "../yahooAPI/yahooStartingPlayer.service.js";
 import { RevokedRefreshTokenError } from "./errors.js";
 import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
@@ -73,10 +73,13 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
       token = await refreshYahooAccessToken(docData.refreshToken);
     } catch (error: unknown) {
       logger.error(`Could not refresh access token for user: ${uid}`, error);
-      if (isAxiosError(error)) {
+      if (isHttpError(error)) {
+        const responseData = error.response?.data;
+        const parsedData =
+          typeof responseData === "string" ? JSON.parse(responseData) : responseData;
         if (
-          error.response?.data?.error === "invalid_grant" &&
-          error.response?.data?.error_description === "Invalid refresh token"
+          parsedData?.error === "invalid_grant" &&
+          parsedData?.error_description === "Invalid refresh token"
         ) {
           // Revoking the refresh token will force the user to re-authenticate with Yahoo
           // Send an email to the user to let them know that their access has expired
@@ -96,7 +99,7 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
           );
         }
         throw new Error(
-          `Could not refresh access token for user: ${uid} : ${error.response?.data.error} ${error.response?.data.error_description}`,
+          `Could not refresh access token for user: ${uid} : ${parsedData?.error} ${parsedData?.error_description}`,
         );
       }
       throw new Error(`Could not refresh access token for user: ${uid} : ${error}`);

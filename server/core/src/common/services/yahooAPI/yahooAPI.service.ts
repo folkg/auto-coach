@@ -1,4 +1,3 @@
-import { AxiosError, isAxiosError } from "axios";
 import dotenv from "dotenv";
 import { XMLParser } from "fast-xml-parser";
 import { logger } from "firebase-functions";
@@ -24,10 +23,12 @@ import {
   YahooAPIUserResponseSchema,
 } from "./interfaces/YahooAPIResponse.js";
 import {
-  httpGetAxios,
-  httpPostAxiosAuth,
-  httpPostAxiosUnauth,
-  httpPutAxios,
+  type HttpError,
+  httpGetYahoo,
+  httpPostYahooAuth,
+  httpPostYahooUnauth,
+  httpPutYahoo,
+  isHttpError,
 } from "./yahooHttp.service.js";
 
 dotenv.config();
@@ -70,7 +71,7 @@ export async function refreshYahooAccessToken(refreshToken: string): Promise<Tok
 
   try {
     const requestTime = Date.now();
-    const { data } = await httpPostAxiosUnauth<YahooAccessTokenResponse>(url, body);
+    const { data } = await httpPostYahooUnauth<YahooAccessTokenResponse>(url, body);
     // Get the token info from the response and save it to the database
     const accessToken = data.access_token;
     const tokenExpirationTime = data.expires_in * 1000 + requestTime;
@@ -82,7 +83,7 @@ export async function refreshYahooAccessToken(refreshToken: string): Promise<Tok
 
     return token;
   } catch (err: unknown) {
-    handleAxiosError(err, null);
+    handleHttpError(err, null);
   }
 }
 
@@ -115,12 +116,12 @@ export async function getRostersByTeamID(
   const url = `users;use_login=1/games;game_keys=nhl,nfl,nba,mlb/leagues;league_keys=${leagueKeys};out=settings/teams;out=transactions,games_played;transactions.types=waiver,pending_trade/roster;date=${date}/players;out=percent_started,percent_owned,ranks,opponent,starting_status;ranks=last30days,last14days,projected_next7days,projected_season_remaining,last4weeks,projected_week,projected_next4weeks;percent_started.cut_types=diamond;percent_owned.cut_types=diamond?format=json`;
 
   try {
-    const { data } = await httpGetAxios(url, uid);
+    const { data } = await httpGetYahoo(url, uid);
     assertType(data, YahooAPIUserResponseSchema);
     return data;
   } catch (err) {
     const errMessage = `Error in getRostersByTeamID. User: ${uid} Teams: ${teamKeys}`;
-    handleAxiosError(err, errMessage);
+    handleHttpError(err, errMessage);
   }
 }
 
@@ -154,12 +155,12 @@ export async function getTopAvailablePlayers(
   const url = `users;use_login=1/games;game_keys=nhl,nfl,nba,mlb/leagues;league_keys=${leagueKeys}/players;status=${availabilityStatus};${sort};out=ownership,percent_started,percent_owned,ranks,opponent,starting_status;ranks=last30days,last14days,projected_next7days,projected_season_remaining,last4weeks,projected_week,projected_next4weeks;percent_started.cut_types=diamond;percent_owned.cut_types=diamond?format=json`;
 
   try {
-    const { data } = await httpGetAxios(url, uid);
+    const { data } = await httpGetYahoo(url, uid);
     assertType(data, YahooAPIUserResponseSchema);
     return data;
   } catch (err) {
     const errMessage = `Error in getTopAvailablePlayers. User: ${uid} League: ${teamKeys}`;
-    handleAxiosError(err, errMessage);
+    handleHttpError(err, errMessage);
   }
 }
 
@@ -178,12 +179,12 @@ export async function getTopPlayersGeneral(
   const url = `/games;game_keys=${gameKey}/players;status=${availabilityStatus};position=${positions};${sort};count=25;start=${start};out=ownership,percent_started,percent_owned,ranks,opponent,starting_status;ranks=last30days,last14days,projected_next7days,projected_season_remaining,last4weeks,projected_week,projected_next4weeks;percent_started.cut_types=diamond;percent_owned.cut_types=diamond?format=json`;
 
   try {
-    const { data } = await httpGetAxios(url, uid);
+    const { data } = await httpGetYahoo(url, uid);
     assertType(data, YahooAPIPlayerResponseSchema);
     return data;
   } catch (err) {
     const errMessage = "Error in getTopPlayersGeneral.";
-    handleAxiosError(err, errMessage);
+    handleHttpError(err, errMessage);
   }
 }
 
@@ -197,7 +198,7 @@ export async function getTopPlayersGeneral(
  */
 export async function getUsersTeams(uid: string): Promise<YahooAPIUserResponse> {
   try {
-    const { data } = await httpGetAxios(
+    const { data } = await httpGetYahoo(
       "users;use_login=1/games;game_keys=nfl,nhl,nba,mlb/leagues;out=settings/teams;out=standings?format=json",
       uid,
     );
@@ -205,7 +206,7 @@ export async function getUsersTeams(uid: string): Promise<YahooAPIUserResponse> 
     return data;
   } catch (err) {
     const errMessage = `Error in getUserStandings. User: ${uid}`;
-    handleAxiosError(err, errMessage);
+    handleHttpError(err, errMessage);
   }
 }
 
@@ -239,13 +240,13 @@ export async function getStartingPlayers(
     // to get all the players. The first call will get the first 25 players.
     const urlBase = `league/${leagueKey}/players;position=${positions};sort=AR;start=`;
     const results = await Promise.all([
-      httpGetAxios(`${urlBase}0?format=json`, uid),
-      httpGetAxios(`${urlBase}25?format=json`, uid),
+      httpGetYahoo(`${urlBase}0?format=json`, uid),
+      httpGetYahoo(`${urlBase}25?format=json`, uid),
     ]);
     return results.map((result) => ensureType(result.data, YahooAPILeagueResponseSchema));
   } catch (err) {
     const errMessage = `Error in getStartingPlayers. User: ${uid} League: ${leagueKey} Position: ${positions}`;
-    handleAxiosError(err, errMessage);
+    handleHttpError(err, errMessage);
   }
 }
 
@@ -299,7 +300,7 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
 }
 
 async function putRosterChangePromise(uid: string, teamKey: string, xmlBody: string) {
-  await httpPutAxios(uid, `team/${teamKey}/roster?format=json`, xmlBody);
+  await httpPutYahoo(uid, `team/${teamKey}/roster?format=json`, xmlBody);
   logger.log(`Successfully put roster changes for team: ${teamKey} for user: ${uid}`);
   await updateFirestoreTimestamp(uid, teamKey);
 }
@@ -363,7 +364,7 @@ export async function postRosterAddDropTransaction(
 
   const leagueKey = teamKey.split(".t")[0];
   try {
-    await httpPostAxiosAuth(uid, `league/${leagueKey}/transactions`, xmlBody);
+    await httpPostYahooAuth(uid, `league/${leagueKey}/transactions`, xmlBody);
     logger.log(
       `Successfully posted ${transactionType} transaction for team: ${teamKey} for user: ${uid}.`,
     );
@@ -374,11 +375,11 @@ export async function postRosterAddDropTransaction(
       transaction,
     )}`;
     let throwError = true;
-    if (isAxiosError(err)) {
+    if (isHttpError(err)) {
       throwError = checkYahooErrorDescription(err, errMessage);
     }
     if (throwError) {
-      handleAxiosError(err, errMessage);
+      handleHttpError(err, errMessage);
     }
   }
   return null;
@@ -407,42 +408,38 @@ type TransactionData = {
 };
 
 // TODO: Handle from Yahoo data.error.description = 'Invalid cookie, please log in again.' status = 401
-// It seems we don't need to revoke the token. What do we need to do? Axios retry? Refetch access token?
+// It seems we don't need to revoke the token. What do we need to do? retry? Refetch access token?
 // See team 422.l.54890.t.13 for example. Error @ 2023-04-16 13:55:12.916 MDT
 
 /**
- * Handle the axios error
+ * Handle HTTP errors
  *
- * @param {AxiosError} err - The axios error
+ * @param {unknown} err - The error
  * @param {string} message - The message to throw
  */
-function handleAxiosError(err: unknown, message: string | null): never {
+function handleHttpError(err: unknown, message: string | null): never {
   const errMessage = message ? `${message}. ` : "";
   if (err instanceof RevokedRefreshTokenError) {
     throw err;
   }
-  if (isAxiosError(err) && err.response) {
+  if (isHttpError(err) && err.response) {
     logger.error(errMessage, JSON.stringify(err), JSON.stringify(err.response.data, null, 2));
-    const enrichedError = new AxiosError(`${errMessage}. ${err.message}`);
-    enrichedError.response = err.response;
+    const enrichedError = new Error(`${errMessage}${err.message}`);
     throw enrichedError;
-  }
-  if (isAxiosError(err) && err.request) {
-    logger.error(errMessage, JSON.stringify(err.request));
-    throw new Error(`${errMessage}${err.request}`);
   }
   const error = err as Error;
   logger.error(errMessage, error.message);
   throw new Error(`${errMessage}${error.message}`);
 }
+
 /**
  * Check the Yahoo error description to see if it is a known error that we can handle
  *
- * @param {AxiosError} err - The axios error
+ * @param {HttpError} err - The HTTP error
  * @param {string} errMsg - The message to log
  * @return {boolean} - True if we should throw the error, false if we should not
  */
-function checkYahooErrorDescription(err: AxiosError, errMsg: string): boolean {
+function checkYahooErrorDescription(err: HttpError, errMsg: string): boolean {
   let result = true;
   const xmlString: string = err.response?.data as string;
   const parser = new XMLParser();
