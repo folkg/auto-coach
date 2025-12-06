@@ -27,6 +27,7 @@ const mockSetLineupRequest: SetLineupRequest = {
   userId: "test-user",
   teamKey: "test.team.1",
   lineupChanges: [],
+  skipGamesCheck: false,
 };
 
 const mockWeeklyTransactionsRequest: WeeklyTransactionsRequest = {

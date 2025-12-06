@@ -2,6 +2,7 @@ import type { FirestoreTeam } from "@common/types/team.js";
 import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
 
 import { createMock } from "@common/utilities/createMock.js";
+import { AuthorizationError } from "@common/utilities/error.js";
 import { Effect, Either } from "effect";
 import { describe, expect, it, vi } from "vitest";
 
@@ -160,11 +161,11 @@ describe("ExecutionService", () => {
       const mockTeam = createMockFirestoreTeam();
 
       // When the inner Effect.runPromise call throws, it gets caught by tryPromise's catch
-      // We simulate this by returning an Effect that throws when run
+      // We simulate this by returning an Effect that fails with AuthorizationError
       mockSetUsersLineup.mockImplementation(() => {
-        const error = new Error("RevokedRefreshTokenError: Token was revoked");
-        error.name = "SetLineupError";
-        return Effect.fail(error);
+        return Effect.fail(
+          new AuthorizationError("Yahoo API authentication failed (HTTP 401)", 401, "test-user-id"),
+        );
       });
 
       const request: ExecuteMutationRequest = {

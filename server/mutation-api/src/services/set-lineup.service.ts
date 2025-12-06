@@ -1,6 +1,12 @@
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
 
+import {
+  ApiRateLimitError,
+  AuthorizationError,
+  isApiRateLimitError,
+  isAuthorizationError,
+} from "@common/utilities/error.js";
 import { Data, Effect } from "effect";
 
 import type { TopAvailablePlayers } from "../../../core/src/common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
@@ -19,10 +25,6 @@ import {
   isTodayPacific,
 } from "../../../core/src/common/services/utilities.service.js";
 import { putLineupChanges } from "../../../core/src/common/services/yahooAPI/yahooAPI.service.js";
-import {
-  isYahooRateLimitError,
-  type YahooRateLimitError,
-} from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import { fetchRostersFromYahoo } from "../../../core/src/common/services/yahooAPI/yahooLineupBuilder.service.js";
 import {
   initStartingGoalies,
@@ -42,32 +44,28 @@ export class SetLineupError extends Data.TaggedError("SetLineupError")<{
   readonly uid?: string;
 }> {}
 
-export class SetLineupRateLimitError extends Data.TaggedError("SetLineupRateLimitError")<{
-  readonly message: string;
-  readonly statusCode: number;
-  readonly retryAfter: number | undefined;
-  readonly uid?: string;
-}> {}
+export { ApiRateLimitError, AuthorizationError };
 
-export type SetLineupServiceError = SetLineupError | SetLineupRateLimitError;
-
-function toSetLineupRateLimitError(
-  error: YahooRateLimitError,
-  uid?: string,
-): SetLineupRateLimitError {
-  return new SetLineupRateLimitError({
-    message: error.message,
-    statusCode: error.statusCode,
-    retryAfter: error.retryAfter,
-    uid,
-  });
-}
+export type SetLineupServiceError = SetLineupError | ApiRateLimitError | AuthorizationError;
 
 function toErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
   return String(error);
+}
+
+function wrapError(error: unknown, message: string, uid?: string): SetLineupServiceError {
+  if (isApiRateLimitError(error)) {
+    return error;
+  }
+  if (isAuthorizationError(error)) {
+    return error;
+  }
+  return new SetLineupError({
+    message: `${message}: ${toErrorMessage(error)}`,
+    uid,
+  });
 }
 
 /**
@@ -95,15 +93,7 @@ export function setUsersLineup(
     // Step 2: Start parallel initialization of top available players and starting players
     const topAvailablePlayersEffect = Effect.tryPromise({
       try: () => getTopAvailablePlayers(firestoreTeamsToSet, uid),
-      catch: (error: unknown): SetLineupServiceError => {
-        if (isYahooRateLimitError(error)) {
-          return toSetLineupRateLimitError(error, uid);
-        }
-        return new SetLineupError({
-          message: `Failed to get top available players: ${toErrorMessage(error)}`,
-          uid,
-        });
-      },
+      catch: (error) => wrapError(error, "Failed to get top available players", uid),
     });
 
     const initStartingPlayersEffect = initializeGlobalStartingPlayers(firestoreTeamsToSet);
@@ -120,15 +110,7 @@ export function setUsersLineup(
           "",
           postponedTeams,
         ),
-      catch: (error: unknown): SetLineupServiceError => {
-        if (isYahooRateLimitError(error)) {
-          return toSetLineupRateLimitError(error, uid);
-        }
-        return new SetLineupError({
-          message: `Failed to fetch rosters from Yahoo: ${toErrorMessage(error)}`,
-          uid,
-        });
-      },
+      catch: (error) => wrapError(error, "Failed to fetch rosters from Yahoo", uid),
     });
 
     if (usersTeams.length === 0) {
@@ -142,7 +124,7 @@ export function setUsersLineup(
     Effect.runFork(
       Effect.tryPromise({
         try: () => patchTeamChangesInFirestore(usersTeams, firestoreTeamsToSet),
-        catch: (error: unknown) =>
+        catch: (error) =>
           new SetLineupError({
             message: `Failed to patch team changes: ${toErrorMessage(error)}`,
             uid,
@@ -205,18 +187,9 @@ function processLineupChanges(
     }
 
     if (allLineupChanges.length > 0) {
-      // TODO: It is really this part that should be put onto a queue and then rate limited...
       yield* Effect.tryPromise({
         try: () => putLineupChanges(allLineupChanges, uid),
-        catch: (error: unknown): SetLineupServiceError => {
-          if (isYahooRateLimitError(error)) {
-            return toSetLineupRateLimitError(error, uid);
-          }
-          return new SetLineupError({
-            message: `Failed to put lineup changes: ${toErrorMessage(error)}`,
-            uid,
-          });
-        },
+        catch: (error) => wrapError(error, "Failed to put lineup changes", uid),
       });
     }
 
@@ -225,7 +198,7 @@ function processLineupChanges(
       (teamKey: string) =>
         Effect.tryPromise({
           try: () => updateFirestoreTimestamp(uid, teamKey),
-          catch: (error: unknown) =>
+          catch: (error) =>
             new SetLineupError({
               message: `Failed to update timestamp for ${teamKey}: ${toErrorMessage(error)}`,
               uid,
@@ -265,15 +238,7 @@ export function processTransactionsForIntradayTeams(
       const teamKeys = originalTeams.map((t) => t.team_key);
       result = yield* Effect.tryPromise({
         try: () => fetchRostersFromYahoo(teamKeys, uid, "", postponedTeams),
-        catch: (error: unknown): SetLineupServiceError => {
-          if (isYahooRateLimitError(error)) {
-            return toSetLineupRateLimitError(error, uid);
-          }
-          return new SetLineupError({
-            message: `Failed to re-fetch rosters: ${toErrorMessage(error)}`,
-            uid,
-          });
-        },
+        catch: (error) => wrapError(error, "Failed to re-fetch rosters", uid),
       });
       result = enrichTeamsWithFirestoreSettings(result, firestoreTeams);
     }
@@ -298,15 +263,7 @@ export function processTransactionsForNextDayTeams(
     const { dropPlayerTransactions: potentialDrops, addSwapTransactions: potentialAddSwaps } =
       yield* Effect.tryPromise({
         try: () => createPlayersTransactions([...teams], topAvailablePlayerCandidates),
-        catch: (error: unknown): SetLineupServiceError => {
-          if (isYahooRateLimitError(error)) {
-            return toSetLineupRateLimitError(error, uid);
-          }
-          return new SetLineupError({
-            message: `Failed to create player transactions: ${toErrorMessage(error)}`,
-            uid,
-          });
-        },
+        catch: (error) => wrapError(error, "Failed to create player transactions", uid),
       });
 
     if (!(potentialDrops || potentialAddSwaps)) {
@@ -331,15 +288,7 @@ export function processTomorrowsTransactions(
 
     let tomorrowsTeams = yield* Effect.tryPromise({
       try: () => fetchRostersFromYahoo(teamKeys, uid, tomorrowsDateAsString()),
-      catch: (error: unknown): SetLineupServiceError => {
-        if (isYahooRateLimitError(error)) {
-          return toSetLineupRateLimitError(error, uid);
-        }
-        return new SetLineupError({
-          message: `Failed to fetch tomorrow's rosters: ${toErrorMessage(error)}`,
-          uid,
-        });
-      },
+      catch: (error) => wrapError(error, "Failed to fetch tomorrow's rosters", uid),
     });
 
     tomorrowsTeams = enrichTeamsWithFirestoreSettings(tomorrowsTeams, firestoreTeams);
@@ -373,15 +322,7 @@ export function processAutomaticTransactions(
       {
         try: () =>
           createPlayersTransactions([...teamsWithAutoTransactions], topAvailablePlayerCandidates),
-        catch: (error: unknown): SetLineupServiceError => {
-          if (isYahooRateLimitError(error)) {
-            return toSetLineupRateLimitError(error, uid);
-          }
-          return new SetLineupError({
-            message: `Failed to create transactions: ${toErrorMessage(error)}`,
-            uid,
-          });
-        },
+        catch: (error) => wrapError(error, "Failed to create transactions", uid),
       },
     );
 
@@ -393,15 +334,7 @@ export function processAutomaticTransactions(
 
     const result = yield* Effect.tryPromise({
       try: () => postTransactions(transactionData, uid),
-      catch: (error: unknown): SetLineupServiceError => {
-        if (isYahooRateLimitError(error)) {
-          return toSetLineupRateLimitError(error, uid);
-        }
-        return new SetLineupError({
-          message: `Failed to post transactions: ${toErrorMessage(error)}`,
-          uid,
-        });
-      },
+      catch: (error) => wrapError(error, "Failed to post transactions", uid),
     });
 
     return result.success;
@@ -428,15 +361,7 @@ export function processManualTransactions(
 
     const { dropPlayerTransactions, addSwapTransactions } = yield* Effect.tryPromise({
       try: () => createPlayersTransactions([...teamsToCheck], topAvailablePlayerCandidates),
-      catch: (error: unknown): SetLineupServiceError => {
-        if (isYahooRateLimitError(error)) {
-          return toSetLineupRateLimitError(error, uid);
-        }
-        return new SetLineupError({
-          message: `Failed to create manual transactions: ${toErrorMessage(error)}`,
-          uid,
-        });
-      },
+      catch: (error) => wrapError(error, "Failed to create manual transactions", uid),
     });
 
     const proposedTransactions: PlayerTransaction[] = (dropPlayerTransactions ?? [])
@@ -465,14 +390,7 @@ export function initializeGlobalStartingPlayers(
       effects.push(
         Effect.tryPromise({
           try: () => initStartingGoalies(),
-          catch: (error: unknown): SetLineupServiceError => {
-            if (isYahooRateLimitError(error)) {
-              return toSetLineupRateLimitError(error);
-            }
-            return new SetLineupError({
-              message: `Failed to init starting goalies: ${toErrorMessage(error)}`,
-            });
-          },
+          catch: (error) => wrapError(error, "Failed to init starting goalies"),
         }),
       );
     }
@@ -481,14 +399,7 @@ export function initializeGlobalStartingPlayers(
       effects.push(
         Effect.tryPromise({
           try: () => initStartingPitchers(),
-          catch: (error: unknown): SetLineupServiceError => {
-            if (isYahooRateLimitError(error)) {
-              return toSetLineupRateLimitError(error);
-            }
-            return new SetLineupError({
-              message: `Failed to init starting pitchers: ${toErrorMessage(error)}`,
-            });
-          },
+          catch: (error) => wrapError(error, "Failed to init starting pitchers"),
         }),
       );
     }

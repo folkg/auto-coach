@@ -99,6 +99,7 @@ describe("DispatchService Integration Tests", () => {
             userId: "test-user",
             teamKey: "test.t.123",
             lineupChanges: [],
+            skipGamesCheck: false,
           })
           .pipe(Effect.provide(testLayer));
 
@@ -135,6 +136,7 @@ describe("DispatchService Integration Tests", () => {
             userId: "test-user",
             teamKey: "test.t.123",
             lineupChanges: [],
+            skipGamesCheck: false,
           })
           .pipe(Effect.provide(testLayer));
 
@@ -219,6 +221,7 @@ describe("DispatchService Integration Tests", () => {
             userId: "test-user",
             teamKey: "test.t.123",
             lineupChanges: [],
+            skipGamesCheck: false,
           })
           .pipe(Effect.provide(testLayer));
 
@@ -255,6 +258,7 @@ describe("DispatchService Integration Tests", () => {
             userId: "test-user",
             teamKey: "test.t.123",
             lineupChanges: [],
+            skipGamesCheck: false,
           })
           .pipe(Effect.provide(testLayer));
 

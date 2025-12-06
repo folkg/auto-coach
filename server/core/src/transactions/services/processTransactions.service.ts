@@ -7,6 +7,7 @@ import type {
   TransactionType,
 } from "@common/types/transactions.js";
 
+import { isApiRateLimitError } from "@common/utilities/error.js";
 import { logger } from "firebase-functions";
 import assert from "node:assert";
 
@@ -22,7 +23,6 @@ import {
   postRosterAddDropTransaction,
   putLineupChanges,
 } from "../../common/services/yahooAPI/yahooAPI.service.js";
-import { isYahooRateLimitError } from "../../common/services/yahooAPI/yahooHttp.service.js";
 import { fetchRostersFromYahoo } from "../../common/services/yahooAPI/yahooLineupBuilder.service.js";
 import {
   fetchTopAvailablePlayersFromYahoo,
@@ -393,7 +393,7 @@ async function postTransactionsHelper(
         postedTransactions.push(transaction);
       }
     } else if (result.status === "rejected") {
-      if (isYahooRateLimitError(result.reason)) {
+      if (isApiRateLimitError(result.reason)) {
         throw result.reason;
       }
 

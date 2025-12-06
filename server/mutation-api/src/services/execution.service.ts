@@ -1,6 +1,7 @@
 import type { FirestoreTeam } from "@common/types/team.js";
 import type { Firestore } from "@google-cloud/firestore";
 
+import { isApiRateLimitError, isAuthorizationError } from "@common/utilities/error.js";
 import { Context, Effect, Layer, Schema } from "effect";
 
 import type { MutationTask } from "../types/schemas.js";
@@ -8,7 +9,7 @@ import type { RateLimiterService } from "./rate-limiter.service.js";
 
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
 import {
-  RateLimitError as ApiRateLimitError,
+  RateLimitError as EffectRateLimitError,
   DomainError,
   type ExecuteMutationRequest,
   type ExecuteMutationResponse,
@@ -54,7 +55,7 @@ export class ExecutionServiceImpl implements ExecutionService {
       yield* self.rateLimiter.checkRateLimit(task.userId).pipe(
         Effect.mapError(
           (error) =>
-            new ApiRateLimitError({
+            new EffectRateLimitError({
               message: error.message,
               code: "RATE_LIMIT_EXCEEDED",
               retryAfter: error.retryAfter,
@@ -66,7 +67,7 @@ export class ExecutionServiceImpl implements ExecutionService {
       yield* self.rateLimiter.checkCircuitBreaker().pipe(
         Effect.mapError(
           (error) =>
-            new ApiRateLimitError({
+            new EffectRateLimitError({
               message: error.message,
               code: "CIRCUIT_BREAKER_OPEN",
               retryAfter: 60,
@@ -78,7 +79,7 @@ export class ExecutionServiceImpl implements ExecutionService {
       yield* self.rateLimiter.consumeToken(task.userId).pipe(
         Effect.mapError(
           (error) =>
-            new ApiRateLimitError({
+            new EffectRateLimitError({
               message: error.message,
               code: "TOKEN_CONSUMPTION_FAILED",
             }),
@@ -203,12 +204,22 @@ export class ExecutionServiceImpl implements ExecutionService {
       // Call the set-lineup service
       yield* setUsersLineup(uid, teams as readonly FirestoreTeam[]).pipe(
         Effect.catchAll((error): Effect.Effect<void, MutationError> => {
-          if (error._tag === "SetLineupRateLimitError") {
+          if (isApiRateLimitError(error)) {
             return Effect.fail(
-              new ApiRateLimitError({
+              new EffectRateLimitError({
                 message: error.message,
                 code: "YAHOO_RATE_LIMIT",
                 retryAfter: error.retryAfter,
+              }),
+            );
+          }
+
+          if (isAuthorizationError(error)) {
+            return Effect.fail(
+              new DomainError({
+                message: error.message,
+                code: "REVOKED_REFRESH_TOKEN",
+                userId: uid,
               }),
             );
           }
@@ -225,26 +236,6 @@ export class ExecutionServiceImpl implements ExecutionService {
           }
 
           const errorMessage = error instanceof Error ? error.message : String(error);
-
-          // TODO: This should be baked into the http layer, we can specificaly check for auth errors at the router level
-          // Check for various auth-related errors that indicate revoked/expired tokens
-          const isAuthError =
-            errorMessage.includes("RevokedRefreshTokenError") ||
-            errorMessage.includes("Forbidden access") ||
-            errorMessage.includes("Invalid cookie") ||
-            errorMessage.includes("please log in again") ||
-            errorMessage.includes('status":401') ||
-            errorMessage.includes('status":403');
-
-          if (isAuthError) {
-            return Effect.fail(
-              new DomainError({
-                message: errorMessage,
-                code: "REVOKED_REFRESH_TOKEN",
-                userId: uid,
-              }),
-            );
-          }
 
           return Effect.fail(
             new SystemError({
@@ -277,9 +268,9 @@ export class ExecutionServiceImpl implements ExecutionService {
       // Call the weekly-transactions service
       yield* performWeeklyLeagueTransactions(uid, teams as readonly FirestoreTeam[]).pipe(
         Effect.catchAll((error): Effect.Effect<void, MutationError> => {
-          if (error._tag === "WeeklyTransactionsRateLimitError") {
+          if (isApiRateLimitError(error)) {
             return Effect.fail(
-              new ApiRateLimitError({
+              new EffectRateLimitError({
                 message: error.message,
                 code: "YAHOO_RATE_LIMIT",
                 retryAfter: error.retryAfter,
@@ -287,7 +278,18 @@ export class ExecutionServiceImpl implements ExecutionService {
             );
           }
 
+          if (isAuthorizationError(error)) {
+            return Effect.fail(
+              new DomainError({
+                message: error.message,
+                code: "REVOKED_REFRESH_TOKEN",
+                userId: uid,
+              }),
+            );
+          }
+
           const errorMessage = error instanceof Error ? error.message : String(error);
+
           return Effect.fail(
             new SystemError({
               message: `Weekly transactions failed: ${errorMessage}`,

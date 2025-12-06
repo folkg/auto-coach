@@ -1,3 +1,4 @@
+import { ApiRateLimitError, AuthorizationError } from "@common/utilities/error.js";
 import { logger } from "firebase-functions";
 
 import { loadYahooAccessToken } from "../firebase/firestore.service.js";
@@ -6,6 +7,9 @@ const API_URL = "https://fantasysports.yahooapis.com/fantasy/v2/";
 
 /** Rate limit status codes from Yahoo API */
 const RATE_LIMIT_STATUS_CODES = [429, 999];
+
+/** Auth error status codes from Yahoo API */
+const AUTH_ERROR_STATUS_CODES = [401, 403];
 
 interface HttpResponse<T> {
   readonly data: T;
@@ -29,33 +33,18 @@ export class HttpError extends Error {
 }
 
 /**
- * Error thrown when Yahoo API returns a rate limit response
- */
-export class YahooRateLimitError extends Error {
-  readonly statusCode: number;
-  readonly retryAfter: number | undefined;
-
-  constructor(message: string, statusCode: number, retryAfter?: number) {
-    super(message);
-    this.name = "YahooRateLimitError";
-    this.statusCode = statusCode;
-    this.retryAfter = retryAfter;
-  }
-}
-
-/**
  * Type guard for HttpError
  */
 export function isHttpError(error: unknown): error is HttpError {
   return error instanceof HttpError;
 }
 
-export function isYahooRateLimitError(error: unknown): error is YahooRateLimitError {
-  return error instanceof YahooRateLimitError;
-}
-
 function isRateLimitStatusCode(status: number): boolean {
   return RATE_LIMIT_STATUS_CODES.includes(status);
+}
+
+function isAuthErrorStatusCode(status: number): boolean {
+  return AUTH_ERROR_STATUS_CODES.includes(status);
 }
 
 function parseRetryAfterHeader(response: Response): number | undefined {
@@ -83,10 +72,22 @@ async function handleFetchResponse<T>(response: Response): Promise<HttpResponse<
         url: response.url,
       });
 
-      throw new YahooRateLimitError(
+      throw new ApiRateLimitError(
         `Yahoo API rate limit exceeded (HTTP ${response.status})`,
         response.status,
         retryAfter,
+      );
+    }
+
+    if (isAuthErrorStatusCode(response.status)) {
+      logger.warn("Yahoo API auth error detected", {
+        statusCode: response.status,
+        url: response.url,
+      });
+
+      throw new AuthorizationError(
+        `Yahoo API authentication failed (HTTP ${response.status})`,
+        response.status,
       );
     }
 

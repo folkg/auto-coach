@@ -1,10 +1,15 @@
 import type { FirestoreTeam } from "@common/types/team.js";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 
+import {
+  ApiRateLimitError,
+  AuthorizationError,
+  isApiRateLimitError,
+  isAuthorizationError,
+} from "@common/utilities/error.js";
 import { Effect, Schema } from "effect";
 
 import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
-import { isYahooRateLimitError } from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
 import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";
 import { processTomorrowsTransactions } from "./set-lineup.service.js";
@@ -18,19 +23,26 @@ export class WeeklyTransactionsError extends Schema.TaggedError<WeeklyTransactio
   },
 ) {}
 
-export class WeeklyTransactionsRateLimitError extends Schema.TaggedError<WeeklyTransactionsRateLimitError>()(
-  "WeeklyTransactionsRateLimitError",
-  {
-    message: Schema.String,
-    statusCode: Schema.Number,
-    retryAfter: Schema.optional(Schema.Number),
-    uid: Schema.optional(Schema.String),
-  },
-) {}
+export { ApiRateLimitError, AuthorizationError };
 
 export type WeeklyTransactionsServiceError =
   | WeeklyTransactionsError
-  | WeeklyTransactionsRateLimitError;
+  | ApiRateLimitError
+  | AuthorizationError;
+
+function wrapError(error: unknown, message: string, uid?: string): WeeklyTransactionsServiceError {
+  if (isApiRateLimitError(error)) {
+    return error;
+  }
+  if (isAuthorizationError(error)) {
+    return error;
+  }
+  return WeeklyTransactionsError.make({
+    message,
+    uid,
+    error,
+  });
+}
 
 /**
  * Schedules weekly league transactions for all users with teams that have
@@ -101,24 +113,10 @@ export const performWeeklyLeagueTransactions = Effect.fn(
   // Step 1: Fetch top available players for all teams
   const topAvailablePlayerCandidates = yield* Effect.tryPromise({
     try: () => getTopAvailablePlayers([...firestoreTeams], uid),
-    catch: (error): WeeklyTransactionsServiceError => {
-      if (isYahooRateLimitError(error)) {
-        return WeeklyTransactionsRateLimitError.make({
-          message: error.message,
-          statusCode: error.statusCode,
-          retryAfter: error.retryAfter,
-          uid,
-        });
-      }
-      return WeeklyTransactionsError.make({
-        message: "Failed to get top available players",
-        uid,
-        error,
-      });
-    },
+    catch: (error) => wrapError(error, "Failed to get top available players", uid),
   });
 
-  // Step 2: Process tomorrow's transactions
+  // Step 2: Process tomorrow's transactions - errors propagate directly
   yield* processTomorrowsTransactions(
     firestoreTeams,
     firestoreTeams,
@@ -126,15 +124,12 @@ export const performWeeklyLeagueTransactions = Effect.fn(
     topAvailablePlayerCandidates,
   ).pipe(
     Effect.catchAll((setLineupError): Effect.Effect<void, WeeklyTransactionsServiceError> => {
-      if (setLineupError._tag === "SetLineupRateLimitError") {
-        return Effect.fail(
-          WeeklyTransactionsRateLimitError.make({
-            message: setLineupError.message,
-            statusCode: setLineupError.statusCode,
-            retryAfter: setLineupError.retryAfter,
-            uid,
-          }),
-        );
+      // ApiRateLimitError and AuthorizationError propagate directly
+      if (isApiRateLimitError(setLineupError)) {
+        return Effect.fail(setLineupError);
+      }
+      if (isAuthorizationError(setLineupError)) {
+        return Effect.fail(setLineupError);
       }
       return Effect.fail(
         WeeklyTransactionsError.make({

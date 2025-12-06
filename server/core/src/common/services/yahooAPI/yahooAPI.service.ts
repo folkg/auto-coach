@@ -6,6 +6,7 @@ import type {
 } from "@common/types/transactions.js";
 
 import { assertType, ensureType } from "@common/utilities/checks.js";
+import { isApiRateLimitError, isAuthorizationError } from "@common/utilities/error.js";
 import dotenv from "dotenv";
 import { XMLParser } from "fast-xml-parser";
 import { logger } from "firebase-functions";
@@ -31,7 +32,6 @@ import {
   httpPostYahooUnauth,
   httpPutYahoo,
   isHttpError,
-  isYahooRateLimitError,
 } from "./yahooHttp.service.js";
 
 dotenv.config();
@@ -288,7 +288,7 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
     try {
       await putRosterChangePromise(uid, teamKey, xmlBody);
     } catch (err) {
-      if (isYahooRateLimitError(err)) {
+      if (isApiRateLimitError(err) || isAuthorizationError(err)) {
         throw err;
       }
       logger.error(JSON.stringify(err));
@@ -372,8 +372,8 @@ export async function postRosterAddDropTransaction(
     );
     logger.log("Transaction data:", { data });
     return transaction;
-  } catch (err: unknown) {
-    if (isYahooRateLimitError(err)) {
+  } catch (err) {
+    if (isApiRateLimitError(err) || isAuthorizationError(err)) {
       throw err;
     }
 
@@ -426,7 +426,7 @@ type TransactionData = {
 function handleHttpError(err: unknown, message: string | null): never {
   const errMessage = message ? `${message}. ` : "";
 
-  if (isYahooRateLimitError(err)) {
+  if (isApiRateLimitError(err) || isAuthorizationError(err)) {
     throw err;
   }
 
