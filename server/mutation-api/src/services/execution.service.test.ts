@@ -155,13 +155,12 @@ describe("ExecutionService", () => {
       expect(mockSetUsersLineup).toHaveBeenCalledWith("test-user-id", [mockTeam]);
     });
 
-    it("handles RevokedRefreshTokenError gracefully without failing", async () => {
+    it("handles AuthorizationError as retryable system error", async () => {
       // Arrange
       const { executionService } = setupTest();
       const mockTeam = createMockFirestoreTeam();
 
-      // When the inner Effect.runPromise call throws, it gets caught by tryPromise's catch
-      // We simulate this by returning an Effect that fails with AuthorizationError
+      // Yahoo 401/403 after successful token fetch is treated as transient/retryable
       mockSetUsersLineup.mockImplementation(() => {
         return Effect.fail(
           new AuthorizationError("Yahoo API authentication failed (HTTP 401)", 401, "test-user-id"),
@@ -187,12 +186,14 @@ describe("ExecutionService", () => {
         Effect.either(executionService.executeMutation(request)),
       );
 
-      // Assert - Should complete successfully, not fail
-      expect(Either.isRight(result)).toBe(true);
-      if (Either.isRight(result)) {
-        expect(result.right.success).toBe(true);
-        expect(result.right.status).toBe("COMPLETED");
-        expect(result.right.message).toContain("token revoked");
+      // Assert - Should fail with retryable SystemError
+      expect(Either.isLeft(result)).toBe(true);
+      if (Either.isLeft(result)) {
+        expect(result.left._tag).toBe("SystemError");
+        expect(result.left.code).toBe("YAHOO_AUTH_ERROR");
+        if (result.left._tag === "SystemError") {
+          expect(result.left.retryable).toBe(true);
+        }
       }
     });
 

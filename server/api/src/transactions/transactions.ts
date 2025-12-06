@@ -1,5 +1,4 @@
 import { TransactionsData } from "@common/types/transactions";
-import { getErrorMessage } from "@common/utilities/error";
 import {
   getTransactionSuggestions,
   processSelectedTransactions,
@@ -8,6 +7,8 @@ import { arktypeValidator } from "@hono/arktype-validator";
 import { Hono } from "hono";
 
 import type { AuthContext } from "..";
+
+import { handleRouteError } from "../yahooAuthErrorHandler";
 
 export const transactionsRoute = new Hono<AuthContext>()
 
@@ -22,7 +23,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const data = await getTransactionSuggestions(uid);
       return c.json(data);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   })
 
@@ -39,7 +40,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const result = await processSelectedTransactions(transactions, uid);
       return c.json(result);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   });
 

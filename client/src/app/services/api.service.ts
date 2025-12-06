@@ -5,6 +5,7 @@ import type { PostTransactionsResult, TransactionsData } from "@common/types/tra
 import { Injectable, inject } from "@angular/core";
 import { Schedule } from "@common/types/Schedule";
 import { isType } from "@common/utilities/checks";
+import { type } from "arktype";
 
 import { HONO_CLIENT } from "../hono-client-config";
 
@@ -15,29 +16,21 @@ export class APIService {
   private readonly client = inject(HONO_CLIENT);
 
   async fetchTeamsYahoo(): Promise<ClientTeam[]> {
-    try {
-      const response = await this.client.api.teams.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch teams: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching Yahoo teams:", error);
-      throw error;
+    const response = await this.client.api.teams.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
   async fetchTeamsPartial(): Promise<FirestoreTeam[]> {
-    try {
-      const response = await this.client.api.teams.partial.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch teams: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching partial teams:", error);
-      throw error;
+    const response = await this.client.api.teams.partial.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
   async fetchSchedules(): Promise<Schedule> {
@@ -68,31 +61,23 @@ export class APIService {
   }
 
   async fetchTransactions(): Promise<TransactionsData> {
-    try {
-      const response = await this.client.api.transactions.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      throw error;
+    const response = await this.client.api.transactions.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
   async postTransactions(transactions: TransactionsData): Promise<PostTransactionsResult> {
-    try {
-      const response = await this.client.api.transactions.$post({
-        json: transactions,
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to post transactions: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error posting transactions:", error);
-      throw error;
+    const response = await this.client.api.transactions.$post({
+      json: transactions,
+    });
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
   async sendFeedbackEmail(data: FeedbackData): Promise<boolean> {
@@ -140,4 +125,32 @@ export class APIService {
       throw error;
     }
   }
+}
+
+const ErrorResponseBody = type({
+  "code?": "string",
+  "error?": "string",
+  "message?": "string",
+});
+
+async function extractErrorCode(response: Response): Promise<string> {
+  try {
+    const json: unknown = await response.json();
+    const result = ErrorResponseBody(json);
+    if (result instanceof type.errors) {
+      return response.statusText;
+    }
+    if (result.code) {
+      return result.code;
+    }
+    if (result.error) {
+      return result.error;
+    }
+    if (result.message) {
+      return result.message;
+    }
+  } catch {
+    // fall through to statusText
+  }
+  return response.statusText;
 }

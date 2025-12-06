@@ -28,6 +28,8 @@ import {
 import { shareLatest } from "../shared/utils/shareLatest";
 import { APIService } from "./api.service";
 
+const YAHOO_AUTH_REQUIRED_CODE = "YAHOO_AUTH_REQUIRED";
+
 @Injectable({
   providedIn: "root",
 })
@@ -140,8 +142,14 @@ export class SyncTeamsService {
     try {
       return this.api.fetchTeamsYahoo();
     } catch (err) {
-      // Check for specific error messages that might indicate token expiry
       const errorMsg = getErrorMessage(err);
+
+      // Check for structured Yahoo auth error code first
+      if (errorMsg.includes(YAHOO_AUTH_REQUIRED_CODE)) {
+        throw new Error("Refresh Token Error");
+      }
+
+      // Fallback heuristic for legacy/other auth issues
       if (errorMsg.includes("token") || errorMsg.includes("auth")) {
         throw new Error("Refresh Token Error");
       }
@@ -163,7 +171,12 @@ export class SyncTeamsService {
 
   private handleFetchTeamsError(err: unknown): void {
     const errorMessage = getErrorMessage(err);
-    if (errorMessage === "Refresh Token Error") {
+
+    // Check for Yahoo auth required - either our translated error or direct code
+    const isYahooAuthError =
+      errorMessage === "Refresh Token Error" || errorMessage.includes(YAHOO_AUTH_REQUIRED_CODE);
+
+    if (isYahooAuthError) {
       this.errorDialog(
         "Your teams are currently not being managed!\n" +
           "Please sign in again below to grant access for Fantasy AutoCoach to continue managing your teams.",

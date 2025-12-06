@@ -1,4 +1,3 @@
-import { getErrorMessage } from "@common/utilities/error";
 import {
   getUserTeams,
   getUserTeamsPartial,
@@ -12,6 +11,8 @@ import { type } from "arktype";
 import { Hono } from "hono";
 
 import type { AuthContext } from "../index";
+
+import { handleRouteError } from "../yahooAuthErrorHandler";
 
 // Define validators for request bodies
 const BooleanValueSchema = type({
@@ -32,7 +33,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeams(uid);
       return c.json(teams);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   })
 
@@ -47,7 +48,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeamsPartial(uid);
       return c.json(teams);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   })
 
@@ -65,7 +66,7 @@ const teamsRouter = new Hono<AuthContext>()
       const success = await updateTeamLineupSetting(uid, teamKey, value);
       return c.json({ success });
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   })
 
@@ -83,7 +84,7 @@ const teamsRouter = new Hono<AuthContext>()
       const success = await updateTeamLineupPaused(uid, teamKey, value);
       return c.json({ success });
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error);
     }
   });
 

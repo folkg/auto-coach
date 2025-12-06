@@ -58,7 +58,7 @@ function parseRetryAfterHeader(response: Response): number | undefined {
   return undefined;
 }
 
-async function handleFetchResponse<T>(response: Response): Promise<HttpResponse<T>> {
+async function handleFetchResponse<T>(response: Response, uid?: string): Promise<HttpResponse<T>> {
   if (!response.ok) {
     const errorData = await response.text();
 
@@ -83,11 +83,13 @@ async function handleFetchResponse<T>(response: Response): Promise<HttpResponse<
       logger.warn("Yahoo API auth error detected", {
         statusCode: response.status,
         url: response.url,
+        userId: uid,
       });
 
       throw new AuthorizationError(
         `Yahoo API authentication failed (HTTP ${response.status})`,
         response.status,
+        uid,
       );
     }
 
@@ -124,7 +126,7 @@ export async function httpGetYahoo<T>(url: string, uid?: string): Promise<HttpRe
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  return handleFetchResponse<T>(response);
+  return handleFetchResponse<T>(response, uid);
 }
 
 /**
@@ -163,7 +165,7 @@ export async function httpPostYahooAuth<T>(
     },
     body: body as string,
   });
-  return handleFetchResponse<T>(response);
+  return handleFetchResponse<T>(response, uid);
 }
 
 /**
@@ -192,5 +194,5 @@ export async function httpPutYahoo<T>(
     },
     body,
   });
-  return handleFetchResponse<T>(response);
+  return handleFetchResponse<T>(response, uid);
 }

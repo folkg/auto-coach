@@ -214,17 +214,18 @@ export class ExecutionServiceImpl implements ExecutionService {
             );
           }
 
+          // Yahoo 401/403 after successful token fetch - likely transient, retry
           if (isAuthorizationError(error)) {
             return Effect.fail(
-              new DomainError({
-                message: error.message,
-                code: "REVOKED_REFRESH_TOKEN",
-                userId: uid,
+              new SystemError({
+                message: `Yahoo auth error (transient): ${error.message}`,
+                code: "YAHOO_AUTH_ERROR",
+                retryable: true,
               }),
             );
           }
 
-          // Check for RevokedRefreshTokenError
+          // Check for RevokedRefreshTokenError (token was already revoked)
           if (error instanceof RevokedRefreshTokenError) {
             return Effect.fail(
               new DomainError({
@@ -278,12 +279,13 @@ export class ExecutionServiceImpl implements ExecutionService {
             );
           }
 
+          // Yahoo 401/403 after successful token fetch - likely transient, retry
           if (isAuthorizationError(error)) {
             return Effect.fail(
-              new DomainError({
-                message: error.message,
-                code: "REVOKED_REFRESH_TOKEN",
-                userId: uid,
+              new SystemError({
+                message: `Yahoo auth error (transient): ${error.message}`,
+                code: "YAHOO_AUTH_ERROR",
+                retryable: true,
               }),
             );
           }

@@ -17,7 +17,6 @@ import { logger } from "firebase-functions";
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 
-import { sendUserEmail } from "../email/email.service.js";
 import {
   getCurrentPacificNumDay,
   getPacificTimeDateString,
@@ -27,7 +26,7 @@ import { refreshYahooAccessToken } from "../yahooAPI/yahooAPI.service.js";
 import { isHttpError } from "../yahooAPI/yahooHttp.service.js";
 import { fetchStartingPlayers } from "../yahooAPI/yahooStartingPlayer.service.js";
 import { RevokedRefreshTokenError } from "./errors.js";
-import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
+import { handleYahooAuthRevoked } from "./handleYahooAuthRevoked.service.js";
 
 const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
 
@@ -83,22 +82,7 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
           parsedData?.error === "invalid_grant" &&
           parsedData?.error_description === "Invalid refresh token"
         ) {
-          // Revoking the refresh token will force the user to re-authenticate with Yahoo
-          // Send an email to the user to let them know that their access has expired
-          await revokeRefreshToken(uid);
-          await sendUserEmail(
-            uid,
-            "Urgent Action Required: Yahoo Authentication Error",
-            [
-              "<strong>Your Yahoo access has expired and your lineups are no longer being managed by Fantasy AutoCoach.</strong>",
-              "Please visit the Fantasy AutoCoach website below and sign in again with Yahoo so that we can continue to " +
-                "manage your teams. Once you sign in, you will be re-directed to your dashabord and we " +
-                "will have everything we need to continue managing your teams. Thank you for your assistance, and we " +
-                "apologize for the inconvenience.",
-            ],
-            "Sign In",
-            "https://fantasyautocoach.com/",
-          );
+          await handleYahooAuthRevoked(uid);
         }
         throw new Error(
           `Could not refresh access token for user: ${uid} : ${parsedData?.error} ${parsedData?.error_description}`,

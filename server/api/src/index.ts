@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
 
 import feedbackRouter from "./feedback/feedback";
 import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware";
@@ -32,6 +33,20 @@ app.use(
     credentials: true,
   }),
 );
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    const status = err.status;
+    try {
+      const body = JSON.parse(err.message);
+      return c.json(body, status);
+    } catch {
+      return c.json({ error: err.message }, status);
+    }
+  }
+  console.error("Unhandled error:", err);
+  return c.json({ error: "Internal server error" }, 500);
+});
 
 const routes = app
   .get("/", (c) => c.json({ status: "ok" }))
