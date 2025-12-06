@@ -1,11 +1,8 @@
-import type { Schedule } from "@common/types/Schedule";
-
 import { NgIf } from "@angular/common";
-import { Component, type OnInit, signal } from "@angular/core";
+import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
+import { MatCard } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
-import { getErrorMessage, logError } from "@common/utilities/error";
 import { lastValueFrom } from "rxjs";
 
 import type { PauseLineupEvent, SetLineupEvent } from "./interfaces/outputEvents";
@@ -28,25 +25,18 @@ import { TeamComponent } from "./team/team.component";
   templateUrl: "./teams.component.html",
   styleUrls: ["./teams.component.scss"],
   providers: [RelativeDatePipe],
-  imports: [
-    OfflineWarningCardComponent,
-    NgIf,
-    ProfileCardComponent,
-    TeamComponent,
-    MatCard,
-    MatCardHeader,
-    MatCardTitle,
-    MatCardContent,
-  ],
+  imports: [OfflineWarningCardComponent, NgIf, ProfileCardComponent, TeamComponent, MatCard],
 })
-export class TeamsComponent implements OnInit {
+export class TeamsComponent {
   readonly user = toSignal(this.auth.user$);
-  readonly teams = toSignal(this.syncTeamsService.teams$, { initialValue: [] });
-  readonly loading = toSignal(this.syncTeamsService.loading$, {
-    initialValue: false,
-  });
-  readonly schedule = signal<Schedule | null>(null);
+  readonly teamsState = toSignal(this.syncTeamsService.teamsState$);
+  readonly teams = computed(() => this.teamsState()?.teams ?? []);
+  readonly schedule = computed(() => this.teamsState()?.schedule);
+  readonly showInitialSkeleton = computed(() => this.teamsState()?.status === "loading-initial");
+  readonly isLoadingTimes = computed(() => this.teamsState()?.status === "loading-times");
   private readonly isDirty = signal(false);
+
+  readonly skeletonCards = [1, 2, 3];
 
   constructor(
     private readonly auth: AuthService,
@@ -55,23 +45,6 @@ export class TeamsComponent implements OnInit {
     readonly dialog: MatDialog,
     readonly appStatusService: AppStatusService,
   ) {}
-
-  ngOnInit(): void {
-    this.fetchLeagueSchedules().catch(logError);
-  }
-
-  private async fetchLeagueSchedules() {
-    if (!this.schedule()) {
-      try {
-        this.schedule.set(await this.api.fetchSchedules());
-      } catch (err) {
-        await this.errorDialog(
-          `${getErrorMessage(err)} Please ensure you are connected to the internet and try again later.`,
-          "ERROR Fetching Schedules",
-        );
-      }
-    }
-  }
 
   async setLineupBoolean($event: SetLineupEvent): Promise<void> {
     const teamKey = $event.team.team_key;

@@ -7,8 +7,8 @@ import {
 import { provideNoopAnimations } from "@angular/platform-browser/animations";
 import { beforeEach } from "vitest";
 
-import { mockAuth, mockFirestore, mockFunctions } from "./__mocks__/firebase/firebase";
-import { AUTH, FIRESTORE, FUNCTIONS } from "./app/shared/firebase-tokens";
+import { mockAuth, mockFirestore } from "./__mocks__/firebase/firebase";
+import { AUTH, FIRESTORE } from "./app/shared/firebase-tokens";
 
 @NgModule({
   providers: [
@@ -16,7 +16,6 @@ import { AUTH, FIRESTORE, FUNCTIONS } from "./app/shared/firebase-tokens";
     provideNoopAnimations(),
     { provide: AUTH, useValue: mockAuth },
     { provide: FIRESTORE, useValue: mockFirestore },
-    { provide: FUNCTIONS, useValue: mockFunctions },
   ],
 })
 class ZonelessModule {}

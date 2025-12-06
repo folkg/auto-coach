@@ -1,19 +1,26 @@
 import type { FeedbackData } from "@common/types/feedback";
-import type { ClientTeam, FirestoreTeam } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 import type { PostTransactionsResult, TransactionsData } from "@common/types/transactions";
 
 import { Injectable, inject } from "@angular/core";
 import { Schedule } from "@common/types/Schedule";
-import { isType } from "@common/utilities/checks";
+import { FirestoreTeam } from "@common/types/team";
+import { assertType, isType } from "@common/utilities/checks";
 import { type } from "arktype";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
 
 import { HONO_CLIENT } from "../hono-client-config";
+import { FIRESTORE } from "../shared/firebase-tokens";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class APIService {
   private readonly client = inject(HONO_CLIENT);
+  private readonly firestore = inject(FIRESTORE);
+
+  constructor(private readonly auth: AuthService) {}
 
   async fetchTeamsYahoo(): Promise<ClientTeam[]> {
     const response = await this.client.api.teams.$get({});
@@ -24,6 +31,20 @@ export class APIService {
     return response.json();
   }
 
+  async fetchTeamsFirestore(): Promise<FirestoreTeam[]> {
+    const user = await this.auth.getUser();
+    const db = this.firestore;
+
+    const teamsRef = collection(db, "users", user.uid, "teams");
+    const teamsSnapshot = await getDocs(query(teamsRef, where("end_date", ">=", Date.now())));
+
+    return teamsSnapshot.docs.map((docSnapshot) => {
+      const team = docSnapshot.data();
+      assertType(team, FirestoreTeam);
+      return team;
+    });
+  }
+
   async fetchTeamsPartial(): Promise<FirestoreTeam[]> {
     const response = await this.client.api.teams.partial.$get({});
     if (!response.ok) {
@@ -31,6 +52,25 @@ export class APIService {
       throw new Error(errorCode);
     }
     return response.json();
+  }
+
+  async fetchSchedulesFirestore(): Promise<Schedule> {
+    const storedSchedule = sessionStorage.getItem("schedules");
+    if (storedSchedule !== null) {
+      const schedule = JSON.parse(storedSchedule);
+      if (isType(schedule, Schedule)) {
+        return schedule;
+      }
+    }
+
+    const db = this.firestore;
+    const schedulesRef = doc(db, "schedule", "today");
+    const scheduleSnap = await getDoc(schedulesRef);
+    const schedule = scheduleSnap.data();
+    assertType(schedule, Schedule);
+
+    sessionStorage.setItem("schedules", JSON.stringify(schedule));
+    return schedule;
   }
 
   async fetchSchedules(): Promise<Schedule> {

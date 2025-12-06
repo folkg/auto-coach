@@ -63,6 +63,7 @@ const FIRST_SERVER_UPDATE_HOUR = 1;
 export class TeamComponent {
   readonly team = input.required<Readonly<ClientTeam>>();
   readonly gameTimeStamps = input.required<number[] | null>();
+  readonly loadingTimes = input(false);
   @Output() toggleSetLineupEvent = new EventEmitter<SetLineupEvent>();
   @Output() togglePauseLineupEvent = new EventEmitter<PauseLineupEvent>();
 

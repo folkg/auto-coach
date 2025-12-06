@@ -77,18 +77,23 @@
             class="flex-sb card-content-section"
             *ngIf="team.end_date > date(); else seasonOver"
         >
-            <div>
-                Last update:
-                {{
-                    team.last_updated > 0
-                        ? (team.last_updated | relativeDate)
-                        : "Never"
-                }}
-            </div>
-            <div>
-                Next update:
-                {{ team.is_setting_lineups ? nextLineupUpdate() : "N/A" }}
-            </div>
+            @if (loadingTimes()) {
+                <div><span class="time-shimmer shimmer">&nbsp;</span></div>
+                <div><span class="time-shimmer shimmer">&nbsp;</span></div>
+            } @else {
+                <div>
+                    Last update:
+                    {{
+                        team.last_updated > 0
+                            ? (team.last_updated | relativeDate)
+                            : "Never"
+                    }}
+                </div>
+                <div>
+                    Next update:
+                    {{ team.is_setting_lineups ? nextLineupUpdate() : "N/A" }}
+                </div>
+            }
         </div>
         <ng-template #seasonOver>
             <div class="card-content-section">The season is over.</div>
@@ -99,6 +104,7 @@
         <div class="flex-sb">
             <mat-slide-toggle
                 [disabled]="
+                    loadingTimes() ||
                     isPausedToday() ||
                     !team.is_subscribed ||
                     team.end_date < date() ||
@@ -111,6 +117,7 @@
             </mat-slide-toggle>
             <button
                 [disabled]="
+                    loadingTimes() ||
                     !team.is_setting_lineups ||
                     !team.is_subscribed ||
                     team.end_date < date() ||

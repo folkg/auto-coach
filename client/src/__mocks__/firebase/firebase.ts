@@ -10,7 +10,3 @@ export const mockFirestore = {
   collection: vi.fn(),
   doc: vi.fn(),
 };
-
-export const mockFunctions = {
-  httpsCallable: vi.fn(),
-};
