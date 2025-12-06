@@ -4,6 +4,7 @@ import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import { Effect, Schema } from "effect";
 
 import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
+import { isYahooRateLimitError } from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
 import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";
 import { processTomorrowsTransactions } from "./set-lineup.service.js";
@@ -16,6 +17,20 @@ export class WeeklyTransactionsError extends Schema.TaggedError<WeeklyTransactio
     error: Schema.optional(Schema.Defect),
   },
 ) {}
+
+export class WeeklyTransactionsRateLimitError extends Schema.TaggedError<WeeklyTransactionsRateLimitError>()(
+  "WeeklyTransactionsRateLimitError",
+  {
+    message: Schema.String,
+    statusCode: Schema.Number,
+    retryAfter: Schema.optional(Schema.Number),
+    uid: Schema.optional(Schema.String),
+  },
+) {}
+
+export type WeeklyTransactionsServiceError =
+  | WeeklyTransactionsError
+  | WeeklyTransactionsRateLimitError;
 
 /**
  * Schedules weekly league transactions for all users with teams that have
@@ -86,12 +101,21 @@ export const performWeeklyLeagueTransactions = Effect.fn(
   // Step 1: Fetch top available players for all teams
   const topAvailablePlayerCandidates = yield* Effect.tryPromise({
     try: () => getTopAvailablePlayers([...firestoreTeams], uid),
-    catch: (error) =>
-      WeeklyTransactionsError.make({
+    catch: (error): WeeklyTransactionsServiceError => {
+      if (isYahooRateLimitError(error)) {
+        return WeeklyTransactionsRateLimitError.make({
+          message: error.message,
+          statusCode: error.statusCode,
+          retryAfter: error.retryAfter,
+          uid,
+        });
+      }
+      return WeeklyTransactionsError.make({
         message: "Failed to get top available players",
         uid,
         error,
-      }),
+      });
+    },
   });
 
   // Step 2: Process tomorrow's transactions
@@ -101,12 +125,24 @@ export const performWeeklyLeagueTransactions = Effect.fn(
     uid,
     topAvailablePlayerCandidates,
   ).pipe(
-    Effect.mapError((setLineupError) =>
-      WeeklyTransactionsError.make({
-        message: "Failed to process tomorrow's transactions",
-        uid,
-        error: setLineupError,
-      }),
-    ),
+    Effect.catchAll((setLineupError): Effect.Effect<void, WeeklyTransactionsServiceError> => {
+      if (setLineupError._tag === "SetLineupRateLimitError") {
+        return Effect.fail(
+          WeeklyTransactionsRateLimitError.make({
+            message: setLineupError.message,
+            statusCode: setLineupError.statusCode,
+            retryAfter: setLineupError.retryAfter,
+            uid,
+          }),
+        );
+      }
+      return Effect.fail(
+        WeeklyTransactionsError.make({
+          message: "Failed to process tomorrow's transactions",
+          uid,
+          error: setLineupError,
+        }),
+      );
+    }),
   );
 });

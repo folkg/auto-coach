@@ -248,7 +248,10 @@ async function main(): Promise<void> {
             "GCP_PROJECT_ID or PROJECT_ID environment variable required for Mutation API deployment",
           );
         }
-        await deployMutationAPI(args, projectId, firebaseProjectId);
+        if (args.env !== "prod") {
+          throw new Error('Only "prod" environment is supported for mutation-api');
+        }
+        await deployMutationAPI({ ...args, env: "prod" }, projectId);
         break;
       case "full":
         if (!projectId) {

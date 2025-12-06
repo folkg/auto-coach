@@ -61,6 +61,26 @@ Builds, containerizes, and deploys the API service to Cloud Run.
 - Cloud Run service: `auto-coach-api-prod`
 - **Requires:** `--version` flag with semantic version (e.g., v1.2.3)
 
+### Deploy Mutation API
+
+```bash
+bun run deploy:mutation-api:prod --version v1.2.3
+```
+
+Builds, containerizes, and deploys the Mutation API service to Cloud Run.
+
+**Key details:**
+- Only `prod` environment is supported (no dev environment exists)
+- Tags: `v1.2.3`, `prod-latest`
+- Cloud Run service: `mutation-api-prod`
+- **Requires:** `--version` flag with semantic version (e.g., v1.2.3)
+- Deploys directly via `gcloud run deploy` (not OpenTofu, to avoid shared tag conflicts)
+
+**Options:**
+- `--version, -v`: Required semantic version (e.g., v1.2.3)
+- `--skip-build`: Skip building, use existing container image
+- `--dry-run`: Test deployment without making changes
+
 ### Deploy Client
 
 ```bash

@@ -145,7 +145,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
           const globalData = globalDoc.data();
           if (globalData?.isPaused) {
             const pausedAt = globalData.pausedAt?.toMillis?.() || 0;
-            const pauseDuration = globalData.pauseDurationMs || 300000; // 5 minutes default
+            const pauseDuration = globalData.pauseDurationMs || 60000; // 60 seconds default (max cooldown)
             const now = Date.now();
 
             if (now - pausedAt < pauseDuration) {
@@ -248,7 +248,7 @@ export class RateLimiterServiceImpl implements RateLimiterService {
                 // Open circuit breaker after 3 failures
                 if (failureCount >= 3) {
                   isOpen = true;
-                  nextRetryTime = new Date(now.getTime() + 300000); // 5 minutes retry
+                  nextRetryTime = new Date(now.getTime() + 60000); // 60 seconds retry (max cooldown)
                 }
               }
             }
@@ -273,12 +273,12 @@ export class RateLimiterServiceImpl implements RateLimiterService {
 
       // Trigger global pause on circuit breaker open
       if (finalFailureCount >= 3) {
-        yield* triggerPause("Circuit breaker opened due to rate limit errors", 300000);
+        yield* triggerPause("Circuit breaker opened due to rate limit errors", 60000);
       }
     }).pipe(Effect.ignore);
   }
 
-  triggerGlobalPause(reason: string, durationMs = 300000): Effect.Effect<void, never> {
+  triggerGlobalPause(reason: string, durationMs = 60000): Effect.Effect<void, never> {
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {

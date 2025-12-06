@@ -10,24 +10,38 @@ import { ExecutionServiceImpl } from "../services/execution.service";
 import { RateLimiterServiceImpl } from "../services/rate-limiter.service";
 import { validateExecuteMutation } from "../validators";
 
-function errorToResponse(error: MutationError): {
+/**
+ * Converts a MutationError to an HTTP response format.
+ * Exported for testing.
+ */
+export function errorToResponse(error: MutationError): {
   response: ErrorResponse;
   statusCode: 400 | 429 | 500;
+  retryAfter: number | undefined;
 } {
-  const response: ErrorResponse = {
+  const baseResponse: ErrorResponse = {
     error: "Mutation execution failed",
     message: error.message,
     code: error.code || error._tag,
   };
 
-  let statusCode: 400 | 429 | 500 = 500;
   if (error._tag === "RateLimitError") {
-    statusCode = 429;
-  } else if (error._tag === "DomainError") {
+    return {
+      response: {
+        ...baseResponse,
+        retryAfter: error.retryAfter,
+      },
+      statusCode: 429,
+      retryAfter: error.retryAfter,
+    };
+  }
+
+  let statusCode: 400 | 429 | 500 = 500;
+  if (error._tag === "DomainError") {
     statusCode = 400;
   }
 
-  return { response, statusCode };
+  return { response: baseResponse, statusCode, retryAfter: undefined };
 }
 
 export function createExecutionRoutes(firestore: Firestore) {
@@ -50,11 +64,21 @@ export function createExecutionRoutes(firestore: Firestore) {
       executionService.executeMutation(request).pipe(
         Effect.match({
           onFailure: (error) => {
-            const { response, statusCode } = errorToResponse(error);
+            const { response, statusCode, retryAfter } = errorToResponse(error);
+
+            // Set Retry-After header for rate limit errors so Cloud Tasks respects backoff
+            if (retryAfter !== undefined) {
+              c.header("Retry-After", String(retryAfter));
+            }
+
             // Log errors for debugging
             console.error(
               `[execution] Task ${request.task.id} failed for user ${request.task.userId}:`,
-              JSON.stringify({ code: error.code || error._tag, message: error.message }),
+              JSON.stringify({
+                code: error.code || error._tag,
+                message: error.message,
+                retryAfter,
+              }),
             );
             return c.json(response, statusCode);
           },

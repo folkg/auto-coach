@@ -22,6 +22,7 @@ import {
   postRosterAddDropTransaction,
   putLineupChanges,
 } from "../../common/services/yahooAPI/yahooAPI.service.js";
+import { isYahooRateLimitError } from "../../common/services/yahooAPI/yahooHttp.service.js";
 import { fetchRostersFromYahoo } from "../../common/services/yahooAPI/yahooLineupBuilder.service.js";
 import {
   fetchTopAvailablePlayersFromYahoo,
@@ -392,6 +393,10 @@ async function postTransactionsHelper(
         postedTransactions.push(transaction);
       }
     } else if (result.status === "rejected") {
+      if (isYahooRateLimitError(result.reason)) {
+        throw result.reason;
+      }
+
       error = true;
       const { reason } = result;
       logger.error(`Error in postAllTransactions() for User: ${uid}: ${JSON.stringify(reason)}`);

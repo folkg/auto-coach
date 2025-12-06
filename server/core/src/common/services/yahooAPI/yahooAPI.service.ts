@@ -31,6 +31,7 @@ import {
   httpPostYahooUnauth,
   httpPutYahoo,
   isHttpError,
+  isYahooRateLimitError,
 } from "./yahooHttp.service.js";
 
 dotenv.config();
@@ -254,6 +255,7 @@ export async function getStartingPlayers(
 
 /**
  * Post the roster changes to Yahoo sequentially, continuing on errors
+ * EXCEPT for rate limit errors which are immediately re-thrown
  *
  * @export
  * @async
@@ -286,6 +288,9 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
     try {
       await putRosterChangePromise(uid, teamKey, xmlBody);
     } catch (err) {
+      if (isYahooRateLimitError(err)) {
+        throw err;
+      }
       logger.error(JSON.stringify(err));
       errors.push(err instanceof Error ? err : new Error(String(err)));
     }
@@ -368,6 +373,10 @@ export async function postRosterAddDropTransaction(
     logger.log("Transaction data:", { data });
     return transaction;
   } catch (err: unknown) {
+    if (isYahooRateLimitError(err)) {
+      throw err;
+    }
+
     const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction: ${JSON.stringify(
       transaction,
     )}`;
@@ -416,6 +425,11 @@ type TransactionData = {
  */
 function handleHttpError(err: unknown, message: string | null): never {
   const errMessage = message ? `${message}. ` : "";
+
+  if (isYahooRateLimitError(err)) {
+    throw err;
+  }
+
   if (err instanceof RevokedRefreshTokenError) {
     throw err;
   }

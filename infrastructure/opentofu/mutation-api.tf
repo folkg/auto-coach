@@ -49,7 +49,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
     timeout                          = "60s"
     execution_environment            = "EXECUTION_ENVIRONMENT_GEN2"
     service_account                  = google_service_account.mutation_api_sa.email
-    max_instance_request_concurrency = 80
+    max_instance_request_concurrency = 40
 
     scaling {
       min_instance_count = 0
@@ -62,7 +62,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
       resources {
         limits = {
           cpu    = "1"
-          memory = "1Gi"
+          memory = "512Mi"
         }
         cpu_idle = false
       }
@@ -196,15 +196,16 @@ resource "google_cloud_tasks_queue" "mutation_queue" {
   location = var.region
 
   rate_limits {
-    max_dispatches_per_second = 10
+    max_dispatches_per_second  = 5
+    max_concurrent_dispatches = 5
   }
 
   retry_config {
-    max_attempts       = 3
+    max_attempts       = 5
     min_backoff        = "1s"
-    max_backoff        = "30s"
-    max_doublings      = 2
-    max_retry_duration = "60s"
+    max_backoff        = "60s"
+    max_doublings      = 3
+    max_retry_duration = "300s"
   }
 
   depends_on = [google_project_service.cloud_tasks_api]
@@ -216,7 +217,7 @@ resource "google_cloud_scheduler_job" "set_lineup_schedule" {
   project   = var.project_id
   region    = var.region
   schedule  = "55 * * * *" # Every hour at minute 55
-  time_zone = "America/New_York"
+  time_zone = "America/Los_Angeles"
 
   http_target {
     http_method = "POST"
@@ -250,7 +251,7 @@ resource "google_cloud_scheduler_job" "weekly_transactions_schedule" {
   project   = var.project_id
   region    = var.region
   schedule  = "0 3 * * *" # Daily at 3 AM
-  time_zone = "America/New_York"
+  time_zone = "America/Los_Angeles"
 
   http_target {
     http_method = "POST"
@@ -284,7 +285,7 @@ resource "google_cloud_scheduler_job" "calc_scarcity_schedule" {
   project   = var.project_id
   region    = var.region
   schedule  = "30 0 * * 0" # Weekly on Sunday at 12:30 AM
-  time_zone = "America/New_York"
+  time_zone = "America/Los_Angeles"
 
   http_target {
     http_method = "POST"

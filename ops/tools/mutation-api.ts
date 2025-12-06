@@ -4,15 +4,13 @@ import { parseArgs } from "node:util";
 
 import { loadEnvironment } from "./environment";
 import { log, logError, logStep, logSuccess, logWarning } from "./log";
-import { applyInfrastructure } from "./tofu";
 import { determineContainerTags, getPrimaryTag } from "./versioning";
 
 interface DeployMutationAPIArgs {
-  env: "dev" | "prod";
-  version?: string;
-  dryRun: boolean;
-  skipBuild: boolean;
-  skipInfra: boolean;
+  readonly env: "prod";
+  readonly version?: string;
+  readonly dryRun: boolean;
+  readonly skipBuild: boolean;
 }
 
 function parseArguments(): DeployMutationAPIArgs {
@@ -23,21 +21,19 @@ function parseArguments(): DeployMutationAPIArgs {
       version: { type: "string", short: "v" },
       "dry-run": { type: "boolean", default: false },
       "skip-build": { type: "boolean", default: false },
-      "skip-infra": { type: "boolean", default: false },
     },
   });
 
-  const env = (values.env as "dev" | "prod") || "dev";
-  if (!["dev", "prod"].includes(env)) {
-    throw new Error('Environment must be "dev" or "prod"');
+  const env = values.env as string | undefined;
+  if (env && env !== "prod") {
+    throw new Error('Only "prod" environment is supported for mutation-api');
   }
 
   return {
-    env,
+    env: "prod",
     version: values.version as string | undefined,
     dryRun: values["dry-run"] as boolean,
     skipBuild: values["skip-build"] as boolean,
-    skipInfra: values["skip-infra"] as boolean,
   };
 }
 
@@ -51,48 +47,63 @@ async function buildMutationAPI(): Promise<void> {
 }
 
 async function buildMutationAPIContainer(): Promise<void> {
-  logStep("Docker", "Building Mutation API container...");
+  logStep("Docker", "Building Mutation API container for linux/amd64...");
 
   const { resolve } = await import("node:path");
   const projectRoot = resolve(import.meta.dir, "..", "..");
 
-  await $`cd ${projectRoot}/server/mutation-api && bun run container:build`;
+  await $`cd ${projectRoot} && bun run container:build:mutation-api:cloud`;
 }
 
-async function tagMutationAPIContainer(containerRepo: string, tags: string[]): Promise<void> {
+async function tagMutationAPIContainer(
+  projectId: string,
+  containerRepo: string,
+  tags: string[],
+): Promise<void> {
   logStep("Docker", "Tagging Mutation API container...");
 
   for (const tag of tags) {
-    await $`docker tag auto-coach-mutation-api ${containerRepo}/auto-coach/auto-coach-mutation-api:${tag}`;
+    const fullTag = `${containerRepo}/${projectId}/auto-coach/auto-coach-mutation-api:${tag}`;
+    logStep("Docker", `Tagging as ${fullTag}`);
+    await $`docker tag auto-coach-mutation-api ${fullTag}`;
   }
 }
 
-async function pushMutationAPIContainer(containerRepo: string, tags: string[]): Promise<void> {
+async function pushMutationAPIContainer(
+  projectId: string,
+  containerRepo: string,
+  tags: string[],
+): Promise<void> {
+  logStep("Docker", "Configuring Docker authentication...");
+  await $`gcloud auth configure-docker ${containerRepo}`;
+
   logStep("Docker", "Pushing Mutation API container...");
 
   for (const tag of tags) {
-    await $`docker push ${containerRepo}/auto-coach/auto-coach-mutation-api:${tag}`;
+    const fullTag = `${containerRepo}/${projectId}/auto-coach/auto-coach-mutation-api:${tag}`;
+    logStep("Docker", `Pushing ${fullTag}`);
+    await $`docker push ${fullTag}`;
   }
 }
 
 export async function deployMutationAPI(
   args: DeployMutationAPIArgs,
   projectId: string,
-  firebaseProjectId: string,
 ): Promise<void> {
   const envConfig = loadEnvironment(args.env);
   const tags = await determineContainerTags(args.env, args.version);
   const primaryTag = getPrimaryTag(tags);
+  const fullImagePath = `${envConfig.containerRepo}/${projectId}/auto-coach/auto-coach-mutation-api:${primaryTag}`;
 
   logStep("Deploy Mutation API", `Environment: ${args.env}, Tags: ${tags.join(", ")}`);
 
   if (args.dryRun) {
     logWarning("Dry run mode - no changes will be made");
     log("Would build Mutation API binary");
-    log("Would build Docker container");
+    log("Would build Docker container for linux/amd64");
     log(`Would tag container: ${tags.join(", ")}`);
-    log(`Would push container to ${envConfig.containerRepo}`);
-    log(`Would apply OpenTofu with tag ${primaryTag}`);
+    log(`Would push container to ${envConfig.containerRepo}/${projectId}/auto-coach`);
+    log(`Would deploy to Cloud Run: mutation-api-${args.env}`);
     return;
   }
 
@@ -103,35 +114,22 @@ export async function deployMutationAPI(
     logStep("Mutation API", "Skipping build (using existing build artifact)");
   }
 
-  await tagMutationAPIContainer(envConfig.containerRepo, tags);
-  await pushMutationAPIContainer(envConfig.containerRepo, tags);
+  await tagMutationAPIContainer(projectId, envConfig.containerRepo, tags);
+  await pushMutationAPIContainer(projectId, envConfig.containerRepo, tags);
 
-  if (!args.skipInfra) {
-    await applyInfrastructure(envConfig, primaryTag, projectId, firebaseProjectId);
-    const apiURL = await getMutationAPIURL();
-    logSuccess("Mutation API deployed successfully!");
-    log(`API URL: ${apiURL}`);
-    log(`Container tags: ${tags.join(", ")}`);
-  } else {
-    logStep("Mutation API", "Skipping infrastructure apply - container pushed successfully");
-    logSuccess("Container image ready for deployment");
-    log(`Container tags: ${tags.join(", ")}`);
-    log(
-      `Deploy to Cloud Run with: gcloud run deploy mutation-api-${args.env} --image ${envConfig.containerRepo}/auto-coach/auto-coach-mutation-api:${primaryTag}`,
-    );
-  }
+  // Deploy directly to Cloud Run using gcloud (avoids OpenTofu shared tag issues)
+  logStep("Cloud Run", `Deploying mutation-api-${args.env}...`);
+  await $`gcloud run deploy mutation-api-${args.env} --image ${fullImagePath} --region us-central1 --project ${projectId}`;
+
+  const apiURL = await getMutationAPIURL(projectId);
+  logSuccess("Mutation API deployed successfully!");
+  log(`API URL: ${apiURL}`);
+  log(`Container tags: ${tags.join(", ")}`);
 }
 
-async function getMutationAPIURL(): Promise<string> {
-  const projectId = process.env.GCP_PROJECT_ID || process.env.PROJECT_ID;
-  const env = process.env.NODE_ENV || "dev";
-
-  if (!projectId) {
-    throw new Error("GCP_PROJECT_ID or PROJECT_ID environment variable required");
-  }
-
+async function getMutationAPIURL(projectId: string): Promise<string> {
   const result =
-    await $`gcloud run services describe mutation-api-${env} --region us-central1 --project ${projectId} --format='value(status.url)'`.text();
+    await $`gcloud run services describe mutation-api-prod --region us-central1 --project ${projectId} --format='value(status.url)'`.text();
   return result.trim();
 }
 
@@ -140,7 +138,6 @@ async function main(): Promise<void> {
     const args = parseArguments();
 
     const projectId = process.env.GCP_PROJECT_ID || process.env.PROJECT_ID;
-    const firebaseProjectId = process.env.FIREBASE_PROJECT_ID || "auto-gm-372620";
 
     logStep("Configuration", `Component: mutation-api, Environment: ${args.env}`);
 
@@ -150,7 +147,7 @@ async function main(): Promise<void> {
       );
     }
 
-    await deployMutationAPI(args, projectId, firebaseProjectId);
+    await deployMutationAPI(args, projectId);
 
     process.exit(0);
   } catch (error) {

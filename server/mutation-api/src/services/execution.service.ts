@@ -48,8 +48,9 @@ export class ExecutionServiceImpl implements ExecutionService {
         message: "Starting mutation execution",
       });
 
-      // TODO: What happens if this errors? We don't do anything with the retryAfter.. this isn't doing anything.
-      // Check rate limits
+      // TODO: We should probably also check this further down right before we call the yahoo api
+      // - we could hit rate limits mid-process, and then still make way too many server calls
+      // Check rate limits - retryAfter is propagated via HTTP Retry-After header from the route
       yield* self.rateLimiter.checkRateLimit(task.userId).pipe(
         Effect.mapError(
           (error) =>
@@ -202,6 +203,16 @@ export class ExecutionServiceImpl implements ExecutionService {
       // Call the set-lineup service
       yield* setUsersLineup(uid, teams as readonly FirestoreTeam[]).pipe(
         Effect.catchAll((error): Effect.Effect<void, MutationError> => {
+          if (error._tag === "SetLineupRateLimitError") {
+            return Effect.fail(
+              new ApiRateLimitError({
+                message: error.message,
+                code: "YAHOO_RATE_LIMIT",
+                retryAfter: error.retryAfter,
+              }),
+            );
+          }
+
           // Check for RevokedRefreshTokenError
           if (error instanceof RevokedRefreshTokenError) {
             return Effect.fail(
@@ -264,14 +275,26 @@ export class ExecutionServiceImpl implements ExecutionService {
 
       // Call the weekly-transactions service
       yield* performWeeklyLeagueTransactions(uid, teams as readonly FirestoreTeam[]).pipe(
-        Effect.mapError(
-          (error) =>
+        Effect.catchAll((error): Effect.Effect<void, MutationError> => {
+          if (error._tag === "WeeklyTransactionsRateLimitError") {
+            return Effect.fail(
+              new ApiRateLimitError({
+                message: error.message,
+                code: "YAHOO_RATE_LIMIT",
+                retryAfter: error.retryAfter,
+              }),
+            );
+          }
+
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          return Effect.fail(
             new SystemError({
-              message: `Weekly transactions failed: ${error.message}`,
+              message: `Weekly transactions failed: ${errorMessage}`,
               code: "WEEKLY_TRANSACTIONS_FAILED",
               retryable: true,
             }),
-        ),
+          );
+        }),
       );
     });
   }
