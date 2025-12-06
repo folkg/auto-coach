@@ -37,8 +37,8 @@ export const scheduleWeeklyLeagueTransactions = Effect.fn(
       }),
   });
 
-  // Step 2: Map users to their active teams
-  const activeUsers = mapUsersToActiveTeams(teamsSnapshot);
+  // Step 2: Map users to their active teams (now an Effect with validation)
+  const activeUsers = yield* mapUsersToActiveTeams(teamsSnapshot);
 
   if (activeUsers.size === 0) {
     yield* Effect.logInfo("No users to process weekly transactions for");

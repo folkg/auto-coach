@@ -4,7 +4,7 @@
 FROM oven/bun:1-alpine AS base
 WORKDIR /app
 
-# Build stage - install and build everything
+# Build stage - install dependencies
 FROM base AS builder
 
 # Copy workspace configuration
@@ -22,17 +22,17 @@ RUN apk add --no-cache jq && \
 # Install dependencies
 RUN bun install --production
 
-# Build the Mutation API
-WORKDIR /app/server/mutation-api
-RUN bun build src/index.ts --target=bun --outfile=dist/index.js
-
 # Release stage - minimal runtime image
 FROM base AS release
 WORKDIR /app
 
-# Copy production dependencies and built application
+# Copy the entire workspace structure needed at runtime
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/server/mutation-api/dist ./dist
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/tsconfig.base.json ./tsconfig.base.json
+COPY --from=builder /app/common ./common
+COPY --from=builder /app/server/mutation-api ./server/mutation-api
+COPY --from=builder /app/server/core ./server/core
 
 # Create non-root user and switch to it
 RUN adduser -D -u 1001 appuser
@@ -44,5 +44,6 @@ EXPOSE 3001
 # Set environment variable for production
 ENV NODE_ENV=production
 
-# Run the application
-ENTRYPOINT ["bun", "run", "dist/index.js"]
+# Run the application from the correct workspace location
+WORKDIR /app/server/mutation-api
+ENTRYPOINT ["bun", "run", "src/index.ts"]

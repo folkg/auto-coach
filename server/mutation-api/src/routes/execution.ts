@@ -42,8 +42,8 @@ export function createExecutionRoutes(firestore: Firestore) {
 
   const executionService = new ExecutionServiceImpl(firestore, rateLimiter);
 
-  // POST /execute/mutation - Core worker endpoint
-  app.post("/execute/mutation", validateExecuteMutation, async (c) => {
+  // POST /mutation - Core worker endpoint for Cloud Tasks
+  app.post("/mutation", validateExecuteMutation, async (c) => {
     const request = c.req.valid("json");
 
     const result = await Effect.runPromise(
@@ -51,6 +51,11 @@ export function createExecutionRoutes(firestore: Firestore) {
         Effect.match({
           onFailure: (error) => {
             const { response, statusCode } = errorToResponse(error);
+            // Log errors for debugging
+            console.error(
+              `[execution] Task ${request.task.id} failed for user ${request.task.userId}:`,
+              JSON.stringify({ code: error.code || error._tag, message: error.message }),
+            );
             return c.json(response, statusCode);
           },
           onSuccess: (response) => c.json(response, 200),

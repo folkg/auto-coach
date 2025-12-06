@@ -7,7 +7,8 @@ export const MutationTaskType = Schema.Literal(
 );
 
 // Team schema for payload validation (matches FirestoreTeam structure)
-export const FirestoreTeamPayloadSchema = Schema.Struct({
+// Using Schema.Struct with extend to allow additional fields from Firestore
+const FirestoreTeamPayloadBase = Schema.Struct({
   team_key: Schema.String,
   game_code: Schema.String,
   start_date: Schema.Number,
@@ -20,13 +21,17 @@ export const FirestoreTeamPayloadSchema = Schema.Struct({
   allow_adding: Schema.Boolean,
   allow_add_drops: Schema.Boolean,
   allow_waiver_adds: Schema.Boolean,
-  automated_transaction_processing: Schema.optional(Schema.Boolean),
   last_updated: Schema.Number,
-  lineup_paused_at: Schema.optional(Schema.Number),
   uid: Schema.String,
   is_subscribed: Schema.Boolean,
   is_setting_lineups: Schema.Boolean,
 });
+
+// Allow additional fields from Firestore that we don't validate
+export const FirestoreTeamPayloadSchema = Schema.extend(
+  FirestoreTeamPayloadBase,
+  Schema.Record({ key: Schema.String, value: Schema.Unknown }),
+);
 
 // Payload schemas for task types
 export const SetLineupPayloadSchema = Schema.Struct({

@@ -292,14 +292,15 @@ gcloud iam service-accounts keys create ./sa-key.json \
 2. **Run the container:**
 
 ```bash
-docker run -p 3001:3001 \
+docker run --rm -it \
+  -p 3001:3001 \
   -e PORT=3001 \
   -e NODE_ENV=production \
-  -e FIREBASE_PROJECT_ID=your-prod-project \
-  -e CLOUD_TASKS_QUEUE_PATH=projects/your-project/locations/us-central1/queues/mutation-queue-prod \
+  -e FIREBASE_PROJECT_ID=auto-gm-372620 \
+  -e CLOUD_TASKS_QUEUE_PATH=projects/auto-gm-372620/locations/us-central1/queues/mutation-queue-prod \
   -e ALLOWED_ORIGINS=http://localhost:3001 \
   -e GOOGLE_APPLICATION_CREDENTIALS=/app/sa-key.json \
-  -v $(pwd)/sa-key.json:/app/sa-key.json:ro \
+  -v "$(pwd)/sa-key.json:/app/sa-key.json:ro" \
   auto-coach-mutation-api
 ```
 
@@ -342,7 +343,7 @@ curl -X POST http://localhost:3001/mutations/calc-positional-scarcity \
 
 2. **Check Cloud Tasks Console** for queued/completed tasks:
    - Navigate to Cloud Tasks in GCP Console
-   - Select the `mutation-queue-{env}` queue
+   - Select the `mutation-queue-prod` queue
    - View task execution history
 
 3. **Check Cloud Logging:**
@@ -370,13 +371,13 @@ The Mutation API infrastructure is defined in `infrastructure/opentofu/mutation-
 
 ### Resources Created
 
-- **Cloud Run Service** (`mutation-api-{env}`)
+- **Cloud Run Service** (`mutation-api-prod`)
 - **Service Account** with Firestore, Cloud Tasks, and Firebase permissions
-- **Cloud Tasks Queue** (`mutation-queue-{env}`) with rate limiting
+- **Cloud Tasks Queue** (`mutation-queue-prod`) with rate limiting
 - **Cloud Scheduler Jobs:**
-  - `set-lineup-schedule-{env}` - Every hour at minute 0
-  - `weekly-transactions-schedule-{env}` - Daily at 2 AM ET
-  - `calc-scarcity-schedule-{env}` - Weekly on Sunday at 3 AM ET
+  - `set-lineup-schedule-prod` - Every hour at minute 0
+  - `weekly-transactions-schedule-prod` - Daily at 2 AM ET
+  - `calc-scarcity-schedule-prod` - Weekly on Sunday at 3 AM ET
 
 ### Prerequisites
 
@@ -406,37 +407,31 @@ cd infrastructure/opentofu
 # Initialize
 tofu init
 
+# Source environment variables
+source ../../.env.deployment
+
 # Plan changes
 tofu plan \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 
 # Apply
 tofu apply \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 ```
 
-### Environment-Specific Configuration
+### Configuration
 
-| Setting | Dev | Prod |
-|---------|-----|------|
-| Max Cloud Run instances | 10 | 100 |
-| Cloud Tasks max dispatches/sec | 10 | 10 |
-| Cloud Tasks max burst | 20 | 20 |
-| Cloud Tasks retry attempts | 5 | 5 |
+| Setting | Value |
+|---------|-------|
+| Max Cloud Run instances | 100 |
+| Cloud Tasks max dispatches/sec | 10 |
+| Cloud Tasks retry attempts | 5 |
 
-See `infrastructure/opentofu/environments/dev.tfvars` and `prod.tfvars` for full configuration.
+See `infrastructure/opentofu/environments/prod.tfvars` for full configuration.
 
 For detailed infrastructure documentation, see [infrastructure/opentofu/README.md](../../infrastructure/opentofu/README.md).
 
@@ -460,16 +455,13 @@ The GitHub Actions workflow (`.github/workflows/deploy-mutation-api.yml`) automa
 2. **Test & Build** - Runs linting, tests, and builds the binary
 3. **Build & Push Container** - Builds Docker image and pushes to Artifact Registry
 4. **Deploy Infrastructure** - Applies OpenTofu changes (main branch only)
-5. **Deploy to Dev/Prod** - Updates Cloud Run service
+5. **Deploy to Prod** - Updates Cloud Run service
 
 ### Manual Deployment
 
 From the workspace root:
 
 ```bash
-# Deploy to dev
-bun run deploy mutation-api --env dev
-
 # Deploy to prod with version
 bun run deploy mutation-api --env prod --version v1.2.3
 
@@ -482,9 +474,6 @@ Or use the package scripts:
 ```bash
 cd server/mutation-api
 
-# Deploy to dev
-bun run deploy:dev
-
 # Deploy to prod
 bun run deploy:prod
 ```
@@ -494,8 +483,7 @@ bun run deploy:prod
 Via GitHub CLI:
 
 ```bash
-gh workflow run deploy-mutation-api.yml \
-  --field environment=dev
+gh workflow run deploy-mutation-api.yml
 ```
 
 ## Monitoring & Troubleshooting

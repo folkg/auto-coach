@@ -24,12 +24,12 @@ variable "region" {
 }
 
 variable "environment" {
-  description = "The deployment environment (dev, prod)"
+  description = "The deployment environment"
   type        = string
-  default     = "dev"
+  default     = "prod"
   validation {
-    condition     = contains(["dev", "prod"], var.environment)
-    error_message = "Environment must be either 'dev' or 'prod'."
+    condition     = var.environment == "prod"
+    error_message = "Environment must be 'prod'."
   }
 }
 

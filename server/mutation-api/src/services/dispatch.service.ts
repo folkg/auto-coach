@@ -18,12 +18,12 @@ import {
 } from "./positional-scarcity.service";
 import {
   enqueueUsersTeams,
+  type FirestoreTeamPayload,
   leaguesToSetLineupsFor,
   mapUsersToActiveTeams,
   type SchedulingError,
   setStartingPlayersForToday,
   setTodaysPostponedTeams,
-  type TeamData,
 } from "./scheduling.service";
 import {
   scheduleWeeklyLeagueTransactions,
@@ -71,9 +71,9 @@ export class SchedulingService extends Context.Tag("SchedulingService")<
     ) => Effect.Effect<void, SchedulingError>;
     readonly mapUsersToActiveTeams: (
       teamsSnapshot: QuerySnapshot<DocumentData>,
-    ) => Map<string, TeamData[]>;
+    ) => Effect.Effect<Map<string, FirestoreTeamPayload[]>, never>;
     readonly enqueueUsersTeams: (
-      activeUsers: Map<string, TeamData[]>,
+      activeUsers: Map<string, FirestoreTeamPayload[]>,
       queueName: string,
     ) => Effect.Effect<readonly { readonly uid: string }[], SchedulingError>;
   }
@@ -214,8 +214,8 @@ export class DispatchServiceImpl implements DispatchService {
           ),
       );
 
-      // Step 7: Call mapUsersToActiveTeams(teamsSnapshot)
-      const activeUsers = schedulingService.mapUsersToActiveTeams(teamsSnapshot);
+      // Step 7: Call mapUsersToActiveTeams(teamsSnapshot) - now an Effect with validation
+      const activeUsers = yield* schedulingService.mapUsersToActiveTeams(teamsSnapshot);
 
       if (activeUsers.size === 0) {
         return {
@@ -229,7 +229,7 @@ export class DispatchServiceImpl implements DispatchService {
       yield* Effect.all([Fiber.join(postponedTeamsFiber), Fiber.join(startingPlayersFiber)]);
 
       // Step 9: Enqueue tasks - let Effect fail naturally
-      const queueName = "set-lineup-queue";
+      const queueName = process.env.CLOUD_TASKS_QUEUE_PATH ?? "mutation-queue-prod";
       const enqueuedTasks = yield* schedulingService.enqueueUsersTeams(activeUsers, queueName);
 
       // Step 10: Return success with count of tasks created

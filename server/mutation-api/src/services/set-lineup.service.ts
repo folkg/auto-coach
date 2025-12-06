@@ -146,7 +146,7 @@ export function setUsersLineup(
 /**
  * Runs lineup optimizer and posts changes to Yahoo
  */
-export function processLineupChanges(
+function processLineupChanges(
   teams: readonly TeamOptimizer[],
   uid: string,
 ): Effect.Effect<TeamOptimizer[], SetLineupError> {
@@ -172,6 +172,7 @@ export function processLineupChanges(
     }
 
     if (allLineupChanges.length > 0) {
+      // TODO: It is really this part that should be put onto a queue and then rate limited...
       yield* Effect.tryPromise({
         try: () => putLineupChanges(allLineupChanges, uid),
         catch: (error: unknown) =>

@@ -8,7 +8,7 @@ import { createExecutionRoutes } from "./execution";
 // Minimal Firestore stub if needed (can pass real, tests won't reach usage for invalid case)
 const firestore = new Firestore();
 
-it("returns validation error when task field missing in execute/mutation", async () => {
+it("returns validation error when task field missing in /mutation", async () => {
   // Arrange
   const app = createExecutionRoutes(firestore);
   const body = {
@@ -17,7 +17,7 @@ it("returns validation error when task field missing in execute/mutation", async
 
   // Act
   const res = await app.fetch(
-    new Request("http://test/execute/mutation", {
+    new Request("http://test/mutation", {
       method: "POST",
       body: JSON.stringify(body),
       headers: { "Content-Type": "application/json" },

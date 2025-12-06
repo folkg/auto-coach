@@ -20,7 +20,7 @@ import {
   WeeklyTransactionsService,
 } from "./dispatch.service.js";
 import { PositionalScarcityError } from "./positional-scarcity.service.js";
-import { SchedulingError, type TeamData } from "./scheduling.service.js";
+import { type FirestoreTeamPayload, SchedulingError } from "./scheduling.service.js";
 import { WeeklyTransactionsError } from "./weekly-transactions.service.js";
 
 const mockSetLineupRequest: SetLineupRequest = {
@@ -40,8 +40,37 @@ const mockCalcPositionalScarcityRequest: CalcPositionalScarcityRequest = {
   leagueKey: "nba.l.123",
 };
 
+/**
+ * Creates a complete FirestoreTeamPayload with sensible defaults.
+ */
+function createMockTeamPayload(
+  overrides: Partial<FirestoreTeamPayload> & {
+    uid: string;
+    game_code: Leagues;
+    start_date: number;
+  },
+): FirestoreTeamPayload {
+  return {
+    team_key: "test-team-key",
+    end_date: Date.now() + 86400000 * 180,
+    weekly_deadline: "intraday",
+    roster_positions: { C: 1, LW: 2, RW: 2, D: 4, G: 2, BN: 4, IR: 2 },
+    num_teams: 12,
+    allow_transactions: true,
+    allow_dropping: true,
+    allow_adding: true,
+    allow_add_drops: true,
+    allow_waiver_adds: true,
+    automated_transaction_processing: false,
+    last_updated: Date.now(),
+    is_subscribed: true,
+    is_setting_lineups: true,
+    ...overrides,
+  };
+}
+
 function createMockTeamsSnapshot(
-  teams: ReadonlyArray<{ readonly id: string; readonly data: TeamData }>,
+  teams: ReadonlyArray<{ readonly id: string; readonly data: FirestoreTeamPayload }>,
 ): QuerySnapshot<DocumentData> {
   const docs = teams.map((team) => ({
     id: team.id,
@@ -65,7 +94,7 @@ function createTestSchedulingService(overrides: {
   readonly leaguesError?: SchedulingError;
   readonly postponedTeamsError?: SchedulingError;
   readonly startingPlayersError?: SchedulingError;
-  readonly activeUsers?: Map<string, TeamData[]>;
+  readonly activeUsers?: Map<string, FirestoreTeamPayload[]>;
   readonly enqueuedTasks?: readonly { readonly uid: string }[];
   readonly enqueueError?: SchedulingError;
 }) {
@@ -89,12 +118,23 @@ function createTestSchedulingService(overrides: {
       return Effect.void;
     },
     mapUsersToActiveTeams: (_teamsSnapshot) => {
-      return (
-        overrides.activeUsers ??
-        new Map<string, TeamData[]>([
-          ["user-1", [{ uid: "user-1", game_code: "nba", start_date: 0 } as TeamData]],
-        ])
-      );
+      if (overrides.activeUsers) {
+        return Effect.succeed(overrides.activeUsers);
+      }
+      // Default: one user with one team
+      const defaultUsers = new Map<string, FirestoreTeamPayload[]>([
+        [
+          "user-1",
+          [
+            createMockTeamPayload({
+              uid: "user-1",
+              game_code: "nba" as Leagues,
+              start_date: 0,
+            }),
+          ],
+        ],
+      ]);
+      return Effect.succeed(defaultUsers);
     },
     enqueueUsersTeams: (_activeUsers, _queueName) => {
       if (overrides.enqueueError) {
@@ -119,11 +159,11 @@ function createTestFirestoreService(overrides: {
           createMockTeamsSnapshot([
             {
               id: "team-1",
-              data: {
+              data: createMockTeamPayload({
                 uid: "user-1",
                 game_code: "nba" as Leagues,
                 start_date: Date.now() - 1000,
-              },
+              }),
             },
           ]),
       );

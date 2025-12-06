@@ -33,11 +33,11 @@ Required variables:
 # Set up environment variables (first time only)
 source .env.deployment
 
-# Deploy API to dev
-bun run deploy:api:dev
+# Deploy API to prod
+bun run deploy:api:prod
 
-# Deploy client to dev
-bun run deploy:client:dev
+# Deploy client to prod
+bun run deploy:client:prod
 
 # Deploy full stack to prod with version
 bun run deploy:full:prod --version v1.2.3
@@ -51,14 +51,10 @@ bun run deploy api --env prod --version v1.2.3 --dry-run
 ### Deploy API
 
 ```bash
-bun run deploy api --env <dev|prod> [--version v1.2.3]
+bun run deploy api --env prod [--version v1.2.3]
 ```
 
 Builds, containerizes, and deploys the API service to Cloud Run.
-
-**Dev deployment:**
-- Tags: `dev-<shortsha>`, `dev-latest`
-- Cloud Run service: `auto-coach-api-dev`
 
 **Prod deployment:**
 - Tags: `v1.2.3`, `prod-latest`
@@ -68,19 +64,15 @@ Builds, containerizes, and deploys the API service to Cloud Run.
 ### Deploy Client
 
 ```bash
-bun run deploy client --env <dev|prod> [--channel <name>]
+bun run deploy client --env prod [--channel <name>]
 ```
 
 Builds and deploys the Angular client to Firebase Hosting.
 
-**Dev deployment:**
-- Site: `app-dev`
-- Rewrites `/api/**` to `auto-coach-api-dev`
-- Use `--channel` for preview channels (e.g., `--channel pr-123`)
-
 **Prod deployment:**
 - Site: `app-prod`
 - Rewrites `/api/**` to `auto-coach-api-prod`
+- Use `--channel` for preview channels (e.g., `--channel pr-123`)
 - Deploys to live channel
 
 ### Deploy Functions
@@ -102,28 +94,27 @@ Deploys Firestore rules and indexes.
 ### Deploy Full Stack
 
 ```bash
-bun run deploy full --env <dev|prod> [--version v1.2.3]
+bun run deploy full --env prod [--version v1.2.3]
 ```
 
 Deploys API, Functions, and Client in sequence.
 
-**Prod requires:** `--version` flag
+**Requires:** `--version` flag
 
 ## Options
 
-- `--env, -e`: Environment (`dev` or `prod`)
-- `--version, -v`: Semantic version for prod deployments (e.g., `v1.2.3`)
+- `--env, -e`: Environment (`prod`)
+- `--version, -v`: Semantic version for deployments (e.g., `v1.2.3`)
 - `--channel, -c`: Preview channel name for client deployments
 - `--dry-run`: Test deployment without making changes
 
 ## Environment Configuration
 
-Environments are defined in YAML files:
+Environment is defined in YAML:
 
-- `ops/environments/dev.yaml`
 - `ops/environments/prod.yaml`
 
-Each environment specifies:
+The environment specifies:
 - Firebase project and hosting site
 - Cloud Run service name and region
 - Container repository
@@ -135,18 +126,13 @@ Each environment specifies:
 
 The client uses **relative `/api` calls** (no hardcoded API URLs).
 
-Firebase Hosting rewrites proxy `/api/**` to the appropriate Cloud Run service:
+Firebase Hosting rewrites proxy `/api/**` to the Cloud Run service:
 
-- **app-dev** site → rewrites to `auto-coach-api-dev`
-- **app-prod** site → rewrites to `auto-coach-api-prod`
+- **app-prod** site -> rewrites to `auto-coach-api-prod`
 
 This eliminates the need to inject API URLs at build time.
 
 ### Container Tagging Strategy
-
-**Development:**
-- Primary: `dev-<shortsha>` (e.g., `dev-a1b2c3d`)
-- Latest: `dev-latest`
 
 **Production:**
 - Primary: `v1.2.3` (semantic version)
@@ -182,7 +168,7 @@ The `.github/workflows/ci.yml` workflow uses the orchestrator for automated depl
 - Deploys to production using orchestrator
 
 **On pull requests:**
-- Deploys client preview to dev site
+- Deploys client preview
 
 ## Required Environment Variables
 
@@ -206,13 +192,7 @@ export SENDGRID_API_KEY="..."
 
 ## Examples
 
-**Deploy dev API after changes:**
-```bash
-bun run checks
-bun run deploy api --env dev
-```
-
-**Deploy prod API with version:**
+**Deploy API with version:**
 ```bash
 bun run checks
 bun run deploy api --env prod --version v1.2.3
@@ -220,7 +200,7 @@ bun run deploy api --env prod --version v1.2.3
 
 **Deploy client preview for PR:**
 ```bash
-bun run deploy client --env dev --channel pr-456
+bun run deploy client --env prod --channel pr-456
 ```
 
 **Full prod deployment:**
@@ -258,7 +238,6 @@ firebase hosting:channel:list
 
 **Test API health:**
 ```bash
-curl https://auto-coach-api-dev-xxxxx.run.app/health
 curl https://auto-coach-api-prod-xxxxx.run.app/health
 ```
 
@@ -266,10 +245,9 @@ curl https://auto-coach-api-prod-xxxxx.run.app/health
 
 1. Make code changes
 2. Run checks: `bun run checks`
-3. Deploy to dev: `bun run deploy <component> --env dev`
-4. Test in dev environment
-5. Create PR (triggers preview deployment)
-6. Merge to main (auto-deploys to prod)
+3. Test locally
+4. Create PR (triggers preview deployment)
+5. Merge to main (auto-deploys to prod)
 
 ---
 

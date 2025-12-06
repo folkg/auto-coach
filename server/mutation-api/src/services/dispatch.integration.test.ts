@@ -5,12 +5,11 @@
  * weekly transactions, and positional scarcity calculations.
  */
 
+import type { Leagues } from "@common/types/Leagues.js";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 
 import { describe, expect, it } from "@effect/vitest";
 import { Effect, Layer } from "effect";
-
-import type { TeamData } from "./scheduling.service.js";
 
 import {
   DispatchServiceImpl,
@@ -21,7 +20,55 @@ import {
   WeeklyTransactionsService,
 } from "./dispatch.service.js";
 import { PositionalScarcityError } from "./positional-scarcity.service.js";
+import { type FirestoreTeamPayload } from "./scheduling.service.js";
 import { WeeklyTransactionsError } from "./weekly-transactions.service.js";
+
+/**
+ * Creates a complete FirestoreTeamPayload with sensible defaults.
+ */
+function createMockTeamPayload(
+  overrides: Partial<FirestoreTeamPayload> & {
+    uid: string;
+    game_code: Leagues;
+    start_date: number;
+  },
+): FirestoreTeamPayload {
+  return {
+    team_key: "test-team-key",
+    end_date: Date.now() + 86400000 * 180,
+    weekly_deadline: "intraday",
+    roster_positions: { C: 1, LW: 2, RW: 2, D: 4, G: 2, BN: 4, IR: 2 },
+    num_teams: 12,
+    allow_transactions: true,
+    allow_dropping: true,
+    allow_adding: true,
+    allow_add_drops: true,
+    allow_waiver_adds: true,
+    automated_transaction_processing: false,
+    last_updated: Date.now(),
+    is_subscribed: true,
+    is_setting_lineups: true,
+    ...overrides,
+  };
+}
+
+// Helper to create mock Firestore QuerySnapshot
+function createMockTeamsSnapshot(
+  teams: ReadonlyArray<{
+    readonly id: string;
+    readonly data: FirestoreTeamPayload;
+  }>,
+): QuerySnapshot<DocumentData> {
+  const docs = teams.map((team) => ({
+    id: team.id,
+    data: () => team.data,
+  }));
+
+  return {
+    size: docs.length,
+    docs,
+  } as unknown as QuerySnapshot<DocumentData>;
+}
 
 describe("DispatchService Integration Tests", () => {
   describe("dispatchSetLineup", () => {
@@ -38,7 +85,7 @@ describe("DispatchService Integration Tests", () => {
             leaguesToSetLineupsFor: () => Effect.succeed([]),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
-            mapUsersToActiveTeams: () => new Map(),
+            mapUsersToActiveTeams: () => Effect.succeed(new Map()),
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
@@ -74,7 +121,7 @@ describe("DispatchService Integration Tests", () => {
             leaguesToSetLineupsFor: () => Effect.succeed([]),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
-            mapUsersToActiveTeams: () => new Map(),
+            mapUsersToActiveTeams: () => Effect.succeed(new Map()),
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
@@ -103,27 +150,27 @@ describe("DispatchService Integration Tests", () => {
         const dispatchService = new DispatchServiceImpl();
 
         const now = Date.now();
-        const activeUsers = new Map<string, TeamData[]>([
+        const activeUsers = new Map<string, FirestoreTeamPayload[]>([
           [
             "user1",
             [
-              {
+              createMockTeamPayload({
                 uid: "user1",
-                game_code: "nba",
+                game_code: "nba" as Leagues,
                 start_date: now - 1000,
                 team_key: "nba.t.123",
-              },
+              }),
             ],
           ],
           [
             "user2",
             [
-              {
+              createMockTeamPayload({
                 uid: "user2",
-                game_code: "nhl",
+                game_code: "nhl" as Leagues,
                 start_date: now - 1000,
                 team_key: "nhl.t.456",
-              },
+              }),
             ],
           ],
         ]);
@@ -138,7 +185,7 @@ describe("DispatchService Integration Tests", () => {
             leaguesToSetLineupsFor: () => Effect.succeed(["nba", "nhl"]),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
-            mapUsersToActiveTeams: () => activeUsers,
+            mapUsersToActiveTeams: () => Effect.succeed(activeUsers),
             enqueueUsersTeams: () => Effect.succeed(enqueuedTasks),
           }),
           Layer.succeed(FirestoreService, {
@@ -147,19 +194,19 @@ describe("DispatchService Integration Tests", () => {
                 createMockTeamsSnapshot([
                   {
                     id: "nba.t.123",
-                    data: {
+                    data: createMockTeamPayload({
                       uid: "user1",
-                      game_code: "nba",
+                      game_code: "nba" as Leagues,
                       start_date: now - 1000,
-                    },
+                    }),
                   },
                   {
                     id: "nhl.t.456",
-                    data: {
+                    data: createMockTeamPayload({
                       uid: "user2",
-                      game_code: "nhl",
+                      game_code: "nhl" as Leagues,
                       start_date: now - 1000,
-                    },
+                    }),
                   },
                 ]),
               ),
@@ -194,7 +241,7 @@ describe("DispatchService Integration Tests", () => {
             leaguesToSetLineupsFor: () => Effect.succeed(["nba"]),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
-            mapUsersToActiveTeams: () => new Map(),
+            mapUsersToActiveTeams: () => Effect.succeed(new Map()),
             enqueueUsersTeams: () => Effect.succeed([]),
           }),
           Layer.succeed(FirestoreService, {
@@ -331,21 +378,3 @@ describe("DispatchService Integration Tests", () => {
       }));
   });
 });
-
-// Helper to create mock Firestore QuerySnapshot
-function createMockTeamsSnapshot(
-  teams: ReadonlyArray<{
-    readonly id: string;
-    readonly data: { uid: string; game_code: string; start_date: number };
-  }>,
-): QuerySnapshot<DocumentData> {
-  const docs = teams.map((team) => ({
-    id: team.id,
-    data: () => team.data,
-  }));
-
-  return {
-    size: docs.length,
-    docs,
-  } as unknown as QuerySnapshot<DocumentData>;
-}

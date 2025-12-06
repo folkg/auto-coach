@@ -48,6 +48,7 @@ export class ExecutionServiceImpl implements ExecutionService {
         message: "Starting mutation execution",
       });
 
+      // TODO: What happens if this errors? We don't do anything with the retryAfter.. this isn't doing anything.
       // Check rate limits
       yield* self.rateLimiter.checkRateLimit(task.userId).pipe(
         Effect.mapError(
@@ -214,7 +215,16 @@ export class ExecutionServiceImpl implements ExecutionService {
 
           const errorMessage = error instanceof Error ? error.message : String(error);
 
-          if (errorMessage.includes("RevokedRefreshTokenError")) {
+          // Check for various auth-related errors that indicate revoked/expired tokens
+          const isAuthError =
+            errorMessage.includes("RevokedRefreshTokenError") ||
+            errorMessage.includes("Forbidden access") ||
+            errorMessage.includes("Invalid cookie") ||
+            errorMessage.includes("please log in again") ||
+            errorMessage.includes('status":401') ||
+            errorMessage.includes('status":403');
+
+          if (isAuthError) {
             return Effect.fail(
               new DomainError({
                 message: errorMessage,

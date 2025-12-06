@@ -49,7 +49,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
     timeout                          = "60s"
     execution_environment            = "EXECUTION_ENVIRONMENT_GEN2"
     service_account                  = google_service_account.mutation_api_sa.email
-    max_instance_request_concurrency = 1000
+    max_instance_request_concurrency = 80
 
     scaling {
       min_instance_count = 0
@@ -62,7 +62,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
       resources {
         limits = {
           cpu    = "1"
-          memory = "512Mi"
+          memory = "1Gi"
         }
         cpu_idle = false
       }
@@ -90,6 +90,46 @@ resource "google_cloud_run_v2_service" "mutation_api" {
       env {
         name  = "CLOUD_TASKS_QUEUE_PATH"
         value = google_cloud_tasks_queue.mutation_queue.name
+      }
+
+      env {
+        name  = "GOOGLE_CLOUD_PROJECT_ID"
+        value = var.project_id
+      }
+
+      env {
+        name  = "GOOGLE_CLOUD_LOCATION"
+        value = var.region
+      }
+
+      env {
+        name  = "MUTATION_API_URL"
+        value = "https://mutation-api-${var.environment}-nw73xubluq-uc.a.run.app"
+      }
+
+      env {
+        name  = "YAHOO_APP_ID"
+        value = var.yahoo_app_id
+      }
+
+      env {
+        name  = "YAHOO_CLIENT_ID"
+        value = var.yahoo_client_id
+      }
+
+      env {
+        name  = "YAHOO_REDIRECT_URI"
+        value = var.yahoo_redirect_uri
+      }
+
+      env {
+        name = "YAHOO_CLIENT_SECRET"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.yahoo_client_secret.secret_id
+            version = "latest"
+          }
+        }
       }
 
       # Health probes optimized for compiled binary startup
@@ -155,42 +195,36 @@ resource "google_cloud_tasks_queue" "mutation_queue" {
   project  = var.project_id
   location = var.region
 
-  app_engine_routing_override {
-    service = "default"
-    version = "v1"
-  }
-
   rate_limits {
     max_dispatches_per_second = 10
-    max_burst_size           = 20
   }
 
   retry_config {
-    max_attempts     = 5
-    min_backoff      = "1s"
-    max_backoff      = "60s"
-    max_doublings    = 3
-    max_retry_duration = "300s"
+    max_attempts       = 3
+    min_backoff        = "1s"
+    max_backoff        = "30s"
+    max_doublings      = 2
+    max_retry_duration = "60s"
   }
 
   depends_on = [google_project_service.cloud_tasks_api]
 }
 
-# Cloud Scheduler job for set-lineup dispatch (hourly)
+# Cloud Scheduler job for set-lineup dispatch (hourly at minute 55)
 resource "google_cloud_scheduler_job" "set_lineup_schedule" {
   name      = "set-lineup-schedule-${var.environment}"
   project   = var.project_id
   region    = var.region
-  schedule  = "0 * * * *"  # Every hour at minute 0
+  schedule  = "55 * * * *" # Every hour at minute 55
   time_zone = "America/New_York"
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}:invoke"
-    
+    uri         = "${google_cloud_run_v2_service.mutation_api.uri}/mutations/set-lineup"
+
     oidc_token {
       service_account_email = google_service_account.mutation_api_sa.email
-      audience              = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}"
+      audience              = google_cloud_run_v2_service.mutation_api.uri
     }
 
     headers = {
@@ -198,7 +232,9 @@ resource "google_cloud_scheduler_job" "set_lineup_schedule" {
     }
 
     body = base64encode(jsonencode({
-      path = "/dispatch/set-lineup"
+      userId        = "scheduler"
+      teamKey       = "all"
+      lineupChanges = []
     }))
   }
 
@@ -208,21 +244,21 @@ resource "google_cloud_scheduler_job" "set_lineup_schedule" {
   ]
 }
 
-# Cloud Scheduler job for weekly-transactions dispatch (daily)
+# Cloud Scheduler job for weekly-transactions dispatch (daily at 3 AM)
 resource "google_cloud_scheduler_job" "weekly_transactions_schedule" {
   name      = "weekly-transactions-schedule-${var.environment}"
   project   = var.project_id
   region    = var.region
-  schedule  = "0 2 * * *"  # Daily at 2 AM
+  schedule  = "0 3 * * *" # Daily at 3 AM
   time_zone = "America/New_York"
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}:invoke"
-    
+    uri         = "${google_cloud_run_v2_service.mutation_api.uri}/mutations/weekly-transactions"
+
     oidc_token {
       service_account_email = google_service_account.mutation_api_sa.email
-      audience              = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}"
+      audience              = google_cloud_run_v2_service.mutation_api.uri
     }
 
     headers = {
@@ -230,7 +266,9 @@ resource "google_cloud_scheduler_job" "weekly_transactions_schedule" {
     }
 
     body = base64encode(jsonencode({
-      path = "/dispatch/weekly-transactions"
+      userId       = "scheduler"
+      teamKey      = "all"
+      transactions = []
     }))
   }
 
@@ -240,21 +278,21 @@ resource "google_cloud_scheduler_job" "weekly_transactions_schedule" {
   ]
 }
 
-# Cloud Scheduler job for calc-positional-scarcity dispatch (weekly)
+# Cloud Scheduler job for calc-positional-scarcity dispatch (weekly on Sunday at 12:30 AM)
 resource "google_cloud_scheduler_job" "calc_scarcity_schedule" {
   name      = "calc-scarcity-schedule-${var.environment}"
   project   = var.project_id
   region    = var.region
-  schedule  = "0 3 * * 0"  # Weekly on Sunday at 3 AM
+  schedule  = "30 0 * * 0" # Weekly on Sunday at 12:30 AM
   time_zone = "America/New_York"
 
   http_target {
     http_method = "POST"
-    uri         = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}:invoke"
-    
+    uri         = "${google_cloud_run_v2_service.mutation_api.uri}/mutations/calc-positional-scarcity"
+
     oidc_token {
       service_account_email = google_service_account.mutation_api_sa.email
-      audience              = "https://${var.region}-run.googleapis.com/apis/run.googleapis.com/v1/namespaces/${var.project_id}/services/mutation-api-${var.environment}"
+      audience              = google_cloud_run_v2_service.mutation_api.uri
     }
 
     headers = {
@@ -262,7 +300,8 @@ resource "google_cloud_scheduler_job" "calc_scarcity_schedule" {
     }
 
     body = base64encode(jsonencode({
-      path = "/dispatch/calc-positional-scarcity"
+      userId    = "scheduler"
+      leagueKey = "all"
     }))
   }
 

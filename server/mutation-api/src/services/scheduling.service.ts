@@ -16,6 +16,9 @@ import {
 import { fetchStartingPlayers } from "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js";
 import { SportsnetGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/SportsnetGamesResponse.js";
 import { YahooGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/YahooGamesReponse.js";
+import { FirestoreTeamPayloadSchema } from "../types/schemas.js";
+
+export type FirestoreTeamPayload = Schema.Schema.Type<typeof FirestoreTeamPayloadSchema>;
 
 export class SchedulingError extends Schema.TaggedError<SchedulingError>()("SchedulingError", {
   message: Schema.String,
@@ -29,13 +32,6 @@ export interface GameStartTimes {
   readonly mlb: readonly number[];
 }
 
-export interface TeamData {
-  readonly uid: string;
-  readonly game_code: Leagues;
-  readonly start_date: number;
-  readonly team_key?: string;
-}
-
 interface LoadTodaysGamesResult {
   readonly loadedFromDB: boolean;
   readonly gameStartTimes: GameStartTimes;
@@ -43,7 +39,7 @@ interface LoadTodaysGamesResult {
 
 interface EnqueuedTask {
   readonly uid: string;
-  readonly teams: readonly TeamData[];
+  readonly teams: readonly FirestoreTeamPayload[];
 }
 
 /**
@@ -345,41 +341,53 @@ export function setStartingPlayersForToday(
 
 /**
  * Maps users to their active teams from a Firestore snapshot.
+ * Validates each team document against the schema.
  */
-export function mapUsersToActiveTeams(
+export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams")(function* (
   teamsSnapshot: QuerySnapshot<DocumentData>,
-): Map<string, TeamData[]> {
+) {
   if (teamsSnapshot.size === 0) {
-    return new Map();
+    return new Map<string, FirestoreTeamPayload[]>();
   }
 
-  const result = new Map<string, TeamData[]>();
+  const result = new Map<string, FirestoreTeamPayload[]>();
+
   for (const doc of teamsSnapshot?.docs ?? []) {
-    const team = doc.data() as TeamData;
+    const rawData = doc.data();
+    const dataWithKey = { ...rawData, team_key: doc.id };
+
+    const parseResult = yield* Effect.either(
+      Schema.decodeUnknown(FirestoreTeamPayloadSchema)(dataWithKey),
+    );
+
+    if (Either.isLeft(parseResult)) {
+      yield* Effect.logWarning(
+        `Skipping invalid team document ${doc.id}: ${parseResult.left.message}`,
+      );
+      continue;
+    }
+
+    const team = parseResult.right;
     const uid = team.uid;
-    const teamWithKey: TeamData = {
-      ...team,
-      team_key: doc.id,
-    };
 
     if (team.start_date <= Date.now()) {
       const userTeams = result.get(uid);
       if (userTeams === undefined) {
-        result.set(uid, [teamWithKey]);
+        result.set(uid, [team]);
       } else {
-        userTeams.push(teamWithKey);
+        userTeams.push(team);
       }
     }
   }
 
   return result;
-}
+});
 
 /**
  * Creates Cloud Tasks for each user's teams.
  */
 export const enqueueUsersTeams = Effect.fn("scheduling.enqueueUsersTeams")(function* (
-  activeUsers: Map<string, TeamData[]>,
+  activeUsers: Map<string, FirestoreTeamPayload[]>,
   queueName: string,
 ) {
   const tasksClient = new CloudTasksClient();
@@ -398,14 +406,24 @@ export const enqueueUsersTeams = Effect.fn("scheduling.enqueueUsersTeams")(funct
   const enqueuedTasks: EnqueuedTask[] = [];
 
   for (const [uid, teams] of activeUsers) {
-    const taskPayload = { uid, teams };
+    const taskId = `set-lineup-${uid}-${Date.now()}`;
+    const taskPayload = {
+      task: {
+        id: taskId,
+        type: "SET_LINEUP" as const,
+        payload: { uid, teams },
+        userId: uid,
+        createdAt: new Date().toISOString(),
+        status: "PENDING" as const,
+      },
+    };
 
     yield* Effect.tryPromise({
       try: async () => {
         const cloudTask = {
           httpRequest: {
             httpMethod: "POST" as const,
-            url: `${mutationApiUrl}/execute/set-lineup`,
+            url: `${mutationApiUrl}/mutations/execute/mutation`,
             headers: {
               "Content-Type": "application/json",
             },
@@ -425,7 +443,7 @@ export const enqueueUsersTeams = Effect.fn("scheduling.enqueueUsersTeams")(funct
         }),
     });
 
-    enqueuedTasks.push(taskPayload);
+    enqueuedTasks.push({ uid, teams });
   }
 
   return enqueuedTasks;

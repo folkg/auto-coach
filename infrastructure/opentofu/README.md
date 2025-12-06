@@ -122,11 +122,11 @@ gsutil versioning set on gs://auto-coach-terraform-state
 cd infrastructure/opentofu
 
 # Create SendGrid secret
-make set-sendgrid-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make set-sendgrid-secret PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 # (You'll be prompted to paste your SendGrid API key - it won't be visible while typing)
 
 # Create Yahoo secret
-make set-yahoo-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make set-yahoo-secret PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 # (You'll be prompted to paste your Yahoo Client Secret)
 ```
 
@@ -134,17 +134,15 @@ make set-yahoo-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID
 
 ```bash
 # Create SendGrid secret
-echo "SG.your-sendgrid-api-key-here" | gcloud secrets create sendgrid-api-key-dev \
+echo "SG.your-sendgrid-api-key-here" | gcloud secrets create sendgrid-api-key-prod \
     --project=$PROJECT_ID \
     --data-file=-
 
 # Create Yahoo secret
-echo "your-yahoo-client-secret-here" | gcloud secrets create yahoo-client-secret-dev \
+echo "your-yahoo-client-secret-here" | gcloud secrets create yahoo-client-secret-prod \
     --project=$PROJECT_ID \
     --data-file=-
 ```
-
-**For Production:** Repeat these steps with `ENVIRONMENT=prod` or `-prod` suffix.
 
 ### Step 5: Initialize OpenTofu
 
@@ -221,11 +219,7 @@ export YAHOO_CLIENT_SECRET="your-secret-here"
 
 # Run the plan
 tofu plan \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 ```
@@ -251,11 +245,7 @@ Plan: 16 to add, 0 to change, 0 to destroy.
 ```bash
 # Apply the changes
 tofu apply \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 ```
@@ -279,7 +269,7 @@ Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-api_url = "https://auto-coach-api-dev-xxxxx-uc.a.run.app"
+api_url = "https://auto-coach-api-prod-xxxxx-uc.a.run.app"
 container_registry_url = "us-central1-docker.pkg.dev/your-project/auto-coach"
 ...
 ```
@@ -309,11 +299,7 @@ cd infrastructure/opentofu
 
 # Apply again with container_image_tag=latest to trigger deployment
 tofu apply \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
   -var="container_image_tag=latest"
@@ -345,7 +331,7 @@ open $API_URL/health
 
 **Check Cloud Run service status:**
 ```bash
-gcloud run services describe auto-coach-api-dev \
+gcloud run services describe auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --format="value(status.url,status.conditions[0].type,status.conditions[0].status)"
@@ -353,13 +339,13 @@ gcloud run services describe auto-coach-api-dev \
 
 **View logs:**
 ```bash
-gcloud run services logs read auto-coach-api-dev \
+gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --limit=50
 ```
 
-## 📝 Using the Makefile (Easier Way)
+## Using the Makefile (Easier Way)
 
 Once you understand the basics, the Makefile provides shortcuts:
 
@@ -370,19 +356,19 @@ cd infrastructure/opentofu
 make init
 
 # Plan changes
-make plan ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make plan PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 
 # Apply changes
-make apply ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make apply PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 
 # View outputs
 make output
 
 # Check status
-make status ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
+make status PROJECT_ID=$PROJECT_ID
 
 # View logs
-make logs ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
+make logs PROJECT_ID=$PROJECT_ID
 ```
 
 **Or use the npm scripts from project root:**
@@ -390,10 +376,10 @@ make logs ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
 ```bash
 # From project root
 bun infra:init
-bun infra:plan:dev      # Requires PROJECT_ID and FIREBASE_PROJECT_ID env vars
-bun infra:apply:dev     # Requires all env vars
+bun infra:plan      # Requires PROJECT_ID and FIREBASE_PROJECT_ID env vars
+bun infra:apply     # Requires all env vars
 bun infra:output
-bun infra:status:dev
+bun infra:status
 ```
 
 ## 🔄 Making Changes & Redeploying
@@ -418,11 +404,7 @@ bun infra:status:dev
    ```bash
    cd infrastructure/opentofu
    tofu apply \
-     -var-file="environments/dev.tfvars" \
-     -var="project_id=$PROJECT_ID" \
-     -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-     -var="yahoo_app_id=$YAHOO_APP_ID" \
-     -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+     -var-file="environments/prod.tfvars" \
      -var="sendgrid_api_key=$SENDGRID_API_KEY" \
      -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
      -var="container_image_tag=v1.0.1"
@@ -432,56 +414,19 @@ bun infra:status:dev
 
 ```bash
 cd infrastructure/opentofu
-tofu plan -var-file="environments/dev.tfvars" ...  # Check changes
-tofu apply -var-file="environments/dev.tfvars" ... # Apply changes
+tofu plan -var-file="environments/prod.tfvars" ...  # Check changes
+tofu apply -var-file="environments/prod.tfvars" ... # Apply changes
 ```
 
-## 🌍 Deploying to Production
+## Configuration
 
-**Production uses different settings (stricter access, more scaling):**
-
-1. **Create production secrets:**
-   ```bash
-   cd infrastructure/opentofu
-   make set-sendgrid-secret ENVIRONMENT=prod PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
-   make set-yahoo-secret ENVIRONMENT=prod PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
-   ```
-
-2. **Build and push production image:**
-   ```bash
-   cd ../../
-   docker tag auto-coach-api us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:prod-v1.0.0
-   docker push us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:prod-v1.0.0
-   ```
-
-3. **Deploy production infrastructure:**
-   ```bash
-   cd infrastructure/opentofu
-   tofu apply \
-     -var-file="environments/prod.tfvars" \
-     -var="project_id=$PROJECT_ID" \
-     -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-     -var="yahoo_app_id=$YAHOO_APP_ID" \
-     -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
-     -var="sendgrid_api_key=$SENDGRID_API_KEY" \
-     -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
-     -var="container_image_tag=prod-v1.0.0" \
-     -var="allowed_origins=https://yourdomain.com,https://auto-gm-372620.web.app"
-   ```
-
-**Note:** Production requires authentication by default. For public access during initial testing, you can temporarily set in `prod.tfvars` or override during apply.
-
-## 📊 Environment Differences
-
-| Setting | Development | Production |
-|---------|-------------|------------|
-| **Min Instances** | 0 (scales to zero) | 0 (scales to zero) |
-| **Max Instances** | 10 | 100 |
-| **Public Access** | Yes (allUsers) | Yes (allUsers)* |
-| **CORS Origins** | localhost:4200,3000 | Your production domain |
-| **Service Name** | auto-coach-api-dev | auto-coach-api-prod |
-
-*Note: Public access is currently enabled for both. Change `local.allow_unauthenticated` in `main.tf` if you want authenticated-only for prod.
+| Setting | Value |
+|---------|-------|
+| **Min Instances** | 0 (scales to zero) |
+| **Max Instances** | 100 |
+| **Public Access** | Yes (allUsers) |
+| **CORS Origins** | Your production domain |
+| **Service Name** | auto-coach-api-prod |
 
 ## 🔍 Common Commands Reference
 
@@ -499,7 +444,7 @@ tofu state list
 tofu state show google_cloud_run_v2_service.auto_coach_api
 
 # Refresh state from actual infrastructure
-tofu refresh -var-file="environments/dev.tfvars" ...
+tofu refresh -var-file="environments/prod.tfvars" ...
 
 # Validate configuration files
 tofu validate
@@ -555,7 +500,7 @@ tofu force-unlock LOCK_ID
 
 **Check logs:**
 ```bash
-gcloud run services logs read auto-coach-api-dev \
+gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --limit=100
@@ -576,10 +521,10 @@ gcloud run services logs read auto-coach-api-dev \
 tofu state rm google_cloud_run_v2_service.auto_coach_api
 
 # Or import existing resource
-tofu import google_cloud_run_v2_service.auto_coach_api projects/$PROJECT_ID/locations/us-central1/services/auto-coach-api-dev
+tofu import google_cloud_run_v2_service.auto_coach_api projects/$PROJECT_ID/locations/us-central1/services/auto-coach-api-prod
 ```
 
-## 🤖 GitHub Actions CI/CD Setup
+## GitHub Actions CI/CD Setup
 
 The infrastructure automatically creates a service account for GitHub Actions with all required permissions.
 
@@ -590,10 +535,9 @@ cd infrastructure/opentofu
 
 tofu apply \
   -var-file="environments/prod.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="create_github_actions_sa=true" \
-  ...
+  -var="sendgrid_api_key=$SENDGRID_API_KEY" \
+  -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
+  -var="create_github_actions_sa=true"
 ```
 
 ### Step 2: Get Service Account Details

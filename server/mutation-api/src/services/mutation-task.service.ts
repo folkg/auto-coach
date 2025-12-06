@@ -68,7 +68,7 @@ export class MutationTaskService {
           name: `${parent}/tasks/${id}`,
           httpRequest: {
             httpMethod: "POST" as const,
-            url: `${process.env.MUTATION_API_URL}/execute/mutation`,
+            url: `${process.env.MUTATION_API_URL}/mutations/execute/mutation`,
             headers: {
               "Content-Type": "application/json",
             },
