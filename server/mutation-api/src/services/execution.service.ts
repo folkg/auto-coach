@@ -226,6 +226,7 @@ export class ExecutionServiceImpl implements ExecutionService {
 
           const errorMessage = error instanceof Error ? error.message : String(error);
 
+          // TODO: This should be baked into the http layer, we can specificaly check for auth errors at the router level
           // Check for various auth-related errors that indicate revoked/expired tokens
           const isAuthError =
             errorMessage.includes("RevokedRefreshTokenError") ||

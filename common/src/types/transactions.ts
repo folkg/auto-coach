@@ -61,7 +61,7 @@ export type TransactionsData = typeof TransactionsData.infer;
 const TransactionInfo = type({
   transaction_key: "string",
   type: "'waiver' | 'pending_trade'",
-  status: "'pending' | 'proposed'",
+  status: "'pending' | 'proposed' | 'accepted'",
   "waiver_player_key?": "string",
   "waiver_team_key?": "string",
   "waiver_team_name?": "string",

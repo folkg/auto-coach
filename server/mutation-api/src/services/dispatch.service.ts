@@ -150,7 +150,7 @@ export interface DispatchService {
 
 export class DispatchServiceImpl implements DispatchService {
   dispatchSetLineup(
-    _request: SetLineupRequestType,
+    request: SetLineupRequestType,
   ): Effect.Effect<
     DispatchResponse,
     DispatchServiceError,
@@ -161,9 +161,9 @@ export class DispatchServiceImpl implements DispatchService {
       const schedulingService = yield* SchedulingService;
       const firestoreService = yield* FirestoreService;
 
-      // Step 1: Check if current Pacific hour > 0 (skip midnight run)
+      // Step 1: Check if current Pacific hour > 0 (skip midnight run) - unless skipGamesCheck is true
       const currentHour = timeService.getCurrentPacificHour();
-      if (currentHour === 0) {
+      if (currentHour === 0 && !request.skipGamesCheck) {
         return {
           success: true,
           taskCount: 0,
@@ -171,8 +171,14 @@ export class DispatchServiceImpl implements DispatchService {
         };
       }
 
-      // Step 2: Determine active leagues - let Effect fail naturally
-      const leagues = yield* schedulingService.leaguesToSetLineupsFor();
+      // Step 2: Determine active leagues - skip games check if requested
+      let leagues: readonly Leagues[];
+      if (request.skipGamesCheck) {
+        leagues = ["nba", "nhl", "nfl", "mlb"];
+        yield* Effect.logInfo("Skipping games check - processing all leagues");
+      } else {
+        leagues = yield* schedulingService.leaguesToSetLineupsFor();
+      }
 
       // Step 3: If no leagues, return early
       if (leagues.length === 0) {

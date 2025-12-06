@@ -45,6 +45,7 @@
 		"deploy:client:prod": "bun run deploy client --env prod",
 		"deploy:functions": "bun run deploy functions --env prod",
 		"deploy:firestore": "bun run deploy firestore --env prod",
+		"dispatch:set-lineup": "curl -X POST 'https://mutation-api-prod-nw73xubluq-uc.a.run.app/mutations/set-lineup' -H 'Content-Type: application/json' -d '{\"userId\": \"scheduler\", \"teamKey\": \"all\", \"lineupChanges\": [], \"skipGamesCheck\": true}'",
 		"deploy:full:dev": "GCP_PROJECT_ID=auto-gm-372620 bun run deploy full --env dev",
 		"deploy:full:prod": "GCP_PROJECT_ID=auto-gm-372620 bun run deploy full --env prod",
 		"update-latest": "bun update -i --recursive --latest",

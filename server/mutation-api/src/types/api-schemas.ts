@@ -7,6 +7,7 @@ export const SetLineupRequestSchema = Schema.Struct({
   userId: Schema.String,
   teamKey: Schema.String,
   lineupChanges: Schema.Array(Schema.Unknown), // Will be typed more specifically
+  skipGamesCheck: Schema.optionalWith(Schema.Boolean, { default: () => false }),
 });
 
 export type SetLineupRequest = Schema.Schema.Type<typeof SetLineupRequestSchema>;
