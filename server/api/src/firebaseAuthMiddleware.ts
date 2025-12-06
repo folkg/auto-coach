@@ -2,6 +2,7 @@ import { type } from "arktype";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { createMiddleware } from "hono/factory";
+
 import type { AuthContext } from ".";
 
 const FIREBASE_PROJECT_ID = process.env["FIREBASE_PROJECT_ID"];

@@ -1,4 +1,3 @@
-import { Hono } from "hono";
 import { TransactionsData } from "@common/types/transactions";
 import { getErrorMessage } from "@common/utilities/error";
 import {
@@ -6,6 +5,8 @@ import {
   processSelectedTransactions,
 } from "@core/transactions/services/transactionsApi.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
+import { Hono } from "hono";
+
 import type { AuthContext } from "..";
 
 export const transactionsRoute = new Hono<AuthContext>()

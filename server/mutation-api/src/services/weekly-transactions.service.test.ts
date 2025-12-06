@@ -1,7 +1,8 @@
+import type { FirestoreTeam } from "@common/types/team.js";
 import type { Mock } from "vitest";
+
 import { Effect, Exit } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { FirestoreTeam } from "@common/types/team.js";
 
 // Only mock external dependencies, not local scheduling service
 vi.mock("../../../core/src/common/services/firebase/firestore.service.js", () => ({

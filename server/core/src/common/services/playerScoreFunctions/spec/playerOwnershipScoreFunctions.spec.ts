@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../../calcPositionalScarcity/services/positionalScarcity.service";
 import type { Player } from "../../../classes/Player";
+
 import { calculatePositionalScarcityOffset } from "../playerOwnershipScoreFunctions.service";
 
 describe("playerOwnershipScoreFunctions", () => {

@@ -1,5 +1,5 @@
 import type { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+
 import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { Component, computed } from "@angular/core";
@@ -12,6 +12,8 @@ import { MatToolbar } from "@angular/material/toolbar";
 import { MatTooltip } from "@angular/material/tooltip";
 import { RouterLink, RouterOutlet } from "@angular/router";
 import { isDefined } from "@common/utilities/checks";
+import { map } from "rxjs/operators";
+
 import { AuthService } from "../services/auth.service";
 import { SyncTeamsService } from "../services/sync-teams.service";
 import { ThemingService } from "../services/theming.service";

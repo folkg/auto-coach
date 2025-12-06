@@ -1,11 +1,14 @@
-import { type } from "arktype";
-import assert from "node:assert";
 import type { Leagues } from "@common/types/Leagues.js";
 import type { GamesPlayed, InningsPitched, TeamOptimizer } from "@common/types/team.js";
 import type { TransactionDetails, TransactionPlayer } from "@common/types/transactions.js";
+
 import { isDefined } from "@common/utilities/checks.js";
+import { type } from "arktype";
+import assert from "node:assert";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../../core/src/common/classes/Player.js";
+
 import {
   COMPOUND_POSITION_COMPOSITIONS,
   INACTIVE_POSITION_LIST,

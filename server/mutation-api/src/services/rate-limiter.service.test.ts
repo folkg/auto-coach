@@ -1,7 +1,9 @@
+import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
+
+import { createMock } from "@common/utilities/createMock";
 import { Effect, Either } from "effect";
 import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from "vitest";
-import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
-import { createMock } from "@common/utilities/createMock";
+
 import {
   CircuitBreakerError,
   type RateLimitConfig,

@@ -5,9 +5,10 @@
  * when interacting with Yahoo and Sportsnet APIs.
  */
 
+import { describe, expect, it, vi } from "@effect/vitest";
 import { Effect } from "effect";
 import { HttpResponse, http } from "msw";
-import { describe, expect, it, vi } from "@effect/vitest";
+
 import {
   createYahooGame,
   createYahooGamesResponse,

@@ -6,9 +6,12 @@
  */
 
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Effect, Layer } from "effect";
+
 import { describe, expect, it } from "@effect/vitest";
+import { Effect, Layer } from "effect";
+
 import type { TeamData } from "./scheduling.service.js";
+
 import {
   DispatchServiceImpl,
   FirestoreService,

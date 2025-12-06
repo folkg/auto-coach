@@ -1,7 +1,8 @@
+import { FirestoreTeam } from "@common/types/team.js";
 import { type } from "arktype";
 import { logger } from "firebase-functions";
 import { onTaskDispatched } from "firebase-functions/v2/tasks";
-import { FirestoreTeam } from "@common/types/team.js";
+
 import { performWeeklyLeagueTransactions } from "./services/setLineups.service.js";
 
 export const taskQueueConfig = {

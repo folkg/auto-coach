@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+
 import feedbackRouter from "./feedback/feedback";
 import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware";
 import schedulesRouter from "./schedules/schedules";

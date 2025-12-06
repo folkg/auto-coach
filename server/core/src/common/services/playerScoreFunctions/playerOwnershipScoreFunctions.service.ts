@@ -1,4 +1,5 @@
 import type { PlayerRanks } from "@common/types/Player.js";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { Player } from "../../classes/Player.js";
 

@@ -1,5 +1,6 @@
 import { NgIf } from "@angular/common";
 import { Component, Input } from "@angular/core";
+
 import { LoaderComponent } from "../loader/loader.component";
 
 @Component({

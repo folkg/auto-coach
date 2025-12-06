@@ -1,5 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
 import type { TeamOptimizer } from "@common/types/team.js";
+
+import { describe, expect, it, vi } from "vitest";
+
 import {
   getTeamsForNextDayTransactions,
   getTeamsWithSameDayTransactions,

@@ -1,11 +1,13 @@
-import type { User } from "firebase/auth";
-import { BehaviorSubject, Observable } from "rxjs";
-import { beforeEach, describe, expect, it } from "vitest";
 import type { ClientTeam } from "@common/types/team";
+import type { User } from "firebase/auth";
+
 import { BreakpointObserver } from "@angular/cdk/layout";
 import { createMock } from "@common/utilities/createMock";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
+import { BehaviorSubject, Observable } from "rxjs";
+import { beforeEach, describe, expect, it } from "vitest";
+
 import { mockRoutes } from "../../__mocks__/routes/routes";
 import { AuthService } from "../services/auth.service";
 import { SyncTeamsService } from "../services/sync-teams.service";

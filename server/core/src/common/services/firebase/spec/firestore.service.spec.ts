@@ -1,4 +1,5 @@
 import { assert, describe, expect, it, vi } from "vitest";
+
 import { RevokedRefreshTokenError } from "../errors.js";
 import { loadYahooAccessToken } from "../firestore.service.js";
 

@@ -1,6 +1,8 @@
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Effect, Schema } from "effect";
 import type { FirestoreTeam } from "@common/types/team.js";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
+import { Effect, Schema } from "effect";
+
 import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
 import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
 import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";

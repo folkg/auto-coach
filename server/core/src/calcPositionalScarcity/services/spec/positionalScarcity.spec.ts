@@ -1,3 +1,6 @@
+import type { FirestoreTeam } from "@common/types/team.js";
+
+import { createMock } from "@common/utilities/createMock";
 import {
   afterEach,
   beforeAll,
@@ -8,8 +11,7 @@ import {
   type MockInstance,
   vi,
 } from "vitest";
-import type { FirestoreTeam } from "@common/types/team.js";
-import { createMock } from "@common/utilities/createMock";
+
 import * as constants from "../../../common/helpers/constants";
 import * as firestoreService from "../../../common/services/firebase/firestore.service";
 import { YahooAPIPlayerResponseSchema } from "../../../common/services/yahooAPI/interfaces/YahooAPIResponse";

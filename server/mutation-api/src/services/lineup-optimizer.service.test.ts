@@ -1,6 +1,8 @@
+import type { TeamOptimizer } from "@common/types/team.js";
+
 import { Effect } from "effect";
 import { beforeEach, describe, expect, it } from "vitest";
-import type { TeamOptimizer } from "@common/types/team.js";
+
 import { createLineupOptimizer, type LineupOptimizer } from "./lineup-optimizer.service.js";
 
 describe("LineupOptimizer", () => {

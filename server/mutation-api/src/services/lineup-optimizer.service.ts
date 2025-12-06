@@ -1,7 +1,10 @@
-import { Effect, Schema } from "effect";
 import type { TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
+
+import { Effect, Schema } from "effect";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
+
 import { LineupOptimizer as CoreLineupOptimizer } from "../../../core/src/dispatchSetLineup/classes/LineupOptimizer.js";
 
 export class LineupOptimizerError extends Schema.TaggedError<LineupOptimizerError>()(

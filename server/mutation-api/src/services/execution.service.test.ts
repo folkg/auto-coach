@@ -1,8 +1,10 @@
-import { Effect, Either } from "effect";
-import { describe, expect, it, vi } from "vitest";
 import type { FirestoreTeam } from "@common/types/team.js";
 import type { CollectionReference, DocumentReference, Firestore } from "@google-cloud/firestore";
+
 import { createMock } from "@common/utilities/createMock.js";
+import { Effect, Either } from "effect";
+import { describe, expect, it, vi } from "vitest";
+
 import {
   RateLimitError as ApiRateLimitError,
   DomainError,

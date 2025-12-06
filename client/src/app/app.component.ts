@@ -1,6 +1,7 @@
-import { pairwise, startWith } from "rxjs";
 import { OverlayContainer } from "@angular/cdk/overlay";
 import { Component, HostBinding, type OnInit } from "@angular/core";
+import { pairwise, startWith } from "rxjs";
+
 import { AppNavComponent } from "./app-nav/app-nav.component";
 import { ThemingService } from "./services/theming.service";
 

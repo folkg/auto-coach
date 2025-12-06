@@ -1,5 +1,6 @@
-import { expect, it } from "vitest";
 import { Firestore } from "@google-cloud/firestore";
+import { expect, it } from "vitest";
+
 import { createExecutionRoutes } from "./execution";
 
 // Validation only; avoids executing downstream Firestore logic.

@@ -1,8 +1,11 @@
-import { type } from "arktype";
 import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
+
 import { Leagues } from "@common/types/Leagues.js";
 import { type TransactionDetails, TransactionDetailsSchema } from "@common/types/transactions.js";
+import { type } from "arktype";
+
 import type { LeagueDetails } from "./interfaces/YahooAPIResponse.js";
+
 import { flattenArray, parseToInt } from "../utilities.service.js";
 
 const LeagueSettingsSchema = type({

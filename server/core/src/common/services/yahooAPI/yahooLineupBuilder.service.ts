@@ -1,6 +1,8 @@
-import { type } from "arktype";
 import type { IPlayer } from "@common/types/Player.js";
 import type { TeamOptimizer } from "@common/types/team.js";
+
+import { type } from "arktype";
+
 import {
   flattenArray,
   getPacificEndOfDay,

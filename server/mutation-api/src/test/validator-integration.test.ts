@@ -1,7 +1,7 @@
+import { effectValidator } from "@hono/effect-validator";
 import { Schema } from "effect";
 import { Hono } from "hono";
 import { describe, expect, it } from "vitest";
-import { effectValidator } from "@hono/effect-validator";
 
 const TestSchema = Schema.Struct({
   userId: Schema.String,

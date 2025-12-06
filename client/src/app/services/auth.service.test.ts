@@ -1,8 +1,9 @@
-import { type Auth, signInWithPopup, type User, type UserCredential } from "firebase/auth";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
 import { createMock } from "@common/utilities/createMock";
+import { type Auth, signInWithPopup, type User, type UserCredential } from "firebase/auth";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { AUTH } from "../shared/firebase-tokens";
 import { AuthService } from "./auth.service";
 

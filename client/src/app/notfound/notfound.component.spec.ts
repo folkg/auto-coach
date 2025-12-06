@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/angular";
+import { describe, expect, it } from "vitest";
+
 import { NotfoundComponent } from "./notfound.component";
 
 describe("NotfoundComponent", () => {

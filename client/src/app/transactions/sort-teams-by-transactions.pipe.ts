@@ -1,5 +1,6 @@
 import type { ClientTeam } from "@common/types/team";
 import type { PlayerTransaction } from "@common/types/transactions";
+
 import { Pipe, type PipeTransform } from "@angular/core";
 
 @Pipe({

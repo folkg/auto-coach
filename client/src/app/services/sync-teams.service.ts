@@ -1,3 +1,9 @@
+import { Injectable } from "@angular/core";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { MatDialog } from "@angular/material/dialog";
+import { ClientTeam } from "@common/types/team";
+import { isDefined, isType } from "@common/utilities/checks";
+import { getErrorMessage } from "@common/utilities/error";
 import {
   BehaviorSubject,
   catchError,
@@ -13,12 +19,7 @@ import {
   startWith,
   switchMap,
 } from "rxjs";
-import { Injectable } from "@angular/core";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
-import { MatDialog } from "@angular/material/dialog";
-import { ClientTeam } from "@common/types/team";
-import { isDefined, isType } from "@common/utilities/checks";
-import { getErrorMessage } from "@common/utilities/error";
+
 import { AuthService } from "../services/auth.service";
 import {
   ConfirmDialogComponent,

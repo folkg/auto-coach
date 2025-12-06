@@ -1,4 +1,5 @@
 import type { ClientTeam } from "@common/types/team";
+
 import { DecimalPipe } from "@angular/common";
 import { Component, computed, EventEmitter, Input, input, Output } from "@angular/core";
 import { MatIconButton } from "@angular/material/button";
@@ -13,7 +14,9 @@ import {
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
+
 import type { PlayerTransactionClient } from "../types/client-types";
+
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";
 import { TransactionComponent } from "../transaction/transaction.component";

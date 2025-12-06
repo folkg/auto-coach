@@ -1,5 +1,3 @@
-import { logger } from "firebase-functions";
-import assert from "node:assert";
 import type { IPlayer } from "@common/types/Player.js";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type {
@@ -8,6 +6,10 @@ import type {
   TPlayer,
   TransactionType,
 } from "@common/types/transactions.js";
+
+import { logger } from "firebase-functions";
+import assert from "node:assert";
+
 import { getScarcityOffsetsForTeam } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import { sendUserEmail } from "../../common/services/email/email.service.js";
 import { getActiveTeamsForUser } from "../../common/services/firebase/firestore.service.js";

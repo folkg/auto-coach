@@ -1,6 +1,8 @@
 import { $ } from "bun";
 import { resolve } from "node:path";
+
 import type { EnvironmentConfig } from "./types";
+
 import { logStep } from "./log";
 
 export async function applyInfrastructure(

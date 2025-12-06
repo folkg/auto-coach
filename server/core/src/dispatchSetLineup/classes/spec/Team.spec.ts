@@ -1,5 +1,6 @@
 import spacetime from "spacetime";
 import { describe, expect, it, test, vi } from "vitest";
+
 import { Team } from "../Team.js";
 
 vi.mock("firebase-admin/firestore", () => ({

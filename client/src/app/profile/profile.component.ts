@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { logError } from "@common/utilities/error";
+
 import { AuthService } from "../services/auth.service";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
 import { ProfileCardComponent } from "./profile-card/profile-card.component";

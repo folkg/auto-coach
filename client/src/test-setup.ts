@@ -1,4 +1,3 @@
-import { beforeEach } from "vitest";
 import { NgModule, provideZonelessChangeDetection } from "@angular/core";
 import { getTestBed, TestBed } from "@angular/core/testing";
 import {
@@ -6,6 +5,8 @@ import {
   platformBrowserDynamicTesting,
 } from "@angular/platform-browser-dynamic/testing";
 import { provideNoopAnimations } from "@angular/platform-browser/animations";
+import { beforeEach } from "vitest";
+
 import { mockAuth, mockFirestore, mockFunctions } from "./__mocks__/firebase/firebase";
 import { AUTH, FIRESTORE, FUNCTIONS } from "./app/shared/firebase-tokens";
 

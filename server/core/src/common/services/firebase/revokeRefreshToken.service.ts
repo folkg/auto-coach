@@ -1,6 +1,7 @@
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { logger } from "firebase-functions";
+
 import { flagRefreshToken } from "./firestore.service.js";
 
 if (getApps().length === 0) {

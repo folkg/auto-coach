@@ -1,9 +1,11 @@
 import type { FeedbackData } from "@common/types/feedback";
 import type { ClientTeam, FirestoreTeam } from "@common/types/team";
 import type { PostTransactionsResult, TransactionsData } from "@common/types/transactions";
+
 import { Injectable, inject } from "@angular/core";
 import { Schedule } from "@common/types/Schedule";
 import { isType } from "@common/utilities/checks";
+
 import { HONO_CLIENT } from "../hono-client-config";
 
 @Injectable({

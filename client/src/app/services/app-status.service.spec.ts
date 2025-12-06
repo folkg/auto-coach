@@ -1,6 +1,7 @@
+import { TestBed } from "@angular/core/testing";
 import { bufferCount, firstValueFrom } from "rxjs";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { TestBed } from "@angular/core/testing";
+
 import { AppStatusService } from "./app-status.service";
 
 describe("AppStatusService", () => {

@@ -1,5 +1,7 @@
 import type { UserRecord } from "firebase-admin/auth";
+
 import { describe, expect, it, vi } from "vitest";
+
 import {
   sendCustomVerificationEmail,
   sendFeedbackEmail,

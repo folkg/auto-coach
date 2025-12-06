@@ -1,7 +1,10 @@
-import { logger } from "firebase-functions";
 import type { IPlayer } from "@common/types/Player.js";
 import type { CommonTeam } from "@common/types/team.js";
+
+import { logger } from "firebase-functions";
+
 import type { YahooAPIPlayerResponse } from "../../common/services/yahooAPI/interfaces/YahooAPIResponse.js";
+
 import {
   COMPOUND_POSITION_COMPOSITIONS,
   INACTIVE_POSITION_LIST,

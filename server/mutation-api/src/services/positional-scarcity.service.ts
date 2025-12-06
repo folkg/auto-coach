@@ -1,6 +1,9 @@
-import { Effect, Schema } from "effect";
 import type { CommonTeam } from "@common/types/team.js";
+
+import { Effect, Schema } from "effect";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
+
 import {
   getScarcityOffsetsForTeam as coreGetScarcityOffsetsForTeam,
   recalculateScarcityOffsetsForAll as coreRecalculateScarcityOffsetsForAll,

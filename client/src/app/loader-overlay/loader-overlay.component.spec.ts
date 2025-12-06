@@ -1,5 +1,6 @@
-import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/angular";
+import { describe, expect, it } from "vitest";
+
 import { LoaderComponent } from "../loader/loader.component";
 import { LoaderOverlayComponent } from "./loader-overlay.component";
 

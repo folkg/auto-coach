@@ -11,7 +11,7 @@
   "bracketSameLine": false,
   "arrowParens": "always",
   "experimentalSortImports": {
-    "newlinesBetween": false
+    // use defaults
   },
   "embeddedLanguageFormatting": "auto",
   "endOfLine": "lf",

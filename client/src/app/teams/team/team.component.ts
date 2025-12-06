@@ -1,6 +1,5 @@
-import { Subscription } from "rxjs";
-import spacetime, { type Spacetime } from "spacetime";
 import type { ClientTeam } from "@common/types/team";
+
 import { AsyncPipe, DecimalPipe, NgIf } from "@angular/common";
 import { Component, computed, EventEmitter, input, Output, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -19,7 +18,11 @@ import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
 import { MatSlideToggle, type MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
+import { Subscription } from "rxjs";
+import spacetime, { type Spacetime } from "spacetime";
+
 import type { PauseLineupEvent, SetLineupEvent } from "../interfaces/outputEvents";
+
 import { AppStatusService } from "../../services/app-status.service";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";

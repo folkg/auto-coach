@@ -1,5 +1,5 @@
-import { lastValueFrom } from "rxjs";
 import type { TransactionResults, TransactionsData } from "@common/types/transactions";
+
 import { JsonPipe } from "@angular/common";
 import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
@@ -8,7 +8,10 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/m
 import { MatDialog } from "@angular/material/dialog";
 import { ActivatedRoute, Router } from "@angular/router";
 import { logError } from "@common/utilities/error";
+import { lastValueFrom } from "rxjs";
+
 import type { PlayerTransactionClient, TransactionsDataClient } from "./types/client-types";
+
 import { LoaderOverlayComponent } from "../loader-overlay/loader-overlay.component";
 import { LoaderComponent } from "../loader/loader.component";
 import { APIService } from "../services/api.service";

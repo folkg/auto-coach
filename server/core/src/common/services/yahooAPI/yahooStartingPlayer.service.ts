@@ -1,6 +1,8 @@
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
 import { type } from "arktype";
 import { logger } from "firebase-functions";
+
 import {
   getIntradayTeams,
   getStartingPlayersFromFirestore,

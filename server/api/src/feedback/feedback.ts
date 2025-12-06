@@ -1,8 +1,9 @@
-import { Hono } from "hono";
 import { FeedbackData } from "@common/types/feedback";
 import { getErrorMessage } from "@common/utilities/error";
 import { sendUserFeedbackEmail } from "@core/common/services/email/feedbackEmail.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
+import { Hono } from "hono";
+
 import type { AuthContext } from "../index";
 
 export const feedbackRouter = new Hono<AuthContext>()

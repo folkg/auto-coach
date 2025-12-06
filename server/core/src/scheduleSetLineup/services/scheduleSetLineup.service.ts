@@ -1,7 +1,9 @@
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getFunctions, type TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
+
 import { getActiveTeamsForLeagues } from "../../common/services/firebase/firestore.service.js";
 import { getCurrentPacificHour, getFunctionUrl } from "../../common/services/utilities.service.js";
 import {

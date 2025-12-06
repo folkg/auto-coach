@@ -1,7 +1,10 @@
-import { type } from "arktype";
 import type { IPlayer, PlayerRanks } from "@common/types/Player.js";
+
 import { assertDefined, isDefined } from "@common/utilities/checks.js";
+import { type } from "arktype";
+
 import type { YahooAPIPlayers } from "./interfaces/YahooAPIResponse.js";
+
 import { flattenArray, parseToInt } from "../utilities.service.js";
 
 const FlatBasePlayerSchema = type({

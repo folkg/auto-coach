@@ -1,8 +1,11 @@
-import spacetime from "spacetime";
-import { assert, describe, expect, it, test, vi } from "vitest";
 import type { TeamOptimizer } from "@common/types/team.js";
 import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
+
+import spacetime from "spacetime";
+import { assert, describe, expect, it, test, vi } from "vitest";
+
 import type { PlayerCollection } from "../classes/PlayerCollection.js";
+
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 
 vi.mock("firebase-admin/firestore", () => ({

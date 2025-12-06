@@ -1,5 +1,3 @@
-import { type } from "arktype";
-import { Hono } from "hono";
 import { getErrorMessage } from "@common/utilities/error";
 import {
   getUserTeams,
@@ -10,6 +8,9 @@ import {
   updateTeamLineupSetting,
 } from "@core/fetchUsersTeams/services/updateTeam.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
+import { type } from "arktype";
+import { Hono } from "hono";
+
 import type { AuthContext } from "../index";
 
 // Define validators for request bodies

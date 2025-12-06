@@ -1,7 +1,9 @@
-import { lastValueFrom, type Observable } from "rxjs";
 import type { UrlTree } from "@angular/router";
+
 import { Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
+import { lastValueFrom, type Observable } from "rxjs";
+
 import {
   ConfirmDialogComponent,
   type DialogData,

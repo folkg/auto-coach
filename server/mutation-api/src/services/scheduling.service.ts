@@ -1,8 +1,10 @@
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Effect, Either, Schema } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
 import { ensureType } from "@common/utilities/checks.js";
 import { CloudTasksClient } from "@google-cloud/tasks";
+import { Effect, Either, Schema } from "effect";
+
 import {
   db,
   storeTodaysPostponedTeams,

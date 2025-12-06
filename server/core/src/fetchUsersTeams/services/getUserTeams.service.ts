@@ -1,5 +1,7 @@
 import type { ClientTeam, FirestoreTeam } from "@common/types/team.js";
+
 import { isDefined } from "@common/utilities/checks.js";
+
 import {
   fetchTeamsFirestore,
   syncTeamsInFirestore,

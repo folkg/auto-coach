@@ -1,12 +1,15 @@
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Context, Effect, Fiber, Layer, Schema } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
+import { Context, Effect, Fiber, Layer, Schema } from "effect";
+
 import type {
   CalcPositionalScarcityRequest as CalcPositionalScarcityRequestType,
   DispatchResponse,
   SetLineupRequest as SetLineupRequestType,
   WeeklyTransactionsRequest as WeeklyTransactionsRequestType,
 } from "../types/api-schemas";
+
 import { getActiveTeamsForLeagues } from "../../../core/src/common/services/firebase/firestore.service.js";
 import { getCurrentPacificHour } from "../../../core/src/common/services/utilities.service.js";
 import {

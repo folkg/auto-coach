@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
 import { parseArgs } from "node:util";
+
 import { buildAPI, buildContainer, pushContainer, tagContainer } from "./tools/docker";
 import { loadEnvironment } from "./tools/environment";
 import { buildClient, deployFunctions, deployHosting } from "./tools/firebase";

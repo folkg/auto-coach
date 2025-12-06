@@ -1,7 +1,8 @@
-import { BehaviorSubject } from "rxjs";
-import { beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
+import { BehaviorSubject } from "rxjs";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { APIService } from "../services/api.service";
 import { AppStatusService } from "../services/app-status.service";
 import { AuthService } from "../services/auth.service";

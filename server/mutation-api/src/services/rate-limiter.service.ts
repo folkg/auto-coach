@@ -1,5 +1,5 @@
-import { Context, Effect, Layer, Schema } from "effect";
 import { FieldValue, type Firestore } from "@google-cloud/firestore";
+import { Context, Effect, Layer, Schema } from "effect";
 
 export class RateLimitError extends Schema.TaggedError<RateLimitError>()("RateLimitError", {
   message: Schema.String,

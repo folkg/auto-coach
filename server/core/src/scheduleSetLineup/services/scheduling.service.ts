@@ -1,9 +1,12 @@
+import type { Leagues } from "@common/types/Leagues.js";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import type { TaskQueue } from "firebase-admin/functions";
-import { logger } from "firebase-functions";
-import type { Leagues } from "@common/types/Leagues.js";
+
 import { ensureType } from "@common/utilities/checks.js";
+import { logger } from "firebase-functions";
+
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
+
 import { db, storeTodaysPostponedTeams } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString, todayPacific } from "../../common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";

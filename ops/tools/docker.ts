@@ -1,5 +1,6 @@
 import { $ } from "bun";
 import { resolve } from "node:path";
+
 import { logStep } from "./log.js";
 
 export async function buildAPI(): Promise<void> {

@@ -4,10 +4,11 @@
  * These tests verify the positional scarcity calculation flows.
  */
 
+import type { CommonTeam } from "@common/types/team.js";
+
+import { describe, expect, it } from "@effect/vitest";
 import { Effect } from "effect";
 import { vi } from "vitest";
-import type { CommonTeam } from "@common/types/team.js";
-import { describe, expect, it } from "@effect/vitest";
 
 // Create hoisted mocks to avoid initialization order issues
 const mocks = vi.hoisted(() => ({

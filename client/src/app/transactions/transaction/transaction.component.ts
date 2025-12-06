@@ -1,10 +1,13 @@
 import type { TPlayer } from "@common/types/transactions";
+
 import { NgClass } from "@angular/common";
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatCheckbox, type MatCheckboxChange } from "@angular/material/checkbox";
 import { MatIcon } from "@angular/material/icon";
+
 import type { PlayerTransactionClient } from "../types/client-types";
+
 import { PlayerComponent } from "../player/player.component";
 
 @Component({

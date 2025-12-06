@@ -1,10 +1,13 @@
-import { logger } from "firebase-functions";
-import assert from "node:assert";
 import type { IPlayer } from "@common/types/Player.js";
 import type { TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
+
 import { isDefined } from "@common/utilities/checks.js";
+import { logger } from "firebase-functions";
+import assert from "node:assert";
+
 import type { LeagueSpecificScarcityOffsets } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
+
 import { Player } from "../../common/classes/Player.js";
 import { INACTIVE_POSITION_LIST } from "../../common/helpers/constants.js";
 import { PlayerCollection } from "./PlayerCollection.js";

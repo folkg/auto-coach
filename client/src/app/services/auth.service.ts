@@ -1,3 +1,6 @@
+import { Inject, Injectable } from "@angular/core";
+import { Router } from "@angular/router";
+import { assertDefined, ensure } from "@common/utilities/checks";
 import {
   type Auth,
   OAuthProvider,
@@ -10,9 +13,7 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
-import { Inject, Injectable } from "@angular/core";
-import { Router } from "@angular/router";
-import { assertDefined, ensure } from "@common/utilities/checks";
+
 import { delay } from "../../../../common/src/utilities/delay";
 import { getErrorMessage } from "../../../../common/src/utilities/error";
 import { AUTH } from "../shared/firebase-tokens";

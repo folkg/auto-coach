@@ -1,5 +1,7 @@
 import type { Schedule } from "@common/types/Schedule.js";
+
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
+
 import { db } from "../../common/services/firebase/firestore.service.js";
 import { getPacificTimeDateString } from "../../common/services/utilities.service.js";
 import { getTodaysGames } from "./scheduling.service.js";

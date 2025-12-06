@@ -1,9 +1,11 @@
 import type { User } from "firebase/auth";
-import { BehaviorSubject } from "rxjs";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { createMock } from "@common/utilities/createMock";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
+import { BehaviorSubject } from "rxjs";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { AppStatusService } from "../../services/app-status.service";
 import { AuthService } from "../../services/auth.service";
 import { ProfileCardComponent } from "./profile-card.component";

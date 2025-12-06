@@ -1,8 +1,8 @@
+import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth, type UserRecord } from "firebase-admin/auth";
 import { logger } from "firebase-functions";
-import sgMail from "@sendgrid/mail";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");

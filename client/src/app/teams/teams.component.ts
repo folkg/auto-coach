@@ -1,12 +1,15 @@
-import { lastValueFrom } from "rxjs";
 import type { Schedule } from "@common/types/Schedule";
+
 import { NgIf } from "@angular/common";
 import { Component, type OnInit, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
 import { getErrorMessage, logError } from "@common/utilities/error";
+import { lastValueFrom } from "rxjs";
+
 import type { PauseLineupEvent, SetLineupEvent } from "./interfaces/outputEvents";
+
 import { ProfileCardComponent } from "../profile/profile-card/profile-card.component";
 import { APIService } from "../services/api.service";
 import { AppStatusService } from "../services/app-status.service";

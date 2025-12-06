@@ -1,5 +1,7 @@
-import { type } from "arktype";
 import type { InfoTeam } from "@common/types/team.js";
+
+import { type } from "arktype";
+
 import {
   flattenArray,
   getPacificEndOfDay,

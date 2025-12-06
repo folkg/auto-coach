@@ -5,10 +5,13 @@
  * including rate limiting, circuit breaker, and task status updates.
  */
 
-import { Effect } from "effect";
 import type { Firestore } from "@google-cloud/firestore";
+
 import { describe, expect, it, vi } from "@effect/vitest";
+import { Effect } from "effect";
+
 import type { MutationTask } from "../types/schemas.js";
+
 import { ExecutionServiceImpl } from "./execution.service.js";
 import {
   CircuitBreakerError,

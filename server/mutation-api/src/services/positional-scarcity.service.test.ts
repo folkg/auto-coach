@@ -1,8 +1,11 @@
+import type { CommonTeam } from "@common/types/team.js";
 import type { Mock } from "vitest";
+
 import { Effect } from "effect";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { CommonTeam } from "@common/types/team.js";
+
 import type { LeagueSpecificScarcityOffsets } from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
+
 import * as coreScarcity from "../../../core/src/calcPositionalScarcity/services/positionalScarcity.service.js";
 import {
   getScarcityOffsetsForTeam,

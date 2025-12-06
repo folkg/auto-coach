@@ -1,7 +1,9 @@
 import { $ } from "bun";
 import { copyFileSync } from "node:fs";
 import { resolve } from "node:path";
+
 import type { EnvironmentConfig } from "./types";
+
 import { logStep } from "./log";
 
 export async function buildClient(): Promise<void> {

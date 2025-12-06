@@ -1,4 +1,5 @@
 import type { Routes } from "@angular/router";
+
 import { AboutComponent } from "./app/about/about.component";
 import { authGuard } from "./app/guards/auth.guard";
 import { DirtyFormGuard } from "./app/guards/dirty-form.guard";

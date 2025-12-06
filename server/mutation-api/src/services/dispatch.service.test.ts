@@ -1,12 +1,15 @@
-import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
-import { Effect, Layer } from "effect";
 import type { Leagues } from "@common/types/Leagues.js";
+import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
 import { describe, expect, it } from "@effect/vitest";
+import { Effect, Layer } from "effect";
+
 import type {
   CalcPositionalScarcityRequest,
   SetLineupRequest,
   WeeklyTransactionsRequest,
 } from "../types/api-schemas.js";
+
 import {
   DispatchError,
   DispatchServiceImpl,

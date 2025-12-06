@@ -1,8 +1,10 @@
-import spacetime from "spacetime";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges } from "@common/types/transactions.js";
+
 import { createMock } from "@common/utilities/createMock";
+import spacetime from "spacetime";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
 import * as positionalScarcityService from "../../calcPositionalScarcity/services/positionalScarcity.service";
 import * as firestoreService from "../../common/services/firebase/firestore.service.js";
 import * as yahooAPI from "../../common/services/yahooAPI/yahooAPI.service.js";

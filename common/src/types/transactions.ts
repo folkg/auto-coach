@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { PlayerSchema } from "./Player.js";
 
 /**

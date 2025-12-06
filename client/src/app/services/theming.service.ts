@@ -1,6 +1,6 @@
+import { ApplicationRef, Injectable } from "@angular/core";
 import { type } from "arktype";
 import { BehaviorSubject } from "rxjs";
-import { ApplicationRef, Injectable } from "@angular/core";
 
 @Injectable({
   providedIn: "root",

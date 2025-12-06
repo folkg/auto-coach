@@ -1,7 +1,9 @@
 import type { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
+
+import { createMock } from "@common/utilities/createMock";
 import { logger } from "firebase-functions";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createMock } from "@common/utilities/createMock";
+
 import * as firestoreService from "../../common/services/firebase/firestore.service.js";
 import * as utilitiesService from "../../common/services/utilities.service.js";
 import { scheduleSetLineup } from "../services/scheduleSetLineup.service.js";

@@ -1,3 +1,10 @@
+import {
+  type ClientTeam,
+  FirestoreTeam,
+  type InfoTeam,
+  yahooToFirestore,
+} from "@common/types/team.js";
+import { assertType } from "@common/utilities/checks.js";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {
   type DocumentData,
@@ -6,15 +13,10 @@ import {
   type QuerySnapshot,
 } from "firebase-admin/firestore";
 import { logger } from "firebase-functions";
-import {
-  type ClientTeam,
-  FirestoreTeam,
-  type InfoTeam,
-  yahooToFirestore,
-} from "@common/types/team.js";
-import { assertType } from "@common/utilities/checks.js";
+
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
+
 import { sendUserEmail } from "../email/email.service.js";
 import {
   getCurrentPacificNumDay,

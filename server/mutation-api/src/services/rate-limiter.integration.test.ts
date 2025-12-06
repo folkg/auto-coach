@@ -5,9 +5,11 @@
  * and circuit breaker functionality.
  */
 
-import { Effect } from "effect";
 import type { Firestore } from "@google-cloud/firestore";
+
 import { describe, expect, it, vi } from "@effect/vitest";
+import { Effect } from "effect";
+
 import { type RateLimitConfig, RateLimiterServiceImpl } from "./rate-limiter.service.js";
 
 function createMockFirestore(

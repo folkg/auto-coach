@@ -1,9 +1,12 @@
-import type { Spacetime } from "spacetime";
 import type { ClientTeam } from "@common/types/team";
+import type { Spacetime } from "spacetime";
+
 import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatCardModule } from "@angular/material/card";
+
 import type { PauseLineupEvent, SetLineupEvent } from "../teams/interfaces/outputEvents";
+
 import { AppStatusService } from "../services/app-status.service";
 import { RobotsComponent } from "../shared/robots/robots.component";
 import { spacetimeNow } from "../shared/utils/now";

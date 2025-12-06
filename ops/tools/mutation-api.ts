@@ -1,6 +1,7 @@
 #!/usr/bin/env bun
 import { $ } from "bun";
 import { parseArgs } from "node:util";
+
 import { loadEnvironment } from "./environment";
 import { log, logError, logStep, logSuccess, logWarning } from "./log";
 import { applyInfrastructure } from "./tofu";

@@ -1,5 +1,5 @@
 import type { User } from "firebase/auth";
-import { distinctUntilChanged, map, Subscription } from "rxjs";
+
 import { AsyncPipe, NgIf } from "@angular/common";
 import {
   Component,
@@ -25,6 +25,8 @@ import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { assertDefined } from "@common/utilities/checks";
 import { getErrorMessage } from "@common/utilities/error";
+import { distinctUntilChanged, map, Subscription } from "rxjs";
+
 import { AppStatusService } from "../../services/app-status.service";
 import { AuthService } from "../../services/auth.service";
 import {
