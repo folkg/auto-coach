@@ -13,13 +13,13 @@ import { lastValueFrom } from "rxjs";
 import type { PlayerTransactionClient, TransactionsDataClient } from "./types/client-types";
 
 import { LoaderOverlayComponent } from "../loader-overlay/loader-overlay.component";
-import { LoaderComponent } from "../loader/loader.component";
 import { APIService } from "../services/api.service";
 import { SyncTeamsService } from "../services/sync-teams.service";
 import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
+import { SkeletonCardComponent } from "../shared/skeleton-card/skeleton-card.component";
 import { SortTeamsByTransactionsPipe } from "./sort-teams-by-transactions.pipe";
 import { TeamComponent } from "./team/team.component";
 
@@ -37,14 +37,17 @@ import { TeamComponent } from "./team/team.component";
     JsonPipe,
     SortTeamsByTransactionsPipe,
     LoaderOverlayComponent,
-    LoaderComponent,
+    SkeletonCardComponent,
   ],
 })
 export class TransactionsComponent {
-  readonly allTeams = toSignal(this.sts.teams$, { initialValue: [] });
-  readonly teams = computed(() => this.allTeams().filter((team) => team.allow_transactions));
+  readonly teamsState = toSignal(this.sts.teamsState$);
+  readonly allTeams = computed(() => this.teamsState()?.teams ?? []);
+  readonly teams = computed(() => [...this.allTeams()].filter((team) => team.allow_transactions));
+  readonly showInitialSkeleton = computed(() => this.teamsState()?.status === "loading-initial");
 
   private readonly transactions = signal<TransactionsDataClient | undefined>(undefined);
+  readonly loadingTransactions = computed(() => this.transactions() === undefined);
   readonly flatTransactions = computed<PlayerTransactionClient[] | undefined>(() =>
     this.computeFlatTransactions(this.transactions()),
   );

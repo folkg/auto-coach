@@ -71,33 +71,33 @@
                 </ul>
             </div>
 
-            @if (teams().length !== 0) {
-                @if (flatTransactions() !== undefined) {
-                    @for (
-                        team of teams()
-                            | sortTeamsByTransactions: flatTransactions() ?? [];
-                        track team.team_key
-                    ) {
-                        <app-team
-                            class="card-container"
-                            [team]="team"
-                            [allTransactions]="flatTransactions() ?? []"
-                            (transactionSelected)="onSelectTransaction($event)"
-                        />
-                    }
-                } @else {
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem;">
-                        <app-loader />
-                        <p style="margin-top: 1rem;">Loading...</p>
+            @if (showInitialSkeleton()) {
+                @for (i of [1, 2, 3]; track i) {
+                    <div class="card-container">
+                        <app-skeleton-card [showTransactions]="true" />
                     </div>
+                }
+            } @else if (teams().length !== 0) {
+                @for (
+                    team of teams()
+                        | sortTeamsByTransactions: flatTransactions() ?? [];
+                    track team.team_key
+                ) {
+                    <app-team
+                        class="card-container"
+                        [team]="team"
+                        [allTransactions]="flatTransactions() ?? []"
+                        [loadingTransactions]="loadingTransactions()"
+                        (transactionSelected)="onSelectTransaction($event)"
+                    />
                 }
             } @else {
                 <mat-card class="card">
                     <mat-card-header>
-                        <mat-card-title>Loading Teams...</mat-card-title>
+                        <mat-card-title>No Teams Available</mat-card-title>
                     </mat-card-header>
                     <mat-card-content>
-                        <p>Please wait</p>
+                        <p>Enable transactions on your teams to see suggested transactions.</p>
                     </mat-card-content>
                 </mat-card>
             }

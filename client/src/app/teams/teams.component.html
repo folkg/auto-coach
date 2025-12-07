@@ -20,26 +20,7 @@
   @if (showInitialSkeleton()) {
     @for (i of skeletonCards; track i) {
       <div class="card-container">
-        <mat-card class="team-skeleton-card">
-          <div class="skeleton-header">
-            <div class="skeleton-avatar shimmer"></div>
-            <div class="skeleton-lines">
-              <div class="skeleton-line shimmer"></div>
-              <div class="skeleton-line short shimmer"></div>
-            </div>
-          </div>
-          <div class="skeleton-divider"></div>
-          <div class="skeleton-body">
-            <div class="skeleton-line shimmer"></div>
-            <div class="skeleton-line shimmer"></div>
-            <div class="skeleton-line short shimmer"></div>
-          </div>
-          <div class="skeleton-divider"></div>
-          <div class="skeleton-footer">
-            <div class="skeleton-toggle shimmer"></div>
-            <div class="skeleton-button shimmer"></div>
-          </div>
-        </mat-card>
+        <app-skeleton-card />
       </div>
     }
   } @else {

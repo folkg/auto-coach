@@ -1,7 +1,6 @@
 import { NgIf } from "@angular/common";
 import { Component, computed, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
-import { MatCard } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
 
@@ -17,6 +16,7 @@ import {
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
+import { SkeletonCardComponent } from "../shared/skeleton-card/skeleton-card.component";
 import { RelativeDatePipe } from "./pipes/relative-date.pipe";
 import { TeamComponent } from "./team/team.component";
 
@@ -25,7 +25,13 @@ import { TeamComponent } from "./team/team.component";
   templateUrl: "./teams.component.html",
   styleUrls: ["./teams.component.scss"],
   providers: [RelativeDatePipe],
-  imports: [OfflineWarningCardComponent, NgIf, ProfileCardComponent, TeamComponent, MatCard],
+  imports: [
+    OfflineWarningCardComponent,
+    NgIf,
+    ProfileCardComponent,
+    TeamComponent,
+    SkeletonCardComponent,
+  ],
 })
 export class TeamsComponent {
   readonly user = toSignal(this.auth.user$);
