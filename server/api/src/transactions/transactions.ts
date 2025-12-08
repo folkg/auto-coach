@@ -8,7 +8,7 @@ import { Hono } from "hono";
 
 import type { AuthContext } from "..";
 
-import { handleRouteError } from "../yahooAuthErrorHandler";
+import { handleRouteError } from "../routeErrorHandler";
 
 export const transactionsRoute = new Hono<AuthContext>()
 
@@ -23,7 +23,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const data = await getTransactionSuggestions(uid);
       return c.json(data);
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, { userId: uid, route: "/api/transactions", method: "GET" });
     }
   })
 
@@ -40,7 +40,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const result = await processSelectedTransactions(transactions, uid);
       return c.json(result);
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, { userId: uid, route: "/api/transactions", method: "POST" });
     }
   });
 

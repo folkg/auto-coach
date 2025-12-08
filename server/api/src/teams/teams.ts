@@ -12,7 +12,7 @@ import { Hono } from "hono";
 
 import type { AuthContext } from "../index";
 
-import { handleRouteError } from "../yahooAuthErrorHandler";
+import { handleRouteError } from "../routeErrorHandler";
 
 // Define validators for request bodies
 const BooleanValueSchema = type({
@@ -33,7 +33,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeams(uid);
       return c.json(teams);
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, { userId: uid, route: "/api/teams", method: "GET" });
     }
   })
 
@@ -48,7 +48,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeamsPartial(uid);
       return c.json(teams);
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, { userId: uid, route: "/api/teams/partial", method: "GET" });
     }
   })
 
@@ -66,7 +66,11 @@ const teamsRouter = new Hono<AuthContext>()
       const success = await updateTeamLineupSetting(uid, teamKey, value);
       return c.json({ success });
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, {
+        userId: uid,
+        route: `/api/teams/${teamKey}/lineup/setting`,
+        method: "PUT",
+      });
     }
   })
 
@@ -84,7 +88,11 @@ const teamsRouter = new Hono<AuthContext>()
       const success = await updateTeamLineupPaused(uid, teamKey, value);
       return c.json({ success });
     } catch (error) {
-      handleRouteError(error);
+      handleRouteError(error, {
+        userId: uid,
+        route: `/api/teams/${teamKey}/lineup/paused`,
+        method: "PUT",
+      });
     }
   });
 

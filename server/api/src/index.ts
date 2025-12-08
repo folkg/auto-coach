@@ -1,3 +1,4 @@
+import { structuredLogger } from "@core/common/services/structured-logger.js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
@@ -8,7 +9,10 @@ import schedulesRouter from "./schedules/schedules";
 import teamsRouter from "./teams/teams";
 import transactionsRouter from "./transactions/transactions";
 
-console.log("Starting server...");
+structuredLogger.info("Starting API server", {
+  phase: "execution",
+  event: "SERVER_STARTUP",
+});
 
 export type AuthContext = {
   Variables: {
@@ -44,7 +48,21 @@ app.onError((err, c) => {
       return c.json({ error: err.message }, status);
     }
   }
-  console.error("Unhandled error:", err);
+
+  // Log unhandled errors that weren't caught by route handlers
+  structuredLogger.error(
+    "Unhandled server error",
+    {
+      phase: "execution",
+      event: "UNHANDLED_ERROR",
+      route: c.req.path,
+      method: c.req.method,
+      outcome: "unhandled-error",
+      terminated: true,
+    },
+    err,
+  );
+
   return c.json({ error: "Internal server error" }, 500);
 });
 
