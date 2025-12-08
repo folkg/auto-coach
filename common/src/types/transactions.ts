@@ -66,7 +66,7 @@ const TransactionInfo = type({
   "waiver_team_key?": "string",
   "waiver_team_name?": "string",
   "waiver_date?": "string.date",
-  "waiver_roster_reflect_key?": "string.date",
+  "waiver_roster_reflect_key?": "string",
   "waiver_priority?": "number",
   "waiver_priority_options?": {
     "0": { option: "number" },
