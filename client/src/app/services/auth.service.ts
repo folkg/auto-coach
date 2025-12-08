@@ -1,8 +1,7 @@
-import { Inject, Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { assertDefined, ensure } from "@common/utilities/checks";
 import {
-  type Auth,
   OAuthProvider,
   onAuthStateChanged,
   reauthenticateWithPopup,
@@ -22,13 +21,13 @@ import { AUTH } from "../shared/firebase-tokens";
   providedIn: "root",
 })
 export class AuthService {
+  private readonly router = inject(Router);
+  private readonly auth = inject(AUTH);
+
   readonly user$: Observable<User | null>;
   readonly loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private readonly router: Router,
-    @Inject(AUTH) private readonly auth: Auth,
-  ) {
+  constructor() {
     // if (!environment.production) {
     //   connectAuthEmulator(this.auth, 'http://localhost:9099', { disableWarnings: true })
     // }

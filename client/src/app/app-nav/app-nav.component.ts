@@ -1,8 +1,9 @@
 import type { Observable } from "rxjs";
 
-import { BreakpointObserver, Breakpoints } from "@angular/cdk/layout";
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { Breakpoints } from "@angular/cdk/layout";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { Component, computed } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatIconButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
@@ -40,6 +41,11 @@ import { shareLatest } from "../shared/utils/shareLatest";
   ],
 })
 export class AppNavComponent {
+  private readonly breakpointObserver = inject(BreakpointObserver);
+  readonly themingService = inject(ThemingService);
+  readonly auth = inject(AuthService);
+  private readonly sts = inject(SyncTeamsService);
+
   readonly isHandset$: Observable<boolean> = this.breakpointObserver
     .observe(Breakpoints.Handset)
     .pipe(
@@ -53,13 +59,6 @@ export class AppNavComponent {
   readonly hasTransactionsEnabled = computed(() =>
     this.teams().some((team) => team.allow_transactions),
   );
-
-  constructor(
-    private readonly breakpointObserver: BreakpointObserver,
-    readonly themingService: ThemingService,
-    readonly auth: AuthService,
-    private readonly sts: SyncTeamsService,
-  ) {}
 
   toggleDarkMode() {
     this.themingService.darkModeOn = !this.themingService.darkModeOn;

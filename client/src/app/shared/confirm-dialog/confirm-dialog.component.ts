@@ -2,13 +2,13 @@ import type { Subscription } from "rxjs";
 
 import { CdkScrollable } from "@angular/cdk/scrolling";
 import { NgIf } from "@angular/common";
-import { Component, Inject, type OnDestroy, type OnInit } from "@angular/core";
+import { Component, inject, type OnDestroy, type OnInit } from "@angular/core";
 import { MatButton } from "@angular/material/button";
+import { MatDialogRef } from "@angular/material/dialog";
 import {
   MAT_DIALOG_DATA,
   MatDialogActions,
   MatDialogContent,
-  MatDialogRef,
   MatDialogTitle,
 } from "@angular/material/dialog";
 
@@ -19,6 +19,9 @@ import {
   imports: [MatDialogTitle, CdkScrollable, MatDialogContent, MatDialogActions, NgIf, MatButton],
 })
 export class ConfirmDialogComponent implements OnInit, OnDestroy {
+  private readonly dialogRef = inject(MatDialogRef<ConfirmDialogComponent, boolean>);
+  private readonly data = inject(MAT_DIALOG_DATA);
+
   title: string;
   message: string;
   trueButton: string;
@@ -26,14 +29,11 @@ export class ConfirmDialogComponent implements OnInit, OnDestroy {
   private keySubscription: Subscription | undefined;
   private clickSubscription: Subscription | undefined;
 
-  constructor(
-    readonly dialogRef: MatDialogRef<ConfirmDialogComponent, boolean>,
-    @Inject(MAT_DIALOG_DATA) readonly data: DialogData,
-  ) {
-    this.title = data.title;
-    this.message = data.message;
-    this.trueButton = data.trueButton ?? "";
-    this.falseButton = data.falseButton ?? "";
+  constructor() {
+    this.title = this.data.title;
+    this.message = this.data.message;
+    this.trueButton = this.data.trueButton ?? "";
+    this.falseButton = this.data.falseButton ?? "";
   }
 
   ngOnInit() {

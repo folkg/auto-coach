@@ -1,3 +1,4 @@
+import type { IPlayer } from "@common/types/Player.js";
 import type { TeamOptimizer } from "@common/types/team.js";
 import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
 
@@ -95,9 +96,7 @@ export class LineupOptimizer {
     });
   }
 
-  setAddCandidates(
-    candidates: import("@common/types/Player.js").IPlayer[],
-  ): Effect.Effect<void, LineupOptimizerError> {
+  setAddCandidates(candidates: IPlayer[]): Effect.Effect<void, LineupOptimizerError> {
     return Effect.try({
       try: () => {
         this.coreOptimizer.addCandidates = candidates;

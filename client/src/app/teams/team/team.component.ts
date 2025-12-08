@@ -1,7 +1,7 @@
 import type { ClientTeam } from "@common/types/team";
 
 import { AsyncPipe, DecimalPipe, NgIf } from "@angular/common";
-import { Component, computed, EventEmitter, input, Output, signal } from "@angular/core";
+import { Component, computed, EventEmitter, inject, input, Output, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButton, MatIconButton } from "@angular/material/button";
@@ -61,6 +61,9 @@ const FIRST_SERVER_UPDATE_HOUR = 1;
   ],
 })
 export class TeamComponent {
+  readonly appStatusService = inject(AppStatusService);
+  private readonly datePipe = inject(RelativeDatePipe);
+
   readonly team = input.required<Readonly<ClientTeam>>();
   readonly gameTimeStamps = input.required<number[] | null>();
   readonly loadingTimes = input(false);
@@ -75,11 +78,6 @@ export class TeamComponent {
   readonly isPausedToday = computed(() => this.isToday(this.team().lineup_paused_at, this.focus()));
 
   readonly scoringType = SCORING_TYPES;
-
-  constructor(
-    readonly appStatusService: AppStatusService,
-    private readonly datePipe: RelativeDatePipe,
-  ) {}
 
   private readonly subs = new Subscription();
 

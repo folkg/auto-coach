@@ -1,7 +1,7 @@
 import type { TransactionResults, TransactionsData } from "@common/types/transactions";
 
 import { JsonPipe } from "@angular/common";
-import { Component, computed, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
@@ -41,6 +41,12 @@ import { TeamComponent } from "./team/team.component";
   ],
 })
 export class TransactionsComponent {
+  private readonly api = inject(APIService);
+  private readonly sts = inject(SyncTeamsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+
   readonly teamsState = toSignal(this.sts.teamsState$);
   readonly allTeams = computed(() => this.teamsState()?.teams ?? []);
   readonly teams = computed(() => [...this.allTeams()].filter((team) => team.allow_transactions));
@@ -63,14 +69,6 @@ export class TransactionsComponent {
     () => this.transactionResults()?.postedTransactions ?? [],
   );
   readonly failedReasons = computed(() => this.transactionResults()?.failedReasons ?? []);
-
-  constructor(
-    private readonly api: APIService,
-    private readonly sts: SyncTeamsService,
-    private readonly dialog: MatDialog,
-    private readonly router: Router,
-    private readonly route: ActivatedRoute,
-  ) {}
 
   ngOnInit(): void {
     this.fetchTransactions()

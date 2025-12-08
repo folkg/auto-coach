@@ -1,7 +1,7 @@
 import type { Schedule } from "@common/types/Schedule";
 import type { ClientTeam, FirestoreTeam } from "@common/types/team";
 
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatDialog } from "@angular/material/dialog";
 import { ClientTeam as ClientTeamSchema } from "@common/types/team";
@@ -61,6 +61,10 @@ const YAHOO_AUTH_REQUIRED_CODE = "YAHOO_AUTH_REQUIRED";
   providedIn: "root",
 })
 export class SyncTeamsService {
+  private readonly api = inject(APIService);
+  private readonly auth = inject(AuthService);
+  readonly dialog = inject(MatDialog);
+
   private readonly refetch$ = new Subject<void>();
   private readonly teamsSubject = new BehaviorSubject<readonly ClientTeam[]>([]);
   private readonly scheduleSubject = new BehaviorSubject<Schedule | undefined>(undefined);
@@ -69,11 +73,7 @@ export class SyncTeamsService {
   readonly schedule$ = this.scheduleSubject.asObservable();
   readonly teamsState$: Observable<TeamsState>;
 
-  constructor(
-    private readonly api: APIService,
-    private readonly auth: AuthService,
-    readonly dialog: MatDialog,
-  ) {
+  constructor() {
     this.teamsState$ = combineLatest([
       this.auth.user$,
       this.refetch$.pipe(startWith(undefined)),

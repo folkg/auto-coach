@@ -17,10 +17,9 @@ import { AuthService } from "./auth.service";
   providedIn: "root",
 })
 export class APIService {
+  private readonly auth = inject(AuthService);
   private readonly client = inject(HONO_CLIENT);
   private readonly firestore = inject(FIRESTORE);
-
-  constructor(private readonly auth: AuthService) {}
 
   async fetchTeamsYahoo(): Promise<ClientTeam[]> {
     const response = await this.client.api.teams.$get({});

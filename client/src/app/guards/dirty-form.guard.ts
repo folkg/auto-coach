@@ -1,6 +1,6 @@
 import type { UrlTree } from "@angular/router";
 
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom, type Observable } from "rxjs";
 
@@ -17,7 +17,7 @@ export interface ComponentCanDeactivate {
   providedIn: "root",
 })
 export class DirtyFormGuard {
-  constructor(public dialog: MatDialog) {}
+  dialog = inject(MatDialog);
 
   confirmDialog(): Promise<boolean> {
     const title = "WARNING: You have unsaved changes";

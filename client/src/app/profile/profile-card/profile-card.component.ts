@@ -4,6 +4,7 @@ import { AsyncPipe, NgIf } from "@angular/common";
 import {
   Component,
   EventEmitter,
+  inject,
   type OnDestroy,
   type OnInit,
   Output,
@@ -58,6 +59,10 @@ import {
   standalone: true,
 })
 export class ProfileCardComponent implements OnInit, OnDestroy {
+  private readonly auth = inject(AuthService);
+  readonly appStatusService = inject(AppStatusService);
+  private readonly dialog = inject(MatDialog);
+
   emailFormControl = new FormControl("", [
     Validators.required,
     Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
@@ -70,12 +75,6 @@ export class ProfileCardComponent implements OnInit, OnDestroy {
   @Output() isDirty = new EventEmitter<boolean>();
 
   readonly resendInProgress = signal(false);
-
-  constructor(
-    private readonly auth: AuthService,
-    readonly appStatusService: AppStatusService,
-    private readonly dialog: MatDialog,
-  ) {}
 
   private readonly subs = new Subscription();
 

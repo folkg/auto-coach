@@ -1,5 +1,5 @@
 import { NgIf } from "@angular/common";
-import { Component, computed, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom } from "rxjs";
@@ -34,6 +34,12 @@ import { TeamComponent } from "./team/team.component";
   ],
 })
 export class TeamsComponent {
+  private readonly auth = inject(AuthService);
+  private readonly api = inject(APIService);
+  readonly syncTeamsService = inject(SyncTeamsService);
+  readonly dialog = inject(MatDialog);
+  readonly appStatusService = inject(AppStatusService);
+
   readonly user = toSignal(this.auth.user$);
   readonly teamsState = toSignal(this.syncTeamsService.teamsState$);
   readonly teams = computed(() => this.teamsState()?.teams ?? []);
@@ -43,14 +49,6 @@ export class TeamsComponent {
   private readonly isDirty = signal(false);
 
   readonly skeletonCards = [1, 2, 3];
-
-  constructor(
-    private readonly auth: AuthService,
-    private readonly api: APIService,
-    readonly syncTeamsService: SyncTeamsService,
-    readonly dialog: MatDialog,
-    readonly appStatusService: AppStatusService,
-  ) {}
 
   async setLineupBoolean($event: SetLineupEvent): Promise<void> {
     const teamKey = $event.team.team_key;

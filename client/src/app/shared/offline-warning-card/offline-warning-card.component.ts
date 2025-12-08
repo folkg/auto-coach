@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from "@angular/common";
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 
 import { AppStatusService } from "../../services/app-status.service";
@@ -11,5 +11,5 @@ import { AppStatusService } from "../../services/app-status.service";
   imports: [NgIf, MatCard, MatCardHeader, MatCardTitle, MatCardContent, AsyncPipe],
 })
 export class OfflineWarningCardComponent {
-  constructor(public appStatusService: AppStatusService) {}
+  public appStatusService = inject(AppStatusService);
 }

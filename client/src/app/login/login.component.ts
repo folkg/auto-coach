@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
 import { MatDialog } from "@angular/material/dialog";
@@ -20,12 +20,10 @@ import { RobotsComponent } from "../shared/robots/robots.component";
   imports: [MatButton, RouterLink, RobotsComponent, LoaderOverlayComponent],
 })
 export class LoginComponent {
-  loading = toSignal(this.auth.loading$, { initialValue: false });
+  private readonly auth = inject(AuthService);
+  readonly dialog = inject(MatDialog);
 
-  constructor(
-    private readonly auth: AuthService,
-    readonly dialog: MatDialog,
-  ) {}
+  loading = toSignal(this.auth.loading$, { initialValue: false });
 
   login() {
     this.auth.loginYahoo().catch((err) => {

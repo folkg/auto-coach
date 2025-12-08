@@ -1,7 +1,7 @@
 import type { ClientTeam } from "@common/types/team";
 import type { Spacetime } from "spacetime";
 
-import { Component, computed, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatCardModule } from "@angular/material/card";
 
@@ -21,6 +21,8 @@ import { TeamComponent } from "../teams/team/team.component";
   providers: [RelativeDatePipe],
 })
 export class AboutComponent {
+  readonly appStatusService = inject(AppStatusService);
+
   private readonly focus = toSignal(this.appStatusService.focus$);
   private readonly isSettingLineups = signal(true);
   private readonly lineupPausedAt = signal(-1);
@@ -29,8 +31,6 @@ export class AboutComponent {
   readonly sampleTeam = computed(() =>
     getSampleTeam(this.isSettingLineups(), this.lineupPausedAt(), this.focus()),
   );
-
-  constructor(readonly appStatusService: AppStatusService) {}
 
   setLineupBoolean($event: SetLineupEvent) {
     this.isSettingLineups.set($event.isSettingLineups);
