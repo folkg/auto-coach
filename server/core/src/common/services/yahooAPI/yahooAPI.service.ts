@@ -28,7 +28,7 @@ import {
 import {
   type HttpError,
   httpGetYahoo,
-  httpPostYahooAuth,
+  httpPostYahooAuthXml,
   httpPostYahooUnauth,
   httpPutYahoo,
   isHttpError,
@@ -396,7 +396,7 @@ export async function postRosterAddDropTransaction(
 
   const leagueKey = teamKey.split(".t")[0];
   try {
-    await httpPostYahooAuth(uid, `league/${leagueKey}/transactions`, xmlBody);
+    await httpPostYahooAuthXml(uid, `league/${leagueKey}/transactions`, xmlBody);
     structuredLogger.info("Successfully posted transaction", {
       phase: "yahoo-http",
       service: "yahoo",

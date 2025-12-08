@@ -49,7 +49,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
     spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -95,7 +95,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
     spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -143,7 +143,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
     spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -207,7 +207,7 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
     spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
@@ -246,7 +246,7 @@ describe("YahooAPI Service", () => {
         }),
       ],
     });
-    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
     spyHttpPostYahooAuth.mockImplementation(() => {
       return Promise.reject(httpError);
     });

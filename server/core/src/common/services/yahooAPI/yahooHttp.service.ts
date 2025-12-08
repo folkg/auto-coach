@@ -58,68 +58,107 @@ function parseRetryAfterHeader(response: Response): number | undefined {
   return undefined;
 }
 
-async function handleFetchResponse<T>(response: Response, uid?: string): Promise<HttpResponse<T>> {
-  if (!response.ok) {
-    const errorData = await response.text();
+/**
+ * Handle error responses from Yahoo API.
+ * Throws appropriate error types based on status code.
+ */
+function handleErrorResponse(response: Response, errorData: string, uid?: string): never {
+  if (isRateLimitStatusCode(response.status)) {
+    const retryAfter = parseRetryAfterHeader(response);
 
-    if (isRateLimitStatusCode(response.status)) {
-      const retryAfter = parseRetryAfterHeader(response);
-
-      structuredLogger.warn("Yahoo API rate limit detected", {
-        phase: "yahoo-http",
-        service: "yahoo",
-        event: "YAHOO_RATE_LIMIT",
-        userId: uid,
-        statusCode: response.status,
-        retryAfterHeader: response.headers.get("Retry-After"),
-        retryAfter,
-        url: response.url,
-        outcome: "unhandled-error",
-      });
-
-      throw new ApiRateLimitError(
-        `Yahoo API rate limit exceeded (HTTP ${response.status})`,
-        response.status,
-        retryAfter,
-      );
-    }
-
-    if (isAuthErrorStatusCode(response.status)) {
-      structuredLogger.warn("Yahoo API auth error detected", {
-        phase: "yahoo-http",
-        service: "yahoo",
-        event: "YAHOO_AUTH_ERROR",
-        userId: uid,
-        statusCode: response.status,
-        url: response.url,
-        outcome: "unhandled-error",
-      });
-
-      throw new AuthorizationError(
-        `Yahoo API authentication failed (HTTP ${response.status})`,
-        response.status,
-        uid,
-      );
-    }
-
-    structuredLogger.error("Yahoo API HTTP error", {
+    structuredLogger.warn("Yahoo API rate limit detected", {
       phase: "yahoo-http",
       service: "yahoo",
-      event: "YAHOO_HTTP_ERROR",
+      event: "YAHOO_RATE_LIMIT",
+      userId: uid,
+      statusCode: response.status,
+      retryAfterHeader: response.headers.get("Retry-After"),
+      retryAfter,
+      url: response.url,
+      outcome: "unhandled-error",
+    });
+
+    throw new ApiRateLimitError(
+      `Yahoo API rate limit exceeded (HTTP ${response.status})`,
+      response.status,
+      retryAfter,
+    );
+  }
+
+  if (isAuthErrorStatusCode(response.status)) {
+    structuredLogger.warn("Yahoo API auth error detected", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "YAHOO_AUTH_ERROR",
       userId: uid,
       statusCode: response.status,
       url: response.url,
       outcome: "unhandled-error",
     });
 
-    throw new HttpError(`HTTP ${response.status}: ${response.statusText}`, {
-      data: errorData,
+    throw new AuthorizationError(
+      `Yahoo API authentication failed (HTTP ${response.status})`,
+      response.status,
+      uid,
+    );
+  }
+
+  structuredLogger.error("Yahoo API HTTP error", {
+    phase: "yahoo-http",
+    service: "yahoo",
+    event: "YAHOO_HTTP_ERROR",
+    userId: uid,
+    statusCode: response.status,
+    url: response.url,
+    responsePreview: errorData.substring(0, 500),
+    outcome: "unhandled-error",
+  });
+
+  throw new HttpError(`HTTP ${response.status}: ${response.statusText}`, {
+    data: errorData,
+    status: response.status,
+  });
+}
+
+/**
+ * Handle fetch response - checks for errors and optionally parses JSON body.
+ *
+ * @param response - The fetch Response
+ * @param uid - Optional user ID for logging
+ * @param parseJson - Whether to parse response body as JSON (default: true)
+ */
+async function handleFetchResponse<T>(response: Response, uid?: string): Promise<HttpResponse<T>> {
+  if (!response.ok) {
+    const errorData = await response.text();
+    handleErrorResponse(response, errorData, uid);
+  }
+
+  try {
+    const data = (await response.json()) as T;
+    return { data, status: response.status };
+  } catch {
+    const responseText = await response
+      .clone()
+      .text()
+      .catch(() => "[unable to read response body]");
+
+    structuredLogger.error("Yahoo API returned non-JSON response", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "YAHOO_JSON_PARSE_ERROR",
+      userId: uid,
+      statusCode: response.status,
+      url: response.url,
+      contentType: response.headers.get("Content-Type"),
+      responsePreview: responseText.substring(0, 500),
+      outcome: "unhandled-error",
+    });
+
+    throw new HttpError(`Yahoo API returned invalid JSON (HTTP ${response.status})`, {
+      data: responseText,
       status: response.status,
     });
   }
-
-  const data = (await response.json()) as T;
-  return { data, status: response.status };
 }
 
 /**
@@ -149,7 +188,7 @@ export async function httpGetYahoo<T>(url: string, uid?: string): Promise<HttpRe
 }
 
 /**
- * Perform an HTTP post request to the Yahoo API
+ * Perform an HTTP post request to the Yahoo API (unauthenticated).
  *
  * @export
  * @async
@@ -157,21 +196,25 @@ export async function httpGetYahoo<T>(url: string, uid?: string): Promise<HttpRe
  * @param body - the body of the post request
  * @return - the response from the API
  */
-export async function httpPostYahooUnauth<T>(url: string, body: unknown): Promise<HttpResponse<T>> {
+export async function httpPostYahooUnauth<T>(url: string, body: string): Promise<HttpResponse<T>> {
   const response = await fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: body as string,
+    body,
   });
   return handleFetchResponse<T>(response);
 }
 
+/**
+ * Perform an HTTP post request to the Yahoo API with authentication.
+ * Expects JSON response.
+ */
 export async function httpPostYahooAuth<T>(
   uid: string,
   url: string,
-  body: unknown,
+  body: string,
 ): Promise<HttpResponse<T>> {
   const credential = await loadYahooAccessToken(uid);
   const accessToken = credential.accessToken;
@@ -182,9 +225,32 @@ export async function httpPostYahooAuth<T>(
       "content-type": "application/xml; charset=UTF-8",
       Authorization: `Bearer ${accessToken}`,
     },
-    body: body as string,
+    body,
   });
   return handleFetchResponse<T>(response, uid);
+}
+
+/**
+ * POST to Yahoo API with XML body, not expecting to parse response.
+ * Yahoo transaction endpoints return 201 Created with XML body that we don't need.
+ */
+export async function httpPostYahooAuthXml(uid: string, url: string, body: string): Promise<void> {
+  const credential = await loadYahooAccessToken(uid);
+  const accessToken = credential.accessToken;
+
+  const response = await fetch(API_URL + url, {
+    method: "POST",
+    headers: {
+      "content-type": "application/xml; charset=UTF-8",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.text();
+    handleErrorResponse(response, errorData, uid);
+  }
 }
 
 /**
