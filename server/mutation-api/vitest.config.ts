@@ -5,6 +5,7 @@ export default defineConfig({
   // Explicitly list all tsconfig files needed for path resolution
   // since mutation-api imports from server/core which uses @common/ paths
   plugins: [
+    // @ts-expect-error - type mismatch, hopefully temp lib problem
     tsconfigPaths({
       projects: ["tsconfig.json", "../core/tsconfig.json", "../../common/tsconfig.json"],
     }),

@@ -7,12 +7,7 @@
 </div>
 
 <div mat-dialog-actions>
-  <button
-    *ngIf="falseButton"
-    mat-flat-button
-    color="primary"
-    (click)="onDismiss()"
-  >
+  <button *ngIf="falseButton" mat-flat-button color="primary" (click)="onDismiss()">
     {{ falseButton }}
   </button>
   <button *ngIf="trueButton" mat-stroked-button (click)="onConfirm()">

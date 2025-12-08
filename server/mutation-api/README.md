@@ -67,13 +67,13 @@ cp .env.example .env
 
 Required variables:
 
-| Variable | Description |
-|----------|-------------|
-| `PORT` | Server port (default: 3001) |
-| `NODE_ENV` | Environment (development/production) |
-| `FIREBASE_PROJECT_ID` | Firebase project ID |
-| `CLOUD_TASKS_QUEUE_PATH` | Full Cloud Tasks queue path |
-| `ALLOWED_ORIGINS` | Comma-separated CORS origins |
+| Variable                 | Description                          |
+| ------------------------ | ------------------------------------ |
+| `PORT`                   | Server port (default: 3001)          |
+| `NODE_ENV`               | Environment (development/production) |
+| `FIREBASE_PROJECT_ID`    | Firebase project ID                  |
+| `CLOUD_TASKS_QUEUE_PATH` | Full Cloud Tasks queue path          |
+| `ALLOWED_ORIGINS`        | Comma-separated CORS origins         |
 
 ### Run Locally
 
@@ -102,20 +102,25 @@ bun run test:watch
 ### Health Checks
 
 #### `GET /`
+
 Root health check.
 
 **Response:**
+
 ```json
 { "status": "ok" }
 ```
 
 #### `GET /health`
+
 Kubernetes-style health probe (returns 200 with empty body).
 
 #### `GET /mutations/`
+
 Mutations subsystem health check.
 
 **Response:**
+
 ```json
 { "status": "ok", "timestamp": "2025-01-15T10:30:00.000Z" }
 ```
@@ -129,6 +134,7 @@ These endpoints are called by Cloud Scheduler to fan-out work to Cloud Tasks.
 Triggers lineup processing for all users with active teams in leagues that have games starting soon.
 
 **Request Body:**
+
 ```json
 {
   "userId": "scheduler",
@@ -138,6 +144,7 @@ Triggers lineup processing for all users with active teams in leagues that have 
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -147,6 +154,7 @@ Triggers lineup processing for all users with active teams in leagues that have 
 ```
 
 **Behavior:**
+
 1. Skips if current Pacific hour is 0 (midnight)
 2. Determines leagues with games starting in the next hour
 3. Fetches all active teams for those leagues
@@ -158,6 +166,7 @@ Triggers lineup processing for all users with active teams in leagues that have 
 Triggers weekly transaction processing for all users.
 
 **Request Body:**
+
 ```json
 {
   "userId": "scheduler",
@@ -167,6 +176,7 @@ Triggers weekly transaction processing for all users.
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -180,6 +190,7 @@ Triggers weekly transaction processing for all users.
 Recalculates positional scarcity offsets for all leagues.
 
 **Request Body:**
+
 ```json
 {
   "userId": "scheduler",
@@ -188,6 +199,7 @@ Recalculates positional scarcity offsets for all leagues.
 ```
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -203,6 +215,7 @@ Recalculates positional scarcity offsets for all leagues.
 Executes a single mutation task. Called by Cloud Tasks.
 
 **Request Body:**
+
 ```json
 {
   "task": {
@@ -220,11 +233,13 @@ Executes a single mutation task. Called by Cloud Tasks.
 ```
 
 **Task Types:**
+
 - `SET_LINEUP` - Set optimal lineup for user's teams
 - `WEEKLY_TRANSACTIONS` - Process weekly add/drop transactions
 - `CALC_POSITIONAL_SCARCITY` - Recalculate scarcity offsets
 
 **Response (200):**
+
 ```json
 {
   "success": true,
@@ -238,6 +253,7 @@ Executes a single mutation task. Called by Cloud Tasks.
 **Error Responses:**
 
 Rate limited (429):
+
 ```json
 {
   "error": "Mutation execution failed",
@@ -248,6 +264,7 @@ Rate limited (429):
 ```
 
 Domain error (400):
+
 ```json
 {
   "error": "Mutation execution failed",
@@ -257,6 +274,7 @@ Domain error (400):
 ```
 
 System error (500):
+
 ```json
 {
   "error": "Mutation execution failed",
@@ -425,11 +443,11 @@ tofu apply \
 
 ### Configuration
 
-| Setting | Value |
-|---------|-------|
-| Max Cloud Run instances | 100 |
-| Cloud Tasks max dispatches/sec | 10 |
-| Cloud Tasks retry attempts | 5 |
+| Setting                        | Value |
+| ------------------------------ | ----- |
+| Max Cloud Run instances        | 100   |
+| Cloud Tasks max dispatches/sec | 10    |
+| Cloud Tasks retry attempts     | 5     |
 
 See `infrastructure/opentofu/environments/prod.tfvars` for full configuration.
 
@@ -530,25 +548,33 @@ Monitor in Cloud Console or set up alerts for:
 ### Common Issues
 
 #### "Rate limit exceeded" errors
+
 The token bucket is depleted. Check:
+
 - Current rate limit settings in `rate-limiter.service.ts`
 - Yahoo API rate limit headers in responses
 - Consider reducing `maxTokens` or `refillRate`
 
 #### Circuit breaker is open
+
 Yahoo is returning 429/999 errors. The circuit breaker prevents further calls for 5 minutes.
+
 - Check Yahoo API status
 - Review logs for the triggering error
 - Wait for circuit breaker to reset
 
 #### Tasks stuck in PROCESSING
+
 The worker may have crashed or timed out.
+
 - Check Cloud Run logs for OOM or timeout errors
 - Verify Cloud Tasks retry configuration
 - Consider increasing Cloud Run memory/timeout
 
 #### "REVOKED_REFRESH_TOKEN" errors
+
 User's Yahoo OAuth token has been revoked. This is logged but not retried.
+
 - User needs to re-authenticate via the client app
 - Check `mutationTasks` collection for affected users
 
@@ -556,13 +582,13 @@ User's Yahoo OAuth token has been revoked. This is logged but not retried.
 
 The service uses a token bucket with circuit breaker:
 
-| Setting | Value |
-|---------|-------|
-| Max tokens | 10 |
-| Refill rate | 1 token/second |
-| Window size | 60 seconds |
-| Circuit breaker trip | On 429/999 error |
-| Circuit breaker reset | 5 minutes |
+| Setting               | Value            |
+| --------------------- | ---------------- |
+| Max tokens            | 10               |
+| Refill rate           | 1 token/second   |
+| Window size           | 60 seconds       |
+| Circuit breaker trip  | On 429/999 error |
+| Circuit breaker reset | 5 minutes        |
 
 ## Cutover from Firebase Functions
 
@@ -579,6 +605,7 @@ The service uses a token bucket with circuit breaker:
 1. **Disable Firebase Function Triggers**
 
    In Firebase Console or via CLI:
+
    ```bash
    # Pause scheduled functions
    firebase functions:delete scheduleSetLineup --region us-central1
@@ -590,6 +617,7 @@ The service uses a token bucket with circuit breaker:
 2. **Verify New Service is Receiving Traffic**
 
    Check Cloud Scheduler execution history:
+
    ```bash
    gcloud scheduler jobs describe set-lineup-schedule-prod \
      --location us-central1 \
@@ -597,6 +625,7 @@ The service uses a token bucket with circuit breaker:
    ```
 
    Check Cloud Run request count:
+
    ```bash
    gcloud run services describe mutation-api-prod \
      --region us-central1 \
@@ -614,8 +643,9 @@ The service uses a token bucket with circuit breaker:
 If issues occur after cutover:
 
 1. **Re-enable Firebase Functions**
-   
+
    Redeploy the functions (if code still exists):
+
    ```bash
    firebase deploy --only functions:scheduleSetLineup,functions:dispatchSetLineup
    ```

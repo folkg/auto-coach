@@ -10,47 +10,47 @@ $angular-accent: mat.m2-define-palette(mat.$m2-amber-palette);
 $angular-warn: mat.m2-define-palette(mat.$m2-red-palette);
 
 $angular-light-theme: mat.m2-define-light-theme(
-    (
-        color: (
-            primary: $angular-primary,
-            accent: $angular-accent,
-            warn: $angular-warn,
-        ),
-        background: (
-            card-header-footer-background: red,
-        ),
-    )
+  (
+    color: (
+      primary: $angular-primary,
+      accent: $angular-accent,
+      warn: $angular-warn,
+    ),
+    background: (
+      card-header-footer-background: red,
+    ),
+  )
 );
 
 $angular-dark-theme: mat.m2-define-dark-theme(
-    (
-        color: (
-            primary: $angular-primary,
-            accent: $angular-accent,
-            warn: $angular-warn,
-        ),
-        background: (
-            card-header-footer-background: blue,
-        ),
-    )
+  (
+    color: (
+      primary: $angular-primary,
+      accent: $angular-accent,
+      warn: $angular-warn,
+    ),
+    background: (
+      card-header-footer-background: blue,
+    ),
+  )
 );
 
 .light-theme {
-    @include mat.all-component-themes($angular-light-theme);
-    @include theme-color-grabber($angular-light-theme);
-    & {
-        --accent-grey: #e0e0e0;
-        --text-grey: #6e6e6e;
-        --overlay-bg: rgba(255, 255, 255, 0.8);
-    }
+  @include mat.all-component-themes($angular-light-theme);
+  @include theme-color-grabber($angular-light-theme);
+  & {
+    --accent-grey: #e0e0e0;
+    --text-grey: #6e6e6e;
+    --overlay-bg: rgba(255, 255, 255, 0.8);
+  }
 }
 
 .dark-theme {
-    @include mat.all-component-colors($angular-dark-theme);
-    @include theme-color-grabber($angular-dark-theme);
-    & {
-        --accent-grey: #595959;
-        --text-grey: #c5c5c5;
-        --overlay-bg: rgba(0, 0, 0, 0.8);
-    }
+  @include mat.all-component-colors($angular-dark-theme);
+  @include theme-color-grabber($angular-dark-theme);
+  & {
+    --accent-grey: #595959;
+    --text-grey: #c5c5c5;
+    --overlay-bg: rgba(0, 0, 0, 0.8);
+  }
 }

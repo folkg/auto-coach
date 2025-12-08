@@ -1,6 +1,6 @@
 # Oxlint Migration Todo
 
-Goal: migrate `.oxlintrc.json` from the current config to the stricter target config provided, by enabling one rule (or small closely related group) at a time. 
+Goal: migrate `.oxlintrc.json` from the current config to the stricter target config provided, by enabling one rule (or small closely related group) at a time.
 
 ---
 
@@ -444,7 +444,7 @@ Goal: migrate `.oxlintrc.json` from the current config to the stricter target co
 - Fixes:
   - Replace `Promise.reject('msg')` with `Promise.reject(new Error('msg'))`.
   - Wrap domain errors in custom `Error` subclasses where helpful.
-  
+
 ---
 
 ## Expressions, control flow, and vars

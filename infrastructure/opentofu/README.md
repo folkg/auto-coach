@@ -5,6 +5,7 @@ Complete step-by-step guide for deploying the Auto Coach Bun/Hono API to Google 
 ## 📋 What You're Deploying
 
 This infrastructure creates:
+
 - **Cloud Run Service**: Hosts your Bun API container
 - **Artifact Registry**: Stores Docker images
 - **Secret Manager**: Securely stores API keys (SendGrid, Yahoo)
@@ -18,6 +19,7 @@ Before starting, you need:
 ### Required Software
 
 1. **OpenTofu** (>= 1.6.0) - Infrastructure as Code tool (like Terraform)
+
    ```bash
    # macOS
    brew install opentofu
@@ -26,6 +28,7 @@ Before starting, you need:
    ```
 
 2. **Google Cloud CLI** - Command-line tool for Google Cloud
+
    ```bash
    # macOS
    brew install google-cloud-sdk
@@ -34,6 +37,7 @@ Before starting, you need:
    ```
 
 3. **Docker** - For building container images
+
    ```bash
    # Download from https://docs.docker.com/get-docker/
    ```
@@ -47,6 +51,7 @@ Before starting, you need:
 ### Required Accounts & Information
 
 You'll need:
+
 - ✅ Google Cloud Project with billing enabled
 - ✅ Firebase Project (can be same as GCP project)
 - ✅ SendGrid API key (from [SendGrid](https://app.sendgrid.com/settings/api_keys))
@@ -76,6 +81,7 @@ gcloud config set project $PROJECT_ID
 ```
 
 **Verify you're authenticated:**
+
 ```bash
 gcloud config list
 # Should show your project and account
@@ -155,6 +161,7 @@ tofu init
 ```
 
 **Expected output:**
+
 ```
 Initializing the backend...
 Initializing provider plugins...
@@ -162,6 +169,7 @@ OpenTofu has been successfully initialized!
 ```
 
 **If you get errors:**
+
 - Make sure the state bucket exists (Step 3)
 - Check your gcloud authentication (Step 1)
 
@@ -195,6 +203,7 @@ docker push us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:lat
 ```
 
 **Expected error on first push:**
+
 ```
 UNAUTHORIZED: failed to authorize: failed to fetch oauth token: ...
 ```
@@ -225,6 +234,7 @@ tofu plan \
 ```
 
 **Expected output:**
+
 ```
 Plan: 16 to add, 0 to change, 0 to destroy.
 ```
@@ -232,6 +242,7 @@ Plan: 16 to add, 0 to change, 0 to destroy.
 **Review the plan carefully!** Make sure it's creating resources in the right project.
 
 **Key resources to look for:**
+
 - `google_artifact_registry_repository.auto_coach_repo` - Docker registry
 - `google_cloud_run_v2_service.auto_coach_api` - Your API service
 - `google_secret_manager_secret.sendgrid_api_key` - SendGrid secret
@@ -251,6 +262,7 @@ tofu apply \
 ```
 
 **You'll be prompted:**
+
 ```
 Do you want to perform these actions?
   OpenTofu will perform the actions described above.
@@ -264,6 +276,7 @@ Do you want to perform these actions?
 **This will take 2-5 minutes.** You'll see progress as each resource is created.
 
 **Expected success output:**
+
 ```
 Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
@@ -325,11 +338,13 @@ curl $API_URL/health
 ```
 
 **Or visit the URL in your browser:**
+
 ```bash
 open $API_URL/health
 ```
 
 **Check Cloud Run service status:**
+
 ```bash
 gcloud run services describe auto-coach-api-prod \
     --region=us-central1 \
@@ -338,6 +353,7 @@ gcloud run services describe auto-coach-api-prod \
 ```
 
 **View logs:**
+
 ```bash
 gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
@@ -387,6 +403,7 @@ bun infra:status
 **When you change your API code:**
 
 1. Build new binary:
+
    ```bash
    cd server/api
    bun run build
@@ -394,6 +411,7 @@ bun infra:status
    ```
 
 2. Build new container with a version tag:
+
    ```bash
    bun run container:build
    docker tag auto-coach-api us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:v1.0.1
@@ -420,13 +438,13 @@ tofu apply -var-file="environments/prod.tfvars" ... # Apply changes
 
 ## Configuration
 
-| Setting | Value |
-|---------|-------|
-| **Min Instances** | 0 (scales to zero) |
-| **Max Instances** | 100 |
-| **Public Access** | Yes (allUsers) |
-| **CORS Origins** | Your production domain |
-| **Service Name** | auto-coach-api-prod |
+| Setting           | Value                  |
+| ----------------- | ---------------------- |
+| **Min Instances** | 0 (scales to zero)     |
+| **Max Instances** | 100                    |
+| **Public Access** | Yes (allUsers)         |
+| **CORS Origins**  | Your production domain |
+| **Service Name**  | auto-coach-api-prod    |
 
 ## 🔍 Common Commands Reference
 
@@ -463,6 +481,7 @@ tofu show
 **Problem:** Cloud Run can't pull the container image.
 
 **Solution:**
+
 1. Verify image exists: `gcloud artifacts docker images list us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach`
 2. Check image tag matches `container_image_tag` variable
 3. Ensure service account has `artifactregistry.reader` role
@@ -472,6 +491,7 @@ tofu show
 **Problem:** Your account doesn't have sufficient permissions.
 
 **Solution:**
+
 ```bash
 # Re-authenticate
 gcloud auth application-default login
@@ -488,6 +508,7 @@ gcloud projects get-iam-policy $PROJECT_ID --flatten="bindings[].members" --filt
 **Problem:** State is locked (maybe from a previous failed run).
 
 **Solution:**
+
 ```bash
 # List locks
 gsutil ls gs://auto-coach-terraform-state/**/*.tflock
@@ -499,6 +520,7 @@ tofu force-unlock LOCK_ID
 ### Container Won't Start / Crashes
 
 **Check logs:**
+
 ```bash
 gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
@@ -507,6 +529,7 @@ gcloud run services logs read auto-coach-api-prod \
 ```
 
 **Common issues:**
+
 - Missing environment variables
 - Binary built for wrong architecture (must be `bun-linux-x64`)
 - Port mismatch (container must listen on port from `PORT` env var, default 3000)
@@ -516,6 +539,7 @@ gcloud run services logs read auto-coach-api-prod \
 **Problem:** Resource was deleted outside OpenTofu.
 
 **Solution:**
+
 ```bash
 # Remove from state without deleting the resource
 tofu state rm google_cloud_run_v2_service.auto_coach_api
@@ -573,6 +597,7 @@ gcloud iam service-accounts keys create github-actions-key.json \
 ### Step 5: Add Other Required Secrets
 
 Create these additional secrets in GitHub:
+
 - `FIREBASE_PROJECT_ID`: Your Firebase project ID (e.g., `auto-gm-372620`)
 - `GCP_PROJECT_ID`: Your GCP project ID (same as Firebase project ID)
 
@@ -586,6 +611,7 @@ rm github-actions-key.json
 ### What the Service Account Can Do
 
 The GitHub Actions service account has these permissions:
+
 - ✅ Push Docker images to Artifact Registry
 - ✅ Deploy Cloud Functions
 - ✅ Deploy to Cloud Run
@@ -613,6 +639,7 @@ tofu apply \
 ✅ **State stored in versioned GCS bucket** (can rollback if needed)
 
 **Additional recommendations:**
+
 - Use separate GCP projects for dev/prod
 - Rotate secrets regularly
 - Enable Cloud Audit Logs
@@ -622,6 +649,7 @@ tofu apply \
 ## 💰 Cost Estimates
 
 **Development:**
+
 - Cloud Run: $0-5/month (scales to zero when not in use)
 - Artifact Registry: <$1/month (minimal storage)
 - Secret Manager: <$1/month (< 10 secrets)
@@ -646,6 +674,7 @@ gcloud run services update-traffic auto-coach-api-prod \
 ```
 
 **Or rollback via OpenTofu:**
+
 ```bash
 tofu apply \
   -var="container_image_tag=previous-working-tag" \
@@ -670,6 +699,7 @@ tofu apply \
 5. Check state: `tofu state list` and `tofu show`
 
 **For issues with this infrastructure:**
+
 - Review the plan output carefully before applying
 - Always test in dev environment first
 - Keep secrets secure (never commit to Git)

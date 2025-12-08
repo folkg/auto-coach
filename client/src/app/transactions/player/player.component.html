@@ -1,10 +1,8 @@
 <div class="card">
   <div
     [ngClass]="{
-      'add-trx-header':
-        isAdding && player.ownership?.ownership_type !== 'waivers',
-      'waiver-trx-header':
-        isAdding && player.ownership?.ownership_type === 'waivers',
+      'add-trx-header': isAdding && player.ownership?.ownership_type !== 'waivers',
+      'waiver-trx-header': isAdding && player.ownership?.ownership_type === 'waivers',
       'remove-trx-header': !isAdding,
     }"
   ></div>
@@ -13,8 +11,9 @@
   </p>
   <div class="card-content">
     <p class="player-details">
-      {{ player.player_name }} [{{ player.ownership_score | number: "1.2-2" }}]
-      ({{ playerPositions }})
+      {{ player.player_name }} [{{ player.ownership_score | number: "1.2-2" }}] ({{
+        playerPositions
+      }})
     </p>
     <button mat-icon-button (click)="toggleExpanded()">
       <mat-icon>

@@ -1,80 +1,48 @@
 <mat-card appearance="outlined">
-    <mat-card-header>
-        <img mat-card-avatar src="{{ user()?.photoURL }}" alt="User Photo" />
-        <mat-card-title>{{ user()?.displayName }}</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <p *ngIf="user()?.emailVerified === false" class="error">
-            Your email address has not been verified, please check your inbox
-            for the link.<br /><br />
-            All messages regarding your teams will be sent to this address, so
-            it is important that your email address is correct.<br /><br />
-            If the email listed below is not your preferred email, please change
-            it now. If you have already verified this email address, this
-            warning will dissapear after a page refresh.
-        </p>
-        <div class="line-item">
-            <div
-                *ngIf="this.isEditing(); else showStatic"
-                [formGroup]="profileForm"
-                class="left-text"
-            >
-                <mat-form-field class="form-field">
-                    <mat-label>Email</mat-label>
-                    <input
-                        matInput
-                        type="email"
-                        formControlName="email"
-                        [email]="true"
-                    />
-                    <mat-error *ngIf="emailFormControl.invalid"
-                        >Invalid Email Address</mat-error
-                    >
-                </mat-form-field>
-            </div>
-            <ng-template #showStatic>
-                <mat-label class="static-label">Email</mat-label>
-                <mat-label class="static-label">{{
-                    profileForm.get("email")?.value
-                }}</mat-label>
-            </ng-template>
-            <button
-                mat-button
-                [disabled]="isEditing()"
-                (click)="toggleEdit()"
-                class="right-button"
-            >
-                Edit
-            </button>
-        </div>
-    </mat-card-content>
+  <mat-card-header>
+    <img mat-card-avatar src="{{ user()?.photoURL }}" alt="User Photo" />
+    <mat-card-title>{{ user()?.displayName }}</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    <p *ngIf="user()?.emailVerified === false" class="error">
+      Your email address has not been verified, please check your inbox for the link.<br /><br />
+      All messages regarding your teams will be sent to this address, so it is important that your
+      email address is correct.<br /><br />
+      If the email listed below is not your preferred email, please change it now. If you have
+      already verified this email address, this warning will dissapear after a page refresh.
+    </p>
+    <div class="line-item">
+      <div *ngIf="this.isEditing(); else showStatic" [formGroup]="profileForm" class="left-text">
+        <mat-form-field class="form-field">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" formControlName="email" [email]="true" />
+          <mat-error *ngIf="emailFormControl.invalid">Invalid Email Address</mat-error>
+        </mat-form-field>
+      </div>
+      <ng-template #showStatic>
+        <mat-label class="static-label">Email</mat-label>
+        <mat-label class="static-label">{{ profileForm.get("email")?.value }}</mat-label>
+      </ng-template>
+      <button mat-button [disabled]="isEditing()" (click)="toggleEdit()" class="right-button">
+        Edit
+      </button>
+    </div>
+  </mat-card-content>
 
-    <mat-card-actions>
-        <button
-            *ngIf="user()?.emailVerified === false"
-            mat-button
-            (click)="sendVerificationEmail()"
-        >
-            Re-send Verification Email
-        </button>
-        <button
-            mat-button
-            data-testid="save-button"
-            [disabled]="
-                profileForm.pristine ||
-                emailFormControl.invalid ||
-                !(appStatusService.online$ | async)
-            "
-            (click)="saveChanges()"
-        >
-            Save Changes
-        </button>
-        <button
-            mat-button
-            [disabled]="!this.isEditing()"
-            (click)="cancelChanges()"
-        >
-            Cancel
-        </button>
-    </mat-card-actions>
+  <mat-card-actions>
+    <button *ngIf="user()?.emailVerified === false" mat-button (click)="sendVerificationEmail()">
+      Re-send Verification Email
+    </button>
+    <button
+      mat-button
+      data-testid="save-button"
+      [disabled]="
+        profileForm.pristine || emailFormControl.invalid || !(appStatusService.online$ | async)
+      "
+      (click)="saveChanges()"
+    >
+      Save Changes
+    </button>
+    <button mat-button [disabled]="!this.isEditing()" (click)="cancelChanges()">Cancel</button>
+  </mat-card-actions>
 </mat-card>

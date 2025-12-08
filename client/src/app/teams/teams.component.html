@@ -11,8 +11,8 @@
   />
   <div class="instructions">
     <h3>
-      Enable the <b>Automatically Manage Lineups</b> setting to get started with
-      any of your teams below.
+      Enable the <b>Automatically Manage Lineups</b> setting to get started with any of your teams
+      below.
     </h3>
     <h3>Sit back, relax, and let Fantasy AutoCoach do the work for you!</h3>
   </div>
@@ -28,11 +28,7 @@
       <app-team
         class="card-container"
         [team]="team"
-        [gameTimeStamps]="
-          schedule() && team.game_code
-            ? schedule()!.games[team.game_code]
-            : null
-        "
+        [gameTimeStamps]="schedule() && team.game_code ? schedule()!.games[team.game_code] : null"
         [loadingTimes]="isLoadingTimes()"
         (toggleSetLineupEvent)="setLineupBoolean($event)"
         (togglePauseLineupEvent)="setPauseLineupActions($event)"

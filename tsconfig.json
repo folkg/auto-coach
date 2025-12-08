@@ -4,7 +4,7 @@
     "composite": false,
     "declaration": false,
     "declarationMap": false,
-    "sourceMap": true
+    "sourceMap": true,
   },
-  "files": []
+  "files": [],
 }

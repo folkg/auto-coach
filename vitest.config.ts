@@ -10,6 +10,7 @@ export default defineConfig({
     testTimeout: 10000,
     projects: [
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [angular(), tsconfigPaths()],
         test: {
           name: "client",
@@ -40,6 +41,7 @@ export default defineConfig({
         },
       },
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [tsconfigPaths()],
         test: {
           name: "server-core",
@@ -50,6 +52,7 @@ export default defineConfig({
         },
       },
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [tsconfigPaths()],
         test: {
           name: "server-functions",
@@ -60,6 +63,7 @@ export default defineConfig({
         },
       },
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [tsconfigPaths()],
         test: {
           name: "mutation-api",

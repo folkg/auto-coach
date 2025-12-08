@@ -5,11 +5,7 @@
 >
   <div class="header-actions-wrapper header-footer-bg">
     <mat-card-header>
-      <img
-        mat-card-avatar
-        src="{{ team.team_logo }}"
-        alt="{{ team.team_name }}"
-      />
+      <img mat-card-avatar src="{{ team.team_logo }}" alt="{{ team.team_name }}" />
       <mat-card-title>{{ team.team_name }}</mat-card-title>
       <mat-card-subtitle>
         {{ team.league_name }} ({{ team.game_name }}, {{ team.game_season }})
@@ -28,7 +24,7 @@
   <mat-divider></mat-divider>
   <mat-card-content>
     <div class="card-content-section">
-      <b>{{ team.rank ?? '--' | nth }} of {{ team.num_teams }}</b>
+      <b>{{ team.rank ?? "--" | nth }} of {{ team.num_teams }}</b>
       @if (team.outcome_totals) {
         <br />
         {{ team.outcome_totals.wins }}-{{ team.outcome_totals.losses }}-{{
@@ -65,10 +61,7 @@
       <br />
       {{
         team.max_weekly_adds > 0
-          ? team.current_weekly_adds +
-            " of " +
-            team.max_weekly_adds +
-            " transactions this week"
+          ? team.current_weekly_adds + " of " + team.max_weekly_adds + " transactions this week"
           : ""
       }}
       <div class="padded-divider">
@@ -79,10 +72,7 @@
         <div class="transaction-shimmer shimmer">&nbsp;</div>
       } @else if (transactions().length > 0) {
         @for (transaction of transactions(); track transaction) {
-          <app-transaction
-            [transaction]="transaction"
-            (isSelected)="onSelectTransaction($event)"
-          />
+          <app-transaction [transaction]="transaction" (isSelected)="onSelectTransaction($event)" />
         }
       } @else {
         <p>No transactions available. Check back tomorrow.</p>

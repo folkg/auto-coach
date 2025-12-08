@@ -1,10 +1,11 @@
-You shall read LINT-TODO.md from the repository root to understand the scope of your task. 
+You shall read LINT-TODO.md from the repository root to understand the scope of your task.
 
 First, you shall run oxlint from the repository root with `bun checks` (runs liting and unit tests). If there are any failing checks, then fixing these failures becomes your only job, you shall not proceed further to pick a new task from the todo. If the current failures are marked as "completed" on the TODO list, then you shall unmark the rule(s), and continue with this rule as your job.
 
 If all checks are passing and you are starting with a clean repository, you shall identify the next unmarked lint rule in the list, and this will be your job to implement.
 
 Follow the instructions below sequentially:
+
 1. Update `.oxlintrc.json` to add/adjust the rule.
 2. Run oxlint from the repository root with `bunx oxlint --type-aware --type-check --fix`
 3. Fix all violations using the strategies listed.

@@ -18,6 +18,7 @@ source .env.deployment
 ```
 
 Required variables:
+
 - `GCP_PROJECT_ID` - Google Cloud project ID
 - `FIREBASE_PROJECT_ID` - Firebase project ID
 - `YAHOO_APP_ID` - Yahoo Fantasy API app ID
@@ -57,6 +58,7 @@ bun run deploy api --env prod [--version v1.2.3]
 Builds, containerizes, and deploys the API service to Cloud Run.
 
 **Prod deployment:**
+
 - Tags: `v1.2.3`, `prod-latest`
 - Cloud Run service: `auto-coach-api-prod`
 - **Requires:** `--version` flag with semantic version (e.g., v1.2.3)
@@ -70,6 +72,7 @@ bun run deploy:mutation-api:prod --version v1.2.3
 Builds, containerizes, and deploys the Mutation API service to Cloud Run.
 
 **Key details:**
+
 - Only `prod` environment is supported (no dev environment exists)
 - Tags: `v1.2.3`, `prod-latest`
 - Cloud Run service: `mutation-api-prod`
@@ -77,6 +80,7 @@ Builds, containerizes, and deploys the Mutation API service to Cloud Run.
 - Deploys directly via `gcloud run deploy` (not OpenTofu, to avoid shared tag conflicts)
 
 **Options:**
+
 - `--version, -v`: Required semantic version (e.g., v1.2.3)
 - `--skip-build`: Skip building, use existing container image
 - `--dry-run`: Test deployment without making changes
@@ -90,6 +94,7 @@ bun run deploy client --env prod [--channel <name>]
 Builds and deploys the Angular client to Firebase Hosting.
 
 **Prod deployment:**
+
 - Site: `app-prod`
 - Rewrites `/api/**` to `auto-coach-api-prod`
 - Use `--channel` for preview channels (e.g., `--channel pr-123`)
@@ -135,6 +140,7 @@ Environment is defined in YAML:
 - `ops/environments/prod.yaml`
 
 The environment specifies:
+
 - Firebase project and hosting site
 - Cloud Run service name and region
 - Container repository
@@ -155,6 +161,7 @@ This eliminates the need to inject API URLs at build time.
 ### Container Tagging Strategy
 
 **Production:**
+
 - Primary: `v1.2.3` (semantic version)
 - Latest: `prod-latest`
 
@@ -183,11 +190,13 @@ ops/
 The `.github/workflows/ci.yml` workflow uses the orchestrator for automated deployments:
 
 **On push to main:**
+
 - Detects changed components
 - Runs tests and builds
 - Deploys to production using orchestrator
 
 **On pull requests:**
+
 - Deploys client preview
 
 ## Required Environment Variables
@@ -213,23 +222,27 @@ export SENDGRID_API_KEY="..."
 ## Examples
 
 **Deploy API with version:**
+
 ```bash
 bun run checks
 bun run deploy api --env prod --version v1.2.3
 ```
 
 **Deploy client preview for PR:**
+
 ```bash
 bun run deploy client --env prod --channel pr-456
 ```
 
 **Full prod deployment:**
+
 ```bash
 bun run checks
 bun run deploy full --env prod --version v2.0.0
 ```
 
 **Dry run to test prod deployment:**
+
 ```bash
 bun run deploy full --env prod --version v2.0.0 --dry-run
 ```
@@ -237,26 +250,31 @@ bun run deploy full --env prod --version v2.0.0 --dry-run
 ## Troubleshooting
 
 **Check Cloud Run status:**
+
 ```bash
 gcloud run services list --region us-central1
 ```
 
 **View OpenTofu outputs:**
+
 ```bash
 cd infrastructure/opentofu && tofu output
 ```
 
 **List Firebase hosting sites:**
+
 ```bash
 firebase hosting:sites:list
 ```
 
 **Check active preview channels:**
+
 ```bash
 firebase hosting:channel:list
 ```
 
 **Test API health:**
+
 ```bash
 curl https://auto-coach-api-prod-xxxxx.run.app/health
 ```

@@ -33,7 +33,7 @@
     "@angular/build": "21.0.2",
     "@angular/cli": "21.0.2",
     "@angular/compiler-cli": "21.0.3",
-    "@ngx-env/builder": "20.1.1",
+    "@ngx-env/builder": "21.0.1",
     "@testing-library/angular": "18.1.1",
     "@testing-library/jest-dom": "6.9.1",
     "@testing-library/user-event": "14.6.1",

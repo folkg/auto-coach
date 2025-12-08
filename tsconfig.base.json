@@ -29,6 +29,6 @@
     "lib": ["ES2022"],
 
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  }
+    "forceConsistentCasingInFileNames": true,
+  },
 }

@@ -1254,9 +1254,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "3" }
-                                                ]
+                                                "batting_order": [{ "order_num": "3" }]
                                               },
                                               { "is_editable": 0 },
                                               {
@@ -1627,9 +1625,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "9" }
-                                                ]
+                                                "batting_order": [{ "order_num": "9" }]
                                               },
                                               { "is_editable": 0 },
                                               {
@@ -1815,9 +1811,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "1" }
-                                                ]
+                                                "batting_order": [{ "order_num": "1" }]
                                               },
                                               { "is_editable": 1 },
                                               {
@@ -2005,9 +1999,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "1" }
-                                                ]
+                                                "batting_order": [{ "order_num": "1" }]
                                               },
                                               { "is_editable": 0 },
                                               {
@@ -2193,9 +2185,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "2" }
-                                                ]
+                                                "batting_order": [{ "order_num": "2" }]
                                               },
                                               { "is_editable": 1 },
                                               {
@@ -2382,9 +2372,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "1" }
-                                                ]
+                                                "batting_order": [{ "order_num": "1" }]
                                               },
                                               { "is_editable": 1 },
                                               {
@@ -2570,9 +2558,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "8" }
-                                                ]
+                                                "batting_order": [{ "order_num": "8" }]
                                               },
                                               { "is_editable": 1 },
                                               {
@@ -2759,9 +2745,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "9" }
-                                                ]
+                                                "batting_order": [{ "order_num": "9" }]
                                               },
                                               { "is_editable": 1 },
                                               {
@@ -2949,9 +2933,7 @@
                                                   },
                                                   { "is_starting": 1 }
                                                 ],
-                                                "batting_order": [
-                                                  { "order_num": "6" }
-                                                ]
+                                                "batting_order": [{ "order_num": "6" }]
                                               },
                                               { "is_editable": 0 },
                                               {

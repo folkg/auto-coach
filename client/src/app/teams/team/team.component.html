@@ -1,141 +1,115 @@
 @let team = this.team();
 
 <mat-card
-    class="team-card"
-    [appearance]="team.end_date < date() ? 'outlined' : 'raised'"
-    [class.mat-elevation-z4]="team.end_date > date()"
+  class="team-card"
+  [appearance]="team.end_date < date() ? 'outlined' : 'raised'"
+  [class.mat-elevation-z4]="team.end_date > date()"
 >
-    <div class="header-actions-wrapper header-footer-bg">
-        <mat-card-header>
-            <img
-                mat-card-avatar
-                src="{{ team.team_logo }}"
-                alt="{{ team.team_name }}"
-            />
-            <mat-card-title>{{ team.team_name }}</mat-card-title>
-            <mat-card-subtitle>
-                {{ team.league_name }} ({{ team.game_name }},
-                {{ team.game_season }})
-            </mat-card-subtitle>
-        </mat-card-header>
-        <div>
-            <button
-                mat-icon-button
-                matTooltip="Open {{ team.team_name }} in Yahoo"
-                (click)="gotoExternalDomain(team.team_url)"
-            >
-                <mat-icon>open_in_new</mat-icon>
-            </button>
-        </div>
+  <div class="header-actions-wrapper header-footer-bg">
+    <mat-card-header>
+      <img mat-card-avatar src="{{ team.team_logo }}" alt="{{ team.team_name }}" />
+      <mat-card-title>{{ team.team_name }}</mat-card-title>
+      <mat-card-subtitle>
+        {{ team.league_name }} ({{ team.game_name }}, {{ team.game_season }})
+      </mat-card-subtitle>
+    </mat-card-header>
+    <div>
+      <button
+        mat-icon-button
+        matTooltip="Open {{ team.team_name }} in Yahoo"
+        (click)="gotoExternalDomain(team.team_url)"
+      >
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-divider />
+  <mat-card-content>
+    <div class="card-content-section">
+      <b>{{ team.rank ?? "--" | nth }} of {{ team.num_teams }}</b>
+      <ng-container *ngIf="team.outcome_totals">
+        <br />
+        {{ team.outcome_totals.wins }}-{{ team.outcome_totals.losses }}-{{
+          team.outcome_totals.ties
+        }}
+        ({{ team.outcome_totals.percentage }})
+      </ng-container>
+      <ng-container *ngIf="team.points_for">
+        <br />
+        {{ team.points_for | number: "1.2-2" }} points
+        <ng-container *ngIf="team.points_against">
+          for, {{ team.points_against | number: "1.2-2" }} points against
+        </ng-container>
+        <ng-container *ngIf="team.points_back">
+          ({{ team.points_back | number: "1.2-2" }} points behind leader)
+        </ng-container>
+      </ng-container>
+      <br />
+      {{ scoringType[team.scoring_type] }}
+      <ng-container *ngIf="team.max_games_played > 0 || team.max_innings_pitched > 0">
+        <br />
+        Max Games Played Limit
+      </ng-container>
+      <ng-container *ngIf="team.weekly_deadline != 'intraday' && team.weekly_deadline != ''">
+        <br />
+        Weekly Lineup Changes
+      </ng-container>
     </div>
     <mat-divider />
-    <mat-card-content>
-        <div class="card-content-section">
-            <b>{{ team.rank ?? '--' | nth }} of {{ team.num_teams }}</b>
-            <ng-container *ngIf="team.outcome_totals">
-                <br />
-                {{ team.outcome_totals.wins }}-{{
-                    team.outcome_totals.losses
-                }}-{{ team.outcome_totals.ties }} ({{
-                    team.outcome_totals.percentage
-                }})
-            </ng-container>
-            <ng-container *ngIf="team.points_for">
-                <br />
-                {{ team.points_for | number: "1.2-2" }} points
-                <ng-container *ngIf="team.points_against">
-                    for, {{ team.points_against | number: "1.2-2" }} points
-                    against
-                </ng-container>
-                <ng-container *ngIf="team.points_back">
-                    ({{ team.points_back | number: "1.2-2" }} points behind
-                    leader)
-                </ng-container>
-            </ng-container>
-            <br />
-            {{ scoringType[team.scoring_type] }}
-            <ng-container
-                *ngIf="
-                    team.max_games_played > 0 || team.max_innings_pitched > 0
-                "
-            >
-                <br />
-                Max Games Played Limit
-            </ng-container>
-            <ng-container
-                *ngIf="
-                    team.weekly_deadline != 'intraday' &&
-                    team.weekly_deadline != ''
-                "
-            >
-                <br />
-                Weekly Lineup Changes
-            </ng-container>
+    <div class="flex-sb card-content-section" *ngIf="team.end_date > date(); else seasonOver">
+      @if (loadingTimes()) {
+        <div><span class="time-shimmer shimmer">&nbsp;</span></div>
+        <div><span class="time-shimmer shimmer">&nbsp;</span></div>
+      } @else {
+        <div>
+          Last update:
+          {{ team.last_updated > 0 ? (team.last_updated | relativeDate) : "Never" }}
         </div>
-        <mat-divider />
-        <div
-            class="flex-sb card-content-section"
-            *ngIf="team.end_date > date(); else seasonOver"
-        >
-            @if (loadingTimes()) {
-                <div><span class="time-shimmer shimmer">&nbsp;</span></div>
-                <div><span class="time-shimmer shimmer">&nbsp;</span></div>
-            } @else {
-                <div>
-                    Last update:
-                    {{
-                        team.last_updated > 0
-                            ? (team.last_updated | relativeDate)
-                            : "Never"
-                    }}
-                </div>
-                <div>
-                    Next update:
-                    {{ team.is_setting_lineups ? nextLineupUpdate() : "N/A" }}
-                </div>
-            }
+        <div>
+          Next update:
+          {{ team.is_setting_lineups ? nextLineupUpdate() : "N/A" }}
         </div>
-        <ng-template #seasonOver>
-            <div class="card-content-section">The season is over.</div>
-        </ng-template>
-    </mat-card-content>
-    <mat-divider />
-    <mat-card-actions>
-        <div class="flex-sb">
-            <mat-slide-toggle
-                [disabled]="
-                    loadingTimes() ||
-                    isPausedToday() ||
-                    !team.is_subscribed ||
-                    team.end_date < date() ||
-                    !(appStatusService.online$ | async)
-                "
-                [checked]="team.is_setting_lineups"
-                (change)="onToggleSetLineup($event)"
-            >
-                Automatically Manage Lineups
-            </mat-slide-toggle>
-            <button
-                [disabled]="
-                    loadingTimes() ||
-                    !team.is_setting_lineups ||
-                    !team.is_subscribed ||
-                    team.end_date < date() ||
-                    !(appStatusService.online$ | async)
-                "
-                mat-stroked-button
-                class="button"
-                [color]="isPausedToday() ? 'accent' : null"
-                matTooltip="{{
-                    isPausedToday() ? 'Resume' : 'Pause for the rest of the day'
-                }}"
-                (click)="onTogglePauseLineup()"
-            >
-                <mat-icon>
-                    {{ isPausedToday() ? "play_arrow" : "pause" }}
-                </mat-icon>
-                {{ isPausedToday() ? "Resume" : "Pause" }}
-            </button>
-        </div>
-    </mat-card-actions>
+      }
+    </div>
+    <ng-template #seasonOver>
+      <div class="card-content-section">The season is over.</div>
+    </ng-template>
+  </mat-card-content>
+  <mat-divider />
+  <mat-card-actions>
+    <div class="flex-sb">
+      <mat-slide-toggle
+        [disabled]="
+          loadingTimes() ||
+          isPausedToday() ||
+          !team.is_subscribed ||
+          team.end_date < date() ||
+          !(appStatusService.online$ | async)
+        "
+        [checked]="team.is_setting_lineups"
+        (change)="onToggleSetLineup($event)"
+      >
+        Automatically Manage Lineups
+      </mat-slide-toggle>
+      <button
+        [disabled]="
+          loadingTimes() ||
+          !team.is_setting_lineups ||
+          !team.is_subscribed ||
+          team.end_date < date() ||
+          !(appStatusService.online$ | async)
+        "
+        mat-stroked-button
+        class="button"
+        [color]="isPausedToday() ? 'accent' : null"
+        matTooltip="{{ isPausedToday() ? 'Resume' : 'Pause for the rest of the day' }}"
+        (click)="onTogglePauseLineup()"
+      >
+        <mat-icon>
+          {{ isPausedToday() ? "play_arrow" : "pause" }}
+        </mat-icon>
+        {{ isPausedToday() ? "Resume" : "Pause" }}
+      </button>
+    </div>
+  </mat-card-actions>
 </mat-card>

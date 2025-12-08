@@ -14,16 +14,16 @@
     }
   },
   "lsp": {
-     "oxc": {
-       "initialization_options": {
-         "options": {
-           "typeAware": true,
-           "fmt.experimental": true
-         }
-       }
-     }
-   },
+    "oxc": {
+      "initialization_options": {
+        "options": {
+          "typeAware": true,
+          "fmt.experimental": true
+        }
+      }
+    }
+  },
   "code_actions_on_format": {
-    "source.fixAll": true,
+    "source.fixAll": true
   }
 }

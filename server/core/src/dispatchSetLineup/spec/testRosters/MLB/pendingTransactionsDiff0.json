@@ -561,10 +561,7 @@
         "players": {
           "0": {
             "player": [
-              [
-                { "player_key": "422.p.10660" },
-                { "display_position": "SP,RP" }
-              ],
+              [{ "player_key": "422.p.10660" }, { "display_position": "SP,RP" }],
               {
                 "transaction_data": [
                   {
