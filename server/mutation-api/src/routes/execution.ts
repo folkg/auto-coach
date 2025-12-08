@@ -7,6 +7,8 @@ import type { ErrorResponse, MutationError } from "../types/api-schemas";
 import type { AuthContext } from "../types/hono-app-type";
 
 import { ExecutionServiceImpl } from "../services/execution.service";
+import { ProductionLoggerLayer } from "../services/logger.service";
+import { withExecutionContext } from "../services/logging-context";
 import { RateLimiterServiceImpl } from "../services/rate-limiter.service";
 import { validateExecuteMutation } from "../validators";
 
@@ -60,31 +62,49 @@ export function createExecutionRoutes(firestore: Firestore) {
   app.post("/mutation", validateExecuteMutation, async (c) => {
     const request = c.req.valid("json");
 
+    // Generate or use existing request ID for correlation
+    const requestId = c.req.header("X-Request-Id") ?? crypto.randomUUID();
+    c.set("requestId", requestId);
+
     const result = await Effect.runPromise(
-      executionService.executeMutation(request).pipe(
-        Effect.match({
-          onFailure: (error) => {
-            const { response, statusCode, retryAfter } = errorToResponse(error);
+      withExecutionContext(
+        {
+          requestId,
+          taskId: request.task.id,
+          userId: request.task.userId,
+          operation: request.task.type,
+        },
+        executionService.executeMutation(request).pipe(
+          Effect.tapError((error) =>
+            Effect.annotateLogs(Effect.logError("Mutation execution failed"), {
+              errorTag: error._tag,
+              errorCode: error.code ?? error._tag,
+              errorMessage: error.message,
+              outcome: "unhandled-error",
+              terminated: true,
+              retryAfter: error._tag === "RateLimitError" ? (error.retryAfter ?? "none") : "none",
+            }),
+          ),
+          Effect.tap(() =>
+            Effect.annotateLogs(Effect.logInfo("Mutation execution completed"), {
+              outcome: "success",
+            }),
+          ),
+          Effect.match({
+            onFailure: (error) => {
+              const { response, statusCode, retryAfter } = errorToResponse(error);
 
-            // Set Retry-After header for rate limit errors so Cloud Tasks respects backoff
-            if (retryAfter !== undefined) {
-              c.header("Retry-After", String(retryAfter));
-            }
+              // Set Retry-After header for rate limit errors so Cloud Tasks respects backoff
+              if (retryAfter !== undefined) {
+                c.header("Retry-After", String(retryAfter));
+              }
 
-            // Log errors for debugging
-            console.error(
-              `[execution] Task ${request.task.id} failed for user ${request.task.userId}:`,
-              JSON.stringify({
-                code: error.code || error._tag,
-                message: error.message,
-                retryAfter,
-              }),
-            );
-            return c.json(response, statusCode);
-          },
-          onSuccess: (response) => c.json(response, 200),
-        }),
-      ),
+              return c.json(response, statusCode);
+            },
+            onSuccess: (response) => c.json(response, 200),
+          }),
+        ),
+      ).pipe(Effect.provide(ProductionLoggerLayer)),
     );
 
     return result;

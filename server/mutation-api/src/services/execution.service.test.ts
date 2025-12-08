@@ -52,6 +52,11 @@ vi.mock("./positional-scarcity.service.js", () => ({
   recalculateScarcityOffsetsForAll: () => mockRecalculateScarcityOffsetsForAll(),
 }));
 
+// Mock handleYahooAuthRevoked to avoid real Firebase calls
+vi.mock("../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js", () => ({
+  handleYahooAuthRevoked: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Mock Firestore
 vi.mock("@google-cloud/firestore", () => ({
   Firestore: vi.fn(),

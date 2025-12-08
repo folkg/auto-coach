@@ -7,14 +7,14 @@ import type {
   TransactionType,
 } from "@common/types/transactions.js";
 
-import { isApiRateLimitError } from "@common/utilities/error.js";
-import { logger } from "firebase-functions";
+import { getErrorMessage, isApiRateLimitError } from "@common/utilities/error.js";
 import assert from "node:assert";
 
 import { getScarcityOffsetsForTeam } from "../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import { sendUserEmail } from "../../common/services/email/email.service.js";
 import { getActiveTeamsForUser } from "../../common/services/firebase/firestore.service.js";
 import { enrichTeamsWithFirestoreSettings } from "../../common/services/firebase/firestoreUtils.service.js";
+import { structuredLogger } from "../../common/services/structured-logger.js";
 import {
   getCurrentPacificNumDay,
   getPacificTimeDateString,
@@ -70,7 +70,11 @@ export async function getTransactions(uid: string): Promise<TransactionsData> {
   const teams = await getActiveTeamsForUser(uid);
 
   if (teams.size === 0) {
-    logger.log(`No active teams for user ${uid}`);
+    structuredLogger.info("No active teams for user", {
+      phase: "execution",
+      operation: "getTransactions",
+      userId: uid,
+    });
     return {
       dropPlayerTransactions: null,
       lineupChanges: null,
@@ -198,8 +202,17 @@ export async function postTransactions(
     try {
       return await postTransactionsHelper(transactions, uid);
     } catch (error) {
-      logger.error("Error in postSomeTransactions()", error);
-      logger.error("Transactions object: ", { transactions });
+      structuredLogger.error(
+        "Failed to post transactions",
+        {
+          phase: "execution",
+          operation: "postSomeTransactions",
+          userId: uid,
+          transactionCount: transactions.flat().length,
+          outcome: "unhandled-error",
+        },
+        error,
+      );
       throw error;
     }
   }
@@ -208,8 +221,17 @@ export async function postTransactions(
     try {
       await putLineupChanges(lineupChanges, uid);
     } catch (error) {
-      logger.error("Error in putAllLineupChanges()", error);
-      logger.error("Lineup changes object: ", { lineupChanges });
+      structuredLogger.error(
+        "Failed to put lineup changes",
+        {
+          phase: "execution",
+          operation: "putAllLineupChanges",
+          userId: uid,
+          changeCount: lineupChanges.length,
+          outcome: "unhandled-error",
+        },
+        error,
+      );
       throw error;
     }
   }
@@ -291,12 +313,13 @@ export async function createPlayersTransactions(
       if (dpt) {
         dropPlayerTransactions.push(dpt);
         // TODO: Remove this, temporary logging to spot check the new positional scarcity offset functionality
-        logger.log(
-          `positionalScarcityOffsets for team ${
-            team.team_key
-          }: ${JSON.stringify(positionalScarcityOffsets)}`,
-        );
-        logger.log(`dropPlayerTransactions: ${JSON.stringify(dpt)}`);
+        structuredLogger.debug("Generated drop transactions", {
+          phase: "execution",
+          operation: "createPlayersTransactions",
+          teamKey: team.team_key,
+          transactionCount: dpt.length,
+          positionalScarcityOffsets,
+        });
       }
     }
 
@@ -319,12 +342,13 @@ export async function createPlayersTransactions(
       if (aspt) {
         addSwapPlayerTransactions.push(aspt);
         // TODO: Remove this, temporary logging to spot check the new positional scarcity offset functionality
-        logger.log(
-          `positionalScarcityOffsets for team ${
-            team.team_key
-          }: ${JSON.stringify(positionalScarcityOffsets)}`,
-        );
-        logger.log(`addSwapPlayerTransactions: ${JSON.stringify(aspt)}`);
+        structuredLogger.debug("Generated add/swap transactions", {
+          phase: "execution",
+          operation: "createPlayersTransactions",
+          teamKey: team.team_key,
+          transactionCount: aspt.length,
+          positionalScarcityOffsets,
+        });
       }
     }
 
@@ -379,14 +403,20 @@ async function postTransactionsHelper(
   const postedTransactions: PlayerTransaction[] = [];
   const failedReasons: string[] = [];
 
-  const allTransactionsPromises = playerTransactions
-    .flat()
-    .map((transaction) => postRosterAddDropTransaction(transaction, uid));
+  const flatTransactions = playerTransactions.flat();
+  const allTransactionsPromises = flatTransactions.map((transaction) =>
+    postRosterAddDropTransaction(transaction, uid),
+  );
 
   const results = await Promise.allSettled(allTransactionsPromises);
 
-  let error = false;
-  for (const result of results) {
+  let hasError = false;
+  for (let i = 0; i < results.length; i++) {
+    const result = results[i];
+    if (result === undefined) {
+      continue;
+    }
+
     if (result.status === "fulfilled") {
       const transaction = result.value;
       if (transaction) {
@@ -397,15 +427,31 @@ async function postTransactionsHelper(
         throw result.reason;
       }
 
-      error = true;
+      hasError = true;
       const { reason } = result;
-      logger.error(`Error in postAllTransactions() for User: ${uid}: ${JSON.stringify(reason)}`);
-      failedReasons.push(reason);
+      const transaction = flatTransactions[i];
+      const errorMessage = getErrorMessage(reason);
+
+      structuredLogger.error(
+        "Transaction posting failed",
+        {
+          phase: "execution",
+          service: "yahoo",
+          operation: "postTransactionsHelper",
+          userId: uid,
+          teamKey: transaction?.teamKey,
+          transactionDescription: transaction?.description,
+          outcome: "unhandled-error",
+        },
+        reason,
+      );
+
+      failedReasons.push(errorMessage);
     }
   }
 
-  if (error) {
-    throw new Error("Error in postAllTransactions()");
+  if (hasError) {
+    throw new Error("One or more transactions failed to post");
   }
 
   return { postedTransactions, failedReasons };

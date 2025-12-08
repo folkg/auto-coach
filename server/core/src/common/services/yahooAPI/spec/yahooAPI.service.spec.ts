@@ -246,21 +246,23 @@ describe("YahooAPI Service", () => {
         }),
       ],
     });
-    const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction: ${JSON.stringify(
-      transaction,
-    )}`;
     const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuth");
     spyHttpPostYahooAuth.mockImplementation(() => {
       return Promise.reject(httpError);
     });
-    const spyConsoleError = vi.spyOn(console, "info");
-    spyConsoleError.mockImplementation(() => {
-      return;
-    });
+
+    // Arrange
+    const spyStdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+
+    // Act
     const result = await postRosterAddDropTransaction(transaction, uid);
-    expect(spyConsoleError).toHaveBeenCalledWith(
-      `You cannot add a player you dropped until the waiver period ends. ${errMessage}`,
-    );
+
+    // Assert
     expect(result).toEqual(null);
+    expect(spyStdout).toHaveBeenCalledWith(
+      expect.stringContaining("Transaction blocked - waiver period not ended"),
+    );
+
+    spyStdout.mockRestore();
   });
 });

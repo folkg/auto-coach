@@ -2,7 +2,8 @@ import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth, type UserRecord } from "firebase-admin/auth";
-import { logger } from "firebase-functions";
+
+import { structuredLogger } from "../structured-logger.js";
 
 dotenv.config();
 sgMail.setApiKey(process.env.SENDGRID_API_KEY ?? "");
@@ -16,11 +17,11 @@ if (getApps().length === 0) {
  *
  * @export
  * @async
- * @param {string} userEmail The email address of the user sending the email
- * @param {string} feedbackType The type of feedback being sent
- * @param {string} title The title of the email
- * @param {string} message The message of the email
- * @return {Promise<boolean>} The result of the email send
+ * @param userEmail The email address of the user sending the email
+ * @param feedbackType The type of feedback being sent
+ * @param title The title of the email
+ * @param message The message of the email
+ * @return The result of the email send
  */
 export async function sendFeedbackEmail(
   userEmail: string,
@@ -44,11 +45,36 @@ export async function sendFeedbackEmail(
 
   try {
     await sgMail.send(msg);
+    structuredLogger.info("Feedback email sent successfully", {
+      phase: "email",
+      service: "sendgrid",
+      event: "FEEDBACK_EMAIL_SENT",
+      operation: "sendFeedbackEmail",
+      toEmail: "customersupport@fantasyautocoach.com",
+      fromEmail: userEmail,
+      feedbackType,
+      outcome: "success",
+    });
+    return true;
   } catch (error) {
-    logger.error("feedback email failed to send: ", error);
+    const sendgridError = error as { code?: number; response?: { body?: { errors?: unknown[] } } };
+    structuredLogger.error(
+      "Feedback email failed to send",
+      {
+        phase: "email",
+        service: "sendgrid",
+        event: "FEEDBACK_EMAIL_FAILED",
+        operation: "sendFeedbackEmail",
+        fromEmail: userEmail,
+        feedbackType,
+        errorCode: sendgridError.code ? `SENDGRID_${sendgridError.code}` : "SENDGRID_UNKNOWN",
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Failed to send feedback email ${error}`);
   }
-  return true;
 }
 
 /**
@@ -56,12 +82,12 @@ export async function sendFeedbackEmail(
  *
  * @export
  * @async
- * @param {string} uid The user id of the user to send the email to
- * @param {string} subject The title of the email
- * @param {string} body The message of the email
- * @param {string} [buttonText=""] The text of the button
- * @param {string} [buttonUrl=""] The url of the button
- * @return {Promise<boolean>} The result of the email send
+ * @param uid The user id of the user to send the email to
+ * @param subject The title of the email
+ * @param body The message of the email
+ * @param buttonText The text of the button
+ * @param buttonUrl The url of the button
+ * @return The result of the email send
  */
 export async function sendUserEmail(
   uid: string,
@@ -72,6 +98,15 @@ export async function sendUserEmail(
 ): Promise<boolean> {
   const user = await getAuth().getUser(uid);
   if (!user) {
+    structuredLogger.error("Cannot send email - user not found", {
+      phase: "email",
+      service: "firebase",
+      event: "USER_NOT_FOUND",
+      operation: "sendUserEmail",
+      userId: uid,
+      outcome: "unhandled-error",
+      terminated: true,
+    });
     throw new Error("Not a valid user");
   }
   const userEmailAddress = user.email;
@@ -94,9 +129,35 @@ export async function sendUserEmail(
 
   try {
     await sgMail.send(msg);
+    structuredLogger.info("User email sent successfully", {
+      phase: "email",
+      service: "sendgrid",
+      event: "USER_EMAIL_SENT",
+      operation: "sendUserEmail",
+      userId: uid,
+      toEmail: userEmailAddress,
+      subject,
+      outcome: "success",
+    });
     return true;
   } catch (error) {
-    logger.error(`user email failed to send to ${userEmailAddress}: `, error);
+    const sendgridError = error as { code?: number; response?: { body?: { errors?: unknown[] } } };
+    structuredLogger.error(
+      "User email failed to send",
+      {
+        phase: "email",
+        service: "sendgrid",
+        event: "USER_EMAIL_FAILED",
+        operation: "sendUserEmail",
+        userId: uid,
+        toEmail: userEmailAddress,
+        subject,
+        errorCode: sendgridError.code ? `SENDGRID_${sendgridError.code}` : "SENDGRID_UNKNOWN",
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
     return false;
   }
 }
@@ -104,6 +165,13 @@ export async function sendUserEmail(
 export async function sendCustomVerificationEmail(user: UserRecord): Promise<boolean> {
   const userEmailAddress = user?.email;
   if (!userEmailAddress) {
+    structuredLogger.error("Cannot send verification email - no email address", {
+      phase: "email",
+      event: "VERIFICATION_EMAIL_NO_ADDRESS",
+      operation: "sendCustomVerificationEmail",
+      outcome: "unhandled-error",
+      terminated: true,
+    });
     throw new Error("Not a valid user");
   }
 
@@ -111,6 +179,19 @@ export async function sendCustomVerificationEmail(user: UserRecord): Promise<boo
   try {
     verificationLink = await getAuth().generateEmailVerificationLink(userEmailAddress);
   } catch (error) {
+    structuredLogger.error(
+      "Failed to generate email verification link",
+      {
+        phase: "email",
+        service: "firebase",
+        event: "VERIFICATION_LINK_GENERATION_FAILED",
+        operation: "sendCustomVerificationEmail",
+        toEmail: userEmailAddress,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Failed to generate email verification link ${error}`);
   }
 
@@ -128,9 +209,33 @@ export async function sendCustomVerificationEmail(user: UserRecord): Promise<boo
 
   try {
     await sgMail.send(msg);
+    structuredLogger.info("Welcome/verification email sent successfully", {
+      phase: "email",
+      service: "sendgrid",
+      event: "VERIFICATION_EMAIL_SENT",
+      operation: "sendCustomVerificationEmail",
+      toEmail: userEmailAddress,
+      displayName: user?.displayName,
+      outcome: "success",
+    });
+    return true;
   } catch (error) {
-    logger.error("Welcome email failed to send for new user", user, error);
+    const sendgridError = error as { code?: number; response?: { body?: { errors?: unknown[] } } };
+    structuredLogger.error(
+      "Welcome email failed to send",
+      {
+        phase: "email",
+        service: "sendgrid",
+        event: "VERIFICATION_EMAIL_FAILED",
+        operation: "sendCustomVerificationEmail",
+        toEmail: userEmailAddress,
+        displayName: user?.displayName,
+        errorCode: sendgridError.code ? `SENDGRID_${sendgridError.code}` : "SENDGRID_UNKNOWN",
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Failed to send welcome email: ${error}`);
   }
-  return true;
 }

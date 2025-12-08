@@ -1,6 +1,5 @@
-import { logger } from "firebase-functions";
-
 import { sendUserEmail } from "../email/email.service.js";
+import { structuredLogger } from "../structured-logger.js";
 import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
 
 /**
@@ -10,11 +9,16 @@ import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
  * @param uid - The user ID
  */
 export async function handleYahooAuthRevoked(uid: string): Promise<void> {
-  logger.info(`Handling Yahoo auth revocation for user ${uid}`);
+  structuredLogger.info("Handling Yahoo auth revocation", {
+    phase: "firebase",
+    event: "AUTH_REVOCATION_START",
+    operation: "handleYahooAuthRevoked",
+    userId: uid,
+  });
 
   await revokeRefreshToken(uid);
 
-  await sendUserEmail(
+  const emailSent = await sendUserEmail(
     uid,
     "Urgent Action Required: Yahoo Authentication Error",
     [
@@ -28,5 +32,24 @@ export async function handleYahooAuthRevoked(uid: string): Promise<void> {
     "https://fantasyautocoach.com/",
   );
 
-  logger.info(`Yahoo auth revocation handled for user ${uid}`);
+  if (emailSent) {
+    structuredLogger.info("Yahoo auth revocation handled successfully", {
+      phase: "firebase",
+      event: "AUTH_REVOCATION_COMPLETE",
+      operation: "handleYahooAuthRevoked",
+      userId: uid,
+      emailSent: true,
+      outcome: "success",
+    });
+  } else {
+    structuredLogger.warn("Yahoo auth revocation completed but email failed", {
+      phase: "firebase",
+      event: "AUTH_REVOCATION_PARTIAL",
+      operation: "handleYahooAuthRevoked",
+      userId: uid,
+      emailSent: false,
+      outcome: "handled-error",
+      terminated: false,
+    });
+  }
 }

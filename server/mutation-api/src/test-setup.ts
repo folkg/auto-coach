@@ -1,3 +1,4 @@
+import { Layer, Logger, LogLevel } from "effect";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
 import { server } from "./test/msw-server.js";
@@ -59,10 +60,46 @@ vi.mock("@google-cloud/tasks", () => ({
 // Note: We do NOT mock the "effect" module as it breaks TaggedError functionality
 // and path resolution in dependent modules. The real Effect library should be used.
 
-// Global test setup
+/**
+ * Silent logger for tests - captures log calls but doesn't output anything.
+ * Use this to prevent test output pollution while still allowing log assertions.
+ */
+export const testLoggerCalls: Array<{
+  level: string;
+  message: unknown;
+  annotations: Record<string, unknown>;
+}> = [];
+
+const silentTestLogger = Logger.make<unknown, void>(({ annotations, logLevel, message }) => {
+  const annotationRecord: Record<string, unknown> = {};
+  for (const [key, value] of annotations) {
+    annotationRecord[key] = value;
+  }
+  testLoggerCalls.push({
+    level: logLevel._tag,
+    message,
+    annotations: annotationRecord,
+  });
+});
+
+/**
+ * Test logger layer that suppresses output but captures calls.
+ */
+export const TestLoggerLayer = Layer.merge(
+  Logger.replace(Logger.defaultLogger, silentTestLogger),
+  Logger.minimumLogLevel(LogLevel.All),
+);
+
+/**
+ * Clear captured test log calls between tests.
+ */
+export function clearTestLogCalls(): void {
+  testLoggerCalls.length = 0;
+}
+
+// Suppress console output in tests
 global.console = {
   ...console,
-  // Suppress console.log in tests unless needed
   log: vi.fn(),
   debug: vi.fn(),
   info: vi.fn(),

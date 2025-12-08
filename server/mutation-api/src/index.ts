@@ -1,9 +1,18 @@
+import { Effect } from "effect";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 
 import mutationsRouter from "./routes/mutations";
+import { ProductionLoggerLayer } from "./services/logger.service";
 
-console.log("Starting Mutation API server...");
+// Log server startup with structured logging
+Effect.runSync(
+  Effect.logInfo("Starting Mutation API server").pipe(
+    Effect.annotateLogs("event", "SERVER_STARTUP"),
+    Effect.annotateLogs("port", Number(process.env.PORT || 3001)),
+    Effect.provide(ProductionLoggerLayer),
+  ),
+);
 
 const app = new Hono();
 

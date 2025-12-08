@@ -12,11 +12,11 @@ import {
   getFirestore,
   type QuerySnapshot,
 } from "firebase-admin/firestore";
-import { logger } from "firebase-functions";
 
 import type { ScarcityOffsetsCollection } from "../../../calcPositionalScarcity/services/positionalScarcity.service.js";
 import type { ReturnCredential, Token } from "../../interfaces/credential.js";
 
+import { structuredLogger } from "../structured-logger.js";
 import {
   getCurrentPacificNumDay,
   getPacificTimeDateString,
@@ -49,8 +49,8 @@ db.settings({
 
 /**
  * Load the access token from DB, or refresh from Yahoo if expired
- * @param {(string)} uid The firebase uid
- * @return {Promise<ReturnCredential>} The credential with token and expiry
+ * @param uid The firebase uid
+ * @return The credential with token and expiry
  */
 export async function loadYahooAccessToken(uid: string): Promise<ReturnCredential> {
   // fetch the current token from the database
@@ -73,7 +73,18 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
     try {
       token = await refreshYahooAccessToken(docData.refreshToken);
     } catch (error: unknown) {
-      logger.error(`Could not refresh access token for user: ${uid}`, error);
+      structuredLogger.error(
+        "Could not refresh access token",
+        {
+          phase: "firebase",
+          service: "yahoo",
+          event: "TOKEN_REFRESH_FAILED",
+          operation: "loadYahooAccessToken",
+          userId: uid,
+          outcome: "unhandled-error",
+        },
+        error,
+      );
       if (isHttpError(error)) {
         const responseData = error.response?.data;
         const parsedData =
@@ -96,7 +107,19 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
         .doc(uid)
         .update({ ...token });
     } catch (error) {
-      logger.error(`Error storing token in Firestore for user: ${uid}`, error);
+      structuredLogger.error(
+        "Error storing token in Firestore",
+        {
+          phase: "firebase",
+          service: "firebase",
+          event: "TOKEN_STORE_FAILED",
+          operation: "loadYahooAccessToken",
+          userId: uid,
+          outcome: "handled-error",
+          terminated: false,
+        },
+        error,
+      );
     }
 
     credential = {
@@ -117,14 +140,25 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
  *
  * @export
  * @async
- * @param {string} uid - The user id
- * @return {*} - Nothing
+ * @param uid - The user id
  */
-export async function flagRefreshToken(uid: string) {
+export async function flagRefreshToken(uid: string): Promise<void> {
   try {
     await db.collection("users").doc(uid).update({ refreshToken: "-1" });
   } catch (error) {
-    logger.error(`Error setting refresh token to null for user: ${uid}`, error);
+    structuredLogger.error(
+      "Error setting refresh token to sentinel value",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "FLAG_REFRESH_TOKEN_FAILED",
+        operation: "flagRefreshToken",
+        userId: uid,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 }
 
@@ -132,8 +166,8 @@ export async function flagRefreshToken(uid: string) {
  * Fetches all teams from Firestore for the user
  *
  * @export
- * @param {string} uid - The user id
- * @return {Promise<ITeamFirestore[]>} - An array of teams
+ * @param uid - The user id
+ * @return - An array of teams
  */
 export async function fetchTeamsFirestore(uid: string): Promise<FirestoreTeam[]> {
   try {
@@ -147,7 +181,19 @@ export async function fetchTeamsFirestore(uid: string): Promise<FirestoreTeam[]>
       return team;
     });
   } catch (error) {
-    logger.error(`Error in fetchTeamsFirestore for User: ${uid}`, error);
+    structuredLogger.error(
+      "Error fetching teams from Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "FETCH_TEAMS_FAILED",
+        operation: "fetchTeamsFirestore",
+        userId: uid,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Error fetching teams from Firebase. User: ${uid}`);
   }
 }
@@ -156,13 +202,14 @@ export async function fetchTeamsFirestore(uid: string): Promise<FirestoreTeam[]>
  * Fetches all teams from Firestore for the user that are actively setting
  * lineups
  *
- *
  * @export
  * @async
- * @param {string[]} leagues - The leagues to filter by
- * @return {unknown} - An array of teams from Firestore
+ * @param leagues - The leagues to filter by
+ * @return - An array of teams from Firestore
  */
-export async function getActiveTeamsForLeagues(leagues: string[]) {
+export async function getActiveTeamsForLeagues(
+  leagues: string[],
+): Promise<QuerySnapshot<DocumentData>> {
   let result: QuerySnapshot<DocumentData>;
   try {
     const teamsRef = db.collectionGroup("teams");
@@ -179,7 +226,7 @@ export async function getActiveTeamsForLeagues(leagues: string[]) {
   return result;
 }
 
-export async function getActiveTeamsForUser(uid: string) {
+export async function getActiveTeamsForUser(uid: string): Promise<QuerySnapshot<DocumentData>> {
   let result: QuerySnapshot<DocumentData>;
   try {
     const teamsRef = db.collection(`users/${uid}/teams`);
@@ -201,9 +248,9 @@ export async function getActiveTeamsForUser(uid: string) {
  *
  * @export
  * @async
- * @return {unknown} - An array of teams from Firestore
+ * @return - An array of teams from Firestore
  */
-export async function getTomorrowsActiveWeeklyTeams() {
+export async function getTomorrowsActiveWeeklyTeams(): Promise<QuerySnapshot<DocumentData>> {
   let result: QuerySnapshot<DocumentData>;
 
   try {
@@ -226,10 +273,10 @@ export async function getTomorrowsActiveWeeklyTeams() {
  *
  * @export
  * @async
- * @param {InfoTeam[]} missingTeams - Teams that are in Yahoo but not in Firestore
- * @param {FirestoreTeam[]} extraTeams - Teams that are in Firestore but not in Yahoo
- * @param {string} uid - The user id
- * @return {Promise<ClientTeam[]>} - The teams that were synced
+ * @param missingTeams - Teams that are in Yahoo but not in Firestore
+ * @param extraTeams - Teams that are in Firestore but not in Yahoo
+ * @param uid - The user id
+ * @return - The teams that were synced
  */
 export async function syncTeamsInFirestore(
   missingTeams: InfoTeam[],
@@ -263,9 +310,21 @@ export async function syncTeamsInFirestore(
   try {
     await batch.commit();
   } catch (error) {
-    logger.error(`Error in syncTeamsInFirebase for User: ${uid}`, error);
-    logger.info("missingTeams: ", missingTeams);
-    logger.info("extraTeams: ", extraTeams);
+    structuredLogger.error(
+      "Error syncing teams in Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "SYNC_TEAMS_FAILED",
+        operation: "syncTeamsInFirestore",
+        userId: uid,
+        missingTeamCount: missingTeams.length,
+        extraTeamCount: extraTeams.length,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error("Error syncing teams in Firebase.");
   }
 
@@ -276,17 +335,30 @@ export async function syncTeamsInFirestore(
  * Update the last_updated timestamp in Firestore
  *
  * @async
- * @param {string} uid The firebase uid
- * @param {string} teamKey The team key
+ * @param uid The firebase uid
+ * @param teamKey The team key
  */
-export async function updateFirestoreTimestamp(uid: string, teamKey: string) {
+export async function updateFirestoreTimestamp(uid: string, teamKey: string): Promise<void> {
   const teamRef = db.collection(`users/${uid}/teams`).doc(teamKey);
   try {
     await teamRef.update({
       last_updated: Date.now(),
     });
   } catch (error) {
-    logger.error(`Error in updateFirestoreTimestamp for User: ${uid} and team: ${teamKey}`, error);
+    structuredLogger.error(
+      "Error updating Firestore timestamp",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "UPDATE_TIMESTAMP_FAILED",
+        operation: "updateFirestoreTimestamp",
+        userId: uid,
+        teamKey,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 }
 
@@ -294,21 +366,41 @@ export async function updateTeamFirestore(
   uid: string,
   teamKey: string,
   data: Partial<FirestoreTeam>,
-) {
+): Promise<void> {
   const teamRef = db.collection(`users/${uid}/teams`).doc(teamKey);
   try {
     await teamRef.update(data);
-    logger.info(`Updated team ${teamKey} for user ${uid} in Firestore`);
+    structuredLogger.info("Updated team in Firestore", {
+      phase: "firebase",
+      service: "firebase",
+      event: "TEAM_UPDATED",
+      operation: "updateTeamFirestore",
+      userId: uid,
+      teamKey,
+      outcome: "success",
+    });
   } catch (error) {
-    logger.error(`Error in updateTeamFirestore for User: ${uid} and team: ${teamKey}`, error);
+    structuredLogger.error(
+      "Error updating team in Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "UPDATE_TEAM_FAILED",
+        operation: "updateTeamFirestore",
+        userId: uid,
+        teamKey,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 }
 
 /**
- *
  * @async
- * @param {string} league The league code
- * @return {Promise<QuerySnapshot<DocumentData>>} the team
+ * @param league The league code
+ * @return the teams
  */
 export async function getIntradayTeams(league: string): Promise<QuerySnapshot<DocumentData>> {
   const teamsRef = db.collectionGroup("teams");
@@ -320,7 +412,19 @@ export async function getIntradayTeams(league: string): Promise<QuerySnapshot<Do
       .get();
     return teamsSnapshot;
   } catch (error) {
-    logger.error(`Error fetching Intraday ${league.toUpperCase()} teams from firestore`, error);
+    structuredLogger.error(
+      "Error fetching intraday teams from Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "FETCH_INTRADAY_TEAMS_FAILED",
+        operation: "getIntradayTeams",
+        league,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Error fetching Intraday ${league.toUpperCase()} teams from firestore`);
   }
 }
@@ -331,9 +435,8 @@ export async function getIntradayTeams(league: string): Promise<QuerySnapshot<Do
  *
  * @export
  * @async
- * @param {string[]} startingPlayers - the starting players
- * @param {string} league - the league
- * @return {Promise<void>}
+ * @param startingPlayers - the starting players
+ * @param league - the league
  */
 export async function storeStartingPlayersInFirestore(
   startingPlayers: string[],
@@ -346,7 +449,20 @@ export async function storeStartingPlayersInFirestore(
       date: getPacificTimeDateString(new Date()),
     });
   } catch (error) {
-    logger.error(`Error storing starting ${league.toUpperCase()} players in Firestore`, error);
+    structuredLogger.error(
+      "Error storing starting players in Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "STORE_STARTING_PLAYERS_FAILED",
+        operation: "storeStartingPlayersInFirestore",
+        league,
+        playerCount: startingPlayers.length,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      error,
+    );
     throw new Error(`Error storing starting ${league.toUpperCase()} players in Firestore`);
   }
 }
@@ -357,8 +473,8 @@ export async function storeStartingPlayersInFirestore(
  *
  * @export
  * @async
- * @param {string} league - the league
- * @return {Promise<string[]>} - the starting players
+ * @param league - the league
+ * @return - the starting players
  */
 export async function getStartingPlayersFromFirestore(league: string): Promise<string[]> {
   const startingPlayersRef = db.collection("startingPlayers");
@@ -378,15 +494,45 @@ export async function getStartingPlayersFromFirestore(league: string): Promise<s
     }
     // if the starting players were not updated today,
     // or don't exist in firebase, fetch them from Yahoo API
-    logger.log("Starting players not found in Firestore");
+    structuredLogger.info("Starting players not found in Firestore, fetching from Yahoo", {
+      phase: "firebase",
+      service: "firebase",
+      event: "STARTING_PLAYERS_CACHE_MISS",
+      operation: "getStartingPlayersFromFirestore",
+      league,
+    });
     try {
       await fetchStartingPlayers(league);
       return getStartingPlayersFromFirestore(league);
     } catch (error) {
-      logger.error(error);
+      structuredLogger.error(
+        "Error fetching starting players from Yahoo",
+        {
+          phase: "firebase",
+          service: "yahoo",
+          event: "FETCH_STARTING_PLAYERS_FALLBACK_FAILED",
+          operation: "getStartingPlayersFromFirestore",
+          league,
+          outcome: "handled-error",
+          terminated: false,
+        },
+        error,
+      );
     }
   } catch (error) {
-    logger.error(`Error getting starting ${league.toUpperCase()} players from Firestore`, error);
+    structuredLogger.error(
+      "Error getting starting players from Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "GET_STARTING_PLAYERS_FAILED",
+        operation: "getStartingPlayersFromFirestore",
+        league,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 
   // return an empty array if there was an error
@@ -394,7 +540,7 @@ export async function getStartingPlayersFromFirestore(league: string): Promise<s
   return [];
 }
 
-export async function getPositionalScarcityOffsets() {
+export async function getPositionalScarcityOffsets(): Promise<ScarcityOffsetsCollection> {
   const scarcityOffsetsRef = db.collection("positionalScarcityOffsets");
   try {
     const scarcityOffsetsSnapshot: QuerySnapshot<DocumentData> = await scarcityOffsetsRef.get();
@@ -409,7 +555,18 @@ export async function getPositionalScarcityOffsets() {
     }
     return offsets;
   } catch (error) {
-    logger.error("Error getting scarcity offsets from Firestore", error);
+    structuredLogger.error(
+      "Error getting scarcity offsets from Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "GET_SCARCITY_OFFSETS_FAILED",
+        operation: "getPositionalScarcityOffsets",
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
     return {};
   }
 }
@@ -418,7 +575,7 @@ export async function updatePositionalScarcityOffset(
   league: string,
   position: string,
   offsets: number[],
-) {
+): Promise<void> {
   const scarcityOffsetsRef = db.collection("positionalScarcityOffsets");
   try {
     await scarcityOffsetsRef.doc(league).set(
@@ -427,12 +584,28 @@ export async function updatePositionalScarcityOffset(
       },
       { merge: true },
     );
-    logger.info(
-      `Updated positional scarcity offsets for ${league.toUpperCase()} ${position} in Firestore`,
-    );
+    structuredLogger.info("Updated positional scarcity offsets in Firestore", {
+      phase: "firebase",
+      service: "firebase",
+      event: "SCARCITY_OFFSETS_UPDATED",
+      operation: "updatePositionalScarcityOffset",
+      league,
+      position,
+      outcome: "success",
+    });
   } catch (error) {
-    logger.error(
-      `Error storing positional scarcity offsets for ${league.toUpperCase()} ${position} in Firestore`,
+    structuredLogger.error(
+      "Error storing positional scarcity offsets in Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "UPDATE_SCARCITY_OFFSETS_FAILED",
+        operation: "updatePositionalScarcityOffset",
+        league,
+        position,
+        outcome: "handled-error",
+        terminated: false,
+      },
       error,
     );
   }
@@ -445,7 +618,19 @@ export async function storeTodaysPostponedTeams(teams: string[]): Promise<void> 
       teams,
     });
   } catch (error) {
-    logger.error("Error storing postponed games in Firestore", error);
+    structuredLogger.error(
+      "Error storing postponed games in Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "STORE_POSTPONED_GAMES_FAILED",
+        operation: "storeTodaysPostponedTeams",
+        teamCount: teams.length,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 }
 
@@ -463,7 +648,18 @@ export async function getTodaysPostponedTeams(): Promise<Set<string> | undefined
       }
     }
   } catch (error) {
-    logger.error("Error getting postponed games from Firestore", error);
+    structuredLogger.error(
+      "Error getting postponed games from Firestore",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "GET_POSTPONED_GAMES_FAILED",
+        operation: "getTodaysPostponedTeams",
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 
   return undefined;

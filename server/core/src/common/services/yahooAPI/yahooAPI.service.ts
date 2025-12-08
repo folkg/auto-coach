@@ -9,7 +9,6 @@ import { assertType, ensureType } from "@common/utilities/checks.js";
 import { isApiRateLimitError, isAuthorizationError } from "@common/utilities/error.js";
 import dotenv from "dotenv";
 import { XMLParser } from "fast-xml-parser";
-import { logger } from "firebase-functions";
 import js2xmlparser from "js2xmlparser";
 
 import type { Token, YahooRefreshRequestBody } from "../../interfaces/credential.js";
@@ -17,6 +16,7 @@ import type { YahooAccessTokenResponse } from "./interfaces/YahooAccessTokenResp
 
 import { RevokedRefreshTokenError } from "../firebase/errors.js";
 import { updateFirestoreTimestamp } from "../firebase/firestore.service.js";
+import { structuredLogger } from "../structured-logger.js";
 import {
   type YahooAPILeagueResponse,
   YahooAPILeagueResponseSchema,
@@ -52,8 +52,8 @@ const POSITION_EXPANSION: Record<string, string> = {
 
 /**
  * Refresh the Yahoo access token for the given user
- * @param {string} refreshToken The refresh token
- * @return {Promise<Token>} The new credential
+ * @param refreshToken The refresh token
+ * @return The new credential
  */
 export async function refreshYahooAccessToken(refreshToken: string): Promise<Token> {
   const url = "https://api.login.yahoo.com/oauth2/get_token";
@@ -95,12 +95,10 @@ export async function refreshYahooAccessToken(refreshToken: string): Promise<Tok
  * This will be useful if we want to get for just individual teams
  *
  * @async
- * @param {string} teamKeys - comma separated string of teamIDs, ie.
- * "414.l.240994.t.12, 414.l.358976.t.4, 419.l.14950.t.2,
- * 419.l.19947.t.6,419.l.28340.t.1,419.l.59985.t.12"
- * @param {string} uid - The firebase uid
- * @param {string} [date=""] - The date to get the roster for in the format 2023-01-27. Defaults to today.
- * @return {Promise<any>} The Yahoo JSON object containing the rosters
+ * @param teamKeys - comma separated string of teamIDs
+ * @param uid - The firebase uid
+ * @param date - The date to get the roster for in the format 2023-01-27. Defaults to today.
+ * @return The Yahoo JSON object containing the rosters
  */
 export async function getRostersByTeamID(
   teamKeys: string[],
@@ -134,11 +132,10 @@ export async function getRostersByTeamID(
  *
  * @export
  * @async
- * @param {string} teamKeys - The league key
- * @param {string} uid - The Yahoo user ID
- * @param {AvailabilityStatus} [availabilityStatus="A"] - The availability status
- * @param {PlayerSort} [sort="sort=R_PO"] - The sort order
- * @return {Promise<any>}
+ * @param teamKeys - The league key
+ * @param uid - The Yahoo user ID
+ * @param availabilityStatus - The availability status
+ * @param sort - The sort order
  */
 export async function getTopAvailablePlayers(
   teamKeys: string[],
@@ -196,8 +193,8 @@ export async function getTopPlayersGeneral(
  *
  * @export
  * @async
- * @param {string} uid - The firebase uid
- * @return {Promise<any>} The Yahoo JSON object containing team's standings data and settings
+ * @param uid - The firebase uid
+ * @return The Yahoo JSON object containing team's standings data and settings
  */
 export async function getUsersTeams(uid: string): Promise<YahooAPIUserResponse> {
   try {
@@ -219,10 +216,10 @@ export async function getUsersTeams(uid: string): Promise<YahooAPIUserResponse> 
  *
  * @export
  * @async
- * @param {string} league - The league, ie. nhl, mlb
- * @param {string} uid - The firebase uid
- * @param {string} leagueKey - The user's Yahoo league key (ie. nhl.l.123)
- * @return {Promise<any>} The Yahoo JSON object containing raw start data
+ * @param league - The league, ie. nhl, mlb
+ * @param uid - The firebase uid
+ * @param leagueKey - The user's Yahoo league key (ie. nhl.l.123)
+ * @return The Yahoo JSON object containing raw start data
  */
 export async function getStartingPlayers(
   league: string,
@@ -259,8 +256,8 @@ export async function getStartingPlayers(
  *
  * @export
  * @async
- * @param {LineupChanges[]} lineupChanges
- * @param {string} uid The firebase uid of the user
+ * @param lineupChanges The lineup changes to post
+ * @param uid The firebase uid of the user
  */
 export async function putLineupChanges(lineupChanges: LineupChanges[], uid: string): Promise<void> {
   const errors: Error[] = [];
@@ -291,7 +288,20 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
       if (isApiRateLimitError(err) || isAuthorizationError(err)) {
         throw err;
       }
-      logger.error(JSON.stringify(err));
+      structuredLogger.error(
+        "Error putting lineup change",
+        {
+          phase: "yahoo-http",
+          service: "yahoo",
+          event: "LINEUP_CHANGE_FAILED",
+          operation: "putLineupChanges",
+          userId: uid,
+          teamKey,
+          outcome: "handled-error",
+          terminated: false,
+        },
+        err,
+      );
       errors.push(err instanceof Error ? err : new Error(String(err)));
     }
   }
@@ -301,9 +311,21 @@ export async function putLineupChanges(lineupChanges: LineupChanges[], uid: stri
   }
 }
 
-async function putRosterChangePromise(uid: string, teamKey: string, xmlBody: string) {
+async function putRosterChangePromise(
+  uid: string,
+  teamKey: string,
+  xmlBody: string,
+): Promise<void> {
   await httpPutYahoo(uid, `team/${teamKey}/roster?format=json`, xmlBody);
-  logger.log(`Successfully put roster changes for team: ${teamKey} for user: ${uid}`);
+  structuredLogger.info("Successfully put roster changes", {
+    phase: "yahoo-http",
+    service: "yahoo",
+    event: "ROSTER_CHANGE_SUCCESS",
+    operation: "putRosterChangePromise",
+    userId: uid,
+    teamKey,
+    outcome: "success",
+  });
   await updateFirestoreTimestamp(uid, teamKey);
 }
 
@@ -312,9 +334,9 @@ async function putRosterChangePromise(uid: string, teamKey: string, xmlBody: str
  *
  * @export
  * @async
- * @param {PlayerTransaction} transaction The transaction object to post
- * @param {string} uid The Yahoo uid of the user
- * @return {Promise<PlayerTransaction | null>} The transaction object that was successfully posted
+ * @param transaction The transaction object to post
+ * @param uid The Yahoo uid of the user
+ * @return The transaction object that was successfully posted
  */
 export async function postRosterAddDropTransaction(
   transaction: PlayerTransaction,
@@ -324,9 +346,17 @@ export async function postRosterAddDropTransaction(
 
   const validPlayerCount = [1, 2].includes(players.length);
   if (!validPlayerCount) {
-    logger.warn(
-      `Transaction was not processed. Invalid number of players to move: ${players.length} for team: ${teamKey} for user: ${uid}. Must be 1 or 2.`,
-    );
+    structuredLogger.warn("Transaction not processed - invalid player count", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "TRANSACTION_INVALID_PLAYER_COUNT",
+      operation: "postRosterAddDropTransaction",
+      userId: uid,
+      teamKey,
+      playerCount: players.length,
+      outcome: "handled-error",
+      terminated: false,
+    });
     return null;
   }
   const XMLPlayers: TransactionPlayer[] = players.map((player: TPlayer) => ({
@@ -367,25 +397,29 @@ export async function postRosterAddDropTransaction(
   const leagueKey = teamKey.split(".t")[0];
   try {
     await httpPostYahooAuth(uid, `league/${leagueKey}/transactions`, xmlBody);
-    logger.log(
-      `Successfully posted ${transactionType} transaction for team: ${teamKey} for user: ${uid}.`,
-    );
-    logger.log("Transaction data:", { data });
+    structuredLogger.info("Successfully posted transaction", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "TRANSACTION_SUCCESS",
+      operation: "postRosterAddDropTransaction",
+      userId: uid,
+      teamKey,
+      transactionType,
+      outcome: "success",
+    });
     return transaction;
   } catch (err) {
     if (isApiRateLimitError(err) || isAuthorizationError(err)) {
       throw err;
     }
 
-    const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction: ${JSON.stringify(
-      transaction,
-    )}`;
+    const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction:`;
     let throwError = true;
     if (isHttpError(err)) {
       throwError = checkYahooErrorDescription(err, errMessage);
     }
     if (throwError) {
-      handleHttpError(err, errMessage);
+      handleHttpError(err, errMessage, transaction);
     }
   }
   return null;
@@ -413,17 +447,13 @@ type TransactionData = {
   source_team_key?: string;
 };
 
-// TODO: Handle from Yahoo data.error.description = 'Invalid cookie, please log in again.' status = 401
-// It seems we don't need to revoke the token. What do we need to do? retry? Refetch access token?
-// See team 422.l.54890.t.13 for example. Error @ 2023-04-16 13:55:12.916 MDT
-
 /**
  * Handle HTTP errors
  *
- * @param {unknown} err - The error
- * @param {string} message - The message to throw
+ * @param err - The error
+ * @param message - The message to throw
  */
-function handleHttpError(err: unknown, message: string | null): never {
+function handleHttpError(err: unknown, message: string | null, data?: unknown): never {
   const errMessage = message ? `${message}. ` : "";
 
   if (isApiRateLimitError(err) || isAuthorizationError(err)) {
@@ -434,21 +464,52 @@ function handleHttpError(err: unknown, message: string | null): never {
     throw err;
   }
   if (isHttpError(err) && err.response) {
-    logger.error(errMessage, JSON.stringify(err), JSON.stringify(err.response.data, null, 2));
+    const responseData =
+      typeof err.response.data === "string"
+        ? err.response.data
+        : JSON.stringify(err.response.data, null, 2);
+    structuredLogger.error(
+      "Yahoo API HTTP error",
+      {
+        phase: "yahoo-http",
+        service: "yahoo",
+        event: "YAHOO_API_ERROR",
+        operation: "handleHttpError",
+        statusCode: err.response.status,
+        responseData,
+        transactionData: data,
+        outcome: "unhandled-error",
+        terminated: true,
+      },
+      err,
+    );
     const enrichedError = new Error(`${errMessage}${err.message}`);
     throw enrichedError;
   }
   const error = err as Error;
-  logger.error(errMessage, error.message);
+  structuredLogger.error(
+    "Yahoo API error",
+    {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "YAHOO_API_ERROR",
+      operation: "handleHttpError",
+      errorMessage: error.message,
+      transactionData: data,
+      outcome: "unhandled-error",
+      terminated: true,
+    },
+    err,
+  );
   throw new Error(`${errMessage}${error.message}`);
 }
 
 /**
  * Check the Yahoo error description to see if it is a known error that we can handle
  *
- * @param {HttpError} err - The HTTP error
- * @param {string} errMsg - The message to log
- * @return {boolean} - True if we should throw the error, false if we should not
+ * @param err - The HTTP error
+ * @param errMsg - The message to log
+ * @return - True if we should throw the error, false if we should not
  */
 function checkYahooErrorDescription(err: HttpError, errMsg: string): boolean {
   let result = true;
@@ -458,7 +519,16 @@ function checkYahooErrorDescription(err: HttpError, errMsg: string): boolean {
   if (parsedXml) {
     const errorDescription: string = parsedXml.error.description;
     if (errorDescription === "You cannot add a player you dropped until the waiver period ends.") {
-      console.info(`You cannot add a player you dropped until the waiver period ends. ${errMsg}`);
+      structuredLogger.info("Transaction blocked - waiver period not ended", {
+        phase: "yahoo-http",
+        service: "yahoo",
+        event: "TRANSACTION_WAIVER_BLOCK",
+        operation: "checkYahooErrorDescription",
+        errorDescription,
+        originalError: errMsg,
+        outcome: "handled-error",
+        terminated: false,
+      });
       result = false;
     }
   }

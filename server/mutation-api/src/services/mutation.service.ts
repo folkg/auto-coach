@@ -8,7 +8,7 @@ export class MutationService {
   createMutationTask(
     task: Omit<MutationTask, "id" | "createdAt">,
   ): Effect.Effect<MutationTask, HttpError> {
-    return Effect.sync(() => {
+    return Effect.gen(function* () {
       const id = crypto.randomUUID();
       const createdAt = new Date().toISOString();
 
@@ -18,8 +18,12 @@ export class MutationService {
         createdAt,
       };
 
-      // TODO: Implement actual task creation logic
-      console.log("Creating mutation task:", newTask);
+      yield* Effect.logInfo("Creating mutation task").pipe(
+        Effect.annotateLogs("event", "MUTATION_TASK_CREATED"),
+        Effect.annotateLogs("taskId", id),
+        Effect.annotateLogs("taskType", task.type),
+        Effect.annotateLogs("userId", task.userId),
+      );
 
       return newTask;
     });

@@ -1,7 +1,7 @@
 import { ApiRateLimitError, AuthorizationError } from "@common/utilities/error.js";
-import { logger } from "firebase-functions";
 
 import { loadYahooAccessToken } from "../firebase/firestore.service.js";
+import { structuredLogger } from "../structured-logger.js";
 
 const API_URL = "https://fantasysports.yahooapis.com/fantasy/v2/";
 
@@ -65,11 +65,16 @@ async function handleFetchResponse<T>(response: Response, uid?: string): Promise
     if (isRateLimitStatusCode(response.status)) {
       const retryAfter = parseRetryAfterHeader(response);
 
-      logger.warn("Yahoo API rate limit detected", {
+      structuredLogger.warn("Yahoo API rate limit detected", {
+        phase: "yahoo-http",
+        service: "yahoo",
+        event: "YAHOO_RATE_LIMIT",
+        userId: uid,
         statusCode: response.status,
         retryAfterHeader: response.headers.get("Retry-After"),
-        retryAfterParsed: retryAfter,
+        retryAfter,
         url: response.url,
+        outcome: "unhandled-error",
       });
 
       throw new ApiRateLimitError(
@@ -80,10 +85,14 @@ async function handleFetchResponse<T>(response: Response, uid?: string): Promise
     }
 
     if (isAuthErrorStatusCode(response.status)) {
-      logger.warn("Yahoo API auth error detected", {
+      structuredLogger.warn("Yahoo API auth error detected", {
+        phase: "yahoo-http",
+        service: "yahoo",
+        event: "YAHOO_AUTH_ERROR",
+        userId: uid,
         statusCode: response.status,
         url: response.url,
-        userId: uid,
+        outcome: "unhandled-error",
       });
 
       throw new AuthorizationError(
@@ -92,6 +101,16 @@ async function handleFetchResponse<T>(response: Response, uid?: string): Promise
         uid,
       );
     }
+
+    structuredLogger.error("Yahoo API HTTP error", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "YAHOO_HTTP_ERROR",
+      userId: uid,
+      statusCode: response.status,
+      url: response.url,
+      outcome: "unhandled-error",
+    });
 
     throw new HttpError(`HTTP ${response.status}: ${response.statusText}`, {
       data: errorData,
@@ -108,9 +127,9 @@ async function handleFetchResponse<T>(response: Response, uid?: string): Promise
  *
  * @export
  * @async
- * @param {string} url - the url to fetch
- * @param {?string} [uid] - the firebase uid of the user
- * @return {Promise<HttpResponse<T>>} - the response from the API
+ * @param url - the url to fetch
+ * @param uid - the firebase uid of the user
+ * @return - the response from the API
  */
 export async function httpGetYahoo<T>(url: string, uid?: string): Promise<HttpResponse<T>> {
   if (!uid) {
@@ -134,9 +153,9 @@ export async function httpGetYahoo<T>(url: string, uid?: string): Promise<HttpRe
  *
  * @export
  * @async
- * @param {string} url - the FULL url to post to. Does not use API_URL.
- * @param {*} body - the body of the post request
- * @return {Promise<HttpResponse<T>>} - the response from the API
+ * @param url - the FULL url to post to. Does not use API_URL.
+ * @param body - the body of the post request
+ * @return - the response from the API
  */
 export async function httpPostYahooUnauth<T>(url: string, body: unknown): Promise<HttpResponse<T>> {
   const response = await fetch(url, {
@@ -173,10 +192,10 @@ export async function httpPostYahooAuth<T>(
  *
  * @export
  * @async
- * @param {string} uid The firebase uid of the user
- * @param {string} url - the url to fetch
- * @param {string} body - the body of the put request
- * @return {Promise<HttpResponse<T>>} - the response from the API
+ * @param uid The firebase uid of the user
+ * @param url - the url to fetch
+ * @param body - the body of the put request
+ * @return - the response from the API
  */
 export async function httpPutYahoo<T>(
   uid: string,
