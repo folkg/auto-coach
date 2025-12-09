@@ -7,9 +7,10 @@ import type { EnvironmentConfig } from "./types";
 import { logStep } from "./log";
 
 export async function buildClient(): Promise<void> {
-  logStep("Client", "Building Angular client...");
+  logStep("Client", "Building Angular client for production...");
   const projectRoot = resolve(import.meta.dir, "../..");
-  await $`cd ${projectRoot} && bun run build:client`;
+  // NG_APP_ENV=production tells @ngx-env/builder to use .env.production
+  await $`cd ${projectRoot} && NG_APP_ENV=production bun run build:client`;
 }
 
 export async function deployHosting(

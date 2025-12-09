@@ -102,3 +102,9 @@ server/functions/core/
 
 # Secrets
 *github-actions-key.json
+
+# Generated Firebase config (created by deploy script)
+firebase.generated.json
+
+# Firebase local cache
+.firebase/

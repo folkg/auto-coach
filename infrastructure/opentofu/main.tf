@@ -425,10 +425,10 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 10
+        initial_delay_seconds = 0
         timeout_seconds       = 5
-        period_seconds        = 10
-        failure_threshold     = 3
+        period_seconds        = 2
+        failure_threshold     = 5
       }
 
       liveness_probe {

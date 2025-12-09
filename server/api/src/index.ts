@@ -80,4 +80,5 @@ export type HonoAppType = typeof routes;
 export default {
   fetch: app.fetch,
   port: Number(process.env.PORT || 3000),
+  hostname: "0.0.0.0", // Required for Cloud Run - bind to all interfaces
 };

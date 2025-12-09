@@ -6,7 +6,7 @@
       {
         "source": "/api/**",
         "run": {
-          "serviceId": "auto-coach-api-dev",
+          "serviceId": "auto-coach-api-prod",
           "region": "us-central1"
         }
       },

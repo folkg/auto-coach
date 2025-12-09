@@ -179,7 +179,6 @@ ops/
 │   ├── log.ts             # Logging utilities
 │   └── types.ts           # TypeScript types
 ├── environments/
-│   ├── dev.yaml           # Dev environment config
 │   └── prod.yaml          # Prod environment config
 ├── package.json
 └── tsconfig.json

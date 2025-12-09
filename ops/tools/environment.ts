@@ -7,7 +7,7 @@ import type { EnvironmentConfig } from "./types.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-export function loadEnvironment(env: "dev" | "prod"): EnvironmentConfig {
+export function loadEnvironment(env: "prod"): EnvironmentConfig {
   const configPath = resolve(__dirname, "../environments", `${env}.yaml`);
   const raw = readFileSync(configPath, "utf-8");
   const config = parse(raw) as EnvironmentConfig;
