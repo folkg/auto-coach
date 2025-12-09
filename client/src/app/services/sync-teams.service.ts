@@ -1,5 +1,5 @@
 import type { Schedule } from "@common/types/Schedule";
-import type { ClientTeam, FirestoreTeam } from "@common/types/team";
+import type { ClientTeam } from "@common/types/team";
 
 import { inject, Injectable } from "@angular/core";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
@@ -10,12 +10,12 @@ import { getErrorMessage } from "@common/utilities/error";
 import {
   BehaviorSubject,
   catchError,
+  concat,
   combineLatest,
   filter,
   from,
   lastValueFrom,
   map,
-  merge,
   type Observable,
   of,
   Subject,
@@ -40,8 +40,8 @@ interface LoadingInitialState extends BaseTeamsState {
   readonly status: "loading-initial";
 }
 
-interface LoadingTimesState extends BaseTeamsState {
-  readonly status: "loading-times";
+interface LoadingStaleState extends BaseTeamsState {
+  readonly status: "loading-stale";
 }
 
 interface ReadyState extends BaseTeamsState {
@@ -53,7 +53,7 @@ interface ErrorState extends BaseTeamsState {
   readonly error: string;
 }
 
-export type TeamsState = LoadingInitialState | LoadingTimesState | ReadyState | ErrorState;
+export type TeamsState = LoadingInitialState | LoadingStaleState | ReadyState | ErrorState;
 
 const YAHOO_AUTH_REQUIRED_CODE = "YAHOO_AUTH_REQUIRED";
 
@@ -122,43 +122,27 @@ export class SyncTeamsService {
     const hasCachedTeams = cachedTeams.length > 0;
 
     if (hasCachedTeams) {
-      // Have cached teams: emit them immediately with loading-times status
-      // Then fetch from Firestore (fast) to patch times
-      // Then fetch from API (slow) to get full data
-      return merge(
+      return concat(
         of({
-          status: "loading-times",
+          status: "loading-stale",
           teams: cachedTeams,
           schedule: undefined,
         } as const),
-        from(this.fetchFirestoreDataAndPatch(cachedTeams)).pipe(
-          switchMap((patchedState) =>
-            merge(
-              of(patchedState),
-              // Background API fetch - silently updates teams
-              from(this.fetchTeamsFromApi()).pipe(
-                map(
-                  (apiTeams) =>
-                    ({
-                      status: "ready",
-                      teams: apiTeams,
-                      schedule: patchedState.schedule,
-                    }) as const,
-                ),
-                catchError((err) => {
-                  // API failed but we still have firestore-patched data
-                  console.error("Background API fetch failed:", err);
-                  return of(patchedState);
-                }),
-              ),
-            ),
+        from(this.fetchAllData()).pipe(
+          map(
+            ({ teams, schedule }) =>
+              ({
+                status: "ready",
+                teams,
+                schedule,
+              }) as const,
           ),
         ),
       );
     }
 
     // No cached teams: show skeleton, fetch everything
-    return merge(
+    return concat(
       of({
         status: "loading-initial",
         teams: [],
@@ -177,47 +161,14 @@ export class SyncTeamsService {
     );
   }
 
-  private async fetchFirestoreDataAndPatch(
-    cachedTeams: readonly ClientTeam[],
-  ): Promise<ReadyState> {
-    const [firestoreTeams, schedule] = await Promise.all([
-      this.api.fetchTeamsFirestore(),
-      this.api.fetchSchedulesFirestore(),
-    ]);
-
-    const patchedTeams = this.patchTeamsWithFirestore(cachedTeams, firestoreTeams);
-
-    return {
-      status: "ready",
-      teams: patchedTeams,
-      schedule,
-    };
-  }
-
-  private patchTeamsWithFirestore(
-    cachedTeams: readonly ClientTeam[],
-    firestoreTeams: readonly FirestoreTeam[],
-  ): readonly ClientTeam[] {
-    return cachedTeams.map((cachedTeam) => {
-      const firestoreTeam = firestoreTeams.find((ft) => ft.team_key === cachedTeam.team_key);
-      if (firestoreTeam) {
-        return { ...cachedTeam, ...firestoreTeam };
-      }
-      return cachedTeam;
-    });
-  }
-
   private async fetchAllData(): Promise<{ teams: ClientTeam[]; schedule: Schedule }> {
-    const [teams, schedule] = await Promise.all([
-      this.fetchTeamsFromApi(),
-      this.api.fetchSchedulesFirestore(),
-    ]);
+    const [teams, schedule] = await Promise.all([this.fetchTeams(), this.api.fetchSchedules()]);
     return { teams, schedule };
   }
 
-  private async fetchTeamsFromApi(): Promise<ClientTeam[]> {
+  private async fetchTeams(): Promise<ClientTeam[]> {
     try {
-      return await this.api.fetchTeamsYahoo();
+      return await this.api.fetchTeams();
     } catch (err) {
       const errorMsg = getErrorMessage(err);
 

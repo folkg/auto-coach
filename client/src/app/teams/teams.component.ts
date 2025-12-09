@@ -45,7 +45,7 @@ export class TeamsComponent {
   readonly teams = computed(() => this.teamsState()?.teams ?? []);
   readonly schedule = computed(() => this.teamsState()?.schedule);
   readonly showInitialSkeleton = computed(() => this.teamsState()?.status === "loading-initial");
-  readonly isLoadingTimes = computed(() => this.teamsState()?.status === "loading-times");
+  readonly isLoadingStale = computed(() => this.teamsState()?.status === "loading-stale");
   private readonly isDirty = signal(false);
 
   readonly skeletonCards = [1, 2, 3];
