@@ -1,3 +1,6 @@
+import type { Firestore } from "firebase-admin/firestore";
+
+import { createMock } from "@common/utilities/createMock.js";
 import { Layer, Logger, LogLevel } from "effect";
 import { afterAll, afterEach, beforeAll, vi } from "vitest";
 
@@ -10,7 +13,7 @@ afterAll(() => server.close());
 
 // Create a stable Firestore mock object that won't be reset
 function createFirestoreMock() {
-  return {
+  return createMock<Firestore>({
     collection: vi.fn().mockReturnValue({
       doc: vi.fn().mockReturnValue({
         get: vi.fn().mockResolvedValue({
@@ -28,14 +31,23 @@ function createFirestoreMock() {
         docs: [],
       }),
     }),
-  };
+    settings: vi.fn().mockReturnValue(undefined),
+  });
 }
 
 // Mock Firebase/Firestore - use a class-like constructor function
+const sharedFirestoreMock = createFirestoreMock();
+
+vi.mock("firebase-admin/app", () => ({
+  getApps: () => [{ name: "test-app" }],
+  initializeApp: () => ({ name: "test-app" }),
+}));
+
 vi.mock("firebase-admin/firestore", () => ({
   Firestore: function MockFirestore() {
-    return createFirestoreMock();
+    return sharedFirestoreMock;
   },
+  getFirestore: () => sharedFirestoreMock,
 }));
 
 // Mock Google Cloud Firestore - use a class-like constructor function
@@ -96,13 +108,3 @@ export const TestLoggerLayer = Layer.merge(
 export function clearTestLogCalls(): void {
   testLoggerCalls.length = 0;
 }
-
-// Suppress console output in tests
-global.console = {
-  ...console,
-  log: vi.fn(),
-  debug: vi.fn(),
-  info: vi.fn(),
-  warn: vi.fn(),
-  error: vi.fn(),
-};

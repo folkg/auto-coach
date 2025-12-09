@@ -1,8 +1,8 @@
 {
-  "language_servers": ["...", "oxc"],
+  "language_servers": ["...", "!vtsls", "!typescript-language-server", "oxc"],
   "languages": {
     "TypeScript": {
-      "language_servers": ["angular", "...", "oxc"]
+      "language_servers": ["angular", "...", "!vtsls", "!typescript-language-server", "oxc"]
     },
     "HTML": {
       "language_servers": ["angular", "..."]
