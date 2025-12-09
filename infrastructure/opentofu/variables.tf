@@ -57,7 +57,7 @@ variable "firebase_project_id" {
 variable "container_image_tag" {
   description = "Container image tag to deploy"
   type        = string
-  default     = "latest"
+  default     = "prod-latest"
 }
 
 # Yahoo Fantasy API Configuration
