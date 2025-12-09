@@ -1,19 +1,17 @@
-name: Deploy Mutation API
+name: Deploy Client
 
 on:
   push:
     branches:
       - main
     paths:
-      - "server/mutation-api/**"
-      - "server/core/**"
+      - "client/**"
       - "common/**"
   pull_request:
     branches:
       - main
     paths:
-      - "server/mutation-api/**"
-      - "server/core/**"
+      - "client/**"
       - "common/**"
   workflow_dispatch:
 
@@ -23,7 +21,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Build and Validate
+    name: Validate Deployment
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
@@ -40,17 +38,20 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
       - name: Install dependencies
         run: bun install
 
-      - name: Build and Push Container
+      - name: Validate Client Build
         env:
-          PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: bun run deploy -- --component mutation-api --env prod --pr-number ${{ github.event.pull_request.number }}
+          NG_APP_API_BASE_URL: ""
+          NG_APP_FIREBASE_API_KEY: ${{ secrets.NG_APP_FIREBASE_API_KEY }}
+          NG_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_APP_FIREBASE_AUTH_DOMAIN }}
+          NG_APP_FIREBASE_PROJECT_ID: ${{ secrets.NG_APP_FIREBASE_PROJECT_ID }}
+          NG_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.NG_APP_FIREBASE_STORAGE_BUCKET }}
+          NG_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NG_APP_FIREBASE_MESSAGING_SENDER_ID }}
+          NG_APP_FIREBASE_APP_ID: ${{ secrets.NG_APP_FIREBASE_APP_ID }}
+        run: bun run deploy -- --component client --env prod --pr-number ${{ github.event.pull_request.number }}
 
   deploy-prod:
     name: Deploy to Production
@@ -71,14 +72,17 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_CREDENTIALS }}
 
-      - name: Set up Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-
       - name: Install dependencies
         run: bun install
 
-      - name: Deploy Mutation API
+      - name: Deploy Client
         env:
-          PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-        run: bun run deploy -- --component mutation-api --env prod --version v0.0.${{ github.run_number }}
+          NG_APP_API_BASE_URL: ""
+          NG_APP_FIREBASE_API_KEY: ${{ secrets.NG_APP_FIREBASE_API_KEY }}
+          NG_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.NG_APP_FIREBASE_AUTH_DOMAIN }}
+          NG_APP_FIREBASE_PROJECT_ID: ${{ secrets.NG_APP_FIREBASE_PROJECT_ID }}
+          NG_APP_FIREBASE_STORAGE_BUCKET: ${{ secrets.NG_APP_FIREBASE_STORAGE_BUCKET }}
+          NG_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NG_APP_FIREBASE_MESSAGING_SENDER_ID }}
+          NG_APP_FIREBASE_APP_ID: ${{ secrets.NG_APP_FIREBASE_APP_ID }}
+        run: bun run deploy -- --component client --env prod

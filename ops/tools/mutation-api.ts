@@ -6,11 +6,12 @@ import { loadEnvironment } from "./environment";
 import { log, logError, logStep, logSuccess, logWarning } from "./log";
 import { determineContainerTags, getPrimaryTag } from "./versioning";
 
-interface DeployMutationAPIArgs {
+export interface DeployMutationAPIArgs {
   readonly env: "prod";
   readonly version?: string;
-  readonly dryRun: boolean;
+  readonly prNumber?: string;
   readonly skipBuild: boolean;
+  readonly skipDeploy: boolean;
 }
 
 function parseArguments(): DeployMutationAPIArgs {
@@ -19,8 +20,9 @@ function parseArguments(): DeployMutationAPIArgs {
     options: {
       env: { type: "string", short: "e" },
       version: { type: "string", short: "v" },
-      "dry-run": { type: "boolean", default: false },
+      "pr-number": { type: "string" },
       "skip-build": { type: "boolean", default: false },
+      "skip-deploy": { type: "boolean", default: false },
     },
   });
 
@@ -32,8 +34,9 @@ function parseArguments(): DeployMutationAPIArgs {
   return {
     env: "prod",
     version: values.version as string | undefined,
-    dryRun: values["dry-run"] as boolean,
+    prNumber: values["pr-number"] as string | undefined,
     skipBuild: values["skip-build"] as boolean,
+    skipDeploy: values["skip-deploy"] as boolean,
   };
 }
 
@@ -91,22 +94,21 @@ export async function deployMutationAPI(
   projectId: string,
 ): Promise<void> {
   const envConfig = loadEnvironment(args.env);
-  const tags = await determineContainerTags(args.env, args.version);
+  const tags = await determineContainerTags({
+    env: args.env,
+    version: args.version,
+    prNumber: args.prNumber,
+  });
   const primaryTag = getPrimaryTag(tags);
   const fullImagePath = `${envConfig.containerRepo}/${projectId}/auto-coach/auto-coach-mutation-api:${primaryTag}`;
 
   logStep("Deploy Mutation API", `Environment: ${args.env}, Tags: ${tags.join(", ")}`);
 
-  if (args.dryRun) {
-    logWarning("Dry run mode - no changes will be made");
-    log("Would build Mutation API binary");
-    log("Would build Docker container for linux/amd64");
-    log(`Would tag container: ${tags.join(", ")}`);
-    log(`Would push container to ${envConfig.containerRepo}/${projectId}/auto-coach`);
-    log(`Would deploy to Cloud Run: mutation-api-${args.env}`);
-    return;
+  if (args.prNumber) {
+    logWarning(`PR validation mode - building and pushing with tag: ${primaryTag}`);
   }
 
+  // Build phase
   if (!args.skipBuild) {
     await buildMutationAPI();
     await buildMutationAPIContainer();
@@ -114,8 +116,17 @@ export async function deployMutationAPI(
     logStep("Mutation API", "Skipping build (using existing build artifact)");
   }
 
+  // Push to registry
   await tagMutationAPIContainer(projectId, envConfig.containerRepo, tags);
   await pushMutationAPIContainer(projectId, envConfig.containerRepo, tags);
+
+  // Deploy phase (skip for PR validation)
+  if (args.skipDeploy || args.prNumber) {
+    logSuccess("Container image built and pushed successfully!");
+    log(`Container tags: ${tags.join(", ")}`);
+    log(`Deploy with: gcloud run deploy mutation-api-${args.env} --image ${fullImagePath}`);
+    return;
+  }
 
   // Deploy directly to Cloud Run using gcloud (avoids OpenTofu shared tag issues)
   logStep("Cloud Run", `Deploying mutation-api-${args.env}...`);
@@ -156,4 +167,7 @@ async function main(): Promise<void> {
   }
 }
 
-main().catch(console.error);
+// Only run main() when this file is executed directly, not when imported
+if (import.meta.main) {
+  main().catch(console.error);
+}

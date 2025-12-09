@@ -12,7 +12,11 @@ export async function buildClient(): Promise<void> {
   await $`cd ${projectRoot} && bun run build:client`;
 }
 
-export async function deployHosting(env: EnvironmentConfig, channel?: string): Promise<string> {
+export async function deployHosting(
+  env: EnvironmentConfig,
+  channel?: string,
+  dryRun = false,
+): Promise<string> {
   const projectRoot = resolve(import.meta.dir, "../..");
   const configSource = resolve(projectRoot, `firebase.app-${env.name}.json`);
   const configDest = resolve(projectRoot, "firebase.generated.json");
@@ -24,6 +28,19 @@ export async function deployHosting(env: EnvironmentConfig, channel?: string): P
     const result =
       await $`cd ${projectRoot} && bunx firebase-tools hosting:channel:deploy ${channel} --expires 30d --config firebase.generated.json --project ${env.firebaseProject}`.text();
     return result;
+  }
+
+  if (dryRun) {
+    logStep("Hosting", `Validating deployment to site: ${env.hostingSite} (dry-run)...`);
+    try {
+      const result =
+        await $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject} --dry-run`.text();
+      return result;
+    } catch (error) {
+      console.error("Firebase hosting dry-run failed:");
+      console.error(error);
+      throw error;
+    }
   }
 
   logStep("Hosting", `Deploying to live site: ${env.hostingSite}...`);
