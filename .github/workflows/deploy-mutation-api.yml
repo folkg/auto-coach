@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Build and Validate
+    name: Mutation API / Validate
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:

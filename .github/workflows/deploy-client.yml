@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate Deployment
+    name: Client / Validate
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
