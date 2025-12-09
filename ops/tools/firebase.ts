@@ -7,9 +7,10 @@ import type { EnvironmentConfig } from "./types";
 import { logStep } from "./log";
 
 export async function buildClient(): Promise<void> {
-  logStep("Client", "Building Angular client...");
+  logStep("Client", "Building Angular client for production...");
   const projectRoot = resolve(import.meta.dir, "../..");
-  await $`cd ${projectRoot} && bun run build:client`;
+  // NG_APP_ENV=production tells @ngx-env/builder to use .env.production
+  await $`cd ${projectRoot} && NG_APP_ENV=production bun run build:client`;
 }
 
 export async function deployHosting(
@@ -45,12 +46,13 @@ export async function deployHosting(
 
   logStep("Hosting", `Deploying to live site: ${env.hostingSite}...`);
   try {
-    const shell = $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`;
-    await shell.env({
-      ...process.env,
-      GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || "",
-    });
-    const result = await shell.text();
+    const result =
+      await $`cd ${projectRoot} && bunx firebase-tools deploy --only hosting --config firebase.generated.json --project ${env.firebaseProject}`
+        .env({
+          ...process.env,
+          GOOGLE_APPLICATION_CREDENTIALS: process.env.GOOGLE_APPLICATION_CREDENTIALS || "",
+        })
+        .text();
     return result;
   } catch (error) {
     console.error("Firebase hosting deployment failed:");

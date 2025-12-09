@@ -24,7 +24,7 @@ interface DeployArgs {
     | "mutation-api"
     | "infrastructure"
     | "full";
-  readonly env: "dev" | "prod";
+  readonly env: "prod";
   readonly version?: string;
   readonly channel?: string;
   readonly prNumber?: string;
@@ -70,9 +70,9 @@ function parseArguments(): DeployArgs {
     );
   }
 
-  const env = (values.env as "dev" | "prod") || "dev";
-  if (!["dev", "prod"].includes(env)) {
-    throw new Error('Environment must be "dev" or "prod"');
+  const env = values.env as "prod" | undefined;
+  if (env !== "prod") {
+    throw new Error('Environment required (--env prod). Only "prod" environment is supported.');
   }
 
   return {

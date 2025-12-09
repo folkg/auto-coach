@@ -1,5 +1,5 @@
 export interface EnvironmentConfig {
-  readonly name: "dev" | "prod";
+  readonly name: "prod";
   readonly firebaseProject: string;
   readonly hostingSite: string;
   readonly cloudRunService: string;

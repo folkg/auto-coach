@@ -43,4 +43,5 @@ export { app };
 export default {
   fetch: app.fetch,
   port: Number(process.env.PORT || 3001),
+  hostname: "0.0.0.0", // Required for Cloud Run - bind to all interfaces
 };

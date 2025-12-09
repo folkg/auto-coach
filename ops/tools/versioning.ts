@@ -6,18 +6,14 @@ export async function getGitShortSHA(): Promise<string> {
 }
 
 export interface TagOptions {
-  readonly env: "dev" | "prod";
+  readonly env: "prod";
   readonly version?: string;
   readonly prNumber?: string;
 }
 
 export async function determineContainerTags(options: TagOptions): Promise<string[]> {
-  const { env, version, prNumber } = options;
+  const { version, prNumber } = options;
   const shortSHA = await getGitShortSHA();
-
-  if (env === "dev") {
-    return [`dev-${shortSHA}`, "dev-latest"];
-  }
 
   // PR validation: tag with PR number and SHA
   if (prNumber) {

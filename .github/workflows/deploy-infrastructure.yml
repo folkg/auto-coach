@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   plan:
-    name: Plan Infrastructure
+    name: Infrastructure / Plan
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
     steps:
