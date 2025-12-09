@@ -29,7 +29,7 @@
         class="card-container"
         [team]="team"
         [gameTimeStamps]="schedule() && team.game_code ? schedule()!.games[team.game_code] : null"
-        [loadingTimes]="isLoadingTimes()"
+        [loadingStale]="isLoadingStale()"
         (toggleSetLineupEvent)="setLineupBoolean($event)"
         (togglePauseLineupEvent)="setPauseLineupActions($event)"
       />
