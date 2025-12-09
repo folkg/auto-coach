@@ -426,9 +426,9 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           }
         }
         initial_delay_seconds = 0
-        timeout_seconds       = 5
+        timeout_seconds       = 1
         period_seconds        = 2
-        failure_threshold     = 5
+        failure_threshold     = 10
       }
 
       liveness_probe {
