@@ -3381,9 +3381,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {
@@ -3558,9 +3556,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -3731,9 +3727,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -3906,9 +3900,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {

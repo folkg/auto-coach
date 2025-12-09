@@ -1,4 +1,3 @@
-import { getErrorMessage } from "@common/utilities/error";
 import {
   getUserTeams,
   getUserTeamsPartial,
@@ -10,7 +9,10 @@ import {
 import { arktypeValidator } from "@hono/arktype-validator";
 import { type } from "arktype";
 import { Hono } from "hono";
+
 import type { AuthContext } from "../index";
+
+import { handleRouteError } from "../routeErrorHandler";
 
 // Define validators for request bodies
 const BooleanValueSchema = type({
@@ -31,7 +33,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeams(uid);
       return c.json(teams);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error, { userId: uid, route: "/api/teams", method: "GET" });
     }
   })
 
@@ -46,7 +48,7 @@ const teamsRouter = new Hono<AuthContext>()
       const teams = await getUserTeamsPartial(uid);
       return c.json(teams);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error, { userId: uid, route: "/api/teams/partial", method: "GET" });
     }
   })
 
@@ -56,21 +58,21 @@ const teamsRouter = new Hono<AuthContext>()
    * Request: { value: boolean }
    * Response: { success: boolean }
    */
-  .put(
-    "/:teamKey/lineup/setting",
-    arktypeValidator("json", BooleanValueSchema),
-    async (c) => {
-      const uid = c.get("uid");
-      const teamKey = c.req.param("teamKey");
-      const { value } = c.req.valid("json");
-      try {
-        const success = await updateTeamLineupSetting(uid, teamKey, value);
-        return c.json({ success });
-      } catch (error) {
-        return c.json({ error: getErrorMessage(error) }, 500);
-      }
-    },
-  )
+  .put("/:teamKey/lineup/setting", arktypeValidator("json", BooleanValueSchema), async (c) => {
+    const uid = c.get("uid");
+    const teamKey = c.req.param("teamKey");
+    const { value } = c.req.valid("json");
+    try {
+      const success = await updateTeamLineupSetting(uid, teamKey, value);
+      return c.json({ success });
+    } catch (error) {
+      handleRouteError(error, {
+        userId: uid,
+        route: `/api/teams/${teamKey}/lineup/setting`,
+        method: "PUT",
+      });
+    }
+  })
 
   /**
    * PUT /api/teams/:teamKey/lineup/paused
@@ -78,20 +80,20 @@ const teamsRouter = new Hono<AuthContext>()
    * Request: { value: boolean }
    * Response: { success: boolean }
    */
-  .put(
-    "/:teamKey/lineup/paused",
-    arktypeValidator("json", BooleanValueSchema),
-    async (c) => {
-      const uid = c.get("uid");
-      const teamKey = c.req.param("teamKey");
-      const { value } = c.req.valid("json");
-      try {
-        const success = await updateTeamLineupPaused(uid, teamKey, value);
-        return c.json({ success });
-      } catch (error) {
-        return c.json({ error: getErrorMessage(error) }, 500);
-      }
-    },
-  );
+  .put("/:teamKey/lineup/paused", arktypeValidator("json", BooleanValueSchema), async (c) => {
+    const uid = c.get("uid");
+    const teamKey = c.req.param("teamKey");
+    const { value } = c.req.valid("json");
+    try {
+      const success = await updateTeamLineupPaused(uid, teamKey, value);
+      return c.json({ success });
+    } catch (error) {
+      handleRouteError(error, {
+        userId: uid,
+        route: `/api/teams/${teamKey}/lineup/paused`,
+        method: "PUT",
+      });
+    }
+  });
 
 export default teamsRouter;

@@ -1,17 +1,15 @@
 import { CdkTextareaAutosize } from "@angular/cdk/text-field";
 import { AsyncPipe } from "@angular/common";
-import { Component, signal, ViewChild } from "@angular/core";
+import { Component, inject, signal, ViewChild } from "@angular/core";
 import { FormsModule, type NgForm, ReactiveFormsModule } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatChipListbox, MatChipOption } from "@angular/material/chips";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
+
 import { LoaderComponent } from "../loader/loader.component";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AppStatusService } from "../services/app-status.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../services/auth.service";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
 
@@ -37,6 +35,10 @@ const FEEDBACK_TYPES = ["General", "Bug Report", "Feature Request"];
   ],
 })
 export class FeedbackComponent {
+  private readonly api = inject(APIService);
+  private readonly auth = inject(AuthService);
+  readonly appStatusService = inject(AppStatusService);
+
   feedback = "";
   title = "";
   honeypot = ""; //bots will likely fill this in
@@ -47,12 +49,6 @@ export class FeedbackComponent {
   readonly success = signal<boolean | undefined>(undefined);
 
   @ViewChild("feedbackForm") feedbackForm: NgForm | undefined;
-
-  constructor(
-    private readonly api: APIService,
-    private readonly auth: AuthService,
-    readonly appStatusService: AppStatusService,
-  ) {}
 
   async onSubmitCloudFunction(): Promise<void> {
     this.submitted.set(true);

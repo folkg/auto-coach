@@ -1,16 +1,15 @@
-import { Component, computed, signal } from "@angular/core";
-import { toSignal } from "@angular/core/rxjs-interop";
-import { MatCardModule } from "@angular/material/card";
 import type { ClientTeam } from "@common/types/team";
 import type { Spacetime } from "spacetime";
-// biome-ignore lint/style/useImportType: This is an injection token
+
+import { Component, computed, inject, signal } from "@angular/core";
+import { toSignal } from "@angular/core/rxjs-interop";
+import { MatCardModule } from "@angular/material/card";
+
+import type { PauseLineupEvent, SetLineupEvent } from "../teams/interfaces/outputEvents";
+
 import { AppStatusService } from "../services/app-status.service";
 import { RobotsComponent } from "../shared/robots/robots.component";
 import { spacetimeNow } from "../shared/utils/now";
-import type {
-  PauseLineupEvent,
-  SetLineupEvent,
-} from "../teams/interfaces/outputEvents";
 import { RelativeDatePipe } from "../teams/pipes/relative-date.pipe";
 import { TeamComponent } from "../teams/team/team.component";
 
@@ -22,18 +21,16 @@ import { TeamComponent } from "../teams/team/team.component";
   providers: [RelativeDatePipe],
 })
 export class AboutComponent {
+  readonly appStatusService = inject(AppStatusService);
+
   private readonly focus = toSignal(this.appStatusService.focus$);
   private readonly isSettingLineups = signal(true);
   private readonly lineupPausedAt = signal(-1);
 
-  readonly sampleTimestamps = computed(() => [
-    getNextUpdate(this.focus() ?? spacetimeNow()),
-  ]);
+  readonly sampleTimestamps = computed(() => [getNextUpdate(this.focus() ?? spacetimeNow())]);
   readonly sampleTeam = computed(() =>
     getSampleTeam(this.isSettingLineups(), this.lineupPausedAt(), this.focus()),
   );
-
-  constructor(readonly appStatusService: AppStatusService) {}
 
   setLineupBoolean($event: SetLineupEvent) {
     this.isSettingLineups.set($event.isSettingLineups);

@@ -1,12 +1,14 @@
-import { BreakpointObserver } from "@angular/cdk/layout";
 import type { ClientTeam } from "@common/types/team";
+import type { User } from "firebase/auth";
+
+import { BreakpointObserver } from "@angular/cdk/layout";
+import { createMock } from "@common/utilities/createMock";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
-import type { User } from "firebase/auth";
 import { BehaviorSubject, Observable } from "rxjs";
 import { beforeEach, describe, expect, it } from "vitest";
+
 import { mockRoutes } from "../../__mocks__/routes/routes";
-import { createMock } from "../../__mocks__/utils/createMock";
 import { AuthService } from "../services/auth.service";
 import { SyncTeamsService } from "../services/sync-teams.service";
 import { ThemingService } from "../services/theming.service";
@@ -54,8 +56,8 @@ describe("AppNavComponent", () => {
       providers: defaultProviders,
     });
 
-    expect(screen.getByText("Fantasy AutoCoach")).toBeInTheDocument();
-    expect(screen.getByText("Menu")).toBeInTheDocument();
+    expect(screen.getByText("Fantasy AutoCoach")).toBeDefined();
+    expect(screen.getByText("Menu")).toBeDefined();
   });
 
   describe("Navigation Links", () => {
@@ -64,13 +66,13 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(screen.getByText("Login")).toBeInTheDocument();
+      expect(screen.getByText("Login")).toBeDefined();
 
-      expect(screen.getByText("How It Works")).toBeInTheDocument();
+      expect(screen.getByText("How It Works")).toBeDefined();
 
-      expect(screen.queryByText("My Teams")).not.toBeInTheDocument();
-      expect(screen.queryByText("Profile")).not.toBeInTheDocument();
-      expect(screen.queryByText("Contact")).not.toBeInTheDocument();
+      expect(screen.queryByText("My Teams")).toBeNull();
+      expect(screen.queryByText("Profile")).toBeNull();
+      expect(screen.queryByText("Contact")).toBeNull();
     });
 
     it("shows authenticated links when user is logged in", async () => {
@@ -80,13 +82,13 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(screen.getByText("How It Works")).toBeInTheDocument();
+      expect(screen.getByText("How It Works")).toBeDefined();
 
-      expect(screen.getByText("My Teams")).toBeInTheDocument();
-      expect(screen.getByText("Profile")).toBeInTheDocument();
-      expect(screen.getByText("Contact")).toBeInTheDocument();
+      expect(screen.getByText("My Teams")).toBeDefined();
+      expect(screen.getByText("Profile")).toBeDefined();
+      expect(screen.getByText("Contact")).toBeDefined();
 
-      expect(screen.queryByText("Login")).not.toBeInTheDocument();
+      expect(screen.queryByText("Login")).toBeNull();
     });
 
     it("shows transactions link when user has transactions enabled", async () => {
@@ -97,7 +99,7 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(screen.getByText("Transactions")).toBeInTheDocument();
+      expect(screen.getByText("Transactions")).toBeDefined();
     });
 
     it("hides transactions link when user does not have transactions enabled", async () => {
@@ -108,7 +110,7 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(screen.queryByText("Transactions")).not.toBeInTheDocument();
+      expect(screen.queryByText("Transactions")).toBeNull();
     });
   });
 
@@ -128,9 +130,9 @@ describe("AppNavComponent", () => {
       const user = userEvent.setup();
       const loginLink = screen.getByText("Login");
 
-      expect(screen.queryByText("Mock Login Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Login Page")).toBeNull();
       await user.click(loginLink);
-      expect(screen.getByText("Mock Login Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Login Page")).toBeDefined();
     });
 
     it("navigates to authenticated routes when logged in", async () => {
@@ -150,31 +152,29 @@ describe("AppNavComponent", () => {
       const user = userEvent.setup();
 
       const teamsLink = screen.getByText("My Teams");
-      expect(screen.queryByText("Mock Teams Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Teams Page")).toBeNull();
       await user.click(teamsLink);
-      expect(screen.getByText("Mock Teams Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Teams Page")).toBeDefined();
 
       const transactionsLink = screen.getByText("Transactions");
-      expect(
-        screen.queryByText("Mock Transactions Page"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Transactions Page")).toBeNull();
       await user.click(transactionsLink);
-      expect(screen.getByText("Mock Transactions Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Transactions Page")).toBeDefined();
 
       const profileLink = screen.getByText("Profile");
-      expect(screen.queryByText("Mock Profile Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Profile Page")).toBeNull();
       await user.click(profileLink);
-      expect(screen.getByText("Mock Profile Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Profile Page")).toBeDefined();
 
       const contactLink = screen.getByText("Contact");
-      expect(screen.queryByText("Mock Feedback Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Feedback Page")).toBeNull();
       await user.click(contactLink);
-      expect(screen.getByText("Mock Feedback Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Feedback Page")).toBeDefined();
 
       const aboutLink = screen.getByText("How It Works");
-      expect(screen.queryByText("Mock About Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock About Page")).toBeNull();
       await user.click(aboutLink);
-      expect(screen.getByText("Mock About Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock About Page")).toBeDefined();
     });
 
     it("navigates to How It Works page when clicking the link", async () => {
@@ -190,9 +190,9 @@ describe("AppNavComponent", () => {
       const user = userEvent.setup();
 
       const aboutLink = screen.getByText("How It Works");
-      expect(screen.queryByText("Mock About Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock About Page")).toBeNull();
       await user.click(aboutLink);
-      expect(screen.getByText("Mock About Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock About Page")).toBeDefined();
     });
 
     it("navigates to home when clicking the logo", async () => {
@@ -210,9 +210,9 @@ describe("AppNavComponent", () => {
       const user = userEvent.setup();
       const logo = screen.getByAltText("logo");
 
-      expect(screen.queryByText("Mock Login Page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Mock Login Page")).toBeNull();
       await user.click(logo);
-      expect(screen.getByText("Mock Login Page")).toBeInTheDocument();
+      expect(screen.getByText("Mock Login Page")).toBeDefined();
     });
   });
 
@@ -242,7 +242,7 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(screen.queryByTestId("toggle-sidenav-button")).toBeInTheDocument();
+      expect(screen.queryByTestId("toggle-sidenav-button")).toBeDefined();
     });
 
     it("hides menu button on desktop view", async () => {
@@ -252,9 +252,7 @@ describe("AppNavComponent", () => {
         providers: defaultProviders,
       });
 
-      expect(
-        screen.queryByTestId("toggle-sidenav-button"),
-      ).not.toBeInTheDocument();
+      expect(screen.queryByTestId("toggle-sidenav-button")).toBeNull();
     });
   });
 });

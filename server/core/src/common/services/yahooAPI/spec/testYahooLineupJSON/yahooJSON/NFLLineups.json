@@ -2381,9 +2381,7 @@
                                                   "primary_position": "Q/W/R/T"
                                                 },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "Q/W/R/T" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "Q/W/R/T" }]
                                                 },
                                                 [],
                                                 [],
@@ -3148,9 +3146,7 @@
                                                   "primary_position": "Q/W/R/T"
                                                 },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "Q/W/R/T" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "Q/W/R/T" }]
                                                 },
                                                 [],
                                                 [],
@@ -3531,9 +3527,7 @@
                                                 { "position_type": "DT" },
                                                 { "primary_position": "DEF" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "DEF" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "DEF" }]
                                                 },
                                                 [],
                                                 [],
@@ -4965,9 +4959,7 @@
                                                 { "position_type": "O" },
                                                 { "primary_position": "QB" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "QB" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "QB" }]
                                                 },
                                                 [],
                                                 [],
@@ -7440,9 +7432,7 @@
                                                 { "position_type": "K" },
                                                 { "primary_position": "K" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "K" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "K" }]
                                                 },
                                                 [],
                                                 [],
@@ -7631,9 +7621,7 @@
                                                 { "position_type": "DT" },
                                                 { "primary_position": "DEF" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "DEF" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "DEF" }]
                                                 },
                                                 [],
                                                 [],

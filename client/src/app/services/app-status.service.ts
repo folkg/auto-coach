@@ -1,6 +1,7 @@
+import type { Spacetime } from "spacetime";
+
 import { Injectable } from "@angular/core";
 import { fromEvent, map, merge, type Observable, of, startWith } from "rxjs";
-import type { Spacetime } from "spacetime";
 
 import { spacetimeNow } from "../shared/utils/now";
 import { shareLatest } from "../shared/utils/shareLatest";
@@ -13,18 +14,11 @@ export class AppStatusService {
   readonly focus$: Observable<Spacetime>;
 
   constructor() {
-    this.online$ = merge(
-      of(null),
-      fromEvent(window, "online"),
-      fromEvent(window, "offline"),
-    ).pipe(
+    this.online$ = merge(of(null), fromEvent(window, "online"), fromEvent(window, "offline")).pipe(
       map(() => navigator.onLine),
       shareLatest(),
     );
 
-    this.focus$ = fromEvent(window, "focus").pipe(
-      map(spacetimeNow),
-      startWith(spacetimeNow()),
-    );
+    this.focus$ = fromEvent(window, "focus").pipe(map(spacetimeNow), startWith(spacetimeNow()));
   }
 }

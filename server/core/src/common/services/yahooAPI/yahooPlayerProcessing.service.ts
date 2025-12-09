@@ -1,8 +1,11 @@
 import type { IPlayer, PlayerRanks } from "@common/types/Player.js";
+
 import { assertDefined, isDefined } from "@common/utilities/checks.js";
 import { type } from "arktype";
-import { flattenArray, parseToInt } from "../utilities.service.js";
+
 import type { YahooAPIPlayers } from "./interfaces/YahooAPIResponse.js";
+
+import { flattenArray, parseToInt } from "../utilities.service.js";
 
 const FlatBasePlayerSchema = type({
   player_key: "string",
@@ -85,38 +88,26 @@ export default function buildPlayers(
 
     const [basePlayer, ...extendedPlayer] = player.player;
 
-    const flatBasePlayer = FlatBasePlayerSchema.assert(
-      flattenArray(basePlayer),
-    );
-    const flatExtendedPlayer = FlatExtendedPlayerSchema.assert(
-      flattenArray(extendedPlayer),
-    );
+    const flatBasePlayer = FlatBasePlayerSchema.assert(flattenArray(basePlayer));
+    const flatExtendedPlayer = FlatExtendedPlayerSchema.assert(flattenArray(extendedPlayer));
 
     const selectedPosition = flatExtendedPlayer.selected_position
-      ? SelectedPositionSchema.assert(
-          flattenArray(flatExtendedPlayer.selected_position),
-        ).position
+      ? SelectedPositionSchema.assert(flattenArray(flatExtendedPlayer.selected_position)).position
       : null;
 
     const percentStartedData = flatExtendedPlayer.percent_started
-      ? FlatPercentStartedSchema.assert(
-          flattenArray(flatExtendedPlayer.percent_started),
-        )
+      ? FlatPercentStartedSchema.assert(flattenArray(flatExtendedPlayer.percent_started))
       : undefined;
 
     const percentOwnedData = flatExtendedPlayer.percent_owned
-      ? FlatPercentOwnedSchema.assert(
-          flattenArray(flatExtendedPlayer.percent_owned),
-        )
+      ? FlatPercentOwnedSchema.assert(flattenArray(flatExtendedPlayer.percent_owned))
       : undefined;
 
     assertDefined(flatExtendedPlayer.player_ranks);
     const ranks = getPlayerRanks(flatExtendedPlayer.player_ranks);
 
     const isStarting = flatExtendedPlayer.starting_status
-      ? StartingStatusSchema.assert(
-          flattenArray(flatExtendedPlayer.starting_status),
-        ).is_starting
+      ? StartingStatusSchema.assert(flattenArray(flatExtendedPlayer.starting_status)).is_starting
       : "N/A";
 
     const isPlaying =
@@ -127,20 +118,14 @@ export default function buildPlayers(
     const playerObject: IPlayer = {
       player_key: flatBasePlayer.player_key,
       player_name: flatBasePlayer.name.full,
-      eligible_positions: flatBasePlayer.eligible_positions.map(
-        (pos) => pos.position,
-      ),
+      eligible_positions: flatBasePlayer.eligible_positions.map((pos) => pos.position),
       display_positions: flatBasePlayer.display_position.split(","),
       selected_position: selectedPosition,
       is_editable: flatExtendedPlayer.is_editable === 1,
       is_playing: isPlaying,
       injury_status: flatBasePlayer.status_full ?? "Healthy",
-      percent_started: percentStartedData
-        ? getPercentValueForCut(percentStartedData)
-        : -22200, // Is this the right default?
-      percent_owned: percentOwnedData
-        ? getPercentValueForCut(percentOwnedData)
-        : -22200,
+      percent_started: percentStartedData ? getPercentValueForCut(percentStartedData) : -22200, // Is this the right default?
+      percent_owned: percentOwnedData ? getPercentValueForCut(percentOwnedData) : -22200,
       percent_owned_delta: parseToInt(percentOwnedData?.delta),
       is_starting: isStarting,
       ranks,
@@ -177,11 +162,7 @@ function getPercentValueForCut(
 
   for (const cutType of percentCuts) {
     const cutTypeObject = FlatCutTypeSchema.assert(
-      flattenArray(
-        type("Record<string, unknown>[]").assert(
-          cutType[`${percentType}_cut_type`],
-        ),
-      ),
+      flattenArray(type("Record<string, unknown>[]").assert(cutType[`${percentType}_cut_type`])),
     );
     if (cutTypeObject.cut_type === cut) {
       result = cutTypeObject.value;

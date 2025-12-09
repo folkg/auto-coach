@@ -2,14 +2,15 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
 
     "paths": {
       "@common/*": ["../../common/src/*"],
-      "@core/*": ["../core/src/*"]
-    }
+      "@core/*": ["../core/src/*"],
+    },
   },
   "include": ["./src/**/*.ts"],
   "exclude": ["node_modules", "dist"],
-  "references": [{ "path": "../../common" }, { "path": "../core" }]
 }

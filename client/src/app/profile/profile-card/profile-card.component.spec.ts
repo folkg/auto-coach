@@ -1,9 +1,11 @@
+import type { User } from "firebase/auth";
+
+import { createMock } from "@common/utilities/createMock";
 import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
-import type { User } from "firebase/auth";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createMock } from "../../../__mocks__/utils/createMock";
+
 import { AppStatusService } from "../../services/app-status.service";
 import { AuthService } from "../../services/auth.service";
 import { ProfileCardComponent } from "./profile-card.component";
@@ -42,16 +44,14 @@ describe("ProfileCardComponent", () => {
 
   it("creates the component", async () => {
     await render(ProfileCardComponent, { providers: defaultProviders });
-    expect(screen.getByText("Test User")).toBeInTheDocument();
+    expect(screen.getByText("Test User")).toBeTruthy();
   });
 
   it("displays user email and photo", async () => {
     await render(ProfileCardComponent, { providers: defaultProviders });
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
-    expect(screen.getByAltText("User Photo")).toHaveAttribute(
-      "src",
-      "https://example.com/photo.jpg",
-    );
+    expect(screen.getByText("test@example.com")).toBeTruthy();
+    const photo = screen.getByAltText("User Photo") as HTMLImageElement;
+    expect(photo.getAttribute("src")).toBe("https://example.com/photo.jpg");
   });
 
   it("displays email verification warning if email is not verified", async () => {
@@ -62,7 +62,7 @@ describe("ProfileCardComponent", () => {
       screen.getByText(
         /Your email address has not been verified, please check your inbox for the link./i,
       ),
-    ).toBeInTheDocument();
+    ).toBeTruthy();
   });
 
   it("enables edit mode when clicking edit button", async () => {
@@ -72,7 +72,7 @@ describe("ProfileCardComponent", () => {
     const editButton = screen.getByText("Edit");
     await user.click(editButton);
 
-    expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    expect(screen.getByLabelText("Email")).toBeTruthy();
   });
 
   it("disables save button when form is invalid", async () => {
@@ -91,8 +91,8 @@ describe("ProfileCardComponent", () => {
     const form = fixture.componentInstance.emailFormControl;
     expect(form.valid).toBe(false);
 
-    const saveButton = screen.getByTestId("save-button");
-    expect(saveButton).toBeDisabled();
+    const saveButton = screen.getByTestId("save-button") as HTMLButtonElement;
+    expect(saveButton.disabled).toBe(true);
   });
 
   it("enables save button when form is valid and online", async () => {
@@ -111,8 +111,8 @@ describe("ProfileCardComponent", () => {
     const form = fixture.componentInstance.emailFormControl;
     expect(form.valid).toBe(true);
 
-    const saveButton = screen.getByText("Save Changes");
-    expect(saveButton).not.toBeDisabled();
+    const saveButton = screen.getByTestId("save-button") as HTMLButtonElement;
+    expect(saveButton.disabled).toBe(false);
   });
 
   it("disables save button when offline", async () => {
@@ -133,8 +133,8 @@ describe("ProfileCardComponent", () => {
     const form = fixture.componentInstance.emailFormControl;
     expect(form.valid).toBe(true);
 
-    const saveButton = screen.getByTestId("save-button");
-    expect(saveButton).toBeDisabled();
+    const saveButton = screen.getByTestId("save-button") as HTMLButtonElement;
+    expect(saveButton.disabled).toBe(true);
   });
 
   it("emits isDirty event when form changes", async () => {
@@ -183,9 +183,7 @@ describe("ProfileCardComponent", () => {
     const saveButton = screen.getByText("Save Changes");
     await user.click(saveButton);
 
-    expect(mockAuthService.updateUserEmail).toHaveBeenCalledWith(
-      "new@example.com",
-    );
+    expect(mockAuthService.updateUserEmail).toHaveBeenCalledWith("new@example.com");
   });
 
   it("calls sendVerificationEmail when clicking resend verification email button", async () => {
@@ -214,6 +212,6 @@ describe("ProfileCardComponent", () => {
     const cancelButton = screen.getByText("Cancel");
     await user.click(cancelButton);
 
-    expect(screen.getByText("test@example.com")).toBeInTheDocument();
+    expect(screen.getByText("test@example.com")).toBeTruthy();
   });
 });

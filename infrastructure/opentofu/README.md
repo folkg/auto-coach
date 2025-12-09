@@ -5,6 +5,7 @@ Complete step-by-step guide for deploying the Auto Coach Bun/Hono API to Google 
 ## 📋 What You're Deploying
 
 This infrastructure creates:
+
 - **Cloud Run Service**: Hosts your Bun API container
 - **Artifact Registry**: Stores Docker images
 - **Secret Manager**: Securely stores API keys (SendGrid, Yahoo)
@@ -18,6 +19,7 @@ Before starting, you need:
 ### Required Software
 
 1. **OpenTofu** (>= 1.6.0) - Infrastructure as Code tool (like Terraform)
+
    ```bash
    # macOS
    brew install opentofu
@@ -26,6 +28,7 @@ Before starting, you need:
    ```
 
 2. **Google Cloud CLI** - Command-line tool for Google Cloud
+
    ```bash
    # macOS
    brew install google-cloud-sdk
@@ -34,6 +37,7 @@ Before starting, you need:
    ```
 
 3. **Docker** - For building container images
+
    ```bash
    # Download from https://docs.docker.com/get-docker/
    ```
@@ -47,6 +51,7 @@ Before starting, you need:
 ### Required Accounts & Information
 
 You'll need:
+
 - ✅ Google Cloud Project with billing enabled
 - ✅ Firebase Project (can be same as GCP project)
 - ✅ SendGrid API key (from [SendGrid](https://app.sendgrid.com/settings/api_keys))
@@ -76,6 +81,7 @@ gcloud config set project $PROJECT_ID
 ```
 
 **Verify you're authenticated:**
+
 ```bash
 gcloud config list
 # Should show your project and account
@@ -122,11 +128,11 @@ gsutil versioning set on gs://auto-coach-terraform-state
 cd infrastructure/opentofu
 
 # Create SendGrid secret
-make set-sendgrid-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make set-sendgrid-secret PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 # (You'll be prompted to paste your SendGrid API key - it won't be visible while typing)
 
 # Create Yahoo secret
-make set-yahoo-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make set-yahoo-secret PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 # (You'll be prompted to paste your Yahoo Client Secret)
 ```
 
@@ -134,17 +140,15 @@ make set-yahoo-secret ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID
 
 ```bash
 # Create SendGrid secret
-echo "SG.your-sendgrid-api-key-here" | gcloud secrets create sendgrid-api-key-dev \
+echo "SG.your-sendgrid-api-key-here" | gcloud secrets create sendgrid-api-key-prod \
     --project=$PROJECT_ID \
     --data-file=-
 
 # Create Yahoo secret
-echo "your-yahoo-client-secret-here" | gcloud secrets create yahoo-client-secret-dev \
+echo "your-yahoo-client-secret-here" | gcloud secrets create yahoo-client-secret-prod \
     --project=$PROJECT_ID \
     --data-file=-
 ```
-
-**For Production:** Repeat these steps with `ENVIRONMENT=prod` or `-prod` suffix.
 
 ### Step 5: Initialize OpenTofu
 
@@ -157,6 +161,7 @@ tofu init
 ```
 
 **Expected output:**
+
 ```
 Initializing the backend...
 Initializing provider plugins...
@@ -164,6 +169,7 @@ OpenTofu has been successfully initialized!
 ```
 
 **If you get errors:**
+
 - Make sure the state bucket exists (Step 3)
 - Check your gcloud authentication (Step 1)
 
@@ -197,6 +203,7 @@ docker push us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:lat
 ```
 
 **Expected error on first push:**
+
 ```
 UNAUTHORIZED: failed to authorize: failed to fetch oauth token: ...
 ```
@@ -221,16 +228,13 @@ export YAHOO_CLIENT_SECRET="your-secret-here"
 
 # Run the plan
 tofu plan \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 ```
 
 **Expected output:**
+
 ```
 Plan: 16 to add, 0 to change, 0 to destroy.
 ```
@@ -238,6 +242,7 @@ Plan: 16 to add, 0 to change, 0 to destroy.
 **Review the plan carefully!** Make sure it's creating resources in the right project.
 
 **Key resources to look for:**
+
 - `google_artifact_registry_repository.auto_coach_repo` - Docker registry
 - `google_cloud_run_v2_service.auto_coach_api` - Your API service
 - `google_secret_manager_secret.sendgrid_api_key` - SendGrid secret
@@ -251,16 +256,13 @@ Plan: 16 to add, 0 to change, 0 to destroy.
 ```bash
 # Apply the changes
 tofu apply \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET"
 ```
 
 **You'll be prompted:**
+
 ```
 Do you want to perform these actions?
   OpenTofu will perform the actions described above.
@@ -274,12 +276,13 @@ Do you want to perform these actions?
 **This will take 2-5 minutes.** You'll see progress as each resource is created.
 
 **Expected success output:**
+
 ```
 Apply complete! Resources: 16 added, 0 changed, 0 destroyed.
 
 Outputs:
 
-api_url = "https://auto-coach-api-dev-xxxxx-uc.a.run.app"
+api_url = "https://auto-coach-api-prod-xxxxx-uc.a.run.app"
 container_registry_url = "us-central1-docker.pkg.dev/your-project/auto-coach"
 ...
 ```
@@ -309,11 +312,7 @@ cd infrastructure/opentofu
 
 # Apply again with container_image_tag=latest to trigger deployment
 tofu apply \
-  -var-file="environments/dev.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="yahoo_app_id=$YAHOO_APP_ID" \
-  -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+  -var-file="environments/prod.tfvars" \
   -var="sendgrid_api_key=$SENDGRID_API_KEY" \
   -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
   -var="container_image_tag=latest"
@@ -339,27 +338,30 @@ curl $API_URL/health
 ```
 
 **Or visit the URL in your browser:**
+
 ```bash
 open $API_URL/health
 ```
 
 **Check Cloud Run service status:**
+
 ```bash
-gcloud run services describe auto-coach-api-dev \
+gcloud run services describe auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --format="value(status.url,status.conditions[0].type,status.conditions[0].status)"
 ```
 
 **View logs:**
+
 ```bash
-gcloud run services logs read auto-coach-api-dev \
+gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --limit=50
 ```
 
-## 📝 Using the Makefile (Easier Way)
+## Using the Makefile (Easier Way)
 
 Once you understand the basics, the Makefile provides shortcuts:
 
@@ -370,19 +372,19 @@ cd infrastructure/opentofu
 make init
 
 # Plan changes
-make plan ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make plan PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 
 # Apply changes
-make apply ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
+make apply PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
 
 # View outputs
 make output
 
 # Check status
-make status ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
+make status PROJECT_ID=$PROJECT_ID
 
 # View logs
-make logs ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
+make logs PROJECT_ID=$PROJECT_ID
 ```
 
 **Or use the npm scripts from project root:**
@@ -390,10 +392,10 @@ make logs ENVIRONMENT=dev PROJECT_ID=$PROJECT_ID
 ```bash
 # From project root
 bun infra:init
-bun infra:plan:dev      # Requires PROJECT_ID and FIREBASE_PROJECT_ID env vars
-bun infra:apply:dev     # Requires all env vars
+bun infra:plan      # Requires PROJECT_ID and FIREBASE_PROJECT_ID env vars
+bun infra:apply     # Requires all env vars
 bun infra:output
-bun infra:status:dev
+bun infra:status
 ```
 
 ## 🔄 Making Changes & Redeploying
@@ -401,6 +403,7 @@ bun infra:status:dev
 **When you change your API code:**
 
 1. Build new binary:
+
    ```bash
    cd server/api
    bun run build
@@ -408,6 +411,7 @@ bun infra:status:dev
    ```
 
 2. Build new container with a version tag:
+
    ```bash
    bun run container:build
    docker tag auto-coach-api us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:v1.0.1
@@ -418,11 +422,7 @@ bun infra:status:dev
    ```bash
    cd infrastructure/opentofu
    tofu apply \
-     -var-file="environments/dev.tfvars" \
-     -var="project_id=$PROJECT_ID" \
-     -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-     -var="yahoo_app_id=$YAHOO_APP_ID" \
-     -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
+     -var-file="environments/prod.tfvars" \
      -var="sendgrid_api_key=$SENDGRID_API_KEY" \
      -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
      -var="container_image_tag=v1.0.1"
@@ -432,56 +432,19 @@ bun infra:status:dev
 
 ```bash
 cd infrastructure/opentofu
-tofu plan -var-file="environments/dev.tfvars" ...  # Check changes
-tofu apply -var-file="environments/dev.tfvars" ... # Apply changes
+tofu plan -var-file="environments/prod.tfvars" ...  # Check changes
+tofu apply -var-file="environments/prod.tfvars" ... # Apply changes
 ```
 
-## 🌍 Deploying to Production
+## Configuration
 
-**Production uses different settings (stricter access, more scaling):**
-
-1. **Create production secrets:**
-   ```bash
-   cd infrastructure/opentofu
-   make set-sendgrid-secret ENVIRONMENT=prod PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
-   make set-yahoo-secret ENVIRONMENT=prod PROJECT_ID=$PROJECT_ID FIREBASE_PROJECT_ID=$FIREBASE_PROJECT_ID
-   ```
-
-2. **Build and push production image:**
-   ```bash
-   cd ../../
-   docker tag auto-coach-api us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:prod-v1.0.0
-   docker push us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach/auto-coach-api:prod-v1.0.0
-   ```
-
-3. **Deploy production infrastructure:**
-   ```bash
-   cd infrastructure/opentofu
-   tofu apply \
-     -var-file="environments/prod.tfvars" \
-     -var="project_id=$PROJECT_ID" \
-     -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-     -var="yahoo_app_id=$YAHOO_APP_ID" \
-     -var="yahoo_client_id=$YAHOO_CLIENT_ID" \
-     -var="sendgrid_api_key=$SENDGRID_API_KEY" \
-     -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
-     -var="container_image_tag=prod-v1.0.0" \
-     -var="allowed_origins=https://yourdomain.com,https://auto-gm-372620.web.app"
-   ```
-
-**Note:** Production requires authentication by default. For public access during initial testing, you can temporarily set in `prod.tfvars` or override during apply.
-
-## 📊 Environment Differences
-
-| Setting | Development | Production |
-|---------|-------------|------------|
-| **Min Instances** | 0 (scales to zero) | 0 (scales to zero) |
-| **Max Instances** | 10 | 100 |
-| **Public Access** | Yes (allUsers) | Yes (allUsers)* |
-| **CORS Origins** | localhost:4200,3000 | Your production domain |
-| **Service Name** | auto-coach-api-dev | auto-coach-api-prod |
-
-*Note: Public access is currently enabled for both. Change `local.allow_unauthenticated` in `main.tf` if you want authenticated-only for prod.
+| Setting           | Value                  |
+| ----------------- | ---------------------- |
+| **Min Instances** | 0 (scales to zero)     |
+| **Max Instances** | 100                    |
+| **Public Access** | Yes (allUsers)         |
+| **CORS Origins**  | Your production domain |
+| **Service Name**  | auto-coach-api-prod    |
 
 ## 🔍 Common Commands Reference
 
@@ -499,7 +462,7 @@ tofu state list
 tofu state show google_cloud_run_v2_service.auto_coach_api
 
 # Refresh state from actual infrastructure
-tofu refresh -var-file="environments/dev.tfvars" ...
+tofu refresh -var-file="environments/prod.tfvars" ...
 
 # Validate configuration files
 tofu validate
@@ -518,6 +481,7 @@ tofu show
 **Problem:** Cloud Run can't pull the container image.
 
 **Solution:**
+
 1. Verify image exists: `gcloud artifacts docker images list us-central1-docker.pkg.dev/$PROJECT_ID/auto-coach`
 2. Check image tag matches `container_image_tag` variable
 3. Ensure service account has `artifactregistry.reader` role
@@ -527,6 +491,7 @@ tofu show
 **Problem:** Your account doesn't have sufficient permissions.
 
 **Solution:**
+
 ```bash
 # Re-authenticate
 gcloud auth application-default login
@@ -543,6 +508,7 @@ gcloud projects get-iam-policy $PROJECT_ID --flatten="bindings[].members" --filt
 **Problem:** State is locked (maybe from a previous failed run).
 
 **Solution:**
+
 ```bash
 # List locks
 gsutil ls gs://auto-coach-terraform-state/**/*.tflock
@@ -554,14 +520,16 @@ tofu force-unlock LOCK_ID
 ### Container Won't Start / Crashes
 
 **Check logs:**
+
 ```bash
-gcloud run services logs read auto-coach-api-dev \
+gcloud run services logs read auto-coach-api-prod \
     --region=us-central1 \
     --project=$PROJECT_ID \
     --limit=100
 ```
 
 **Common issues:**
+
 - Missing environment variables
 - Binary built for wrong architecture (must be `bun-linux-x64`)
 - Port mismatch (container must listen on port from `PORT` env var, default 3000)
@@ -571,15 +539,16 @@ gcloud run services logs read auto-coach-api-dev \
 **Problem:** Resource was deleted outside OpenTofu.
 
 **Solution:**
+
 ```bash
 # Remove from state without deleting the resource
 tofu state rm google_cloud_run_v2_service.auto_coach_api
 
 # Or import existing resource
-tofu import google_cloud_run_v2_service.auto_coach_api projects/$PROJECT_ID/locations/us-central1/services/auto-coach-api-dev
+tofu import google_cloud_run_v2_service.auto_coach_api projects/$PROJECT_ID/locations/us-central1/services/auto-coach-api-prod
 ```
 
-## 🤖 GitHub Actions CI/CD Setup
+## GitHub Actions CI/CD Setup
 
 The infrastructure automatically creates a service account for GitHub Actions with all required permissions.
 
@@ -590,10 +559,9 @@ cd infrastructure/opentofu
 
 tofu apply \
   -var-file="environments/prod.tfvars" \
-  -var="project_id=$PROJECT_ID" \
-  -var="firebase_project_id=$FIREBASE_PROJECT_ID" \
-  -var="create_github_actions_sa=true" \
-  ...
+  -var="sendgrid_api_key=$SENDGRID_API_KEY" \
+  -var="yahoo_client_secret=$YAHOO_CLIENT_SECRET" \
+  -var="create_github_actions_sa=true"
 ```
 
 ### Step 2: Get Service Account Details
@@ -629,6 +597,7 @@ gcloud iam service-accounts keys create github-actions-key.json \
 ### Step 5: Add Other Required Secrets
 
 Create these additional secrets in GitHub:
+
 - `FIREBASE_PROJECT_ID`: Your Firebase project ID (e.g., `auto-gm-372620`)
 - `GCP_PROJECT_ID`: Your GCP project ID (same as Firebase project ID)
 
@@ -642,6 +611,7 @@ rm github-actions-key.json
 ### What the Service Account Can Do
 
 The GitHub Actions service account has these permissions:
+
 - ✅ Push Docker images to Artifact Registry
 - ✅ Deploy Cloud Functions
 - ✅ Deploy to Cloud Run
@@ -669,6 +639,7 @@ tofu apply \
 ✅ **State stored in versioned GCS bucket** (can rollback if needed)
 
 **Additional recommendations:**
+
 - Use separate GCP projects for dev/prod
 - Rotate secrets regularly
 - Enable Cloud Audit Logs
@@ -678,6 +649,7 @@ tofu apply \
 ## 💰 Cost Estimates
 
 **Development:**
+
 - Cloud Run: $0-5/month (scales to zero when not in use)
 - Artifact Registry: <$1/month (minimal storage)
 - Secret Manager: <$1/month (< 10 secrets)
@@ -702,6 +674,7 @@ gcloud run services update-traffic auto-coach-api-prod \
 ```
 
 **Or rollback via OpenTofu:**
+
 ```bash
 tofu apply \
   -var="container_image_tag=previous-working-tag" \
@@ -726,6 +699,7 @@ tofu apply \
 5. Check state: `tofu state list` and `tofu show`
 
 **For issues with this infrastructure:**
+
 - Review the plan output carefully before applying
 - Always test in dev environment first
 - Keep secrets secure (never commit to Git)

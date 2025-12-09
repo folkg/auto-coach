@@ -1,5 +1,7 @@
 import type { TeamOptimizer } from "@common/types/team.js";
+
 import { describe, expect, it, vi } from "vitest";
+
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 
 vi.mock("firebase-admin/firestore", () => ({
@@ -21,14 +23,10 @@ describe("Test LineupOptimizer Class NBA Daily", () => {
     const isSuccessfullyOptimized = lo.isSuccessfullyOptimized();
     expect(isSuccessfullyOptimized).toEqual(true);
 
-    expect(
-      rosterModification?.newPlayerPositions["419.p.6370"],
-    ).not.toBeDefined(); // on IR+, should not be moved
+    expect(rosterModification?.newPlayerPositions["419.p.6370"]).not.toBeDefined(); // on IR+, should not be moved
 
     expect(rosterModification?.newPlayerPositions["418.p.5482"]).toBeDefined();
-    expect(["IL", "IL+", "BN"]).not.toContain(
-      rosterModification?.newPlayerPositions["418.p.5482"],
-    );
+    expect(["IL", "IL+", "BN"]).not.toContain(rosterModification?.newPlayerPositions["418.p.5482"]);
     expect(rosterModification?.newPlayerPositions["418.p.5864"]).toBeDefined();
     expect(rosterModification?.newPlayerPositions["418.p.5864"]).toEqual("IL");
   });

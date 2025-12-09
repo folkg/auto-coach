@@ -1,9 +1,6 @@
 <div class="header primaryColorBG"><h1>Profile</h1></div>
 <div class="content">
   <app-offline-warning-card class="card"></app-offline-warning-card>
-  <app-profile-card
-    (isDirty)="onDirtyChange($event)"
-    class="card"
-  ></app-profile-card>
+  <app-profile-card (isDirty)="onDirtyChange($event)" class="card"></app-profile-card>
   <button mat-stroked-button (click)="logout()">Logout</button>
 </div>

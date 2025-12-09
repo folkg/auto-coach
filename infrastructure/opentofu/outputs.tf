@@ -35,6 +35,21 @@ output "api_url" {
   value       = google_cloud_run_v2_service.auto_coach_api.uri
 }
 
+output "mutation_api_url" {
+  description = "The URL of the deployed Mutation API Cloud Run service"
+  value       = google_cloud_run_v2_service.mutation_api.uri
+}
+
+output "mutation_api_service_account_email" {
+  description = "The email of the Mutation API Cloud Run service account"
+  value       = google_service_account.mutation_api_sa.email
+}
+
+output "mutation_queue_name" {
+  description = "The name of the Cloud Tasks queue for mutations"
+  value       = google_cloud_tasks_queue.mutation_queue.name
+}
+
 output "github_actions_service_account_email" {
   description = "The email of the GitHub Actions service account for CI/CD"
   value       = var.create_github_actions_sa ? google_service_account.github_actions_sa[0].email : null

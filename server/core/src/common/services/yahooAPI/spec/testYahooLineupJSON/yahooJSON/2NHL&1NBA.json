@@ -568,9 +568,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -743,9 +741,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 [],
                                                 [],
@@ -1093,9 +1089,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -1268,9 +1262,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "RW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "RW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "RW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -1443,9 +1435,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "RW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "RW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "RW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -1618,9 +1608,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -1791,9 +1779,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {
@@ -1968,9 +1954,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -2143,9 +2127,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -2318,9 +2300,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -2493,9 +2473,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -2673,9 +2651,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {
@@ -2850,9 +2826,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -3025,9 +2999,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -3200,9 +3172,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 [],
                                                 [],
@@ -3373,9 +3343,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -4060,9 +4028,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {
@@ -4237,9 +4203,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 [],
                                                 [],
@@ -4410,9 +4374,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -4585,9 +4547,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 [],
                                                 [],
@@ -4758,9 +4718,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "RW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "RW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "RW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -4933,9 +4891,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "RW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "RW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "RW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -5108,9 +5064,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 [],
                                                 [],
@@ -5281,9 +5235,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 [],
                                                 [],
@@ -5454,9 +5406,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 [],
                                                 [],
@@ -5627,9 +5577,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "D" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "D" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "D" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -5802,9 +5750,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "C" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "C" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "C" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -5977,9 +5923,7 @@
                                                 { "position_type": "P" },
                                                 { "primary_position": "LW" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "LW" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "LW" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -6330,9 +6274,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 [],
@@ -6505,9 +6447,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {
@@ -6682,9 +6622,7 @@
                                                 { "position_type": "G" },
                                                 { "primary_position": "G" },
                                                 {
-                                                  "eligible_positions": [
-                                                    { "position": "G" }
-                                                  ]
+                                                  "eligible_positions": [{ "position": "G" }]
                                                 },
                                                 { "has_player_notes": 1 },
                                                 {

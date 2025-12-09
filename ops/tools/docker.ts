@@ -1,6 +1,7 @@
-import { resolve } from "node:path";
 import { $ } from "bun";
-import { logStep } from "./log.ts";
+import { resolve } from "node:path";
+
+import { logStep } from "./log.js";
 
 export async function buildAPI(): Promise<void> {
   logStep("API", "Building server/api binary...");
@@ -14,11 +15,7 @@ export async function buildContainer(): Promise<void> {
   await $`cd ${projectRoot} && docker build --platform linux/amd64 -f server/api/Dockerfile -t auto-coach-api .`;
 }
 
-export async function tagContainer(
-  projectId: string,
-  repo: string,
-  tags: string[],
-): Promise<void> {
+export async function tagContainer(projectId: string, repo: string, tags: string[]): Promise<void> {
   for (const tag of tags) {
     const fullTag = `${repo}/${projectId}/auto-coach/auto-coach-api:${tag}`;
     logStep("Container", `Tagging as ${fullTag}`);

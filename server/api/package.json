@@ -15,20 +15,18 @@
     "@hono/arktype-validator": "2.0.1",
     "@sendgrid/mail": "8.1.6",
     "arktype": "catalog:",
-    "axios": "1.12.2",
-    "axios-retry": "4.5.0",
-    "dotenv": "16.5.0",
+    "dotenv": "17.2.3",
     "fast-xml-parser": "5.3.2",
-    "firebase-admin": "13.5.0",
+    "firebase-admin": "13.6.0",
     "firebase-functions": "6.5.0",
-    "google-auth-library": "10.4.0",
+    "google-auth-library": "10.5.0",
     "hono": "catalog:",
     "js2xmlparser": "5.0.0",
-    "p-limit": "7.1.1",
+    "p-limit": "7.2.0",
     "spacetime": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "24.7.2",
+    "@types/bun": "catalog:",
     "typescript": "catalog:"
   }
 }

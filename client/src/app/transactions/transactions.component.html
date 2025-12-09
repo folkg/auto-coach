@@ -1,121 +1,103 @@
 <div class="header primaryColorBG">
-    <h1>Suggested Transactions</h1>
+  <h1>Suggested Transactions</h1>
 </div>
 <div class="content">
-    @switch (success()) {
-        @case (false) {
-            <h2>
-                There was an error with your submission. Please try again later.
-            </h2>
-            <button
-                mat-raised-button
-                color="primary"
-                class="button"
-                (click)="reloadComponent()"
-            >
-                Done
-            </button>
-        }
-        @case (true) {
-            @if (successTransactions().length > 0) {
-                <h2>Transactions Succesfully Submitted!</h2>
-                <h3>Successful Transactions</h3>
-                <ul>
-                    @for (transaction of successTransactions(); track $index) {
-                        <li>
-                            {{ transaction.description }} ({{
-                                transaction.teamName
-                            }})
-                        </li>
-                    }
-                </ul>
-            }
-            @if (failedReasons().length > 0) {
-                <h3>Failed Transactions</h3>
-                <ul>
-                    @for (reason of failedReasons(); track reason) {
-                        <li>{{ reason | json }}</li>
-                    }
-                </ul>
-            }
-            <button
-                mat-raised-button
-                color="primary"
-                class="button"
-                (click)="reloadComponent()"
-            >
-                Done
-            </button>
-        }
-        @case (undefined) {
-            <div class="instructions">
-                <h3>
-                    Select any transactions you would like to process for your
-                    teams and click the Submit button at the bottom of the page.
-                </h3>
-                <p>Notes:</p>
-                <ul>
-                    <li>
-                        The number in square brackets next to each player is
-                        their calculated value based on your league's settings.
-                    </li>
-                    <li>
-                        Placing transactions is a permanent action. Once you
-                        submit a transaction, it will be processed by Yahoo and
-                        cannot be undone.
-                    </li>
-                    <li>
-                        If any of your teams are missing, go back to the 'My
-                        Teams' page and enable Transactions in the settings.
-                    </li>
-                </ul>
-            </div>
-
-            @if (teams().length !== 0) {
-                @if (flatTransactions() !== undefined) {
-                    @for (
-                        team of teams()
-                            | sortTeamsByTransactions: flatTransactions() ?? [];
-                        track team.team_key
-                    ) {
-                        <app-team
-                            class="card-container"
-                            [team]="team"
-                            [allTransactions]="flatTransactions() ?? []"
-                            (transactionSelected)="onSelectTransaction($event)"
-                        />
-                    }
-                } @else {
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem;">
-                        <app-loader />
-                        <p style="margin-top: 1rem;">Loading...</p>
-                    </div>
-                }
-            } @else {
-                <mat-card class="card">
-                    <mat-card-header>
-                        <mat-card-title>Loading Teams...</mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <p>Please wait</p>
-                    </mat-card-content>
-                </mat-card>
-            }
-
-            <button
-                mat-raised-button
-                color="accent"
-                class="button"
-                [disabled]="!numSelectedTransactions()"
-                (click)="submitTransactions()"
-            >
-                Submit {{ numSelectedTransactions() || "" }} Transaction{{
-                    numSelectedTransactions() !== 1 ? "s" : ""
-                }}
-                to Yahoo
-            </button>
-        }
+  @switch (success()) {
+    @case (false) {
+      <h2>There was an error with your submission. Please try again later.</h2>
+      <button mat-raised-button color="primary" class="button" (click)="reloadComponent()">
+        Done
+      </button>
     }
+    @case (true) {
+      @if (successTransactions().length > 0) {
+        <h2>Transactions Succesfully Submitted!</h2>
+        <h3>Successful Transactions</h3>
+        <ul>
+          @for (transaction of successTransactions(); track $index) {
+            <li>{{ transaction.description }} ({{ transaction.teamName }})</li>
+          }
+        </ul>
+      }
+      @if (failedReasons().length > 0) {
+        <h3>Failed Transactions</h3>
+        <ul>
+          @for (reason of failedReasons(); track reason) {
+            <li>{{ reason | json }}</li>
+          }
+        </ul>
+      }
+      <button mat-raised-button color="primary" class="button" (click)="reloadComponent()">
+        Done
+      </button>
+    }
+    @case (undefined) {
+      <div class="instructions">
+        <h3>
+          Select any transactions you would like to process for your teams and click the Submit
+          button at the bottom of the page.
+        </h3>
+        <p>Notes:</p>
+        <ul>
+          <li>
+            The number in square brackets next to each player is their calculated value based on
+            your league's settings.
+          </li>
+          <li>
+            Placing transactions is a permanent action. Once you submit a transaction, it will be
+            processed by Yahoo and cannot be undone.
+          </li>
+          <li>
+            If any of your teams are missing, go back to the 'My Teams' page and enable Transactions
+            in the settings.
+          </li>
+        </ul>
+      </div>
+
+      @if (showInitialSkeleton()) {
+        @for (i of [1, 2, 3]; track i) {
+          <div class="card-container">
+            <app-skeleton-card [showTransactions]="true" />
+          </div>
+        }
+      } @else if (teams().length !== 0) {
+        @for (
+          team of teams() | sortTeamsByTransactions: flatTransactions() ?? [];
+          track team.team_key
+        ) {
+          <app-team
+            class="card-container"
+            [team]="team"
+            [allTransactions]="flatTransactions() ?? []"
+            [loadingTransactions]="loadingTransactions()"
+            (transactionSelected)="onSelectTransaction($event)"
+          />
+        }
+      } @else {
+        <mat-card class="card">
+          <mat-card-header>
+            <mat-card-title>No Teams Available</mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p>Enable transactions on your teams to see suggested transactions.</p>
+          </mat-card-content>
+        </mat-card>
+      }
+
+      <button
+        mat-raised-button
+        color="accent"
+        class="button"
+        [disabled]="!numSelectedTransactions()"
+        (click)="submitTransactions()"
+      >
+        Submit {{ numSelectedTransactions() || "" }} Transaction{{
+          numSelectedTransactions() !== 1 ? "s" : ""
+        }}
+        to Yahoo
+      </button>
+    }
+  }
 </div>
 
 <app-loader-overlay [loading]="isProcessing()"></app-loader-overlay>

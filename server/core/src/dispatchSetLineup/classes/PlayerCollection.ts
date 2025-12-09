@@ -1,5 +1,7 @@
-import assert from "node:assert";
 import type { IPlayer } from "@common/types/Player.js";
+
+import assert from "node:assert";
+
 import { Player } from "../../common/classes/Player.js";
 
 export class PlayerCollection {
@@ -86,17 +88,13 @@ export class PlayerCollection {
   }
 
   public sortDescByOwnershipScoreAndRemoveDuplicates() {
-    this.players.sort(
-      (a: Player, b: Player) => b.ownership_score - a.ownership_score,
-    );
+    this.players.sort((a: Player, b: Player) => b.ownership_score - a.ownership_score);
     this.players = this.players.filter(
       (player, i, all) => player.player_key !== all[i - 1]?.player_key,
     );
   }
 
   public removePlayer(playerToRemove: Player) {
-    this.players = this.players.filter(
-      (player) => player.player_key !== playerToRemove.player_key,
-    );
+    this.players = this.players.filter((player) => player.player_key !== playerToRemove.player_key);
   }
 }

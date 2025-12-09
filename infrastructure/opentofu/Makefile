@@ -4,7 +4,7 @@
 # Default values
 PROJECT_ID ?=
 FIREBASE_PROJECT_ID ?=
-ENVIRONMENT ?= dev
+ENVIRONMENT ?= prod
 REGION ?= us-central1
 
 # Colors for output
@@ -21,15 +21,15 @@ help: ## Show this help message
 	@echo "$(BLUE)Auto Coach Infrastructure - OpenTofu Commands$(NC)"
 	@echo ""
 	@echo "$(YELLOW)Usage:$(NC)"
-	@echo "  make <target> [ENVIRONMENT=dev|prod] [PROJECT_ID=your-project] [FIREBASE_PROJECT_ID=your-firebase-project]"
+	@echo "  make <target> [PROJECT_ID=your-project] [FIREBASE_PROJECT_ID=your-firebase-project]"
 	@echo ""
 	@echo "$(YELLOW)Targets:$(NC)"
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 	@echo ""
 	@echo "$(YELLOW)Examples:$(NC)"
-	@echo "  make plan ENVIRONMENT=dev PROJECT_ID=my-project FIREBASE_PROJECT_ID=my-firebase"
-	@echo "  make apply ENVIRONMENT=prod PROJECT_ID=my-prod-project FIREBASE_PROJECT_ID=my-firebase"
-	@echo "  make destroy ENVIRONMENT=dev PROJECT_ID=my-project FIREBASE_PROJECT_ID=my-firebase"
+	@echo "  make plan PROJECT_ID=my-project FIREBASE_PROJECT_ID=my-firebase"
+	@echo "  make apply PROJECT_ID=my-prod-project FIREBASE_PROJECT_ID=my-firebase"
+	@echo "  make destroy PROJECT_ID=my-project FIREBASE_PROJECT_ID=my-firebase"
 
 init: ## Initialize OpenTofu configuration
 	@echo "$(BLUE)Initializing OpenTofu...$(NC)"
@@ -49,54 +49,52 @@ check: validate fmt ## Run validation and formatting checks
 	@echo "$(GREEN)All checks passed!$(NC)"
 
 plan: check-vars ## Plan infrastructure changes
-	@echo "$(BLUE)Planning infrastructure changes for $(ENVIRONMENT) environment...$(NC)"
+	@echo "$(BLUE)Planning infrastructure changes for prod environment...$(NC)"
 	@tofu plan \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)" \
-		-out="$(ENVIRONMENT).tfplan"
-	@echo "$(GREEN)Plan saved to $(ENVIRONMENT).tfplan$(NC)"
+		-out="prod.tfplan"
+	@echo "$(GREEN)Plan saved to prod.tfplan$(NC)"
 
 apply: check-vars ## Apply infrastructure changes
-	@echo "$(YELLOW)Applying infrastructure changes for $(ENVIRONMENT) environment...$(NC)"
-	@if [ "$(ENVIRONMENT)" = "prod" ]; then \
-		echo "$(RED)WARNING: You are about to apply changes to PRODUCTION!$(NC)"; \
-		read -p "Are you sure? (yes/no): " confirm; \
-		if [ "$$confirm" != "yes" ]; then \
-			echo "$(YELLOW)Aborted.$(NC)"; \
-			exit 1; \
-		fi; \
+	@echo "$(YELLOW)Applying infrastructure changes for prod environment...$(NC)"
+	@echo "$(RED)WARNING: You are about to apply changes to PRODUCTION!$(NC)"; \
+	read -p "Are you sure? (yes/no): " confirm; \
+	if [ "$$confirm" != "yes" ]; then \
+		echo "$(YELLOW)Aborted.$(NC)"; \
+		exit 1; \
 	fi
 	@tofu apply \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)"
 	@echo "$(GREEN)Infrastructure applied successfully!$(NC)"
 
 apply-auto: check-vars ## Apply infrastructure changes without confirmation
-	@echo "$(YELLOW)Auto-applying infrastructure changes for $(ENVIRONMENT) environment...$(NC)"
+	@echo "$(YELLOW)Auto-applying infrastructure changes for prod environment...$(NC)"
 	@tofu apply \
 		-auto-approve \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)"
 	@echo "$(GREEN)Infrastructure applied successfully!$(NC)"
 
 destroy: check-vars ## Destroy infrastructure
-	@echo "$(RED)WARNING: You are about to DESTROY infrastructure for $(ENVIRONMENT) environment!$(NC)"
+	@echo "$(RED)WARNING: You are about to DESTROY infrastructure!$(NC)"
 	@read -p "Type 'destroy' to confirm: " confirm; \
 	if [ "$$confirm" != "destroy" ]; then \
 		echo "$(YELLOW)Aborted.$(NC)"; \
 		exit 1; \
 	fi
 	@tofu destroy \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)"
 	@echo "$(GREEN)Infrastructure destroyed!$(NC)"
 
 output: ## Show infrastructure outputs
-	@echo "$(BLUE)Infrastructure outputs for $(ENVIRONMENT):$(NC)"
+	@echo "$(BLUE)Infrastructure outputs:$(NC)"
 	@tofu output -json | jq '.'
 
 output-url: ## Show service URL
@@ -104,22 +102,22 @@ output-url: ## Show service URL
 
 status: check-vars ## Check Cloud Run service status
 	@echo "$(BLUE)Checking service status...$(NC)"
-	@gcloud run services describe auto-coach-api-$(ENVIRONMENT) \
+	@gcloud run services describe auto-coach-api-prod \
 		--region=$(REGION) \
 		--project=$(PROJECT_ID) \
 		--format="table(metadata.name,status.url,status.conditions[0].type,status.conditions[0].status)" \
 		2>/dev/null || echo "$(RED)Service not found or not accessible$(NC)"
 
 logs: check-vars ## View service logs
-	@echo "$(BLUE)Viewing logs for auto-coach-api-$(ENVIRONMENT)...$(NC)"
-	@gcloud run services logs read auto-coach-api-$(ENVIRONMENT) \
+	@echo "$(BLUE)Viewing logs for auto-coach-api-prod...$(NC)"
+	@gcloud run services logs read auto-coach-api-prod \
 		--region=$(REGION) \
 		--project=$(PROJECT_ID) \
 		--limit=100
 
 logs-follow: check-vars ## Follow service logs
-	@echo "$(BLUE)Following logs for auto-coach-api-$(ENVIRONMENT)...$(NC)"
-	@gcloud run services logs tail auto-coach-api-$(ENVIRONMENT) \
+	@echo "$(BLUE)Following logs for auto-coach-api-prod...$(NC)"
+	@gcloud run services logs tail auto-coach-api-prod \
 		--region=$(REGION) \
 		--project=$(PROJECT_ID)
 
@@ -137,7 +135,7 @@ state-show: ## Show detailed state for a specific resource
 refresh: check-vars ## Refresh state from actual infrastructure
 	@echo "$(BLUE)Refreshing state from actual infrastructure...$(NC)"
 	@tofu refresh \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)"
 	@echo "$(GREEN)State refreshed!$(NC)"
@@ -152,7 +150,7 @@ import: check-vars ## Import existing resource into state
 	@read -p "Enter resource address (e.g., google_cloud_run_v2_service.auto_coach_api): " address; \
 	read -p "Enter resource ID: " id; \
 	tofu import \
-		-var-file="environments/$(ENVIRONMENT).tfvars" \
+		-var-file="environments/prod.tfvars" \
 		-var="project_id=$(PROJECT_ID)" \
 		-var="firebase_project_id=$(FIREBASE_PROJECT_ID)" \
 		"$$address" "$$id"
@@ -192,10 +190,10 @@ setup-state-bucket: check-vars ## Create GCS bucket for Terraform state
 set-sendgrid-secret: check-vars ## Set SendGrid API key in Secret Manager
 	@echo "$(BLUE)Setting SendGrid API key secret...$(NC)"
 	@read -s -p "Enter SendGrid API key: " api_key; \
-	echo "$$api_key" | gcloud secrets create sendgrid-api-key-$(ENVIRONMENT) \
+	echo "$$api_key" | gcloud secrets create sendgrid-api-key-prod \
 		--project=$(PROJECT_ID) \
 		--data-file=- 2>/dev/null || \
-	echo "$$api_key" | gcloud secrets versions add sendgrid-api-key-$(ENVIRONMENT) \
+	echo "$$api_key" | gcloud secrets versions add sendgrid-api-key-prod \
 		--project=$(PROJECT_ID) \
 		--data-file=-
 	@echo "$(GREEN)SendGrid secret set successfully!$(NC)"
@@ -203,18 +201,18 @@ set-sendgrid-secret: check-vars ## Set SendGrid API key in Secret Manager
 set-yahoo-secret: check-vars ## Set Yahoo client secret in Secret Manager
 	@echo "$(BLUE)Setting Yahoo client secret...$(NC)"
 	@read -s -p "Enter Yahoo client secret: " client_secret; \
-	echo "$$client_secret" | gcloud secrets create yahoo-client-secret-$(ENVIRONMENT) \
+	echo "$$client_secret" | gcloud secrets create yahoo-client-secret-prod \
 		--project=$(PROJECT_ID) \
 		--data-file=- 2>/dev/null || \
-	echo "$$client_secret" | gcloud secrets versions add yahoo-client-secret-$(ENVIRONMENT) \
+	echo "$$client_secret" | gcloud secrets versions add yahoo-client-secret-prod \
 		--project=$(PROJECT_ID) \
 		--data-file=-
 	@echo "$(GREEN)Yahoo secret set successfully!$(NC)"
 
 setup-secrets: check-vars ## Set up all required secrets
-	@echo "$(BLUE)Setting up all secrets for $(ENVIRONMENT) environment...$(NC)"
-	@$(MAKE) set-sendgrid-secret ENVIRONMENT=$(ENVIRONMENT) PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) set-yahoo-secret ENVIRONMENT=$(ENVIRONMENT) PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@echo "$(BLUE)Setting up all secrets...$(NC)"
+	@$(MAKE) set-sendgrid-secret PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) set-yahoo-secret PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
 	@echo "$(GREEN)All secrets configured!$(NC)"
 
 create-tfvars: ## Create terraform.tfvars from example
@@ -226,24 +224,15 @@ create-tfvars: ## Create terraform.tfvars from example
 		echo "$(YELLOW)terraform.tfvars already exists$(NC)"; \
 	fi
 
-# Environment-specific shortcuts
-dev: ## Set environment to dev and run plan
-	@$(MAKE) plan ENVIRONMENT=dev
-
-prod: ## Set environment to prod and run plan
-	@$(MAKE) plan ENVIRONMENT=prod
-
-dev-apply: check-vars ## Apply dev environment
-	@$(MAKE) apply ENVIRONMENT=dev PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+# Production shortcuts
+prod: ## Run plan for prod
+	@$(MAKE) plan
 
 prod-apply: check-vars ## Apply prod environment
-	@$(MAKE) apply ENVIRONMENT=prod PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-
-dev-status: check-vars ## Check dev environment status
-	@$(MAKE) status ENVIRONMENT=dev PROJECT_ID=$(PROJECT_ID)
+	@$(MAKE) apply PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
 
 prod-status: check-vars ## Check prod environment status
-	@$(MAKE) status ENVIRONMENT=prod PROJECT_ID=$(PROJECT_ID)
+	@$(MAKE) status PROJECT_ID=$(PROJECT_ID)
 
 # Internal targets
 check-vars:
@@ -257,31 +246,6 @@ check-vars:
 		echo "$(YELLOW)Usage: make <target> PROJECT_ID=your-project-id FIREBASE_PROJECT_ID=your-firebase-project$(NC)"; \
 		exit 1; \
 	fi
-	@if [ "$(ENVIRONMENT)" != "dev" ] && [ "$(ENVIRONMENT)" != "prod" ]; then \
-		echo "$(RED)ERROR: ENVIRONMENT must be 'dev' or 'prod'$(NC)"; \
-		exit 1; \
-	fi
-
-# Development workflow
-dev-workflow: check-vars ## Complete development workflow: setup, init, plan, apply
-	@echo "$(BLUE)Running complete development workflow...$(NC)"
-	@$(MAKE) setup-gcloud PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) setup-state-bucket PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) init
-	@$(MAKE) plan ENVIRONMENT=dev PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) apply ENVIRONMENT=dev PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) output
-	@$(MAKE) status ENVIRONMENT=dev PROJECT_ID=$(PROJECT_ID)
-
-# First-time setup workflow
-first-time-setup: check-vars ## Complete first-time setup: gcloud, bucket, secrets, init
-	@echo "$(BLUE)Running first-time setup workflow...$(NC)"
-	@$(MAKE) setup-gcloud PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) setup-state-bucket PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) setup-secrets ENVIRONMENT=$(ENVIRONMENT) PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) create-tfvars
-	@$(MAKE) init
-	@echo "$(GREEN)First-time setup complete! Edit terraform.tfvars and run 'make plan' next.$(NC)"
 
 # Production workflow
 prod-workflow: check-vars ## Complete production workflow: setup, init, plan, apply
@@ -289,7 +253,17 @@ prod-workflow: check-vars ## Complete production workflow: setup, init, plan, ap
 	@$(MAKE) setup-gcloud PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
 	@$(MAKE) setup-state-bucket PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
 	@$(MAKE) init
-	@$(MAKE) plan ENVIRONMENT=prod PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
-	@$(MAKE) apply ENVIRONMENT=prod PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) plan PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) apply PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
 	@$(MAKE) output
-	@$(MAKE) status ENVIRONMENT=prod PROJECT_ID=$(PROJECT_ID)
+	@$(MAKE) status PROJECT_ID=$(PROJECT_ID)
+
+# First-time setup workflow
+first-time-setup: check-vars ## Complete first-time setup: gcloud, bucket, secrets, init
+	@echo "$(BLUE)Running first-time setup workflow...$(NC)"
+	@$(MAKE) setup-gcloud PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) setup-state-bucket PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) setup-secrets PROJECT_ID=$(PROJECT_ID) FIREBASE_PROJECT_ID=$(FIREBASE_PROJECT_ID)
+	@$(MAKE) create-tfvars
+	@$(MAKE) init
+	@echo "$(GREEN)First-time setup complete! Edit terraform.tfvars and run 'make plan' next.$(NC)"

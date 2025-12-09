@@ -1,9 +1,7 @@
-import type {
-  IPlayer,
-  PlayerOwnership,
-  PlayerRanks,
-} from "@common/types/Player.js";
+import type { IPlayer, PlayerOwnership, PlayerRanks } from "@common/types/Player.js";
+
 import { isDefined } from "@common/utilities/checks.js";
+
 import {
   HEALTHY_STATUS_LIST,
   INACTIVE_POSITION_LIST,
@@ -87,15 +85,12 @@ export class Player implements IPlayer {
 
   isInactiveList(): boolean {
     return (
-      isDefined(this.selected_position) &&
-      INACTIVE_POSITION_LIST.includes(this.selected_position)
+      isDefined(this.selected_position) && INACTIVE_POSITION_LIST.includes(this.selected_position)
     );
   }
 
   isInactiveListEligible(): boolean {
-    return this.eligible_positions.some((position) =>
-      INACTIVE_POSITION_LIST.includes(position),
-    );
+    return this.eligible_positions.some((position) => INACTIVE_POSITION_LIST.includes(position));
   }
 
   isLTIR(): boolean {
@@ -106,8 +101,7 @@ export class Player implements IPlayer {
 
   isActiveRoster(): boolean {
     return (
-      isDefined(this.selected_position) &&
-      !INACTIVE_POSITION_LIST.includes(this.selected_position)
+      isDefined(this.selected_position) && !INACTIVE_POSITION_LIST.includes(this.selected_position)
     );
   }
 
@@ -125,8 +119,7 @@ export class Player implements IPlayer {
 
   isIllegalPosition(): boolean {
     return (
-      this.selected_position === null ||
-      !this.eligible_positions.includes(this.selected_position)
+      this.selected_position === null || !this.eligible_positions.includes(this.selected_position)
     );
   }
 
@@ -150,9 +143,7 @@ export class Player implements IPlayer {
   }
 
   isEligibleAndHigherScoreThan(playerB: Player): boolean {
-    return (
-      this.compareStartScore(playerB) > 0 && this.isEligibleToSwapWith(playerB)
-    );
+    return this.compareStartScore(playerB) > 0 && this.isEligibleToSwapWith(playerB);
   }
 
   getEligibleTargetPlayers(playersList: Player[]): Player[] {
@@ -167,21 +158,16 @@ export class Player implements IPlayer {
 
   findEligiblePositionIn(positionsList: string[]): string | undefined {
     return this.eligible_positions.find(
-      (position) =>
-        position !== this.selected_position && positionsList.includes(position),
+      (position) => position !== this.selected_position && positionsList.includes(position),
     );
   }
 
   isEligibleForAnyPositionIn(positionsList: string[]): boolean {
-    return positionsList.some((position) =>
-      this.eligible_positions.includes(position),
-    );
+    return positionsList.some((position) => this.eligible_positions.includes(position));
   }
 
   hasDisplayPositionIn(positionsList: string[]): boolean {
-    return positionsList.some((position) =>
-      this.display_positions?.includes(position),
-    );
+    return positionsList.some((position) => this.display_positions?.includes(position));
   }
 
   hasLowerStartScoreThanAll(playersList: Player[]): boolean {
@@ -189,9 +175,7 @@ export class Player implements IPlayer {
   }
 
   hasLowerOwnershipScoreThanAll(playersList: Player[]): boolean {
-    return playersList.every(
-      (player) => this.compareOwnershipScore(player) <= 0,
-    );
+    return playersList.every((player) => this.compareOwnershipScore(player) <= 0);
   }
 
   makeInelliglbeForIL(): void {

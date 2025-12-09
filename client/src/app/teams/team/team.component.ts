@@ -1,12 +1,7 @@
+import type { ClientTeam } from "@common/types/team";
+
 import { AsyncPipe, DecimalPipe, NgIf } from "@angular/common";
-import {
-  Component,
-  computed,
-  EventEmitter,
-  input,
-  Output,
-  signal,
-} from "@angular/core";
+import { Component, computed, EventEmitter, inject, input, Output, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButton, MatIconButton } from "@angular/material/button";
@@ -21,23 +16,17 @@ import {
 } from "@angular/material/card";
 import { MatDivider } from "@angular/material/divider";
 import { MatIcon } from "@angular/material/icon";
-import {
-  MatSlideToggle,
-  type MatSlideToggleChange,
-} from "@angular/material/slide-toggle";
+import { MatSlideToggle, type MatSlideToggleChange } from "@angular/material/slide-toggle";
 import { MatTooltip } from "@angular/material/tooltip";
-import type { ClientTeam } from "@common/types/team";
 import { Subscription } from "rxjs";
 import spacetime, { type Spacetime } from "spacetime";
-// biome-ignore lint/style/useImportType: This is an injection token
+
+import type { PauseLineupEvent, SetLineupEvent } from "../interfaces/outputEvents";
+
 import { AppStatusService } from "../../services/app-status.service";
 import { NthPipe } from "../../shared/pipes/nth.pipe";
 import { SCORING_TYPES } from "../../shared/utils/constants";
 import { spacetimeNow } from "../../shared/utils/now";
-import type {
-  PauseLineupEvent,
-  SetLineupEvent,
-} from "../interfaces/outputEvents";
 import { RelativeDatePipe } from "../pipes/relative-date.pipe";
 
 // server update is in Pacific Time, this is when yahoo resets for the day
@@ -72,8 +61,12 @@ const FIRST_SERVER_UPDATE_HOUR = 1;
   ],
 })
 export class TeamComponent {
+  readonly appStatusService = inject(AppStatusService);
+  private readonly datePipe = inject(RelativeDatePipe);
+
   readonly team = input.required<Readonly<ClientTeam>>();
   readonly gameTimeStamps = input.required<number[] | null>();
+  readonly loadingTimes = input(false);
   @Output() toggleSetLineupEvent = new EventEmitter<SetLineupEvent>();
   @Output() togglePauseLineupEvent = new EventEmitter<PauseLineupEvent>();
 
@@ -82,16 +75,9 @@ export class TeamComponent {
   readonly nextLineupUpdate = computed(() =>
     this.getNextLineupUpdate(this.team().lineup_paused_at, this.focus()),
   );
-  readonly isPausedToday = computed(() =>
-    this.isToday(this.team().lineup_paused_at, this.focus()),
-  );
+  readonly isPausedToday = computed(() => this.isToday(this.team().lineup_paused_at, this.focus()));
 
   readonly scoringType = SCORING_TYPES;
-
-  constructor(
-    readonly appStatusService: AppStatusService,
-    private readonly datePipe: RelativeDatePipe,
-  ) {}
 
   private readonly subs = new Subscription();
 
@@ -122,15 +108,9 @@ export class TeamComponent {
     }
   }
 
-  private getNextLineupUpdate(
-    lineupPausedAt: number,
-    now = spacetimeNow(),
-  ): string {
+  private getNextLineupUpdate(lineupPausedAt: number, now = spacetimeNow()): string {
     const tomorrowMorning = this.datePipe.transform(
-      now
-        .add(1, "day")
-        .hour(FIRST_SERVER_UPDATE_HOUR)
-        .minute(SERVER_UPDATE_MINUTE).epoch,
+      now.add(1, "day").hour(FIRST_SERVER_UPDATE_HOUR).minute(SERVER_UPDATE_MINUTE).epoch,
     );
 
     if (this.isToday(lineupPausedAt)) {
@@ -141,8 +121,7 @@ export class TeamComponent {
     const gameTimeStamps = this.gameTimeStamps();
 
     const editKeyDate = spacetime(team.edit_key, "Canada/Pacific");
-    const isWeeklyLeague =
-      team.weekly_deadline !== "intraday" && team.weekly_deadline !== "";
+    const isWeeklyLeague = team.weekly_deadline !== "intraday" && team.weekly_deadline !== "";
 
     if (isWeeklyLeague) {
       let nextWeeklyUpdate: Spacetime = editKeyDate
@@ -151,10 +130,7 @@ export class TeamComponent {
 
       if (editKeyDate.day() === now.day()) {
         const firstGameTimestamp = gameTimeStamps?.[0];
-        if (
-          firstGameTimestamp !== undefined &&
-          firstGameTimestamp > now.epoch
-        ) {
+        if (firstGameTimestamp !== undefined && firstGameTimestamp > now.epoch) {
           const firstGame: Spacetime = spacetime(firstGameTimestamp);
           return this.getUpdateBeforeGame(firstGame);
         }
@@ -165,9 +141,7 @@ export class TeamComponent {
       return this.datePipe.transform(nextWeeklyUpdate.epoch);
     }
     if (gameTimeStamps) {
-      const nextGameTimestamp = gameTimeStamps.find(
-        (timestamp) => timestamp > now.epoch,
-      );
+      const nextGameTimestamp = gameTimeStamps.find((timestamp) => timestamp > now.epoch);
       if (nextGameTimestamp !== undefined) {
         const nextGame: Spacetime = spacetime(nextGameTimestamp);
         return this.getUpdateBeforeGame(nextGame);

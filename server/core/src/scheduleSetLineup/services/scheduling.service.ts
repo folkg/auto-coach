@@ -1,20 +1,17 @@
 import type { Leagues } from "@common/types/Leagues.js";
-import axios, { isAxiosError } from "axios";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
 import type { TaskQueue } from "firebase-admin/functions";
+
+import { ensureType } from "@common/utilities/checks.js";
 import { logger } from "firebase-functions";
-import {
-  db,
-  storeTodaysPostponedTeams,
-} from "../../common/services/firebase/firestore.service.js";
-import {
-  getPacificTimeDateString,
-  todayPacific,
-} from "../../common/services/utilities.service.js";
-import { fetchStartingPlayers } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
+
 import type { GameStartTimes } from "../interfaces/GameStartTimes.js";
-import type { SportsnetGamesResponse } from "../interfaces/SportsnetGamesResponse.js";
-import type { YahooGamesReponse } from "../interfaces/YahooGamesReponse.js";
+
+import { db, storeTodaysPostponedTeams } from "../../common/services/firebase/firestore.service.js";
+import { getPacificTimeDateString, todayPacific } from "../../common/services/utilities.service.js";
+import { fetchStartingPlayers } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
+import { SportsnetGamesResponseSchema } from "../interfaces/SportsnetGamesResponse.js";
+import { YahooGamesResponseSchema } from "../interfaces/YahooGamesReponse.js";
 
 /**
  * Determine the leagues that we will set lineups for at this time
@@ -88,10 +85,7 @@ async function loadTodaysGames(todayDate: string) {
   let loadedFromDB: boolean;
   const scheduleDoc = await db.collection("schedule").doc("today").get();
   const scheduleDocData = scheduleDoc.data();
-  if (
-    !(scheduleDoc.exists && scheduleDocData) ||
-    scheduleDocData.date !== todayDate
-  ) {
+  if (!(scheduleDoc.exists && scheduleDocData) || scheduleDocData.date !== todayDate) {
     logger.log("No games in database, fetching from internet");
     gameStartTimes = await getTodaysGames(todayDate);
     loadedFromDB = false;
@@ -109,9 +103,7 @@ async function loadTodaysGames(todayDate: string) {
  * @param {string} todayDate - The date to fetch the games for
  * @return {Promise<GameStartTimes[]>} - The game start times
  */
-export async function getTodaysGames(
-  todayDate: string,
-): Promise<GameStartTimes> {
+export async function getTodaysGames(todayDate: string): Promise<GameStartTimes> {
   const leagues: Leagues[] = ["nba", "nhl", "nfl", "mlb"];
   // get today's gametimes for each league
   const gameStartTimes: GameStartTimes = {
@@ -126,31 +118,18 @@ export async function getTodaysGames(
       gameStartTimes[league] = await getGameTimesYahoo(league, todayDate);
     } catch (error: unknown) {
       logger.error("Error fetching games from Yahoo API", error);
-      if (isAxiosError(error) && error.response) {
-        logger.error(error.response.data);
-        logger.error(error.response.status);
-        logger.error(error.response.headers);
-      }
       // get gamestimes from Sportsnet as a backup plan
       logger.log("Trying to get games from Sportsnet API");
       try {
         gameStartTimes[league] = await getGameTimesSportsnet(league, todayDate);
       } catch (error: unknown) {
         logger.error("Error fetching games from Sportsnet API", error);
-        if (isAxiosError(error) && error.response) {
-          logger.error(error.response.data);
-          logger.error(error.response.status);
-          logger.error(error.response.headers);
-        }
       }
     }
   }
 
   // TODO: Move all calls to db into firestore.service
-  await db
-    .collection("schedule")
-    .doc("today")
-    .set({ date: todayDate, games: gameStartTimes });
+  await db.collection("schedule").doc("today").set({ date: todayDate, games: gameStartTimes });
 
   return gameStartTimes;
 }
@@ -161,12 +140,14 @@ export async function getTodaysGames(
  * @param {string} league - league to get games for
  * @param {string} todayDate - date to get games for
  */
-async function getGameTimesYahoo(
-  league: Leagues,
-  todayDate: string,
-): Promise<number[]> {
+async function getGameTimesYahoo(league: Leagues, todayDate: string): Promise<number[]> {
   const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-  const { data } = await axios.get<YahooGamesReponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, YahooGamesResponseSchema);
 
   // get the game timestamp for each game in the response
   const gamesJSON = data.league.games[0];
@@ -186,12 +167,14 @@ async function getGameTimesYahoo(
  * @param {string} league - league to get games for
  * @param {string} todayDate - date to get games for
  */
-async function getGameTimesSportsnet(
-  league: Leagues,
-  todayDate: string,
-): Promise<number[]> {
+async function getGameTimesSportsnet(league: Leagues, todayDate: string): Promise<number[]> {
   const url = `https://mobile-statsv2.sportsnet.ca/scores?league=${league}&team=&day=${todayDate}`;
-  const { data } = await axios.get<SportsnetGamesResponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, SportsnetGamesResponseSchema);
 
   // get the game timestamp for each game in the response
   const gamesJSON = data.data[0].games;
@@ -211,9 +194,7 @@ async function getGameTimesSportsnet(
  *
  * @param {Leagues[]} leagues - An array of SportLeague objects representing the leagues.
  */
-export async function setTodaysPostponedTeams(
-  leagues: Leagues[],
-): Promise<void> {
+export async function setTodaysPostponedTeams(leagues: Leagues[]): Promise<void> {
   const today = todayPacific();
   const postponedTeams: string[] = [];
 
@@ -229,12 +210,14 @@ export async function setTodaysPostponedTeams(
   await storeTodaysPostponedTeams(postponedTeams);
 }
 
-async function getPostponedTeamsYahoo(
-  league: Leagues,
-  todayDate: string,
-): Promise<string[]> {
+async function getPostponedTeamsYahoo(league: Leagues, todayDate: string): Promise<string[]> {
   const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-  const { data } = await axios.get<YahooGamesReponse>(url);
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+  const json: unknown = await response.json();
+  const data = ensureType(json, YahooGamesResponseSchema);
 
   const gamesJSON = data.league.games[0];
   const postponedTeams: string[] = [];
@@ -256,15 +239,11 @@ async function getPostponedTeamsYahoo(
   return postponedTeams;
 }
 
-export async function setStartingPlayersForToday(
-  teamsSnapshot: QuerySnapshot<DocumentData>,
-) {
+export async function setStartingPlayersForToday(teamsSnapshot: QuerySnapshot<DocumentData>) {
   const leaguesWithStarters: Leagues[] = ["nhl", "mlb"];
 
   for (const league of leaguesWithStarters) {
-    const hasTeam = teamsSnapshot?.docs?.some(
-      (doc) => doc.data().game_code === league,
-    );
+    const hasTeam = teamsSnapshot?.docs?.some((doc) => doc.data().game_code === league);
     if (hasTeam) {
       try {
         await fetchStartingPlayers(league);
@@ -278,9 +257,7 @@ export async function setStartingPlayersForToday(
   }
 }
 
-export function mapUsersToActiveTeams(
-  teamsSnapshot: QuerySnapshot<DocumentData>,
-) {
+export function mapUsersToActiveTeams(teamsSnapshot: QuerySnapshot<DocumentData>) {
   if (teamsSnapshot.size === 0) {
     return new Map();
   }

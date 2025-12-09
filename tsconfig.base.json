@@ -30,6 +30,5 @@
 
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "composite": true
-  }
+  },
 }

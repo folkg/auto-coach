@@ -1,4 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
+
 import * as yahooAPIService from "../yahooAPI.service.js";
 import { fetchRostersFromYahoo } from "../yahooLineupBuilder.service.js";
 
@@ -67,12 +68,7 @@ describe("Test fetchRostersFromYahoo", () => {
   });
 
   test("Two NHL, two NBA for Jeff Barnes", async () => {
-    const teams = [
-      "419.l.91560.t.5",
-      "419.l.91564.t.11",
-      "418.l.201581.t.1",
-      "418.l.200641.t.9",
-    ]; // Jeff Barnes
+    const teams = ["419.l.91560.t.5", "419.l.91564.t.11", "418.l.201581.t.1", "418.l.200641.t.9"]; // Jeff Barnes
     const uid = "xAyXmaHKO3aRm9J3fnj2rgZRPnX2";
     const yahooJSON = require("./testYahooLineupJSON/yahooJSON/2NHL&1NBA.json");
 

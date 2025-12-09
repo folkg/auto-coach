@@ -1,9 +1,11 @@
 import type { PlayerTransaction, TPlayer } from "@common/types/transactions.js";
-import type { AxiosError, AxiosResponse } from "axios";
+
+import { createMock } from "@common/utilities/createMock";
 import { parse } from "js2xmlparser";
 import { describe, expect, it, vi } from "vitest";
-import { createMock } from "../../../spec/createMock.js";
+
 import { postRosterAddDropTransaction } from "../yahooAPI.service.js";
+import { HttpError } from "../yahooHttp.service.js";
 import * as yahooHttpService from "../yahooHttp.service.js";
 
 vi.mock("firebase-admin/firestore", () => ({
@@ -47,18 +49,15 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
-    spyHttpPostAxiosAuth.mockImplementation(
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
+    spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
       }),
     );
 
     await postRosterAddDropTransaction(transaction, uid);
-    expect(spyHttpPostAxiosAuth).toHaveBeenCalledWith(
+    expect(spyHttpPostYahooAuth).toHaveBeenCalledWith(
       uid,
       "league/418.l.201581/transactions",
       expectedXML,
@@ -96,18 +95,15 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
-    spyHttpPostAxiosAuth.mockImplementation(
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
+    spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
       }),
     );
 
     await postRosterAddDropTransaction(transaction, uid);
-    expect(spyHttpPostAxiosAuth).toHaveBeenCalledWith(
+    expect(spyHttpPostYahooAuth).toHaveBeenCalledWith(
       uid,
       "league/418.l.201581/transactions",
       expectedXML,
@@ -147,18 +143,15 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
-    spyHttpPostAxiosAuth.mockImplementation(
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
+    spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
       }),
     );
 
     await postRosterAddDropTransaction(transaction, uid);
-    expect(spyHttpPostAxiosAuth).toHaveBeenCalledWith(
+    expect(spyHttpPostYahooAuth).toHaveBeenCalledWith(
       uid,
       "league/418.l.201581/transactions",
       expectedXML,
@@ -214,34 +207,29 @@ describe("YahooAPI Service", () => {
       ],
     });
 
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
-    spyHttpPostAxiosAuth.mockImplementation(
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
+    spyHttpPostYahooAuth.mockImplementation(
       createMock(() => {
         return Promise.resolve();
       }),
     );
 
     await postRosterAddDropTransaction(transaction, uid);
-    expect(spyHttpPostAxiosAuth).toHaveBeenCalledWith(
+    expect(spyHttpPostYahooAuth).toHaveBeenCalledWith(
       uid,
       "league/418.l.201581/transactions",
       expectedXML,
     );
   });
-  it("should swallow the error for picking up a player on waivers that we recently dropped", async () => {
-    const axiosError = createMock<AxiosError>({
-      isAxiosError: true,
-      response: createMock<AxiosResponse>({
-        data:
-          '<?xml version="1.0" encoding="UTF-8"?>\n' +
-          '<error xml:lang="en-us" yahoo:uri="http://fantasysports.yahooapis.com/fantasy/v2/league/422.l.58716/transactions" xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns="http://www.yahooapis.com/v1/base.rng">\n' +
-          " <description>You cannot add a player you dropped until the waiver period ends.</description>\n" +
-          " <detail/>\n" +
-          "</error>",
-      }),
+  it("swallows the error for picking up a player on waivers that we recently dropped", async () => {
+    const httpError = new HttpError("HTTP 400: Bad Request", {
+      data:
+        '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<error xml:lang="en-us" yahoo:uri="http://fantasysports.yahooapis.com/fantasy/v2/league/422.l.58716/transactions" xmlns:yahoo="http://www.yahooapis.com/v1/base.rng" xmlns="http://www.yahooapis.com/v1/base.rng">\n' +
+        " <description>You cannot add a player you dropped until the waiver period ends.</description>\n" +
+        " <detail/>\n" +
+        "</error>",
+      status: 400,
     });
     const uid = "xAyXmaHKO3aRm9J3fnj2rgZRPnX2"; // Jeff Barnes
     const teamKey = "418.l.201581.t.1";
@@ -258,24 +246,23 @@ describe("YahooAPI Service", () => {
         }),
       ],
     });
-    const errMessage = `There was a problem posting one transaction. Here are the error details: User: ${uid} Team: ${teamKey} Transaction: ${JSON.stringify(
-      transaction,
-    )}`;
-    const spyHttpPostAxiosAuth = vi.spyOn(
-      yahooHttpService,
-      "httpPostAxiosAuth",
-    );
-    spyHttpPostAxiosAuth.mockImplementation(() => {
-      return Promise.reject(axiosError);
+    const spyHttpPostYahooAuth = vi.spyOn(yahooHttpService, "httpPostYahooAuthXml");
+    spyHttpPostYahooAuth.mockImplementation(() => {
+      return Promise.reject(httpError);
     });
-    const spyConsoleError = vi.spyOn(console, "info");
-    spyConsoleError.mockImplementation(() => {
-      return;
-    });
+
+    // Arrange
+    const spyStdout = vi.spyOn(process.stdout, "write").mockImplementation(() => true);
+
+    // Act
     const result = await postRosterAddDropTransaction(transaction, uid);
-    expect(spyConsoleError).toHaveBeenCalledWith(
-      `You cannot add a player you dropped until the waiver period ends. ${errMessage}`,
-    );
+
+    // Assert
     expect(result).toEqual(null);
+    expect(spyStdout).toHaveBeenCalledWith(
+      expect.stringContaining("Transaction blocked - waiver period not ended"),
+    );
+
+    spyStdout.mockRestore();
   });
 });

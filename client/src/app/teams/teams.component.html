@@ -11,31 +11,25 @@
   />
   <div class="instructions">
     <h3>
-      Enable the <b>Automatically Manage Lineups</b> setting to get started with
-      any of your teams below.
+      Enable the <b>Automatically Manage Lineups</b> setting to get started with any of your teams
+      below.
     </h3>
     <h3>Sit back, relax, and let Fantasy AutoCoach do the work for you!</h3>
   </div>
 
-  @if (loading() && teams().length === 0) {
-    <mat-card class="card">
-      <mat-card-header>
-        <mat-card-title>Loading Teams...</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Please wait</p>
-      </mat-card-content>
-    </mat-card>
+  @if (showInitialSkeleton()) {
+    @for (i of skeletonCards; track i) {
+      <div class="card-container">
+        <app-skeleton-card />
+      </div>
+    }
   } @else {
     @for (team of teams(); track team.team_key) {
       <app-team
         class="card-container"
         [team]="team"
-        [gameTimeStamps]="
-          schedule() && team.game_code
-            ? schedule()!.games[team.game_code]
-            : null
-        "
+        [gameTimeStamps]="schedule() && team.game_code ? schedule()!.games[team.game_code] : null"
+        [loadingTimes]="isLoadingTimes()"
         (toggleSetLineupEvent)="setLineupBoolean($event)"
         (togglePauseLineupEvent)="setPauseLineupActions($event)"
       />

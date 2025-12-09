@@ -1,10 +1,11 @@
-import assert from "node:assert";
 import type { FirestoreTeam, TeamOptimizer } from "@common/types/team.js";
-import type {
-  LineupChanges,
-  PlayerTransaction,
-} from "@common/types/transactions.js";
+import type { LineupChanges, PlayerTransaction } from "@common/types/transactions.js";
+
 import { logger } from "firebase-functions";
+import assert from "node:assert";
+
+import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
+
 import {
   getTodaysPostponedTeams,
   updateFirestoreTimestamp,
@@ -24,7 +25,6 @@ import {
   initStartingGoalies,
   initStartingPitchers,
 } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
-import type { TopAvailablePlayers } from "../../common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 import { isFirstRunOfTheDay } from "../../scheduleSetLineup/services/scheduleSetLineup.service.js";
 import {
   createPlayersTransactions,
@@ -50,8 +50,7 @@ export async function setUsersLineup(
   assert(uid, "No uid provided");
   assert(firestoreTeams, "No teams provided");
 
-  const isNotPaused = (team: FirestoreTeam) =>
-    !isTodayPacific(team.lineup_paused_at);
+  const isNotPaused = (team: FirestoreTeam) => !isTodayPacific(team.lineup_paused_at);
 
   const firestoreTeamsToSet = firestoreTeams.filter(isNotPaused);
 
@@ -60,12 +59,8 @@ export async function setUsersLineup(
     return;
   }
 
-  const topAvailablePlayersPromise = getTopAvailablePlayers(
-    firestoreTeamsToSet,
-    uid,
-  );
-  const initStartingPlayersPromise =
-    initializeGlobalStartingPlayers(firestoreTeamsToSet);
+  const topAvailablePlayersPromise = getTopAvailablePlayers(firestoreTeamsToSet, uid);
+  const initStartingPlayersPromise = initializeGlobalStartingPlayers(firestoreTeamsToSet);
 
   const postponedTeams = await initializePostponedTeams();
   let usersTeams: readonly TeamOptimizer[] = await fetchRostersFromYahoo(
@@ -77,16 +72,10 @@ export async function setUsersLineup(
   if (usersTeams.length === 0) {
     return;
   }
-  usersTeams = enrichTeamsWithFirestoreSettings(
-    usersTeams,
-    firestoreTeamsToSet,
-  );
-  patchTeamChangesInFirestore(usersTeams, firestoreTeamsToSet).catch(
-    logger.error,
-  ); // don't await
+  usersTeams = enrichTeamsWithFirestoreSettings(usersTeams, firestoreTeamsToSet);
+  patchTeamChangesInFirestore(usersTeams, firestoreTeamsToSet).catch(logger.error); // don't await
 
-  const topAvailablePlayerCandidates: TopAvailablePlayers =
-    await topAvailablePlayersPromise;
+  const topAvailablePlayerCandidates: TopAvailablePlayers = await topAvailablePlayersPromise;
   usersTeams = await processTransactionsForIntradayTeams(
     usersTeams,
     firestoreTeamsToSet,
@@ -117,8 +106,10 @@ export async function performWeeklyLeagueTransactions(
     return;
   }
 
-  const topAvailablePlayerCandidates: TopAvailablePlayers =
-    await getTopAvailablePlayers(firestoreTeams, uid);
+  const topAvailablePlayerCandidates: TopAvailablePlayers = await getTopAvailablePlayers(
+    firestoreTeams,
+    uid,
+  );
 
   await processTomorrowsTransactions(
     firestoreTeams,
@@ -158,10 +149,7 @@ async function processLineupChanges(
     // TODO: will log any errors, we could remove this later once we're confident in the optimizer
     const isOptimalLineup = lo.isSuccessfullyOptimized();
     if (!isOptimalLineup) {
-      logger.error(
-        `Original roster for problematic team ${team.team_key}`,
-        team,
-      );
+      logger.error(`Original roster for problematic team ${team.team_key}`, team);
     }
   }
 
@@ -221,21 +209,14 @@ async function processTransactionsForNextDayTeams(
 
   // pre-check to see if we need to do anything using today's roster.
   // May not catch 100% if the user made some changes, but it will catch most.
-  const {
-    dropPlayerTransactions: potentialDrops,
-    addSwapTransactions: potentialAddSwaps,
-  } = await createPlayersTransactions(teams, topAvailablePlayerCandidates);
+  const { dropPlayerTransactions: potentialDrops, addSwapTransactions: potentialAddSwaps } =
+    await createPlayersTransactions(teams, topAvailablePlayerCandidates);
 
   if (!(potentialDrops || potentialAddSwaps)) {
     return;
   }
 
-  await processTomorrowsTransactions(
-    teams,
-    firestoreTeams,
-    uid,
-    topAvailablePlayerCandidates,
-  );
+  await processTomorrowsTransactions(teams, firestoreTeams, uid, topAvailablePlayerCandidates);
 }
 
 async function processTomorrowsTransactions(
@@ -245,28 +226,13 @@ async function processTomorrowsTransactions(
   topAvailablePlayerCandidates: TopAvailablePlayers,
 ) {
   const teamKeys: string[] = teams.map((t) => t.team_key);
-  let tomorrowsTeams = await fetchRostersFromYahoo(
-    teamKeys,
-    uid,
-    tomorrowsDateAsString(),
-  );
+  let tomorrowsTeams = await fetchRostersFromYahoo(teamKeys, uid, tomorrowsDateAsString());
 
-  tomorrowsTeams = enrichTeamsWithFirestoreSettings(
-    tomorrowsTeams,
-    firestoreTeams,
-  );
+  tomorrowsTeams = enrichTeamsWithFirestoreSettings(tomorrowsTeams, firestoreTeams);
 
   await Promise.all([
-    processManualTransactions(
-      tomorrowsTeams,
-      topAvailablePlayerCandidates,
-      uid,
-    ),
-    processAutomaticTransactions(
-      tomorrowsTeams,
-      topAvailablePlayerCandidates,
-      uid,
-    ),
+    processManualTransactions(tomorrowsTeams, topAvailablePlayerCandidates, uid),
+    processAutomaticTransactions(tomorrowsTeams, topAvailablePlayerCandidates, uid),
   ]);
 }
 
@@ -275,19 +241,14 @@ async function processAutomaticTransactions(
   topAvailablePlayerCandidates: TopAvailablePlayers,
   uid: string,
 ): Promise<boolean> {
-  const teamsWithAutoTransactions = teams.filter(
-    (t) => t.automated_transaction_processing,
-  );
+  const teamsWithAutoTransactions = teams.filter((t) => t.automated_transaction_processing);
 
   if (teamsWithAutoTransactions.length === 0) {
     return false;
   }
 
   const { dropPlayerTransactions, lineupChanges, addSwapTransactions } =
-    await createPlayersTransactions(
-      teamsWithAutoTransactions,
-      topAvailablePlayerCandidates,
-    );
+    await createPlayersTransactions(teamsWithAutoTransactions, topAvailablePlayerCandidates);
 
   const transactionData = {
     dropPlayerTransactions,
@@ -319,12 +280,12 @@ async function processManualTransactions(
     return;
   }
 
-  const { dropPlayerTransactions, addSwapTransactions } =
-    await createPlayersTransactions(teamsToCheck, topAvailablePlayerCandidates);
+  const { dropPlayerTransactions, addSwapTransactions } = await createPlayersTransactions(
+    teamsToCheck,
+    topAvailablePlayerCandidates,
+  );
 
-  const proposedTransactions: PlayerTransaction[] = (
-    dropPlayerTransactions ?? []
-  )
+  const proposedTransactions: PlayerTransaction[] = (dropPlayerTransactions ?? [])
     .concat(addSwapTransactions ?? [])
     .flat();
 
@@ -333,9 +294,7 @@ async function processManualTransactions(
   }
 }
 
-export function getTeamsWithSameDayTransactions(
-  teams: readonly TeamOptimizer[],
-): TeamOptimizer[] {
+export function getTeamsWithSameDayTransactions(teams: readonly TeamOptimizer[]): TeamOptimizer[] {
   return teams.filter(
     (team) =>
       (team.allow_adding || team.allow_dropping || team.allow_add_drops) &&
@@ -343,9 +302,7 @@ export function getTeamsWithSameDayTransactions(
   );
 }
 
-export function getTeamsForNextDayTransactions(
-  teams: readonly TeamOptimizer[],
-): TeamOptimizer[] {
+export function getTeamsForNextDayTransactions(teams: readonly TeamOptimizer[]): TeamOptimizer[] {
   return teams.filter(
     (team) =>
       (team.allow_adding || team.allow_dropping || team.allow_add_drops) &&
@@ -355,9 +312,7 @@ export function getTeamsForNextDayTransactions(
   );
 }
 
-async function initializeGlobalStartingPlayers(
-  firestoreTeams: readonly FirestoreTeam[],
-) {
+async function initializeGlobalStartingPlayers(firestoreTeams: readonly FirestoreTeam[]) {
   const hasNHLTeam = firestoreTeams.some((team) => team.game_code === "nhl");
   if (hasNHLTeam) {
     await initStartingGoalies();

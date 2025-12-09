@@ -143,6 +143,46 @@ resource "google_artifact_registry_repository" "auto_coach_repo" {
 
   labels = local.common_labels
 
+  # Cleanup policy: delete PR images older than 7 days
+  cleanup_policies {
+    id     = "delete-old-pr-images"
+    action = "DELETE"
+    condition {
+      tag_state    = "TAGGED"
+      tag_prefixes = ["pr-"]
+      older_than   = "604800s" # 7 days in seconds
+    }
+  }
+
+  # Cleanup policy: delete untagged images older than 1 day
+  cleanup_policies {
+    id     = "delete-untagged-images"
+    action = "DELETE"
+    condition {
+      tag_state  = "UNTAGGED"
+      older_than = "86400s" # 1 day in seconds
+    }
+  }
+
+  # Keep policy: always keep prod-latest and recent versioned images
+  cleanup_policies {
+    id     = "keep-prod-images"
+    action = "KEEP"
+    condition {
+      tag_state    = "TAGGED"
+      tag_prefixes = ["v", "prod-latest"]
+    }
+  }
+
+  # Keep the 5 most recent versions of each package
+  cleanup_policies {
+    id     = "keep-recent-versions"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 5
+    }
+  }
+
   depends_on = [google_project_service.artifact_registry_api]
 }
 
@@ -432,4 +472,36 @@ resource "google_cloud_run_v2_service_iam_member" "access_policy" {
   project  = var.project_id
   role     = "roles/run.invoker"
   member   = local.allow_unauthenticated ? "allUsers" : "allAuthenticatedUsers"
+}
+
+# Additional IAM bindings for GitHub Actions service account for Mutation API
+resource "google_project_iam_member" "github_actions_mutation_api_cloud_run_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/run.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+# IAM binding for GitHub Actions to manage secrets (needed for tofu plan to read secret metadata)
+resource "google_project_iam_member" "github_actions_secret_manager_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/secretmanager.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+# IAM binding for GitHub Actions to manage Cloud Tasks (needed for tofu plan)
+resource "google_project_iam_member" "github_actions_cloud_tasks_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/cloudtasks.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
+
+# IAM binding for GitHub Actions to manage Cloud Scheduler (needed for tofu plan)
+resource "google_project_iam_member" "github_actions_cloud_scheduler_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.project_id
+  role    = "roles/cloudscheduler.admin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
 }

@@ -1,5 +1,7 @@
 import type { ClientTeam, FirestoreTeam } from "@common/types/team.js";
+
 import { isDefined } from "@common/utilities/checks.js";
+
 import {
   fetchTeamsFirestore,
   syncTeamsInFirestore,
@@ -19,9 +21,7 @@ export async function getUserTeams(uid: string): Promise<ClientTeam[]> {
   ]);
 
   if (yahooTeams.length === 0) {
-    throw new Error(
-      "No teams were returned from Yahoo. Please try again later.",
-    );
+    throw new Error("No teams were returned from Yahoo. Please try again later.");
   }
 
   const existingPatchedTeams: ClientTeam[] = firestoreTeams

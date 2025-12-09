@@ -1,11 +1,16 @@
 import angular from "@analogjs/vite-plugin-angular";
+import { playwright } from "@vitest/browser-playwright";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
+    globals: true,
+    reporters: ["verbose"],
+    testTimeout: 10000,
     projects: [
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [angular(), tsconfigPaths()],
         test: {
           name: "client",
@@ -17,7 +22,7 @@ export default defineConfig({
           browser: {
             enabled: true,
             headless: true,
-            provider: "playwright",
+            provider: playwright(),
             instances: [{ browser: "chromium" }],
           },
         },
@@ -36,23 +41,37 @@ export default defineConfig({
         },
       },
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [tsconfigPaths()],
         test: {
           name: "server-core",
           root: "./server/core",
-          setupFiles: ["dotenv/config"],
           include: ["src/**/*.{test,spec}.ts"],
           exclude: ["node_modules/**", "dist/**", "lib/**"],
+          environment: "node",
         },
       },
       {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
         plugins: [tsconfigPaths()],
         test: {
           name: "server-functions",
           root: "./server/functions",
-          setupFiles: ["dotenv/config"],
           include: ["src/**/*.{test,spec}.ts"],
           exclude: ["node_modules/**", "dist/**", "lib/**"],
+          environment: "node",
+        },
+      },
+      {
+        // @ts-expect-error - type mismatch, hopefully temp lib problem
+        plugins: [tsconfigPaths()],
+        test: {
+          name: "mutation-api",
+          root: "./server/mutation-api",
+          include: ["src/**/*.test.ts"],
+          exclude: ["node_modules/**", "dist/**"],
+          environment: "node",
+          setupFiles: ["src/test-setup.ts"],
         },
       },
     ],

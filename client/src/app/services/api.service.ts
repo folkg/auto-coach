@@ -1,44 +1,75 @@
-import { Injectable, inject } from "@angular/core";
 import type { FeedbackData } from "@common/types/feedback";
+import type { ClientTeam } from "@common/types/team";
+import type { PostTransactionsResult, TransactionsData } from "@common/types/transactions";
+
+import { Injectable, inject } from "@angular/core";
 import { Schedule } from "@common/types/Schedule";
-import type { ClientTeam, FirestoreTeam } from "@common/types/team";
-import type {
-  PostTransactionsResult,
-  TransactionsData,
-} from "@common/types/transactions";
-import { isType } from "@common/utilities/checks";
+import { FirestoreTeam } from "@common/types/team";
+import { assertType, isType } from "@common/utilities/checks";
+import { type } from "arktype";
+import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+
 import { HONO_CLIENT } from "../hono-client-config";
+import { FIRESTORE } from "../shared/firebase-tokens";
+import { AuthService } from "./auth.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class APIService {
+  private readonly auth = inject(AuthService);
   private readonly client = inject(HONO_CLIENT);
+  private readonly firestore = inject(FIRESTORE);
 
   async fetchTeamsYahoo(): Promise<ClientTeam[]> {
-    try {
-      const response = await this.client.api.teams.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch teams: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching Yahoo teams:", error);
-      throw error;
+    const response = await this.client.api.teams.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
+  }
+
+  async fetchTeamsFirestore(): Promise<FirestoreTeam[]> {
+    const user = await this.auth.getUser();
+    const db = this.firestore;
+
+    const teamsRef = collection(db, "users", user.uid, "teams");
+    const teamsSnapshot = await getDocs(query(teamsRef, where("end_date", ">=", Date.now())));
+
+    return teamsSnapshot.docs.map((docSnapshot) => {
+      const team = docSnapshot.data();
+      assertType(team, FirestoreTeam);
+      return team;
+    });
   }
 
   async fetchTeamsPartial(): Promise<FirestoreTeam[]> {
-    try {
-      const response = await this.client.api.teams.partial.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch teams: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching partial teams:", error);
-      throw error;
+    const response = await this.client.api.teams.partial.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
+  }
+
+  async fetchSchedulesFirestore(): Promise<Schedule> {
+    const storedSchedule = sessionStorage.getItem("schedules");
+    if (storedSchedule !== null) {
+      const schedule = JSON.parse(storedSchedule);
+      if (isType(schedule, Schedule)) {
+        return schedule;
+      }
+    }
+
+    const db = this.firestore;
+    const schedulesRef = doc(db, "schedule", "today");
+    const scheduleSnap = await getDoc(schedulesRef);
+    const schedule = scheduleSnap.data();
+    assertType(schedule, Schedule);
+
+    sessionStorage.setItem("schedules", JSON.stringify(schedule));
+    return schedule;
   }
 
   async fetchSchedules(): Promise<Schedule> {
@@ -69,33 +100,23 @@ export class APIService {
   }
 
   async fetchTransactions(): Promise<TransactionsData> {
-    try {
-      const response = await this.client.api.transactions.$get({});
-      if (!response.ok) {
-        throw new Error(`Failed to fetch transactions: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      throw error;
+    const response = await this.client.api.transactions.$get({});
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
-  async postTransactions(
-    transactions: TransactionsData,
-  ): Promise<PostTransactionsResult> {
-    try {
-      const response = await this.client.api.transactions.$post({
-        json: transactions,
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to post transactions: ${response.statusText}`);
-      }
-      return response.json();
-    } catch (error) {
-      console.error("Error posting transactions:", error);
-      throw error;
+  async postTransactions(transactions: TransactionsData): Promise<PostTransactionsResult> {
+    const response = await this.client.api.transactions.$post({
+      json: transactions,
+    });
+    if (!response.ok) {
+      const errorCode = await extractErrorCode(response);
+      throw new Error(errorCode);
     }
+    return response.json();
   }
 
   async sendFeedbackEmail(data: FeedbackData): Promise<boolean> {
@@ -116,16 +137,12 @@ export class APIService {
 
   async setLineupsBoolean(teamKey: string, value: boolean): Promise<void> {
     try {
-      const response = await this.client.api.teams[
-        ":teamKey"
-      ].lineup.setting.$put({
+      const response = await this.client.api.teams[":teamKey"].lineup.setting.$put({
         param: { teamKey },
         json: { value },
       });
       if (!response.ok) {
-        throw new Error(
-          `Failed to update lineup setting: ${response.statusText}`,
-        );
+        throw new Error(`Failed to update lineup setting: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error setting lineups boolean:", error);
@@ -135,20 +152,44 @@ export class APIService {
 
   async setPauseLineupActions(teamKey: string, value: boolean): Promise<void> {
     try {
-      const response = await this.client.api.teams[
-        ":teamKey"
-      ].lineup.paused.$put({
+      const response = await this.client.api.teams[":teamKey"].lineup.paused.$put({
         param: { teamKey },
         json: { value },
       });
       if (!response.ok) {
-        throw new Error(
-          `Failed to update lineup pause: ${response.statusText}`,
-        );
+        throw new Error(`Failed to update lineup pause: ${response.statusText}`);
       }
     } catch (error) {
       console.error("Error setting pause lineup:", error);
       throw error;
     }
   }
+}
+
+const ErrorResponseBody = type({
+  "code?": "string",
+  "error?": "string",
+  "message?": "string",
+});
+
+async function extractErrorCode(response: Response): Promise<string> {
+  try {
+    const json: unknown = await response.json();
+    const result = ErrorResponseBody(json);
+    if (result instanceof type.errors) {
+      return response.statusText;
+    }
+    if (result.code) {
+      return result.code;
+    }
+    if (result.error) {
+      return result.error;
+    }
+    if (result.message) {
+      return result.message;
+    }
+  } catch {
+    // fall through to statusText
+  }
+  return response.statusText;
 }

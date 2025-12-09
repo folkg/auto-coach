@@ -1,13 +1,16 @@
 import type { IPlayer } from "@common/types/Player.js";
 import type { CommonTeam } from "@common/types/team.js";
+
 import { logger } from "firebase-functions";
+
+import type { YahooAPIPlayerResponse } from "../../common/services/yahooAPI/interfaces/YahooAPIResponse.js";
+
 import {
   COMPOUND_POSITION_COMPOSITIONS,
   INACTIVE_POSITION_LIST,
   POSITIONAL_MAX_EXTRA_PLAYERS,
 } from "../../common/helpers/constants.js";
 import * as Firestore from "../../common/services/firebase/firestore.service.js";
-import type { YahooAPIPlayerResponse } from "../../common/services/yahooAPI/interfaces/YahooAPIResponse.js";
 import { getTopPlayersGeneral } from "../../common/services/yahooAPI/yahooAPI.service.js";
 import buildPlayers from "../../common/services/yahooAPI/yahooPlayerProcessing.service.js";
 
@@ -37,10 +40,7 @@ export async function getScarcityOffsetsForTeam(
   team: CommonTeam,
 ): Promise<LeagueSpecificScarcityOffsets> {
   const replacementLevels = getReplacementLevels(team);
-  return await getLeagueSpecificScarcityOffsets(
-    team.game_code,
-    replacementLevels,
-  );
+  return await getLeagueSpecificScarcityOffsets(team.game_code, replacementLevels);
 }
 
 export function getScarcityOffsetsForGame(gameCode: string) {
@@ -59,24 +59,15 @@ export async function getLeagueSpecificScarcityOffsets(
 
   for (const position in replacementLevels) {
     if (Object.hasOwn(replacementLevels, position)) {
-      const replacementIndex = Math.max(
-        Math.floor((replacementLevels[position] ?? 0) - 1),
-        0,
-      );
+      const replacementIndex = Math.max(Math.floor((replacementLevels[position] ?? 0) - 1), 0);
 
-      let offset =
-        getScarcityOffsetsForGame(gameCode)[position]?.[replacementIndex];
+      let offset = getScarcityOffsetsForGame(gameCode)[position]?.[replacementIndex];
 
       if (offset === undefined) {
-        await calculateOffsetForPosition(
-          position,
-          gameCode,
-          replacementIndex + 1,
-        );
+        await calculateOffsetForPosition(position, gameCode, replacementIndex + 1);
 
         // Refresh the offsets
-        offset =
-          getScarcityOffsetsForGame(gameCode)[position]?.[replacementIndex];
+        offset = getScarcityOffsetsForGame(gameCode)[position]?.[replacementIndex];
 
         if (offset === undefined) {
           logger.error(
@@ -139,12 +130,7 @@ export async function calculateOffsetForPosition(
   uid?: string,
 ): Promise<void> {
   const localUid = uid ?? (await Firestore.getRandomUID());
-  const promises = generateFetchPlayerPromises(
-    localUid,
-    position,
-    league,
-    count,
-  );
+  const promises = generateFetchPlayerPromises(localUid, position, league, count);
   const players = await fetchYahooPlayers(promises);
   if (players) {
     updateOffsetArray(league, position, players);
@@ -172,9 +158,7 @@ export function generateFetchPlayerPromises(
   return result;
 }
 
-async function fetchYahooPlayers(
-  fetchPlayersPromises: Promise<YahooAPIPlayerResponse>[],
-) {
+async function fetchYahooPlayers(fetchPlayersPromises: Promise<YahooAPIPlayerResponse>[]) {
   try {
     const yahooJSONs = await Promise.all(fetchPlayersPromises);
     const players: IPlayer[] = yahooJSONs
@@ -191,11 +175,7 @@ async function fetchYahooPlayers(
   }
 }
 
-function updateOffsetArray(
-  league: string,
-  position: string,
-  players: IPlayer[],
-) {
+function updateOffsetArray(league: string, position: string, players: IPlayer[]) {
   const array: number[] = [];
   for (const player of players) {
     array.push(player?.percent_owned ?? 0);
@@ -209,17 +189,11 @@ function updateOffsetArray(
     SCARCITY_OFFSETS[league] = {};
   }
   SCARCITY_OFFSETS[league][position] = array;
-  Firestore.updatePositionalScarcityOffset(league, position, array).catch(
-    console.error,
-  );
+  Firestore.updatePositionalScarcityOffset(league, position, array).catch(console.error);
 }
 
 export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
-  const {
-    game_code: gameCode,
-    roster_positions: rosterPositions,
-    num_teams: numTeams,
-  } = team;
+  const { game_code: gameCode, roster_positions: rosterPositions, num_teams: numTeams } = team;
 
   const compoundPositionCompositions = COMPOUND_POSITION_COMPOSITIONS[gameCode];
   const maxExtraPlayers = POSITIONAL_MAX_EXTRA_PLAYERS[gameCode];
@@ -262,8 +236,7 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
     }
 
     for (const compoundPosition of compoundPositions) {
-      const numPlayersAtCompoundPosition =
-        rosterPositions[compoundPosition] ?? 0;
+      const numPlayersAtCompoundPosition = rosterPositions[compoundPosition] ?? 0;
 
       const compositions = compoundPositionCompositions[compoundPosition];
       if (!compositions) {
@@ -279,11 +252,7 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
         0,
       );
 
-      distributeExtraPositions(
-        subPositions,
-        numStarters,
-        numPlayersAtCompoundPosition,
-      );
+      distributeExtraPositions(subPositions, numStarters, numPlayersAtCompoundPosition);
     }
   }
 
@@ -345,9 +314,7 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
 
     for (const position of sortedPositionList) {
       const numStartersAtPosition = rosterPositions[position] ?? 0;
-      const newShare =
-        (numStartersAtPosition / remainingStartingSpots) *
-        numPlayersToDistribute;
+      const newShare = (numStartersAtPosition / remainingStartingSpots) * numPlayersToDistribute;
 
       const extraAllowed: number | undefined = maxExtraPlayers[position];
       const totalAllowed: number =
@@ -355,10 +322,7 @@ export function getReplacementLevels(team: CommonTeam): ReplacementLevels {
           ? (numStartersAtPosition + extraAllowed) * numTeams
           : Number.POSITIVE_INFINITY;
 
-      const newTotal = Math.min(
-        newShare + (result[position] ?? 0),
-        totalAllowed,
-      );
+      const newTotal = Math.min(newShare + (result[position] ?? 0), totalAllowed);
       const numAdded = newTotal - (result[position] ?? 0);
 
       numPlayersToDistribute -= numAdded;

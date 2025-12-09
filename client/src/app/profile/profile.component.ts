@@ -1,7 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MatButton } from "@angular/material/button";
 import { logError } from "@common/utilities/error";
-// biome-ignore lint/style/useImportType: This is an injection token
+
 import { AuthService } from "../services/auth.service";
 import { OfflineWarningCardComponent } from "../shared/offline-warning-card/offline-warning-card.component";
 import { ProfileCardComponent } from "./profile-card/profile-card.component";
@@ -13,8 +13,9 @@ import { ProfileCardComponent } from "./profile-card/profile-card.component";
   imports: [OfflineWarningCardComponent, ProfileCardComponent, MatButton],
 })
 export class ProfileComponent {
+  private readonly auth = inject(AuthService);
+
   private isDirty = false;
-  constructor(private readonly auth: AuthService) {}
 
   public logout(): void {
     this.auth.logout().catch(logError);

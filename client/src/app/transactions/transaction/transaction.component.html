@@ -1,9 +1,6 @@
 <div class="card" [ngClass]="{ selected: transaction.selected }">
   @if (transaction) {
-    <mat-checkbox
-      [checked]="transaction.selected"
-      (change)="onTransactionSelectChange($event)"
-    >
+    <mat-checkbox [checked]="transaction.selected" (change)="onTransactionSelectChange($event)">
       @if (transaction.reason) {
         <div class="card-container">
           <mat-icon class="info-icon">info</mat-icon>

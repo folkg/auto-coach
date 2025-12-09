@@ -1,10 +1,8 @@
-// biome-ignore lint/style/useImportType: This is an injection token
 import { OverlayContainer } from "@angular/cdk/overlay";
-import { Component, HostBinding, type OnInit } from "@angular/core";
+import { Component, HostBinding, inject, type OnInit } from "@angular/core";
 import { pairwise, startWith } from "rxjs";
 
 import { AppNavComponent } from "./app-nav/app-nav.component";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { ThemingService } from "./services/theming.service";
 
 @Component({
@@ -16,10 +14,8 @@ import { ThemingService } from "./services/theming.service";
 export class AppComponent implements OnInit {
   @HostBinding("class") public cssClass!: string;
 
-  constructor(
-    private readonly themingService: ThemingService,
-    private readonly overlayContainer: OverlayContainer,
-  ) {}
+  private readonly themingService = inject(ThemingService);
+  private readonly overlayContainer = inject(OverlayContainer);
 
   ngOnInit(): void {
     this.themingService.theme$
@@ -32,9 +28,7 @@ export class AppComponent implements OnInit {
           this.overlayContainer.getContainerElement().classList.add(newTheme);
           if (oldTheme !== newTheme && oldTheme !== undefined) {
             //remove the oldTheme from the overlayContainer
-            this.overlayContainer
-              .getContainerElement()
-              .classList.remove(oldTheme);
+            this.overlayContainer.getContainerElement().classList.remove(oldTheme);
           }
         }
       });

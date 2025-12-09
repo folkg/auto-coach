@@ -7,11 +7,22 @@ The command should be run at the workspace root.
 bun add @tanstack/query-core
 ```
 
+## Effect Solutions Usage
+
+The Effect Solutions CLI provides curated best practices and patterns for Effect TypeScript. Before working on Effect code, check if there's a relevant topic that covers your use case.
+
+- `effect-solutions list` - List all available topics
+- `effect-solutions show <slug...>` - Read one or more topics
+- `effect-solutions search <term>` - Search topics by keyword
+
+**Local Effect Source:** The Effect repository is cloned to `~/.local/share/effect-solutions/effect` for reference. Use this to explore APIs, find usage examples, and understand implementation details when the documentation isn't enough.
+
 # Automated Testing
 
 We practice Test Driven Development (TDD), this means that you should always write failing tests before you begin writing the implementation. Run the tests before you begin to ensure they run (no compliation errors), but fail for the expected reasons.
 
 ## Test Organization
+
 - Place unit tests in the same file as the code being tested
 - Test files should be named `*.test.ts` or `*.test.tsx`
 - Follow the AAA (Arrange-Act-Assert) pattern. Add a code comment to describe and visually partition each section.
@@ -22,27 +33,46 @@ We practice Test Driven Development (TDD), this means that you should always wri
 - `test.each()` (or `it.each()`) is a good tool when only the input / out vary. Use them only when the test logic is identical and you are simply varying inputs and expected outputs. Do not use it to make tests overly clever or hard to read.
 
 ## Test Coverage
+
 - Test both success and error cases
 - Do NOT test implementation details or function internals. Use ONLY the public API to arrange, act, and assert. This means that toHaveBeenCalledWith() or other toHaveBeenCalled() should rarely, if ever, be used.
 - Include edge cases and boundary conditions
 - Use property-based testing where appropriate
 
 ## Test Isolation
+
 - Use test-specific types and mocks
 - Clean up resources after tests
 - Avoid mocking modules, prefer dependency injection wherever possible
 
 ## Test Type Safety
+
 - Type safety is enforced by TypeScript's type system. Do not use `any` types or cast using `as` type assertions. Type safety in test code is as important as in production code.
 - Use type guards and assertions (`assert` from vitest) to ensure type safety in tests
-- helper function `createMock<T>(partialObject)` from services/web/imports/lib/test/createMock.ts shall be used to create a type safe mock object with partial properties. This is very useful for creating partial mocks of service classes that you can inject or partial mocks of objects to be returned from mock functions.
+- helper function `createMock<T>(partialObject)` from @common/utilities/createMock shall be used to create a type safe mock object with partial properties. This is very useful for creating partial mocks of service classes that you can inject or partial mocks of objects to be returned from mock functions. An example of mocking the Firestore module is below:
+
+```ts
+const mockFirestore = createMock<Firestore>({
+  collection: vi.fn(() =>
+    createMock<CollectionReference>({
+      doc: vi.fn(() =>
+        createMock<DocumentReference>({
+          update: vi.fn().mockRejectedValue(new Error("Firestore error")),
+        }),
+      ),
+    }),
+  ),
+});
+```
 
 ## Test Container Initialization
-- If the code under test is in the `services/web/imports/xm/server/**` folder and  depends on server infrastructure (e.g., Postgres, MongoDB, NATS), initialize test containers using the `initTestContainers` helper.
+
+- If the code under test is in the `services/web/imports/xm/server/**` folder and depends on server infrastructure (e.g., Postgres, MongoDB, NATS), initialize test containers using the `initTestContainers` helper.
 - Always clean up resources after tests.
 - If you are cleaning up resources created in a `beforeEach` or `beforeAll` method, return the cleanup function directly in the before method instead of using a separate `afterEach` or `afterAll` method. This keeps the logic in once place.
 
 ## Testing Tools
+
 - Use `vitest` for unit testing
 - Use `TestScheduler` from `rxjs/testing` for pure RxJS Observable testing that use NO asyncronous operations. Async operations break TestScheduler.
 - Use `await firstValueFrom`, `bufferCount`, `bufferTime`, and `vi.useFakeTimers()` (with associated timing methods) for RxJS Observable testing that involve asynchronous operations
@@ -51,6 +81,7 @@ We practice Test Driven Development (TDD), this means that you should always wri
 ## Examples
 
 ### Good (Arrange, Act, Assert)
+
 ```typescript
 // src/utils/math.ts
 export function add(a: number, b: number): number {
@@ -60,10 +91,10 @@ export function add(a: number, b: number): number {
 // src/utils/math.test.ts
 import { expect, it } from "vitest";
 
-import { add } from './math';
+import { add } from "./math";
 
-describe('add', () => {
-  it('adds two numbers correctly', () => {
+describe("add", () => {
+  it("adds two numbers correctly", () => {
     // Arrange
     const a = 1;
     const b = 2;
@@ -78,24 +109,26 @@ describe('add', () => {
 ```
 
 ### Bad
+
 ```typescript
 // src/utils/math.test.ts
 import { expect, it } from "vitest";
-import { add } from './math';
+import { add } from "./math";
 
-describe('add', () => {
-  it('should add two numbers', () => {
+describe("add", () => {
+  it("should add two numbers", () => {
     expect(add(1, 2)).toBe(3);
   });
 });
 ```
 
 ### Good (RxJS Observable Testing with only synchronous operations)
+
 ```typescript
 import { TestScheduler } from "rxjs/testing";
 import { assert, describe, expect, it, vi } from "vitest";
 
-import { createMock } from "../../../lib/test/createMock.js";
+import { createMock } from "@common/utilities/createMock";
 import { XenPreferences } from "../../../lib/xen/util/preferences/XenPreferences.js";
 import { MockRouterService } from "../services/router/mock/MockRouterService.js";
 import { DrawingBoardViewService } from "./DrawingBoardViewService.js";
@@ -183,6 +216,7 @@ describe("DrawingBoardViewService", () => {
 ```
 
 ### Good (RxJS Observable Testing with some asynchronous operations)
+
 ```typescript
 import { describe, expect, it, type Mock, vi } from "vitest";
 
@@ -574,9 +608,7 @@ If a thrown error produces a desirable outcome in the system, go for it. For ins
 However, for code that you would need a manual try catch for, consider using a result type instead:
 
 ```ts
-type Result<T, E extends Error> =
-  | { ok: true; value: T }
-  | { ok: false; error: E };
+type Result<T, E extends Error> = { ok: true; value: T } | { ok: false; error: E };
 ```
 
 For example, when parsing JSON:
@@ -614,15 +646,17 @@ All Observable variable names shall end with "$".
 ## Manage Subscriptions to Prevent Memory Leaks
 
 Always unsubscribe from observables to prevent memory leaks, especially in long-lived applications or components (in React). Common patterns include:
+
 1. Using operators like `take`, `first`, `takeUntil` (often paired with a subject that emits on component destruction).
 
 ## Choose the Right Flattening Operator
 
 Understand and use the appropriate flattening operator (`mergeMap`, `switchMap`, `concatMap`, `exhaustMap`) based on the desired behavior when handling higher-order observables (observables that emit other observables).
-* `mergeMap`: Concurrently subscribes to all inner observables. Use when order doesn't matter and concurrency is desired.
-* `switchMap`: Subscribes to the latest inner observable, unsubscribing from the previous one. Ideal for scenarios like type-ahead searches where only the latest result matters.
-* `concatMap`: Subscribes to inner observables sequentially, waiting for the current one to complete before subscribing to the next. Use when order is important and execution must be sequential.
-* `exhaustMap`: Ignores new inner observables while the current one is still active. Useful for scenarios like preventing multiple clicks on a submit button.
+
+- `mergeMap`: Concurrently subscribes to all inner observables. Use when order doesn't matter and concurrency is desired.
+- `switchMap`: Subscribes to the latest inner observable, unsubscribing from the previous one. Ideal for scenarios like type-ahead searches where only the latest result matters.
+- `concatMap`: Subscribes to inner observables sequentially, waiting for the current one to complete before subscribing to the next. Use when order is important and execution must be sequential.
+- `exhaustMap`: Ignores new inner observables while the current one is still active. Useful for scenarios like preventing multiple clicks on a submit button.
 
 ## Handle Errors Gracefully
 
@@ -631,24 +665,27 @@ Use the `catchError` or `retry` operators within observable pipes to handle erro
 ## Use Subjects Appropriately
 
 Understand the different types of Subjects (`Subject`, `BehaviorSubject`, `ReplaySubject`) and use them judiciously. Subjects act as both an Observer and an Observable, enabling multicasting and bridging imperative code with the reactive world.
-*   `Subject`: Basic multicasting; subscribers only get values emitted *after* they subscribe.
-*   `BehaviorSubject`: Requires an initial value and emits the latest value to new subscribers. Useful for representing "current state".
-*   `ReplaySubject`: Buffers a specified number of past emissions and replays them to new subscribers. Good for caching recent values.
+
+- `Subject`: Basic multicasting; subscribers only get values emitted _after_ they subscribe.
+- `BehaviorSubject`: Requires an initial value and emits the latest value to new subscribers. Useful for representing "current state".
+- `ReplaySubject`: Buffers a specified number of past emissions and replays them to new subscribers. Good for caching recent values.
 
 ## Understand Hot vs. Cold Observables
 
 Understand the difference between Cold and Hot observables and their implications:
-*   **Cold Observables**: Start executing or producing values only when subscribed to. Each subscription triggers a separate execution. Examples: `of()`, `from()`, `interval()`, `timer()`, most observables returned by operators. They are generally preferred for their predictable, isolated execution per subscriber.
-*   **Hot Observables**: Are already producing values even before a subscription exists. Subscribers receive values emitted *after* they subscribe. Examples: Observables derived from DOM events (`fromEvent`), Subjects (`Subject`, `BehaviorSubject`, etc.). Use hot observables when dealing with shared events or state that exists independently of individual subscribers.
+
+- **Cold Observables**: Start executing or producing values only when subscribed to. Each subscription triggers a separate execution. Examples: `of()`, `from()`, `interval()`, `timer()`, most observables returned by operators. They are generally preferred for their predictable, isolated execution per subscriber.
+- **Hot Observables**: Are already producing values even before a subscription exists. Subscribers receive values emitted _after_ they subscribe. Examples: Observables derived from DOM events (`fromEvent`), Subjects (`Subject`, `BehaviorSubject`, etc.). Use hot observables when dealing with shared events or state that exists independently of individual subscribers.
 
 ## Prefer Cold Observables Over Hot Observables
 
 Cold observables are strongly preferred over hot observables wherever possible to maintain state, unless we explicitly need to call `next` in event handlers or store the state permanently to call `.value` on it. Cold observables start emitting values only when they are subscribed to, ensuring that each subscriber gets the full sequence of values from the beginning.
 
 ### Cold Observable example
+
 ```typescript
-import { Observable } from 'rxjs';
-import { interval } from 'rxjs';
+import { Observable } from "rxjs";
+import { interval } from "rxjs";
 
 export class ViewService {
   coldObservable$: Observable<number>;
@@ -660,10 +697,11 @@ export class ViewService {
 ```
 
 ### Hot Observable example (good)
+
 ```typescript
-import { interval } from 'rxjs';
+import { interval } from "rxjs";
 import { Value } from "../../imports/lib/rxjs/subject/Value.js";
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map } from "rxjs/operators";
 
 export class ViewService {
   hotObservable$: Value<number>;
@@ -672,7 +710,7 @@ export class ViewService {
   constructor() {
     this.hotObservable$ = new Value(0);
     this.coldObservable$ = this.hotObservable$.pipe(
-      switchMap(value => interval(1000).pipe(map(interval => value * interval)))
+      switchMap((value) => interval(1000).pipe(map((interval) => value * interval))),
     );
   }
 
@@ -705,42 +743,3 @@ Wherever possible, prefer handling side effects by subscribing to observables di
 Side effects are actions that don't modify the emitted value itself but interact with the outside world, such as logging, debugging, updating external state (use cautiously), or triggering browser APIs.
 
 ## Use `share` for Caching
-
-# Git Auto Commits
-
-After the AI Agent performs automatic changes:
-1. ensure all vitest test pass 100%, biome checks passes 100%, biome formatting has been applied.
-2. All modified files MUST be automatically committed
-3. ONLY the modified files as a part of your task shall be automatically committed. Do not commit all files by default.
-4. Commit messages MUST follow the conventional commit format
-5. Commit messages MUST include:
-   - Type: The type of change (feat, fix, docs, style, refactor, test, chore)
-   - Description: A clear explanation of what changed
-   - Body: NEVER include a commit body message
-6. The commit message should be concise and descriptive, aiming for the total character count to be less than 72 characters.
-7. The commit message should concisely explain the "why", providing context for the changes made, not just the "what", since this can be found in the git diff
-8. Do not run the git diff command or print the output to the terminal.
-
-
-## Examples
-### Good: Correct Commit Message
-```
-feat: Implemented automatic git commit message generation
-```
-
-### Bad: Incorrect Commit Message
-```
-Updated some files
-
-- Made changes to formatting
-- Fixed some issues
-```
-
-## Conventional Commit Types
-- feat: New feature
-- fix: Bug fix
-- docs: Documentation changes
-- style: Code style changes (formatting, etc.)
-- refactor: Code refactoring
-- test: Adding or modifying tests
-- chore: Maintenance tasks

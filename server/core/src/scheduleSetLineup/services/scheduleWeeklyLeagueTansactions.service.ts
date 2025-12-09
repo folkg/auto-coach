@@ -1,13 +1,12 @@
-import { getApps, initializeApp } from "firebase-admin/app";
 import type { DocumentData, QuerySnapshot } from "firebase-admin/firestore";
+
+import { getApps, initializeApp } from "firebase-admin/app";
 import { getFunctions, type TaskQueue } from "firebase-admin/functions";
 import { logger } from "firebase-functions";
+
 import { getTomorrowsActiveWeeklyTeams } from "../../common/services/firebase/firestore.service.js";
 import { getFunctionUrl } from "../../common/services/utilities.service.js";
-import {
-  enqueueUsersTeams,
-  mapUsersToActiveTeams,
-} from "./scheduling.service.js";
+import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";
 
 if (getApps().length === 0) {
   initializeApp();
@@ -22,8 +21,7 @@ export async function scheduleWeeklyLeagueTransactions() {
     return;
   }
 
-  const activeUsers: Map<string, DocumentData> =
-    mapUsersToActiveTeams(teamsSnapshot);
+  const activeUsers: Map<string, DocumentData> = mapUsersToActiveTeams(teamsSnapshot);
   if (activeUsers.size === 0) {
     logger.log("No users to set lineups for");
     return;

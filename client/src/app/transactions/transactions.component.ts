@@ -1,39 +1,27 @@
+import type { TransactionResults, TransactionsData } from "@common/types/transactions";
+
 import { JsonPipe } from "@angular/common";
-import { Component, computed, signal } from "@angular/core";
+import { Component, computed, inject, signal } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { MatButton } from "@angular/material/button";
-import {
-  MatCard,
-  MatCardContent,
-  MatCardHeader,
-  MatCardTitle,
-} from "@angular/material/card";
-// biome-ignore lint/style/useImportType: This is an injection token
+import { MatCard, MatCardContent, MatCardHeader, MatCardTitle } from "@angular/material/card";
 import { MatDialog } from "@angular/material/dialog";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { ActivatedRoute, Router } from "@angular/router";
-import type {
-  TransactionResults,
-  TransactionsData,
-} from "@common/types/transactions";
 import { logError } from "@common/utilities/error";
 import { lastValueFrom } from "rxjs";
-import { LoaderComponent } from "../loader/loader.component";
+
+import type { PlayerTransactionClient, TransactionsDataClient } from "./types/client-types";
+
 import { LoaderOverlayComponent } from "../loader-overlay/loader-overlay.component";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { APIService } from "../services/api.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { SyncTeamsService } from "../services/sync-teams.service";
 import {
   ConfirmDialogComponent,
   type DialogData,
 } from "../shared/confirm-dialog/confirm-dialog.component";
+import { SkeletonCardComponent } from "../shared/skeleton-card/skeleton-card.component";
 import { SortTeamsByTransactionsPipe } from "./sort-teams-by-transactions.pipe";
 import { TeamComponent } from "./team/team.component";
-import type {
-  PlayerTransactionClient,
-  TransactionsDataClient,
-} from "./types/client-types";
 
 @Component({
   selector: "app-transactions",
@@ -49,67 +37,53 @@ import type {
     JsonPipe,
     SortTeamsByTransactionsPipe,
     LoaderOverlayComponent,
-    LoaderComponent,
+    SkeletonCardComponent,
   ],
 })
 export class TransactionsComponent {
-  readonly allTeams = toSignal(this.sts.teams$, { initialValue: [] });
-  readonly teams = computed(() =>
-    this.allTeams().filter((team) => team.allow_transactions),
-  );
+  private readonly api = inject(APIService);
+  private readonly sts = inject(SyncTeamsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
-  private readonly transactions = signal<TransactionsDataClient | undefined>(
-    undefined,
-  );
-  readonly flatTransactions = computed<PlayerTransactionClient[] | undefined>(
-    () => this.computeFlatTransactions(this.transactions()),
+  readonly teamsState = toSignal(this.sts.teamsState$);
+  readonly allTeams = computed(() => this.teamsState()?.teams ?? []);
+  readonly teams = computed(() => [...this.allTeams()].filter((team) => team.allow_transactions));
+  readonly showInitialSkeleton = computed(() => this.teamsState()?.status === "loading-initial");
+
+  private readonly transactions = signal<TransactionsDataClient | undefined>(undefined);
+  readonly loadingTransactions = computed(() => this.transactions() === undefined);
+  readonly flatTransactions = computed<PlayerTransactionClient[] | undefined>(() =>
+    this.computeFlatTransactions(this.transactions()),
   );
   readonly selectedTransactions = computed(
     () => this.flatTransactions()?.filter((t) => t.selected) ?? [],
   );
-  readonly numSelectedTransactions = computed(
-    () => this.selectedTransactions().length,
-  );
+  readonly numSelectedTransactions = computed(() => this.selectedTransactions().length);
 
   readonly isProcessing = signal(false);
   readonly success = signal<boolean | undefined>(undefined);
-  private readonly transactionResults = signal<TransactionResults | undefined>(
-    undefined,
-  );
+  private readonly transactionResults = signal<TransactionResults | undefined>(undefined);
   readonly successTransactions = computed(
     () => this.transactionResults()?.postedTransactions ?? [],
   );
-  readonly failedReasons = computed(
-    () => this.transactionResults()?.failedReasons ?? [],
-  );
-
-  constructor(
-    private readonly api: APIService,
-    private readonly sts: SyncTeamsService,
-    private readonly dialog: MatDialog,
-    private readonly router: Router,
-    private readonly route: ActivatedRoute,
-  ) {}
+  readonly failedReasons = computed(() => this.transactionResults()?.failedReasons ?? []);
 
   ngOnInit(): void {
     this.fetchTransactions()
       .then((transactions) => this.transactions.set(transactions))
-      .catch((err) =>
-        logError(err, "Error fetching transactions from Firebase:"),
-      );
+      .catch((err) => logError(err, "Error fetching transactions from Firebase:"));
   }
 
   private async fetchTransactions(): Promise<TransactionsDataClient> {
     const transactions = await this.api.fetchTransactions();
-    return mapPlayerTransactions(
-      transactions as TransactionsDataClient,
-      (t) => ({
-        ...t,
-        selected: false,
-        // TOOD: ID should be assigned on the server
-        id: `${t.teamKey}-${t.players.map((p) => p.playerKey).join("-")}`,
-      }),
-    );
+    return mapPlayerTransactions(transactions as TransactionsDataClient, (t) => ({
+      ...t,
+      selected: false,
+      // TOOD: ID should be assigned on the server
+      id: `${t.teamKey}-${t.players.map((p) => p.playerKey).join("-")}`,
+    }));
   }
 
   onSelectTransaction($event: { isSelected: boolean; transactionId: string }) {
@@ -120,9 +94,7 @@ export class TransactionsComponent {
     this.transactions.update((transactions) =>
       transactions
         ? mapPlayerTransactions(transactions, (t) =>
-            t.id === $event.transactionId
-              ? { ...t, selected: $event.isSelected }
-              : t,
+            t.id === $event.transactionId ? { ...t, selected: $event.isSelected } : t,
           )
         : undefined,
     );
@@ -137,9 +109,7 @@ export class TransactionsComponent {
 
     const { dropPlayerTransactions, addSwapTransactions } = transactions;
 
-    return (dropPlayerTransactions ?? [])
-      .concat(addSwapTransactions ?? [])
-      .flat();
+    return (dropPlayerTransactions ?? []).concat(addSwapTransactions ?? []).flat();
   }
 
   private getSelectedTransactionsData(): TransactionsDataClient {
@@ -154,23 +124,15 @@ export class TransactionsComponent {
       return result;
     }
 
-    const { dropPlayerTransactions, lineupChanges, addSwapTransactions } =
-      transactions;
+    const { dropPlayerTransactions, lineupChanges, addSwapTransactions } = transactions;
 
-    result.dropPlayerTransactions = filterSelectedTransactionsData(
-      dropPlayerTransactions,
-    );
-
-    result.addSwapTransactions =
-      filterSelectedTransactionsData(addSwapTransactions);
+    result.dropPlayerTransactions = filterSelectedTransactionsData(dropPlayerTransactions);
+    result.addSwapTransactions = filterSelectedTransactionsData(addSwapTransactions);
 
     // Keep all the lineup changes for the teams that have selected transactions, even if we don't need them all
-    const teamsWithTransactions = new Set(
-      this.selectedTransactions().map((t) => t.teamKey),
-    );
+    const teamsWithTransactions = new Set(this.selectedTransactions().map((t) => t.teamKey));
     result.lineupChanges =
-      lineupChanges?.filter((lc) => teamsWithTransactions.has(lc.teamKey)) ??
-      null;
+      lineupChanges?.filter((lc) => teamsWithTransactions.has(lc.teamKey)) ?? null;
 
     return result;
   }
@@ -188,9 +150,7 @@ export class TransactionsComponent {
     }
   }
 
-  private async postTransactions(
-    transactions: TransactionsData,
-  ): Promise<void> {
+  private async postTransactions(transactions: TransactionsData): Promise<void> {
     try {
       const result = await this.api.postTransactions(transactions);
       this.success.set(result.success);
@@ -226,9 +186,12 @@ export class TransactionsComponent {
   }
 
   reloadComponent(): void {
-    this.router.navigateByUrl("/", { skipLocationChange: true }).then(() => {
-      this.router.navigate([this.route.snapshot.routeConfig?.path ?? ""]);
-    });
+    this.router
+      .navigateByUrl("/", { skipLocationChange: true })
+      .then(() => {
+        this.router.navigate([this.route.snapshot.routeConfig?.path ?? ""]).catch(console.error);
+      })
+      .catch(console.error);
   }
 }
 
@@ -236,14 +199,11 @@ function mapPlayerTransactions(
   transactionsData: TransactionsDataClient,
   mapFn: (t: PlayerTransactionClient) => PlayerTransactionClient,
 ): TransactionsDataClient {
-  const { dropPlayerTransactions, addSwapTransactions, lineupChanges } =
-    transactionsData;
+  const { dropPlayerTransactions, addSwapTransactions, lineupChanges } = transactionsData;
 
   return {
-    dropPlayerTransactions:
-      dropPlayerTransactions?.map((tA) => tA.map((t) => mapFn(t))) ?? null,
-    addSwapTransactions:
-      addSwapTransactions?.map((tA) => tA.map((t) => mapFn(t))) ?? null,
+    dropPlayerTransactions: dropPlayerTransactions?.map((tA) => tA.map(mapFn)) ?? null,
+    addSwapTransactions: addSwapTransactions?.map((tA) => tA.map(mapFn)) ?? null,
     lineupChanges,
   };
 }
@@ -256,8 +216,6 @@ function filterSelectedTransactionsData(
   }
 
   return playerTransactions
-    .map((teamTransactions) =>
-      teamTransactions.filter((transaction) => transaction.selected),
-    )
+    .map((teamTransactions) => teamTransactions.filter((transaction) => transaction.selected))
     .filter((selectedTransactions) => selectedTransactions.length > 0);
 }

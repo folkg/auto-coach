@@ -1,12 +1,18 @@
+import { structuredLogger } from "@core/common/services/structured-logger.js";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+
 import feedbackRouter from "./feedback/feedback";
 import { firebaseAuthMiddleware } from "./firebaseAuthMiddleware";
 import schedulesRouter from "./schedules/schedules";
 import teamsRouter from "./teams/teams";
 import transactionsRouter from "./transactions/transactions";
 
-console.log("Starting server...");
+structuredLogger.info("Starting API server", {
+  phase: "execution",
+  event: "SERVER_STARTUP",
+});
 
 export type AuthContext = {
   Variables: {
@@ -16,7 +22,6 @@ export type AuthContext = {
 
 const app = new Hono<AuthContext>();
 
-// biome-ignore lint/complexity/useLiteralKeys: Angular build complains about this since it doesn't know about the server side env types
 const allowedOrigins = (process.env["ALLOWED_ORIGINS"] ?? "")
   .split(",")
   .map((origin) => origin.trim())
@@ -32,6 +37,34 @@ app.use(
     credentials: true,
   }),
 );
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    const status = err.status;
+    try {
+      const body = JSON.parse(err.message);
+      return c.json(body, status);
+    } catch {
+      return c.json({ error: err.message }, status);
+    }
+  }
+
+  // Log unhandled errors that weren't caught by route handlers
+  structuredLogger.error(
+    "Unhandled server error",
+    {
+      phase: "execution",
+      event: "UNHANDLED_ERROR",
+      route: c.req.path,
+      method: c.req.method,
+      outcome: "unhandled-error",
+      terminated: true,
+    },
+    err,
+  );
+
+  return c.json({ error: "Internal server error" }, 500);
+});
 
 const routes = app
   .get("/", (c) => c.json({ status: "ok" }))

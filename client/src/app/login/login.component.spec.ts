@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/angular";
 import userEvent from "@testing-library/user-event";
 import { BehaviorSubject } from "rxjs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+
 import { AuthService } from "../services/auth.service";
 import { LoginComponent } from "./login.component";
 
@@ -33,11 +34,9 @@ describe("LoginComponent", () => {
       providers: defaultProviders,
     });
 
-    expect(
-      screen.getByText("Automatically Optimize your Lineups"),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Sign in with Yahoo")).toBeInTheDocument();
-    expect(screen.getByText("Learn More")).toBeInTheDocument();
+    expect(screen.getByText("Automatically Optimize your Lineups")).toBeTruthy();
+    expect(screen.getByText("Sign in with Yahoo")).toBeTruthy();
+    expect(screen.getByText("Learn More")).toBeTruthy();
   });
 
   describe("Button Actions", () => {
@@ -86,10 +85,7 @@ describe("LoginComponent", () => {
         providers: defaultProviders,
       });
 
-      component.fixture.componentInstance.errorDialog(
-        "Test message",
-        "Custom Title",
-      );
+      component.fixture.componentInstance.errorDialog("Test message", "Custom Title");
 
       expect(mockDialog.open).toHaveBeenCalledWith(
         expect.anything(),

@@ -1,9 +1,11 @@
 import { FeedbackData } from "@common/types/feedback";
-import { getErrorMessage } from "@common/utilities/error";
 import { sendUserFeedbackEmail } from "@core/common/services/email/feedbackEmail.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
 import { Hono } from "hono";
+
 import type { AuthContext } from "../index";
+
+import { handleRouteError } from "../routeErrorHandler";
 
 export const feedbackRouter = new Hono<AuthContext>()
 
@@ -20,7 +22,7 @@ export const feedbackRouter = new Hono<AuthContext>()
       const success: boolean = await sendUserFeedbackEmail(data, uid);
       return c.json<{ success: boolean }>({ success });
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error, { userId: uid, route: "/api/feedback", method: "POST" });
     }
   });
 

@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/angular";
 import { describe, expect, it } from "vitest";
+
 import { LoaderComponent } from "./loader.component";
 
 describe("LoaderComponent", () => {
@@ -7,7 +8,7 @@ describe("LoaderComponent", () => {
     await render(LoaderComponent);
 
     const loader = screen.getByTestId("loader-animation");
-    expect(loader).toBeInTheDocument();
+    expect(loader).toBeTruthy();
 
     // Should render all four balls with correct classes
     expect(loader.querySelector(".ball.football")).toBeTruthy();

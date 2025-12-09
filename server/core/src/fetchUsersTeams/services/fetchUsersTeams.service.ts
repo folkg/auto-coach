@@ -1,6 +1,7 @@
 import type { InfoTeam } from "@common/types/team.js";
 
 import { type } from "arktype";
+
 import {
   flattenArray,
   getPacificEndOfDay,
@@ -61,18 +62,16 @@ export async function fetchTeamsYahoo(uid: string): Promise<InfoTeam[]> {
       if (leagueKey === "count") {
         continue;
       }
-      const { leagueDetails, leagueSettings, usersTeam } =
-        getLeagueSettingsAnduserTeam(leaguesJSON, leagueKey);
+      const { leagueDetails, leagueSettings, usersTeam } = getLeagueSettingsAnduserTeam(
+        leaguesJSON,
+        leagueKey,
+      );
 
       const [baseTeam, ...extendedTeam] = usersTeam;
       const flatTeam = FlatTeamSchema.assert(flattenArray(baseTeam));
 
-      const teamStandings = TeamStandingsSchema.assert(
-        flattenArray(extendedTeam),
-      ).team_standings;
-      const rosterPositions = getPositionCounts(
-        leagueSettings.roster_positions,
-      );
+      const teamStandings = TeamStandingsSchema.assert(flattenArray(extendedTeam)).team_standings;
+      const rosterPositions = getPositionCounts(leagueSettings.roster_positions);
 
       const teamObj: InfoTeam = {
         game_name: flatGameDetails.name,

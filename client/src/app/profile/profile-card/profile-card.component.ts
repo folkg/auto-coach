@@ -1,18 +1,16 @@
+import type { User } from "firebase/auth";
+
 import { AsyncPipe, NgIf } from "@angular/common";
 import {
   Component,
   EventEmitter,
+  inject,
   type OnDestroy,
   type OnInit,
   Output,
   signal,
 } from "@angular/core";
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import {
   MatCard,
@@ -22,18 +20,15 @@ import {
   MatCardHeader,
   MatCardTitle,
 } from "@angular/material/card";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { MatDialog } from "@angular/material/dialog";
 import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { assertDefined } from "@common/utilities/checks";
 import { getErrorMessage } from "@common/utilities/error";
-import type { User } from "firebase/auth";
 import { distinctUntilChanged, map, Subscription } from "rxjs";
-// biome-ignore lint/style/useImportType: This is an injection token
+
 import { AppStatusService } from "../../services/app-status.service";
-// biome-ignore lint/style/useImportType: This is an injection token
 import { AuthService } from "../../services/auth.service";
 import {
   ConfirmDialogComponent,
@@ -64,6 +59,10 @@ import {
   standalone: true,
 })
 export class ProfileCardComponent implements OnInit, OnDestroy {
+  private readonly auth = inject(AuthService);
+  readonly appStatusService = inject(AppStatusService);
+  private readonly dialog = inject(MatDialog);
+
   emailFormControl = new FormControl("", [
     Validators.required,
     Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$"),
@@ -76,12 +75,6 @@ export class ProfileCardComponent implements OnInit, OnDestroy {
   @Output() isDirty = new EventEmitter<boolean>();
 
   readonly resendInProgress = signal(false);
-
-  constructor(
-    private readonly auth: AuthService,
-    readonly appStatusService: AppStatusService,
-    private readonly dialog: MatDialog,
-  ) {}
 
   private readonly subs = new Subscription();
 
@@ -167,10 +160,7 @@ export class ProfileCardComponent implements OnInit, OnDestroy {
         "Verification Email Sent",
       );
     } catch (err) {
-      this.errorDialog(
-        getErrorMessage(err),
-        "Error sending verification email",
-      );
+      this.errorDialog(getErrorMessage(err), "Error sending verification email");
     } finally {
       this.resendInProgress.set(false);
     }

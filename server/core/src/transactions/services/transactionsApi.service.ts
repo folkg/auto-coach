@@ -1,8 +1,6 @@
 import type { TransactionsData } from "@common/types/transactions.js";
-import {
-  getTransactions,
-  postTransactions,
-} from "./processTransactions.service.js";
+
+import { getTransactions, postTransactions } from "./processTransactions.service.js";
 
 /**
  * Get transaction suggestions for a user
@@ -10,9 +8,7 @@ import {
  * @param uid - The user ID
  * @returns TransactionsData object with suggested transactions
  */
-export function getTransactionSuggestions(
-  uid: string,
-): Promise<TransactionsData> {
+export function getTransactionSuggestions(uid: string): Promise<TransactionsData> {
   return getTransactions(uid);
 }
 
@@ -23,9 +19,6 @@ export function getTransactionSuggestions(
  * @param uid - The user ID
  * @returns Result of the transaction processing
  */
-export function processSelectedTransactions(
-  transactionData: TransactionsData,
-  uid: string,
-) {
+export function processSelectedTransactions(transactionData: TransactionsData, uid: string) {
   return postTransactions(transactionData, uid);
 }

@@ -1,9 +1,7 @@
-import { Inject, Injectable } from "@angular/core";
-// biome-ignore lint/style/useImportType: This is an injection token
+import { inject, Injectable } from "@angular/core";
 import { Router } from "@angular/router";
 import { assertDefined, ensure } from "@common/utilities/checks";
 import {
-  type Auth,
   OAuthProvider,
   onAuthStateChanged,
   reauthenticateWithPopup,
@@ -14,6 +12,7 @@ import {
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
+
 import { delay } from "../../../../common/src/utilities/delay";
 import { getErrorMessage } from "../../../../common/src/utilities/error";
 import { AUTH } from "../shared/firebase-tokens";
@@ -22,13 +21,13 @@ import { AUTH } from "../shared/firebase-tokens";
   providedIn: "root",
 })
 export class AuthService {
+  private readonly router = inject(Router);
+  private readonly auth = inject(AUTH);
+
   readonly user$: Observable<User | null>;
   readonly loading$ = new BehaviorSubject<boolean>(false);
 
-  constructor(
-    private readonly router: Router,
-    @Inject(AUTH) private readonly auth: Auth,
-  ) {
+  constructor() {
     // if (!environment.production) {
     //   connectAuthEmulator(this.auth, 'http://localhost:9099', { disableWarnings: true })
     // }
@@ -130,9 +129,7 @@ export class AuthService {
       await sendEmailVerification(this.auth.currentUser);
       //TODO: Dialog to tell user to check email
     } catch (err) {
-      throw new Error(
-        `Couldn't send verification email: ${getErrorMessage(err)}`,
-      );
+      throw new Error(`Couldn't send verification email: ${getErrorMessage(err)}`);
     }
   }
 
@@ -144,9 +141,7 @@ export class AuthService {
     } catch (err) {
       if (err instanceof Error) {
         if (err.message.includes("auth/email-already-in-use")) {
-          throw new Error(
-            "This email address is already in use by another account.",
-          );
+          throw new Error("This email address is already in use by another account.");
         }
         if (err.message.includes("auth/invalid-email")) {
           throw new Error("The email address is not valid.");

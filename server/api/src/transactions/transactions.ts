@@ -1,12 +1,14 @@
 import { TransactionsData } from "@common/types/transactions";
-import { getErrorMessage } from "@common/utilities/error";
 import {
   getTransactionSuggestions,
   processSelectedTransactions,
 } from "@core/transactions/services/transactionsApi.service.js";
 import { arktypeValidator } from "@hono/arktype-validator";
 import { Hono } from "hono";
+
 import type { AuthContext } from "..";
+
+import { handleRouteError } from "../routeErrorHandler";
 
 export const transactionsRoute = new Hono<AuthContext>()
 
@@ -21,7 +23,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const data = await getTransactionSuggestions(uid);
       return c.json(data);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error, { userId: uid, route: "/api/transactions", method: "GET" });
     }
   })
 
@@ -38,7 +40,7 @@ export const transactionsRoute = new Hono<AuthContext>()
       const result = await processSelectedTransactions(transactions, uid);
       return c.json(result);
     } catch (error) {
-      return c.json({ error: getErrorMessage(error) }, 500);
+      handleRouteError(error, { userId: uid, route: "/api/transactions", method: "POST" });
     }
   });
 

@@ -1,6 +1,9 @@
-import assert from "node:assert";
 import type { GamesPlayed, InningsPitched } from "@common/types/team.js";
+
+import assert from "node:assert";
+
 import type { Player } from "../../classes/Player.js";
+
 import { HEALTHY_STATUS_LIST } from "../../helpers/constants.js";
 import {
   getMLBStartingPitchers,
@@ -99,8 +102,7 @@ export function scoreFunctionMaxGamesPlayed(
 
   function getPaceKeeper(player: Player) {
     const isPitcher =
-      inningsPitched &&
-      player.eligible_positions.some((pos) => ["P", "SP", "RP"].includes(pos));
+      inningsPitched && player.eligible_positions.some((pos) => ["P", "SP", "RP"].includes(pos));
     if (isPitcher) {
       return inningsPitched;
     }
@@ -164,9 +166,7 @@ export function scoreFunctionMaxGamesPlayed(
    * @return {number} - a score penalty factor between 0 and 1
    */
   function getScorePenaltyFactor(player: Player): number {
-    return !player.is_playing || player.is_starting === 0
-      ? NOT_PLAYING_FACTOR
-      : 1;
+    return !player.is_playing || player.is_starting === 0 ? NOT_PLAYING_FACTOR : 1;
   }
 }
 
@@ -221,9 +221,8 @@ export function scoreFunctionMLB(): (player: Player) => number {
     // unconfirmed player on the bench in favour of a bad confirmed starter.
 
     const isStartingPitcher =
-      player.eligible_positions.some((pos) =>
-        ["P", "SP", "RP"].includes(pos),
-      ) && isStartingPlayer(player, startingPitchers);
+      player.eligible_positions.some((pos) => ["P", "SP", "RP"].includes(pos)) &&
+      isStartingPlayer(player, startingPitchers);
 
     const isNonStartingSP =
       player.eligible_positions.includes("SP") &&
@@ -273,11 +272,7 @@ function getInitialScore(player: Player): number {
   return (player.percent_started ?? player.percent_owned) || 1;
 }
 
-function applyScoreFactors(
-  score: number,
-  player: Player,
-  isStartingPlayer = false,
-): number {
+function applyScoreFactors(score: number, player: Player, isStartingPlayer = false): number {
   let result = applyInjuryScoreFactors(score, player);
   if (!player.is_playing) {
     result *= NOT_PLAYING_FACTOR;

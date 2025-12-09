@@ -73,10 +73,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -126,10 +123,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -179,10 +173,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -232,10 +223,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -285,10 +273,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -338,10 +323,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -391,10 +373,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -444,10 +423,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -497,10 +473,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -550,10 +523,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -603,10 +573,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -710,10 +677,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -763,10 +727,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -816,10 +777,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -869,10 +827,7 @@
                   { "position_type": "P" },
                   { "primary_position": "RP" },
                   {
-                    "eligible_positions": [
-                      { "position": "RP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "RP" }, { "position": "P" }]
                   },
                   [],
                   [],
@@ -922,10 +877,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -975,10 +927,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1082,10 +1031,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1135,10 +1081,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   [],
                   [],
@@ -1188,10 +1131,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1241,10 +1181,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1294,10 +1231,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1347,10 +1281,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1441,10 +1372,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1603,10 +1531,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],
@@ -1656,10 +1581,7 @@
                   { "position_type": "P" },
                   { "primary_position": "SP" },
                   {
-                    "eligible_positions": [
-                      { "position": "SP" },
-                      { "position": "P" }
-                    ]
+                    "eligible_positions": [{ "position": "SP" }, { "position": "P" }]
                   },
                   { "has_player_notes": 1 },
                   [],

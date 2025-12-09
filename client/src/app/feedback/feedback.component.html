@@ -1,123 +1,112 @@
 <div class="header primaryColorBG"><h1>Contact Us</h1></div>
 <div class="content">
-    @if (!submitted()) {
-        <app-offline-warning-card />
+  @if (!submitted()) {
+    <app-offline-warning-card />
 
-        <h2>Please provide any comments or feedback in the form below</h2>
-        <form
-            class="form"
-            (ngSubmit)="onSubmitCloudFunction()"
-            #feedbackForm="ngForm"
+    <h2>Please provide any comments or feedback in the form below</h2>
+    <form class="form" (ngSubmit)="onSubmitCloudFunction()" #feedbackForm="ngForm">
+      <div class="chips">
+        <mat-chip-listbox
+          aria-labelledby="example-radio-group-label"
+          class="example-radio-group"
+          [(ngModel)]="feedbackType"
+          name="feedbackType"
         >
-            <div class="chips">
-                <mat-chip-listbox
-                    aria-labelledby="example-radio-group-label"
-                    class="example-radio-group"
-                    [(ngModel)]="feedbackType"
-                    name="feedbackType"
-                >
-                    @for (fType of feedbackTypes; track fType) {
-                        <mat-chip-option [value]="fType" color="accent">
-                            {{ fType }}
-                        </mat-chip-option>
-                    }
-                </mat-chip-listbox>
-            </div>
-            <mat-form-field appearance="outline" class="feedback-field">
-                <mat-label>Title</mat-label>
-                <textarea
-                    matInput
-                    cdkTextareaAutosize
-                    cdkAutosizeMinRows="1"
-                    cdkAutosizeMaxRows="3"
-                    required="true"
-                    [(ngModel)]="title"
-                    name="title"
-                ></textarea>
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="feedback-field">
-                <mat-label>Feedback</mat-label>
-                <textarea
-                    matInput
-                    cdkTextareaAutosize
-                    cdkAutosizeMinRows="5"
-                    cdkAutosizeMaxRows="15"
-                    required="true"
-                    [(ngModel)]="feedback"
-                    name="feedback"
-                ></textarea>
-            </mat-form-field>
-            <mat-form-field
-                appearance="outline"
-                class="feedback-field honeypot"
-                aria-hidden="true"
-                style="
-                    opacity: 0;
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    height: 0;
-                    width: 0;
-                    z-index: -1;
-                "
-            >
-                <mat-label>Email</mat-label>
-                <textarea
-                    matInput
-                    [(ngModel)]="honeypot"
-                    name="email"
-                    tabindex="-1"
-                    autocomplete="off"
-                ></textarea>
-            </mat-form-field>
-            <button
-                mat-raised-button
-                color="primary"
-                [disabled]="
-                    !feedbackForm?.form?.valid ||
-                    !title ||
-                    !feedback ||
-                    !(appStatusService.online$ | async)
-                "
-                data-testid="submit-button"
-            >
-                Submit
-            </button>
-        </form>
-        <p class="note">
-            We will get back to you at the email address listed in your profile
-            if a response is required.
-        </p>
-    } @else {
-        <div class="content">
-            @switch (success()) {
-                @case (true) {
-                    <h2>Thank you for your feedback!</h2>
-                    <p class="note">
-                        We will get back to you at the email address listed in
-                        your profile if a response is required.
-                    </p>
-                }
-                @case (false) {
-                    <h2>
-                        There was an error with your submission. Please try
-                        again later.
-                    </h2>
-                    <p class="note"><strong>Original Message:</strong></p>
-                    <p>
-                        {{ title }}
-                    </p>
-                    <p>
-                        {{ feedback }}
-                    </p>
-                }
-                @default {
-                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 2rem;">
-                        <app-loader />
-                        <h2 style="margin-top: 1rem;">Submitting Feedback...</h2>
-                    </div>
-                }
-            }
-        </div>
-    }
+          @for (fType of feedbackTypes; track fType) {
+            <mat-chip-option [value]="fType" color="accent">
+              {{ fType }}
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </div>
+      <mat-form-field appearance="outline" class="feedback-field">
+        <mat-label>Title</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="1"
+          cdkAutosizeMaxRows="3"
+          required="true"
+          [(ngModel)]="title"
+          name="title"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="feedback-field">
+        <mat-label>Feedback</mat-label>
+        <textarea
+          matInput
+          cdkTextareaAutosize
+          cdkAutosizeMinRows="5"
+          cdkAutosizeMaxRows="15"
+          required="true"
+          [(ngModel)]="feedback"
+          name="feedback"
+        ></textarea>
+      </mat-form-field>
+      <mat-form-field
+        appearance="outline"
+        class="feedback-field honeypot"
+        aria-hidden="true"
+        style="opacity: 0; position: absolute; top: 0; left: 0; height: 0; width: 0; z-index: -1"
+      >
+        <mat-label>Email</mat-label>
+        <textarea
+          matInput
+          [(ngModel)]="honeypot"
+          name="email"
+          tabindex="-1"
+          autocomplete="off"
+        ></textarea>
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        [disabled]="
+          !feedbackForm?.form?.valid || !title || !feedback || !(appStatusService.online$ | async)
+        "
+        data-testid="submit-button"
+      >
+        Submit
+      </button>
+    </form>
+    <p class="note">
+      We will get back to you at the email address listed in your profile if a response is required.
+    </p>
+  } @else {
+    <div class="content">
+      @switch (success()) {
+        @case (true) {
+          <h2>Thank you for your feedback!</h2>
+          <p class="note">
+            We will get back to you at the email address listed in your profile if a response is
+            required.
+          </p>
+        }
+        @case (false) {
+          <h2>There was an error with your submission. Please try again later.</h2>
+          <p class="note"><strong>Original Message:</strong></p>
+          <p>
+            {{ title }}
+          </p>
+          <p>
+            {{ feedback }}
+          </p>
+        }
+        @default {
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 2rem;
+            "
+          >
+            <app-loader />
+            <h2 style="margin-top: 1rem">Submitting Feedback...</h2>
+          </div>
+        }
+      }
+    </div>
+  }
 </div>

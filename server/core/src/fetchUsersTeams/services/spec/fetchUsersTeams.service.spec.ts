@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+
 import * as yahooAPI from "../../../common/services/yahooAPI/yahooAPI.service.js";
 import { fetchTeamsYahoo } from "../fetchUsersTeams.service.js";
 

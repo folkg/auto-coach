@@ -1,10 +1,10 @@
+import type { HonoAppType } from "@server/api/src/types/hono-app-type";
+
 import { InjectionToken } from "@angular/core";
-import type { HonoAppType } from "@server/api/dist/types/hono-app-type";
 import { getAuth, getIdToken } from "firebase/auth";
 import { hc } from "hono/client";
 
 const getApiBaseUrl = (): string => {
-  // biome-ignore lint/complexity/useLiteralKeys: Angular TypeScript compiler requires bracket notation for env vars
   const envUrl = import.meta.env["NG_APP_API_BASE_URL"];
   // If env URL is explicitly set to empty string, use same origin (production)
   if (envUrl === "") {
@@ -14,10 +14,7 @@ const getApiBaseUrl = (): string => {
   return envUrl ?? "http://localhost:3000";
 };
 
-const customFetch = async (
-  input: RequestInfo | URL,
-  init?: RequestInit,
-): Promise<Response> => {
+const customFetch = async (input: RequestInfo | URL, init?: RequestInit): Promise<Response> => {
   const auth = getAuth();
   const user = auth.currentUser;
   const headers = new Headers(init?.headers);
@@ -43,8 +40,7 @@ const client = hc<HonoAppType>(getApiBaseUrl());
 type HonoClient = typeof client;
 
 // https://hono.dev/docs/guides/rpc#compile-your-code-before-using-it-recommended
-const hcWithType = (...args: Parameters<typeof hc>): HonoClient =>
-  hc<HonoAppType>(...args);
+const hcWithType = (...args: Parameters<typeof hc>): HonoClient => hc<HonoAppType>(...args);
 
 const honoClient = hcWithType(getApiBaseUrl(), { fetch: customFetch });
 

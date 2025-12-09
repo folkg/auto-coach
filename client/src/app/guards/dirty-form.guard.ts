@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-// biome-ignore lint/style/useImportType: This is an injection token
-import { MatDialog } from "@angular/material/dialog";
 import type { UrlTree } from "@angular/router";
+
+import { inject, Injectable } from "@angular/core";
+import { MatDialog } from "@angular/material/dialog";
 import { lastValueFrom, type Observable } from "rxjs";
 
 import {
@@ -17,7 +17,7 @@ export interface ComponentCanDeactivate {
   providedIn: "root",
 })
 export class DirtyFormGuard {
-  constructor(public dialog: MatDialog) {}
+  dialog = inject(MatDialog);
 
   confirmDialog(): Promise<boolean> {
     const title = "WARNING: You have unsaved changes";
@@ -41,11 +41,7 @@ export class DirtyFormGuard {
 
   canDeactivate(
     component: ComponentCanDeactivate,
-  ):
-    | Observable<boolean | UrlTree>
-    | Promise<boolean | UrlTree>
-    | boolean
-    | UrlTree {
+  ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     //TODO:Make it a dialog
     return component.canDeactivate() ? true : this.confirmDialog();
   }

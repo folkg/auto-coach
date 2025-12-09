@@ -1,4 +1,5 @@
 import { type } from "arktype";
+
 import { Leagues } from "./Leagues.js";
 import { PlayerSchema } from "./Player.js";
 import { TransactionDetailsSchema } from "./transactions.js";

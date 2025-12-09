@@ -5,25 +5,32 @@ export async function getGitShortSHA(): Promise<string> {
   return result.toString().trim();
 }
 
-export async function determineContainerTags(
-  env: "dev" | "prod",
-  version?: string,
-): Promise<string[]> {
+export interface TagOptions {
+  readonly env: "dev" | "prod";
+  readonly version?: string;
+  readonly prNumber?: string;
+}
+
+export async function determineContainerTags(options: TagOptions): Promise<string[]> {
+  const { env, version, prNumber } = options;
+  const shortSHA = await getGitShortSHA();
+
   if (env === "dev") {
-    const shortSHA = await getGitShortSHA();
     return [`dev-${shortSHA}`, "dev-latest"];
   }
 
+  // PR validation: tag with PR number and SHA
+  if (prNumber) {
+    return [`pr-${prNumber}-${shortSHA}`];
+  }
+
+  // Prod deployment requires a version
   if (!version) {
-    throw new Error(
-      "Version required for prod deployment (e.g., --version v1.2.3)",
-    );
+    throw new Error("Version required for prod deployment (e.g., --version v1.2.3)");
   }
 
   if (!version.match(/^v\d+\.\d+\.\d+$/)) {
-    throw new Error(
-      `Invalid version format: ${version}. Expected format: v1.2.3`,
-    );
+    throw new Error(`Invalid version format: ${version}. Expected format: v1.2.3`);
   }
 
   return [version, "prod-latest"];

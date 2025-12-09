@@ -1,0 +1,42 @@
+{
+  "name": "@auto-coach/mutation-api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --hot --inspect src/index.ts",
+    "build": "bun build src/index.ts --target=bun-linux-x64 --outfile=dist/server --compile --minify --sourcemap --bytecode",
+    "start": "./dist/server",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
+    "container:build": "docker build -f Dockerfile -t auto-coach-mutation-api ../../",
+    "container:run": "docker run -p 3001:3001 auto-coach-mutation-api",
+    "deploy": "bun run --cwd ../../ops deploy mutation-api",
+    "deploy:dev": "bun run deploy --env dev",
+    "deploy:prod": "bun run deploy --env prod",
+    "deploy:dry": "bun run deploy --dry-run",
+    "prepare": "command -v effect-language-service >/dev/null 2>&1 && effect-language-service patch --dir ../../node_modules/typescript || true"
+  },
+  "dependencies": {
+    "@effect/platform": "0.93.6",
+    "@google-cloud/firestore": "8.0.0",
+    "@google-cloud/tasks": "6.2.1",
+    "@hono/effect-validator": "1.2.0",
+    "arktype": "catalog:",
+    "dotenv": "17.2.3",
+    "effect": "3.19.9",
+    "firebase-admin": "13.6.0",
+    "hono": "catalog:"
+  },
+  "devDependencies": {
+    "@effect/language-service": "0.60.0",
+    "@effect/vitest": "0.27.0",
+    "@types/bun": "catalog:",
+    "msw": "2.12.4",
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "catalog:",
+    "vitest": "catalog:"
+  }
+}

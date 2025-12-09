@@ -1,8 +1,9 @@
-import { Injectable } from "@angular/core";
 import type { ClientTeam } from "@common/types/team";
 import type { User } from "firebase/auth";
+
+import { Injectable } from "@angular/core";
+import { createMock } from "@common/utilities/createMock";
 import { type Observable, of } from "rxjs";
-import { createMock } from "../../../__mocks__/utils/createMock";
 
 @Injectable({
   providedIn: "root",

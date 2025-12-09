@@ -1,9 +1,8 @@
-import type {
-  QueryDocumentSnapshot,
-  QuerySnapshot,
-} from "firebase-admin/firestore";
+import type { QueryDocumentSnapshot, QuerySnapshot } from "firebase-admin/firestore";
+
+import { createMock } from "@common/utilities/createMock";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { createMock } from "../../../spec/createMock.js";
+
 import * as firestoreService from "../../firebase/firestore.service.js";
 import * as yahooAPI from "../yahooAPI.service.js";
 import { fetchStartingPlayers } from "../yahooStartingPlayer.service.js";
@@ -67,18 +66,15 @@ describe("Test setStartingPlayers()", () => {
   ];
   const startingPlayersObject = require("./startingPlayersObject.json");
 
+  // Create spies at module level
   const spyGetIntradayTeams = vi.spyOn(firestoreService, "getIntradayTeams");
   const spyStoreStartingPlayersInFirestore = vi.spyOn(
     firestoreService,
     "storeStartingPlayersInFirestore",
   );
 
-  spyGetIntradayTeams.mockImplementation(() =>
-    Promise.resolve(intradayTeamsObject),
-  );
-  spyStoreStartingPlayersInFirestore.mockImplementation(() =>
-    Promise.resolve(),
-  );
+  spyGetIntradayTeams.mockImplementation(() => Promise.resolve(intradayTeamsObject));
+  spyStoreStartingPlayersInFirestore.mockImplementation(() => Promise.resolve());
   vi.spyOn(yahooAPI, "getStartingPlayers").mockImplementation(() =>
     Promise.resolve(startingPlayersObject),
   );
@@ -94,20 +90,14 @@ describe("Test setStartingPlayers()", () => {
     await fetchStartingPlayers(league);
     expect(spyGetIntradayTeams).toHaveBeenCalledWith(league);
     expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledTimes(1);
-    expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledWith(
-      startingPlayersArray,
-      league,
-    );
+    expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledWith(startingPlayersArray, league);
   });
   test("test MLB setStartingPlayers", async () => {
     const league = "mlb";
     await fetchStartingPlayers(league);
     expect(spyGetIntradayTeams).toHaveBeenCalledWith(league);
     expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledTimes(1);
-    expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledWith(
-      startingPlayersArray,
-      league,
-    );
+    expect(spyStoreStartingPlayersInFirestore).toHaveBeenCalledWith(startingPlayersArray, league);
   });
   test("test NBA setStartingPlayers", async () => {
     const league = "nba";

@@ -1,6 +1,6 @@
 import { type ComponentFixture, TestBed } from "@angular/core/testing";
-
 import { beforeEach, describe, expect, it } from "vitest";
+
 import { EditTransactionComponent } from "./edit-transaction.component";
 
 describe.todo("EditTransactionComponent", () => {

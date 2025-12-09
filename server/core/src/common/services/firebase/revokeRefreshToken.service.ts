@@ -1,27 +1,53 @@
 import { getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
-import { logger } from "firebase-functions";
+
+import { structuredLogger } from "../structured-logger.js";
 import { flagRefreshToken } from "./firestore.service.js";
 
 if (getApps().length === 0) {
   initializeApp();
 }
+
 /**
  * Revoke the refresh token for a user
  *
  * @export
- * @param {string} uid - The user id
+ * @param uid - The user id
  */
-export async function revokeRefreshToken(uid: string) {
+export async function revokeRefreshToken(uid: string): Promise<void> {
   try {
     await getAuth().revokeRefreshTokens(uid);
-    logger.log(`Token revoked for user ${uid} successfully.`);
+    structuredLogger.info("Token revoked successfully", {
+      phase: "firebase",
+      service: "firebase",
+      event: "TOKEN_REVOKED",
+      operation: "revokeRefreshToken",
+      userId: uid,
+      outcome: "success",
+    });
 
-    // TODO: change the refresh token in the database to null, or other sentinel value
     await flagRefreshToken(uid);
-    // TODO: check this sentinel value before we try to perform and actions for that user (might just need to return empty from the fetch teams?)
-    // TODO: Log the sentinel thing in the db as a warn or info?
+    structuredLogger.info("Refresh token flagged in Firestore", {
+      phase: "firebase",
+      service: "firebase",
+      event: "REFRESH_TOKEN_FLAGGED",
+      operation: "revokeRefreshToken",
+      userId: uid,
+      outcome: "success",
+    });
   } catch (error) {
-    logger.log(error);
+    structuredLogger.error(
+      "Failed to revoke refresh token",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "TOKEN_REVOCATION_FAILED",
+        operation: "revokeRefreshToken",
+        userId: uid,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
   }
 }

@@ -1,5 +1,7 @@
 import type { TeamOptimizer } from "@common/types/team.js";
+
 import { describe, expect, test, vi } from "vitest";
+
 import { LineupOptimizer } from "../classes/LineupOptimizer.js";
 
 vi.mock("firebase-admin/firestore", () => ({
@@ -134,18 +136,12 @@ describe("Test LineupOptimizer Class NBA Weekly", () => {
     expect(["PF", "F", "C", "Util"]).toContain(
       rosterModification?.newPlayerPositions["418.p.6018"],
     );
-    expect(["C", "Util"]).toContain(
-      rosterModification?.newPlayerPositions["418.p.5352"],
-    );
-    expect(["C", "Util"]).toContain(
-      rosterModification?.newPlayerPositions["418.p.5471"],
-    );
+    expect(["C", "Util"]).toContain(rosterModification?.newPlayerPositions["418.p.5352"]);
+    expect(["C", "Util"]).toContain(rosterModification?.newPlayerPositions["418.p.5471"]);
     expect(["SF", "PF", "F", "Util"]).toContain(
       rosterModification?.newPlayerPositions["418.p.4901"],
     );
-    expect(["C", "Util"]).toContain(
-      rosterModification?.newPlayerPositions["418.p.6047"],
-    );
+    expect(["C", "Util"]).toContain(rosterModification?.newPlayerPositions["418.p.6047"]);
   });
   // lineup with worst players on roster, best players on bench
   test("lineup with worst players on roster, best players on bench", () => {
@@ -358,9 +354,7 @@ describe("Test LineupOptimizer Class NBA Weekly", () => {
     const isSuccessfullyOptimized = lo.isSuccessfullyOptimized();
     expect(isSuccessfullyOptimized).toEqual(true);
     expect(rosterModification?.newPlayerPositions["418.p.6163"]).toEqual("BN");
-    expect(["IL", "IL+"]).toContain(
-      rosterModification?.newPlayerPositions["418.p.6035"],
-    );
+    expect(["IL", "IL+"]).toContain(rosterModification?.newPlayerPositions["418.p.6035"]);
   });
   // healthy player on IL+, IL player on BN, no empty IL slot (expect swap)
   test("healthy player on IL+, IL player on BN, no empty IL slot", () => {
