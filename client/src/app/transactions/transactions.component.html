@@ -60,6 +60,12 @@
             <app-skeleton-card [showTransactions]="true" />
           </div>
         }
+      } @else if (teams().length !== 0 && loadingTransactions()) {
+        @for (team of teams(); track team.team_key) {
+          <div class="card-container">
+            <app-skeleton-card [showTransactions]="true" />
+          </div>
+        }
       } @else if (teams().length !== 0) {
         @for (
           team of teams() | sortTeamsByTransactions: flatTransactions() ?? [];
@@ -69,7 +75,6 @@
             class="card-container"
             [team]="team"
             [allTransactions]="flatTransactions() ?? []"
-            [loadingTransactions]="loadingTransactions()"
             (transactionSelected)="onSelectTransaction($event)"
           />
         }

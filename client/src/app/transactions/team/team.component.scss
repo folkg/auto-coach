@@ -43,37 +43,3 @@ button {
   padding-top: 1em;
   padding-bottom: 1em;
 }
-
-// Shimmer animation for loading transactions
-@keyframes shimmer {
-  0% {
-    background-position: -100% 0;
-  }
-  100% {
-    background-position: 100% 0;
-  }
-}
-
-.shimmer {
-  background: linear-gradient(
-    110deg,
-    rgba(0, 0, 0, 0.08) 0%,
-    rgba(0, 0, 0, 0.04) 40%,
-    rgba(0, 0, 0, 0.14) 50%,
-    rgba(0, 0, 0, 0.04) 60%,
-    rgba(0, 0, 0, 0.08) 100%
-  );
-  background-size: 200% 100%;
-  animation: shimmer 1.8s ease-in-out infinite;
-}
-
-.transaction-shimmer {
-  display: block;
-  height: 3rem;
-  margin-bottom: 0.75rem;
-  color: transparent;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}

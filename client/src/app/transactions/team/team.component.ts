@@ -44,7 +44,6 @@ import { TransactionComponent } from "../transaction/transaction.component";
 export class TeamComponent {
   @Input({ required: true }) team!: ClientTeam;
   allTransactions = input.required<PlayerTransactionClient[]>();
-  loadingTransactions = input(false);
   @Output() transactionSelected = new EventEmitter<{
     isSelected: boolean;
     transactionId: string;
