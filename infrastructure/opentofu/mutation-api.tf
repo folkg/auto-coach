@@ -73,7 +73,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
           cpu    = "1"
           memory = "1Gi"
         }
-        cpu_idle = false
+        cpu_idle = true
       }
 
       ports {

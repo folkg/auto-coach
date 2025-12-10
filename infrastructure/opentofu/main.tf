@@ -364,7 +364,8 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           cpu    = "1"
           memory = "512Mi"
         }
-        cpu_idle = false
+        cpu_idle          = true
+        startup_cpu_boost = true
       }
 
       ports {
