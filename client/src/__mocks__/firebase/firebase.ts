@@ -5,3 +5,8 @@ export const mockAuth = {
   signIn: vi.fn(),
   signOut: vi.fn(),
 };
+
+export const mockFirestore = {
+  collection: vi.fn(),
+  doc: vi.fn(),
+};
