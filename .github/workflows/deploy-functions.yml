@@ -8,6 +8,7 @@ on:
       - "server/functions/**"
       - "server/core/**"
       - "common/**"
+      - ".github/workflows/deploy-functions.yml"
   pull_request:
     branches:
       - main
@@ -15,6 +16,7 @@ on:
       - "server/functions/**"
       - "server/core/**"
       - "common/**"
+      - ".github/workflows/deploy-functions.yml"
   workflow_dispatch:
 
 concurrency:

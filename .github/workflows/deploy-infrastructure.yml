@@ -7,12 +7,14 @@ on:
     paths:
       - "infrastructure/opentofu/**"
       - "ops/**"
+      - ".github/workflows/deploy-infrastructure.yml"
   pull_request:
     branches:
       - main
     paths:
       - "infrastructure/opentofu/**"
       - "ops/**"
+      - ".github/workflows/deploy-infrastructure.yml"
   workflow_dispatch:
 
 concurrency:

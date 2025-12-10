@@ -1,6 +1,5 @@
 node_modules
 **/node_modules
-**/dist
 **/.next
 **/build
 **/.turbo
@@ -10,3 +9,8 @@ node_modules
 .gitignore
 Dockerfile
 bun.lockb
+
+# Exclude dist except for server binaries
+**/dist
+!server/api/dist/server
+!server/mutation-api/dist/server

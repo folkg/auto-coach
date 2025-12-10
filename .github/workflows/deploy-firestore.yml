@@ -7,12 +7,14 @@ on:
     paths:
       - "firestore.rules"
       - "firestore.indexes.json"
+      - ".github/workflows/deploy-firestore.yml"
   pull_request:
     branches:
       - main
     paths:
       - "firestore.rules"
       - "firestore.indexes.json"
+      - ".github/workflows/deploy-firestore.yml"
   workflow_dispatch:
 
 concurrency:

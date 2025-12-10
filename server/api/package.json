@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "bun run --hot --inspect src/index.ts",
     "build": "bun build src/index.ts --target=bun-linux-x64 --outfile=dist/server --compile --minify --sourcemap --bytecode",
+    "build:local": "bun build src/index.ts --outfile=dist/server --compile --minify --sourcemap --bytecode",
     "start": "./dist/server",
     "test": "bun test",
     "test:watch": "bun test --watch",
