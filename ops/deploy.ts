@@ -7,12 +7,7 @@ import { loadEnvironment } from "./tools/environment";
 import { buildClient, deployFirestore, deployFunctions, deployHosting } from "./tools/firebase";
 import { log, logError, logStep, logSuccess, logWarning } from "./tools/log";
 import { deployMutationAPI } from "./tools/mutation-api";
-import {
-  applyInfrastructure,
-  deployInfrastructure,
-  getAPIURL,
-  planInfrastructure,
-} from "./tools/tofu";
+import { deployInfrastructure, planInfrastructure } from "./tools/tofu";
 import { determineContainerTags, getPrimaryTag } from "./tools/versioning";
 
 interface DeployArgs {
@@ -87,11 +82,7 @@ function parseArguments(): DeployArgs {
   };
 }
 
-async function deployAPI(
-  args: DeployArgs,
-  projectId: string,
-  firebaseProjectId: string,
-): Promise<void> {
+async function deployAPI(args: DeployArgs, projectId: string): Promise<void> {
   const envConfig = loadEnvironment(args.env);
   const tags = await determineContainerTags({
     env: args.env,
@@ -123,25 +114,30 @@ async function deployAPI(
     logSuccess("Container image built and pushed successfully!");
     log(`Container tags: ${tags.join(", ")}`);
     log(
-      `Deploy with: gcloud run deploy auto-coach-api-${args.env} --image ${envConfig.containerRepo}/auto-coach-api:${primaryTag}`,
+      `Deploy with: gcloud run deploy ${envConfig.cloudRunService} --image ${envConfig.containerRepo}/${projectId}/auto-coach/auto-coach-api:${primaryTag}`,
     );
     return;
   }
 
-  if (!args.skipInfra) {
-    await applyInfrastructure(envConfig, primaryTag, projectId, firebaseProjectId);
-    const apiURL = await getAPIURL();
-    logSuccess("API deployed successfully!");
-    log(`API URL: ${apiURL}`);
-    log(`Container tags: ${tags.join(", ")}`);
-  } else {
-    logStep("API", "Skipping infrastructure apply - container pushed successfully");
-    logSuccess("Container image ready for deployment");
-    log(`Container tags: ${tags.join(", ")}`);
-    log(
-      `Deploy to Cloud Run with: gcloud run deploy auto-coach-api-${args.env} --image ${envConfig.containerRepo}/auto-coach-api:${primaryTag}`,
-    );
-  }
+  // Deploy directly to Cloud Run using gcloud
+  const fullImagePath = `${envConfig.containerRepo}/${projectId}/auto-coach/auto-coach-api:${primaryTag}`;
+  logStep("Cloud Run", `Deploying ${envConfig.cloudRunService}...`);
+  await $`gcloud run deploy ${envConfig.cloudRunService} --image ${fullImagePath} --region ${envConfig.region} --project ${projectId}`;
+
+  const apiURL = await getAPIURLFromGcloud(projectId, envConfig.cloudRunService, envConfig.region);
+  logSuccess("API deployed successfully!");
+  log(`API URL: ${apiURL}`);
+  log(`Container tags: ${tags.join(", ")}`);
+}
+
+async function getAPIURLFromGcloud(
+  projectId: string,
+  serviceName: string,
+  region: string,
+): Promise<string> {
+  const result =
+    await $`gcloud run services describe ${serviceName} --region ${region} --project ${projectId} --format='value(status.url)'`.text();
+  return result.trim();
 }
 
 async function deployClient(args: DeployArgs): Promise<void> {
@@ -304,7 +300,7 @@ async function deployFullStack(
     logWarning("PR validation mode - building and validating only");
   }
 
-  await deployAPI(args, projectId, firebaseProjectId);
+  await deployAPI(args, projectId);
   await deployFunctionsComponent(args, firebaseProjectId);
   await deployClient(args);
 
@@ -331,7 +327,7 @@ async function main(): Promise<void> {
             "GCP_PROJECT_ID or PROJECT_ID environment variable required for API deployment",
           );
         }
-        await deployAPI(args, projectId, firebaseProjectId);
+        await deployAPI(args, projectId);
         break;
       case "client":
         await deployClient(args);
