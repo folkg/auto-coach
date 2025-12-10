@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun run --hot --inspect src/index.ts",
-    "build": "bun build ./src/index.ts --target=bun --outdir=./dist --entry-naming=[name].js --minify --sourcemap --packages=external",
-    "build:local": "bun build ./src/index.ts --outdir=./dist --entry-naming=[name].js --minify --sourcemap --packages=external",
-    "start": "bun run dist/index.js",
+    "start": "bun run src/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "biome check .",

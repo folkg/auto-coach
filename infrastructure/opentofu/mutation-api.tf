@@ -45,6 +45,15 @@ resource "google_cloud_run_v2_service" "mutation_api" {
 
   labels = local.common_labels
 
+  # Ignore image changes - deployed separately via gcloud
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image,
+      client,
+      client_version,
+    ]
+  }
+
   template {
     timeout                          = "60s"
     execution_environment            = "EXECUTION_ENVIRONMENT_GEN2"
@@ -152,10 +161,10 @@ resource "google_cloud_run_v2_service" "mutation_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 0
-        timeout_seconds       = 2
-        period_seconds        = 3
-        failure_threshold     = 10
+        initial_delay_seconds = 5
+        timeout_seconds       = 4
+        period_seconds        = 5
+        failure_threshold     = 5
       }
 
       liveness_probe {
