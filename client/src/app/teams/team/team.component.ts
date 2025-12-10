@@ -66,7 +66,7 @@ export class TeamComponent {
 
   readonly team = input.required<Readonly<ClientTeam>>();
   readonly gameTimeStamps = input.required<number[] | null>();
-  readonly loadingStale = input(false);
+  readonly loadingTimes = input(false);
   @Output() toggleSetLineupEvent = new EventEmitter<SetLineupEvent>();
   @Output() togglePauseLineupEvent = new EventEmitter<PauseLineupEvent>();
 

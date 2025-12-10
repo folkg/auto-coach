@@ -415,7 +415,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
         }
       }
 
-      # Health probes optimized for compiled binary startup
+      # Health probes
       startup_probe {
         http_get {
           path = "/"
@@ -425,9 +425,9 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 0
-        timeout_seconds       = 1
-        period_seconds        = 2
+        initial_delay_seconds = 5
+        timeout_seconds       = 2
+        period_seconds        = 3
         failure_threshold     = 10
       }
 
