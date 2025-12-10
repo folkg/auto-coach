@@ -3,17 +3,17 @@
   "extends": ["config:js-app", ":automergeMinor"],
   "timezone": "America/Edmonton",
   "description": "before 7am on the first day of the month",
-  "schedule": ["0 0-7 1 * *"],
+  "schedule": ["* 0-7 1 * *"],
   "lockFileMaintenance": {
     "enabled": true,
     "description": "before 7am on the first day of the month",
-    "schedule": ["0 0-7 1 * *"]
+    "schedule": ["* 0-7 1 * *"]
   },
   "packageRules": [
     {
       "matchPackagePatterns": ["*"],
       "description": "before 7am on the first day of the month",
-      "schedule": ["0 0-7 1 * *"]
+      "schedule": ["* 0-7 1 * *"]
     }
   ],
   "rangeStrategy": "pin"
