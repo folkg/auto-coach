@@ -328,13 +328,22 @@ resource "google_project_iam_member" "cloud_run_sa_datastore_user" {
   member  = "serviceAccount:${google_service_account.cloud_run_sa.email}"
 }
 
-# Cloud Run service configuration optimized for Bun binary
+# Cloud Run service configuration
 resource "google_cloud_run_v2_service" "auto_coach_api" {
   name     = "auto-coach-api-${var.environment}"
   location = var.region
   project  = var.project_id
 
   labels = local.common_labels
+
+  # Ignore image changes - deployed separately via gcloud
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image,
+      client,
+      client_version,
+    ]
+  }
 
   template {
     timeout                          = "60s"

@@ -40,15 +40,6 @@ function parseArguments(): DeployMutationAPIArgs {
   };
 }
 
-async function buildMutationAPI(): Promise<void> {
-  logStep("Build", "Building Mutation API binary...");
-
-  const { resolve } = await import("node:path");
-  const projectRoot = resolve(import.meta.dir, "..", "..");
-
-  await $`cd ${projectRoot} && bun run build:mutation-api`;
-}
-
 async function buildMutationAPIContainer(): Promise<void> {
   logStep("Docker", "Building Mutation API container for linux/amd64...");
 
@@ -108,12 +99,11 @@ export async function deployMutationAPI(
     logWarning(`PR validation mode - building and pushing with tag: ${primaryTag}`);
   }
 
-  // Build phase
+  // Build phase - Dockerfile handles source copying and dependency installation
   if (!args.skipBuild) {
-    await buildMutationAPI();
     await buildMutationAPIContainer();
   } else {
-    logStep("Mutation API", "Skipping build (using existing build artifact)");
+    logStep("Mutation API", "Skipping build (using existing container)");
   }
 
   // Push to registry
