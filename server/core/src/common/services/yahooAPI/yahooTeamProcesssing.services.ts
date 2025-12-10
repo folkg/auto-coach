@@ -160,7 +160,7 @@ export const FlatGameDetailsSchema = type({
 });
 
 export const LeagueDetailsSchema = type({
-  edit_key: "string",
+  edit_key: type("string | number").pipe((v) => String(v)),
   name: "string",
   num_teams: "number",
   start_date: "string",
