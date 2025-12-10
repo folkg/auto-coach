@@ -11,15 +11,16 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  concat,
   filter,
   from,
   lastValueFrom,
   map,
-  concat,
   type Observable,
   of,
-  Subject,
+  scan,
   startWith,
+  Subject,
   switchMap,
 } from "rxjs";
 
@@ -57,6 +58,11 @@ export type TeamsState = LoadingInitialState | LoadingTimesState | ReadyState | 
 
 const YAHOO_AUTH_REQUIRED_CODE = "YAHOO_AUTH_REQUIRED";
 
+interface OptimisticUpdate {
+  readonly teamKey: string;
+  readonly updater: (team: ClientTeam) => ClientTeam;
+}
+
 @Injectable({
   providedIn: "root",
 })
@@ -66,15 +72,15 @@ export class SyncTeamsService {
   readonly dialog = inject(MatDialog);
 
   private readonly refetch$ = new Subject<void>();
-  private readonly teamsSubject = new BehaviorSubject<readonly ClientTeam[]>([]);
+  private readonly optimisticUpdate$ = new Subject<OptimisticUpdate>();
   private readonly scheduleSubject = new BehaviorSubject<Schedule | undefined>(undefined);
 
-  readonly teams$ = this.teamsSubject.asObservable();
   readonly schedule$ = this.scheduleSubject.asObservable();
   readonly teamsState$: Observable<TeamsState>;
+  readonly teams$: Observable<readonly ClientTeam[]>;
 
   constructor() {
-    this.teamsState$ = combineLatest([
+    const baseTeamsState$ = combineLatest([
       this.auth.user$,
       this.refetch$.pipe(startWith(undefined)),
     ]).pipe(
@@ -92,12 +98,25 @@ export class SyncTeamsService {
       shareLatest(),
     );
 
-    this.teamsState$
-      .pipe(
-        takeUntilDestroyed(),
-        map((state) => state.teams),
-      )
-      .subscribe(this.teamsSubject);
+    this.teamsState$ = baseTeamsState$.pipe(
+      switchMap((baseState) =>
+        this.optimisticUpdate$.pipe(
+          scan(
+            (state, update) => ({
+              ...state,
+              teams: state.teams.map((team) =>
+                team.team_key === update.teamKey ? update.updater(team) : team,
+              ),
+            }),
+            baseState,
+          ),
+          startWith(baseState),
+        ),
+      ),
+      shareLatest(),
+    );
+
+    this.teams$ = this.teamsState$.pipe(map((state) => state.teams));
 
     this.teamsState$
       .pipe(
@@ -107,7 +126,7 @@ export class SyncTeamsService {
       )
       .subscribe(this.scheduleSubject);
 
-    this.teams$.pipe(takeUntilDestroyed()).subscribe((teams) => {
+    this.teamsState$.pipe(takeUntilDestroyed()).subscribe(({ teams }) => {
       if (teams.length > 0) {
         // localStorage will persist the teams across sessions
         // If we fetch a team once per session, it is assumed to be fresh for the duration of the session.
@@ -253,17 +272,10 @@ export class SyncTeamsService {
     property: K,
     value: ClientTeam[K],
   ): void {
-    const currentTeams = this.teamsSubject.value;
-    const updatedTeams = currentTeams.map((team) =>
-      team.team_key === teamKey
-        ? {
-            ...team,
-            [property]: value,
-          }
-        : team,
-    );
-
-    this.teamsSubject.next(updatedTeams);
+    this.optimisticUpdate$.next({
+      teamKey,
+      updater: (team) => ({ ...team, [property]: value }),
+    });
   }
 
   refreshTeams(): void {
