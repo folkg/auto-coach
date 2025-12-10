@@ -152,9 +152,9 @@ resource "google_cloud_run_v2_service" "mutation_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 5
-        timeout_seconds       = 3
-        period_seconds        = 5
+        initial_delay_seconds = 0
+        timeout_seconds       = 2
+        period_seconds        = 3
         failure_threshold     = 10
       }
 
@@ -167,7 +167,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
             value = "GoogleHC/1.0"
           }
         }
-        initial_delay_seconds = 10
+        initial_delay_seconds = 5
         timeout_seconds       = 5
         period_seconds        = 30
         failure_threshold     = 3

@@ -8,6 +8,7 @@ on:
       - "server/mutation-api/**"
       - "server/core/**"
       - "common/**"
+      - ".github/workflows/deploy-mutation-api.yml"
   pull_request:
     branches:
       - main
@@ -15,6 +16,7 @@ on:
       - "server/mutation-api/**"
       - "server/core/**"
       - "common/**"
+      - ".github/workflows/deploy-mutation-api.yml"
   workflow_dispatch:
 
 concurrency:
@@ -80,5 +82,10 @@ jobs:
       - name: Deploy Mutation API
         env:
           PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
+          GCP_PROJECT_ID: ${{ env.GOOGLE_CLOUD_PROJECT }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          YAHOO_APP_ID: ${{ secrets.YAHOO_APP_ID }}
+          YAHOO_CLIENT_ID: ${{ secrets.YAHOO_CLIENT_ID }}
+          YAHOO_CLIENT_SECRET: ${{ secrets.YAHOO_CLIENT_SECRET }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
         run: bun run deploy -- --component mutation-api --env prod --version v0.0.${{ github.run_number }}
