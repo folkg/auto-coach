@@ -10,14 +10,26 @@
 .shimmer {
   background: linear-gradient(
     110deg,
-    rgba(0, 0, 0, 0.08) 0%,
-    rgba(0, 0, 0, 0.04) 40%,
-    rgba(0, 0, 0, 0.14) 50%,
-    rgba(0, 0, 0, 0.04) 60%,
-    rgba(0, 0, 0, 0.08) 100%
+    var(--shimmer-base) 0%,
+    var(--shimmer-light) 40%,
+    var(--shimmer-highlight) 50%,
+    var(--shimmer-light) 60%,
+    var(--shimmer-base) 100%
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
+  border-radius: 4px;
+}
+
+:host {
+  --shimmer-base: rgba(128, 128, 128, 0.15);
+  --shimmer-light: rgba(128, 128, 128, 0.08);
+  --shimmer-highlight: rgba(128, 128, 128, 0.25);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .skeleton-card {
@@ -25,24 +37,20 @@
   width: 90%;
   max-width: 600px;
   margin: 1rem;
-  padding: 0;
-  overflow: hidden;
-  background: var(--mat-card-background-color, white);
-  border-radius: var(--mat-card-container-shape, 12px);
-  box-shadow: var(
-    --mat-card-elevated-container-shadow,
-    0 2px 1px -1px rgba(0, 0, 0, 0.2),
-    0 1px 1px 0 rgba(0, 0, 0, 0.14),
-    0 1px 3px 0 rgba(0, 0, 0, 0.12)
-  );
 }
 
-.skeleton-header {
+.header-actions-wrapper {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.04);
+  justify-content: space-between;
+
+  button {
+    margin-right: 0.5rem;
+  }
+}
+
+.header-footer-bg {
+  background-color: #0000000f;
 }
 
 .skeleton-avatar {
@@ -52,40 +60,51 @@
   flex-shrink: 0;
 }
 
-.skeleton-lines {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+// Override mat-card-header to ensure proper alignment and spacing
+::ng-deep mat-card-header {
+  .mat-mdc-card-header-text {
+    width: 100%;
+    margin-left: 16px;
+    transform: scaleY(0.7);
+    transform-origin: top;
+  }
+}
+
+.skeleton-title-text,
+.skeleton-subtitle-text {
+  color: transparent;
+  display: inline-block;
 }
 
 .skeleton-line {
   height: 0.875rem;
   width: 100%;
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &.short {
+    width: 60%;
+  }
 }
 
-.skeleton-line.short {
-  width: 60%;
+.card-content-section {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
-.skeleton-divider {
-  height: 1px;
-  background-color: rgba(0, 0, 0, 0.12);
-}
-
-.skeleton-body {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.625rem;
+.padded-divider {
+  padding-top: 1em;
+  padding-bottom: 1em;
 }
 
 .skeleton-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.02);
+  width: 100%;
 }
 
 .skeleton-toggle {
@@ -98,13 +117,11 @@
   height: 36px;
 }
 
-.skeleton-transactions {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
 .skeleton-transaction {
   height: 3rem;
+  margin-bottom: 0.75rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }

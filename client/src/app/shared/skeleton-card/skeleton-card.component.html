@@ -1,27 +1,51 @@
-<div class="skeleton-card">
-  <div class="skeleton-header">
-    <div class="skeleton-avatar shimmer"></div>
-    <div class="skeleton-lines">
+<mat-card class="skeleton-card mat-elevation-z4" appearance="raised">
+  <div class="header-actions-wrapper header-footer-bg">
+    <mat-card-header>
+      <div mat-card-avatar class="skeleton-avatar shimmer"></div>
+      <mat-card-title>
+        <span class="skeleton-title-text shimmer"
+          >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+        >
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span class="skeleton-subtitle-text shimmer"
+          >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span
+        >
+      </mat-card-subtitle>
+    </mat-card-header>
+    <div>
+      <button mat-icon-button disabled>
+        <mat-icon>open_in_new</mat-icon>
+      </button>
+    </div>
+  </div>
+  <mat-divider />
+  <mat-card-content>
+    <div class="card-content-section">
+      <div class="skeleton-line shimmer"></div>
       <div class="skeleton-line shimmer"></div>
       <div class="skeleton-line short shimmer"></div>
+      <div class="padded-divider">
+        <mat-divider />
+      </div>
+      <div class="skeleton-line shimmer"></div>
+      <div class="skeleton-line short shimmer"></div>
+      @if (showTransactions()) {
+        <div class="padded-divider">
+          <mat-divider />
+        </div>
+        <div class="skeleton-transaction shimmer"></div>
+        <div class="skeleton-transaction shimmer"></div>
+      }
     </div>
-  </div>
-  <div class="skeleton-divider"></div>
-  <div class="skeleton-body">
-    <div class="skeleton-line shimmer"></div>
-    <div class="skeleton-line shimmer"></div>
-    <div class="skeleton-line short shimmer"></div>
-  </div>
-  <div class="skeleton-divider"></div>
-  @if (showTransactions()) {
-    <div class="skeleton-transactions">
-      <div class="skeleton-transaction shimmer"></div>
-      <div class="skeleton-transaction shimmer"></div>
-    </div>
-  } @else {
-    <div class="skeleton-footer">
-      <div class="skeleton-toggle shimmer"></div>
-      <div class="skeleton-button shimmer"></div>
-    </div>
+  </mat-card-content>
+  @if (!showTransactions()) {
+    <mat-divider />
+    <mat-card-actions>
+      <div class="skeleton-footer">
+        <div class="skeleton-toggle shimmer"></div>
+        <div class="skeleton-button shimmer"></div>
+      </div>
+    </mat-card-actions>
   }
-</div>
+</mat-card>
