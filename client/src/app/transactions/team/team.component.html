@@ -67,10 +67,7 @@
       <div class="padded-divider">
         <mat-divider />
       </div>
-      @if (loadingTransactions()) {
-        <div class="transaction-shimmer shimmer">&nbsp;</div>
-        <div class="transaction-shimmer shimmer">&nbsp;</div>
-      } @else if (transactions().length > 0) {
+      @if (transactions().length > 0) {
         @for (transaction of transactions(); track transaction) {
           <app-transaction [transaction]="transaction" (isSelected)="onSelectTransaction($event)" />
         }
