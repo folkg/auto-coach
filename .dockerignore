@@ -10,7 +10,7 @@ node_modules
 Dockerfile
 bun.lockb
 
-# Exclude dist except for server binaries
+# Exclude dist except for server binaries/bundles
 **/dist
 !server/api/dist/server
-!server/mutation-api/dist/server
+!server/mutation-api/dist/index.js
