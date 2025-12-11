@@ -4,7 +4,7 @@ import type { CollectionReference, DocumentReference, Firestore } from "@google-
 import { createMock } from "@common/utilities/createMock.js";
 import { AuthorizationError } from "@common/utilities/error.js";
 import { Effect, Either } from "effect";
-import { describe, expect, it, vi } from "vitest";
+import { assert, describe, expect, it, vi } from "vitest";
 
 import {
   RateLimitError as ApiRateLimitError,
@@ -191,15 +191,9 @@ describe("ExecutionService", () => {
         Effect.either(executionService.executeMutation(request)),
       );
 
-      // Assert - Should fail with retryable SystemError
-      expect(Either.isLeft(result)).toBe(true);
-      if (Either.isLeft(result)) {
-        expect(result.left._tag).toBe("SystemError");
-        expect(result.left.code).toBe("YAHOO_AUTH_ERROR");
-        if (result.left._tag === "SystemError") {
-          expect(result.left.retryable).toBe(true);
-        }
-      }
+      // Assert - Should succeeed
+      assert(Either.isRight(result));
+      expect(result.right.status).toBe("COMPLETED");
     });
 
     it("handles other SetLineupError as system error", async () => {

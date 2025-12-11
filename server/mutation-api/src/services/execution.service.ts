@@ -8,6 +8,7 @@ import type { MutationTask } from "../types/schemas.js";
 import type { RateLimiterService } from "./rate-limiter.service.js";
 
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
+import { handleYahooAuthRevoked } from "../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js";
 import {
   RateLimitError as EffectRateLimitError,
   DomainError,
@@ -256,16 +257,18 @@ export class ExecutionServiceImpl implements ExecutionService {
             }
 
             if (isAuthorizationError(error)) {
-              // Yahoo 401/403 after successful token fetch - likely transient, retry
-              return Effect.annotateLogs(Effect.logWarning("Auth error in lineup update"), {
-                errorMessage: error.message,
-              }).pipe(
+              return Effect.ignore(
+                Effect.tryPromise({
+                  try: () => handleYahooAuthRevoked(uid),
+                  catch: () => undefined,
+                }),
+              ).pipe(
                 Effect.andThen(
                   Effect.fail(
-                    new SystemError({
-                      message: `Yahoo auth error (transient): ${error.message}`,
-                      code: "YAHOO_AUTH_ERROR",
-                      retryable: true,
+                    new DomainError({
+                      message: error.message,
+                      code: "REVOKED_REFRESH_TOKEN",
+                      userId: uid,
                     }),
                   ),
                 ),
@@ -349,16 +352,18 @@ export class ExecutionServiceImpl implements ExecutionService {
             }
 
             if (isAuthorizationError(error)) {
-              // Yahoo 401/403 after successful token fetch - likely transient, retry
-              return Effect.annotateLogs(Effect.logWarning("Auth error in lineup update"), {
-                errorMessage: error.message,
-              }).pipe(
+              return Effect.ignore(
+                Effect.tryPromise({
+                  try: () => handleYahooAuthRevoked(uid),
+                  catch: () => undefined,
+                }),
+              ).pipe(
                 Effect.andThen(
                   Effect.fail(
-                    new SystemError({
-                      message: `Yahoo auth error (transient): ${error.message}`,
-                      code: "YAHOO_AUTH_ERROR",
-                      retryable: true,
+                    new DomainError({
+                      message: error.message,
+                      code: "REVOKED_REFRESH_TOKEN",
+                      userId: uid,
                     }),
                   ),
                 ),
