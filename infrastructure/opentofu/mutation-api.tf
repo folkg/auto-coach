@@ -9,10 +9,17 @@ resource "google_service_account" "mutation_api_sa" {
   project      = var.project_id
 }
 
-# IAM binding for mutation API service account to access Firebase
+# IAM binding for mutation API service account to access Firebase (read-only)
 resource "google_project_iam_member" "mutation_api_sa_firebase_viewer" {
   project = var.firebase_project_id
   role    = "roles/firebase.viewer"
+  member  = "serviceAccount:${google_service_account.mutation_api_sa.email}"
+}
+
+# IAM binding for mutation API service account to manage Firebase (including Auth for token revocation)
+resource "google_project_iam_member" "mutation_api_sa_firebase_admin" {
+  project = var.firebase_project_id
+  role    = "roles/firebase.admin"
   member  = "serviceAccount:${google_service_account.mutation_api_sa.email}"
 }
 
@@ -193,6 +200,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
     google_project_service.cloud_run_api,
     google_artifact_registry_repository.auto_coach_repo,
     google_project_iam_member.mutation_api_sa_firebase_viewer,
+    google_project_iam_member.mutation_api_sa_firebase_admin,
     google_project_iam_member.mutation_api_sa_secret_accessor,
     google_project_iam_member.mutation_api_sa_datastore_user,
     google_project_iam_member.mutation_api_sa_cloud_tasks_invoker,
