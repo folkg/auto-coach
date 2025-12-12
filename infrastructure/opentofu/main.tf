@@ -515,3 +515,11 @@ resource "google_project_iam_member" "github_actions_cloud_scheduler_admin" {
   role    = "roles/cloudscheduler.admin"
   member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
 }
+
+# IAM binding for GitHub Actions to manage project IAM policies (needed to grant roles to service accounts)
+resource "google_project_iam_member" "github_actions_project_iam_admin" {
+  count   = var.create_github_actions_sa ? 1 : 0
+  project = var.firebase_project_id
+  role    = "roles/resourcemanager.projectIamAdmin"
+  member  = "serviceAccount:${google_service_account.github_actions_sa[0].email}"
+}
