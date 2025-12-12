@@ -9,12 +9,14 @@ import type { RateLimiterService } from "./rate-limiter.service.js";
 
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
 import { handleYahooAuthRevoked } from "../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js";
+import { isYahooMaintenanceError } from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import {
   RateLimitError as EffectRateLimitError,
   DomainError,
   type ExecuteMutationRequest,
   type ExecuteMutationResponse,
   type MutationError,
+  ServiceUnavailableError,
   SystemError,
   type TaskStatusUpdate,
 } from "../types/api-schemas.js";
@@ -74,10 +76,10 @@ export class ExecutionServiceImpl implements ExecutionService {
         Effect.tapError(() => Effect.logWarning("Circuit breaker is open")),
         Effect.mapError(
           (error) =>
-            new EffectRateLimitError({
+            new ServiceUnavailableError({
               message: error.message,
               code: "CIRCUIT_BREAKER_OPEN",
-              retryAfter: 60,
+              retryAfter: self.rateLimiter.getRetryAfterSeconds(),
             }),
         ),
       );
@@ -167,10 +169,28 @@ export class ExecutionServiceImpl implements ExecutionService {
         return yield* Effect.fail(error);
       }
 
+      if (error._tag === "ServiceUnavailableError") {
+        yield* Effect.annotateLogs(Effect.logWarning("Service unavailable error during mutation"), {
+          errorCode: error.code ?? "SERVICE_UNAVAILABLE",
+          retryAfter: error.retryAfter,
+        });
+
+        // Trigger global pause if this is a Yahoo maintenance error
+        if (error.code === "YAHOO_MAINTENANCE") {
+          yield* self.rateLimiter.triggerGlobalPause(
+            "Yahoo API in maintenance/read-only mode",
+            error.retryAfter * 1000, // Convert seconds to ms
+          );
+        }
+
+        // Don't update task status to FAILED - let Cloud Tasks retry
+        return yield* Effect.fail(error);
+      }
+
       // System errors are retryable
       yield* Effect.annotateLogs(Effect.logError("System error during mutation"), {
         errorCode: error.code ?? "UNKNOWN",
-        retryable: error.retryable ?? false,
+        retryable: error._tag === "SystemError" ? error.retryable : false,
       });
 
       yield* self.updateTaskStatus({
@@ -250,6 +270,22 @@ export class ExecutionServiceImpl implements ExecutionService {
                       message: error.message,
                       code: "YAHOO_RATE_LIMIT",
                       retryAfter: error.retryAfter,
+                    }),
+                  ),
+                ),
+              );
+            }
+
+            if (isYahooMaintenanceError(error)) {
+              return Effect.annotateLogs(Effect.logWarning("Yahoo in maintenance mode"), {
+                retryAfter: error.retryAfterSeconds,
+              }).pipe(
+                Effect.andThen(
+                  Effect.fail(
+                    new ServiceUnavailableError({
+                      message: error.message,
+                      code: "YAHOO_MAINTENANCE",
+                      retryAfter: error.retryAfterSeconds,
                     }),
                   ),
                 ),
@@ -345,6 +381,22 @@ export class ExecutionServiceImpl implements ExecutionService {
                       message: error.message,
                       code: "YAHOO_RATE_LIMIT",
                       retryAfter: error.retryAfter,
+                    }),
+                  ),
+                ),
+              );
+            }
+
+            if (isYahooMaintenanceError(error)) {
+              return Effect.annotateLogs(Effect.logWarning("Yahoo in maintenance mode"), {
+                retryAfter: error.retryAfterSeconds,
+              }).pipe(
+                Effect.andThen(
+                  Effect.fail(
+                    new ServiceUnavailableError({
+                      message: error.message,
+                      code: "YAHOO_MAINTENANCE",
+                      retryAfter: error.retryAfterSeconds,
                     }),
                   ),
                 ),

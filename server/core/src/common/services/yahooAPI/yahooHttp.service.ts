@@ -11,6 +11,10 @@ const RATE_LIMIT_STATUS_CODES = [429, 999];
 /** Auth error status codes from Yahoo API */
 const AUTH_ERROR_STATUS_CODES = [401, 403];
 
+/**  Somewhat arbitrary - experimentally Observed to be finished at 3:03 AM some mornings */
+const YAHOO_MAINTENANCE_RETRY_AFTER_SECONDS = 8 * 60;
+const YAHOO_MAINTENANCE_INDICATOR = "site is currently in read-only mode";
+
 interface HttpResponse<T> {
   readonly data: T;
   readonly status: number;
@@ -33,8 +37,22 @@ export class HttpError extends Error {
 }
 
 /**
- * Type guard for HttpError
+ * Error thrown when Yahoo API is in maintenance/read-only mode.
  */
+export class YahooMaintenanceError extends Error {
+  readonly retryAfterSeconds: number;
+
+  constructor(message: string, retryAfterSeconds = YAHOO_MAINTENANCE_RETRY_AFTER_SECONDS) {
+    super(message);
+    this.name = "YahooMaintenanceError";
+    this.retryAfterSeconds = retryAfterSeconds;
+  }
+}
+
+export function isYahooMaintenanceError(error: unknown): error is YahooMaintenanceError {
+  return error instanceof YahooMaintenanceError;
+}
+
 export function isHttpError(error: unknown): error is HttpError {
   return error instanceof HttpError;
 }
@@ -58,11 +76,33 @@ function parseRetryAfterHeader(response: Response): number | undefined {
   return undefined;
 }
 
+function isYahooMaintenanceResponse(errorData: string): boolean {
+  return errorData.includes(YAHOO_MAINTENANCE_INDICATOR);
+}
+
 /**
  * Handle error responses from Yahoo API.
  * Throws appropriate error types based on status code.
  */
 function handleErrorResponse(response: Response, errorData: string, uid?: string): never {
+  if (isYahooMaintenanceResponse(errorData)) {
+    structuredLogger.warn("Yahoo API in maintenance/read-only mode", {
+      phase: "yahoo-http",
+      service: "yahoo",
+      event: "YAHOO_MAINTENANCE_MODE",
+      userId: uid,
+      statusCode: response.status,
+      url: response.url,
+      retryAfterSeconds: YAHOO_MAINTENANCE_RETRY_AFTER_SECONDS,
+      outcome: "unhandled-error",
+    });
+
+    throw new YahooMaintenanceError(
+      `Yahoo API is in read-only/maintenance mode (HTTP ${response.status})`,
+      YAHOO_MAINTENANCE_RETRY_AFTER_SECONDS,
+    );
+  }
+
   if (isRateLimitStatusCode(response.status)) {
     const retryAfter = parseRetryAfterHeader(response);
 

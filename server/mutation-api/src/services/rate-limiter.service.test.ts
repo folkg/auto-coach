@@ -427,4 +427,132 @@ describe("RateLimiterService", () => {
       });
     });
   });
+
+  describe("getRetryAfterSeconds", () => {
+    it("returns config window size in seconds when no pause is active", () => {
+      // Arrange
+      const testWindowSizeMs = 120000; // 2 minutes
+      const customConfig: RateLimitConfig = {
+        maxTokens: 10,
+        refillRate: 1,
+        windowSizeMs: testWindowSizeMs,
+      };
+      const customRateLimiter = new RateLimiterServiceImpl(mockFirestore, customConfig);
+
+      // Act
+      const result = customRateLimiter.getRetryAfterSeconds();
+
+      // Assert - should return windowSizeMs / 1000 = 120 seconds
+      expect(result).toBe(Math.ceil(testWindowSizeMs / 1000));
+    });
+
+    it("returns remaining pause time in seconds when pause is active", async () => {
+      // Arrange
+      mockSet.mockResolvedValue(undefined);
+      const pauseDuration = 60000; // 60 seconds
+
+      // Act
+      await Effect.runPromise(rateLimiter.triggerGlobalPause("Test pause", pauseDuration));
+      const result = rateLimiter.getRetryAfterSeconds();
+
+      // Assert - should return remaining time (close to 60 seconds)
+      expect(result).toBeGreaterThan(0);
+      expect(result).toBeLessThanOrEqual(60);
+    });
+
+    it("returns config window size after clearGlobalPause", async () => {
+      // Arrange
+      const testWindowSizeMs = 90000; // 90 seconds
+      const customConfig: RateLimitConfig = {
+        maxTokens: 10,
+        refillRate: 1,
+        windowSizeMs: testWindowSizeMs,
+      };
+      const customRateLimiter = new RateLimiterServiceImpl(mockFirestore, customConfig);
+      mockSet.mockResolvedValue(undefined);
+      mockUpdate.mockResolvedValue(undefined);
+      await Effect.runPromise(customRateLimiter.triggerGlobalPause("Test pause", 60000));
+
+      // Act
+      await Effect.runPromise(customRateLimiter.clearGlobalPause());
+      const result = customRateLimiter.getRetryAfterSeconds();
+
+      // Assert - should return config window size after clear
+      expect(result).toBe(Math.ceil(testWindowSizeMs / 1000));
+    });
+
+    it("returns config window size after pause expires", async () => {
+      // Arrange
+      const testWindowSizeMs = 75000; // 75 seconds
+      const customConfig: RateLimitConfig = {
+        maxTokens: 10,
+        refillRate: 1,
+        windowSizeMs: testWindowSizeMs,
+      };
+      const customRateLimiter = new RateLimiterServiceImpl(mockFirestore, customConfig);
+      mockSet.mockResolvedValue(undefined);
+      await Effect.runPromise(customRateLimiter.triggerGlobalPause("Test pause", 1)); // 1ms pause
+
+      // Wait for pause to expire
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      // Act
+      const result = customRateLimiter.getRetryAfterSeconds();
+
+      // Assert - should return config window size since pause expired
+      expect(result).toBe(Math.ceil(testWindowSizeMs / 1000));
+    });
+  });
+
+  describe("checkCircuitBreaker with local cache", () => {
+    it("uses local cache to skip Firestore when pause is active", async () => {
+      // Arrange
+      mockSet.mockResolvedValue(undefined);
+      await Effect.runPromise(rateLimiter.triggerGlobalPause("Test pause", 60000));
+      mockCollection.mockClear();
+
+      // Act
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
+
+      // Assert - should fail without hitting Firestore
+      expect(Either.isLeft(result)).toBe(true);
+      if (Either.isLeft(result)) {
+        expect(result.left.isGlobalPause).toBe(true);
+        expect(result.left.message).toContain("cached");
+      }
+      // Firestore should not have been called (used cache instead)
+      expect(mockCollection).not.toHaveBeenCalled();
+    });
+
+    it("falls back to Firestore when local cache is expired", async () => {
+      // Arrange - simulate expired pause by using a very short duration
+      mockSet.mockResolvedValue(undefined);
+      await Effect.runPromise(rateLimiter.triggerGlobalPause("Test pause", 1)); // 1ms pause
+
+      // Wait for pause to expire
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      // Clear mocks to verify Firestore is called
+      mockCollection.mockClear();
+
+      // Mock Firestore response for global doc (no active pause)
+      mockGet.mockResolvedValueOnce({
+        exists: false,
+        data: () => undefined,
+      });
+      // Mock Firestore response for circuitBreaker doc (no circuit breaker)
+      mockGet.mockResolvedValueOnce({
+        exists: false,
+        data: () => undefined,
+      });
+
+      // Act
+      const result = await Effect.runPromise(Effect.either(rateLimiter.checkCircuitBreaker()));
+
+      // Assert - should succeed after hitting Firestore
+      expect(Either.isRight(result)).toBe(true);
+      // Firestore should have been called since cache expired
+      expect(mockCollection).toHaveBeenCalledWith("rateLimits");
+    });
+  });
 });

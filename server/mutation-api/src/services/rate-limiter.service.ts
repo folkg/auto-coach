@@ -30,13 +30,16 @@ export interface RateLimiterService {
   checkCircuitBreaker(): Effect.Effect<void, CircuitBreakerError>;
   recordSuccess(): Effect.Effect<void, never>;
   recordFailure(error: Error): Effect.Effect<void, never>;
-  triggerGlobalPause(reason: string, durationMs?: number): Effect.Effect<void, never>;
+  triggerGlobalPause(reason: string, durationMs: number): Effect.Effect<void, never>;
   clearGlobalPause(): Effect.Effect<void, never>;
+  getRetryAfterSeconds(): number;
 }
 
 export class RateLimiterServiceImpl implements RateLimiterService {
   private readonly firestore: Firestore;
   private readonly config: RateLimitConfig;
+
+  private globalPauseUntilMs: number | undefined;
 
   constructor(firestore: Firestore, config: RateLimitConfig) {
     this.firestore = firestore;
@@ -135,6 +138,16 @@ export class RateLimiterServiceImpl implements RateLimiterService {
   }
 
   checkCircuitBreaker(): Effect.Effect<void, CircuitBreakerError> {
+    const cachedRemainingMs = this.getRemainingPauseMs();
+    if (cachedRemainingMs !== undefined && cachedRemainingMs > 0) {
+      return Effect.fail(
+        CircuitBreakerError.make({
+          message: "Globally paused (cached)",
+          isGlobalPause: true,
+        }),
+      );
+    }
+
     return Effect.tryPromise({
       try: async () => {
         // Check global pause first
@@ -147,14 +160,17 @@ export class RateLimiterServiceImpl implements RateLimiterService {
             const pausedAt = globalData.pausedAt?.toMillis?.() || 0;
             const pauseDuration = globalData.pauseDurationMs || 60000; // 60 seconds default (max cooldown)
             const now = Date.now();
+            const pauseUntil = pausedAt + pauseDuration;
 
-            if (now - pausedAt < pauseDuration) {
+            if (now < pauseUntil) {
+              this.globalPauseUntilMs = pauseUntil;
               throw CircuitBreakerError.make({
                 message: `Globally paused: ${globalData.pauseReason || "Unknown reason"}`,
                 isGlobalPause: true,
               });
             }
             // Auto-clear expired pause
+            this.globalPauseUntilMs = undefined;
             await globalDocRef.update({ isPaused: false });
           }
         }
@@ -278,7 +294,9 @@ export class RateLimiterServiceImpl implements RateLimiterService {
     }).pipe(Effect.ignore);
   }
 
-  triggerGlobalPause(reason: string, durationMs = 60000): Effect.Effect<void, never> {
+  triggerGlobalPause(reason: string, durationMs: number): Effect.Effect<void, never> {
+    this.globalPauseUntilMs = Date.now() + durationMs;
+
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
@@ -298,6 +316,8 @@ export class RateLimiterServiceImpl implements RateLimiterService {
   }
 
   clearGlobalPause(): Effect.Effect<void, never> {
+    this.globalPauseUntilMs = undefined;
+
     return Effect.ignore(
       Effect.tryPromise({
         try: async () => {
@@ -311,6 +331,22 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         },
       }),
     );
+  }
+
+  getRetryAfterSeconds(): number {
+    const remainingMs = this.getRemainingPauseMs();
+    if (remainingMs !== undefined) {
+      return Math.ceil(remainingMs / 1000);
+    }
+    return Math.ceil(this.config.windowSizeMs / 1000);
+  }
+
+  private getRemainingPauseMs(): number | undefined {
+    if (this.globalPauseUntilMs === undefined) {
+      return undefined;
+    }
+    const remaining = this.globalPauseUntilMs - Date.now();
+    return remaining > 0 ? remaining : undefined;
   }
 }
 

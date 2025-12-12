@@ -15,10 +15,16 @@ import { validateExecuteMutation } from "../validators";
 /**
  * Converts a MutationError to an HTTP response format.
  * Exported for testing.
+ *
+ * @param error - The mutation error to convert
+ * @param defaultRetryAfterSeconds - Fallback retry-after value when not provided by the error
  */
-export function errorToResponse(error: MutationError): {
+export function errorToResponse(
+  error: MutationError,
+  defaultRetryAfterSeconds: number,
+): {
   response: ErrorResponse;
-  statusCode: 400 | 429 | 500;
+  statusCode: 400 | 429 | 500 | 503;
   retryAfter: number | undefined;
 } {
   const baseResponse: ErrorResponse = {
@@ -27,18 +33,31 @@ export function errorToResponse(error: MutationError): {
     code: error.code || error._tag,
   };
 
-  if (error._tag === "RateLimitError") {
+  if (error._tag === "ServiceUnavailableError") {
+    const retryAfter = error.retryAfter;
     return {
       response: {
         ...baseResponse,
-        retryAfter: error.retryAfter,
+        retryAfter,
       },
-      statusCode: 429,
-      retryAfter: error.retryAfter,
+      statusCode: 503,
+      retryAfter,
     };
   }
 
-  let statusCode: 400 | 429 | 500 = 500;
+  if (error._tag === "RateLimitError") {
+    const retryAfter = error.retryAfter ?? defaultRetryAfterSeconds;
+    return {
+      response: {
+        ...baseResponse,
+        retryAfter,
+      },
+      statusCode: 429,
+      retryAfter,
+    };
+  }
+
+  let statusCode: 400 | 429 | 500 | 503 = 500;
   if (error._tag === "DomainError") {
     statusCode = 400;
   }
@@ -92,7 +111,10 @@ export function createExecutionRoutes(firestore: Firestore) {
           ),
           Effect.match({
             onFailure: (error) => {
-              const { response, statusCode, retryAfter } = errorToResponse(error);
+              const { response, statusCode, retryAfter } = errorToResponse(
+                error,
+                rateLimiter.getRetryAfterSeconds(),
+              );
 
               // Set Retry-After header for rate limit errors so Cloud Tasks respects backoff
               if (retryAfter !== undefined) {

@@ -10,6 +10,7 @@ import {
   RateLimitError as ApiRateLimitError,
   DomainError,
   type ExecuteMutationRequest,
+  ServiceUnavailableError,
   SystemError,
 } from "../types/api-schemas.js";
 import { ExecutionServiceImpl } from "./execution.service.js";
@@ -111,6 +112,7 @@ function setupTest() {
     recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
     triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
     clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+    getRetryAfterSeconds: vi.fn().mockReturnValue(60),
   };
 
   const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
@@ -477,7 +479,7 @@ describe("ExecutionService", () => {
       // Assert
       expect(Either.isLeft(result)).toBe(true);
       if (Either.isLeft(result)) {
-        expect(result.left).toBeInstanceOf(ApiRateLimitError);
+        expect(result.left).toBeInstanceOf(ServiceUnavailableError);
         expect(result.left.code).toBe("CIRCUIT_BREAKER_OPEN");
       }
     });
@@ -533,6 +535,7 @@ describe("ExecutionService", () => {
         recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+        getRetryAfterSeconds: vi.fn().mockReturnValue(60),
       };
 
       const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
@@ -578,6 +581,7 @@ describe("ExecutionService", () => {
         recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+        getRetryAfterSeconds: vi.fn().mockReturnValue(60),
       };
 
       const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);

@@ -29,6 +29,7 @@ function createMockRateLimiter(overrides: Partial<RateLimiterService> = {}): Rat
     recordFailure: () => Effect.void,
     triggerGlobalPause: () => Effect.void,
     clearGlobalPause: () => Effect.void,
+    getRetryAfterSeconds: () => 60,
     ...overrides,
   };
 }
