@@ -10,25 +10,27 @@ import { createExecutionRoutes, errorToResponse } from "./execution";
 const firestore = new Firestore();
 
 describe("errorToResponse", () => {
+  const defaultRetryAfterSeconds = 60;
+
   it("returns 429 with retryAfter for RateLimitError", () => {
     // Arrange
     const error = new RateLimitError({
       message: "Rate limit exceeded",
       code: "RATE_LIMIT_EXCEEDED",
-      retryAfter: 60,
+      retryAfter: 120,
     });
 
     // Act
-    const result = errorToResponse(error);
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
 
     // Assert
     expect(result.statusCode).toBe(429);
-    expect(result.retryAfter).toBe(60);
-    expect(result.response.retryAfter).toBe(60);
+    expect(result.retryAfter).toBe(120);
+    expect(result.response.retryAfter).toBe(120);
     expect(result.response.code).toBe("RATE_LIMIT_EXCEEDED");
   });
 
-  it("returns 429 with undefined retryAfter when not provided", () => {
+  it("returns 429 with default retryAfter when not provided by Yahoo", () => {
     // Arrange
     const error = new RateLimitError({
       message: "Rate limit exceeded",
@@ -36,12 +38,12 @@ describe("errorToResponse", () => {
     });
 
     // Act
-    const result = errorToResponse(error);
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
 
     // Assert
     expect(result.statusCode).toBe(429);
-    expect(result.retryAfter).toBeUndefined();
-    expect(result.response.retryAfter).toBeUndefined();
+    expect(result.retryAfter).toBe(60);
+    expect(result.response.retryAfter).toBe(60);
   });
 
   it("returns 400 for DomainError with no retryAfter", () => {
@@ -52,7 +54,7 @@ describe("errorToResponse", () => {
     });
 
     // Act
-    const result = errorToResponse(error);
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
 
     // Assert
     expect(result.statusCode).toBe(400);
@@ -69,7 +71,7 @@ describe("errorToResponse", () => {
     });
 
     // Act
-    const result = errorToResponse(error);
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
 
     // Assert
     expect(result.statusCode).toBe(500);

@@ -427,4 +427,22 @@ describe("RateLimiterService", () => {
       });
     });
   });
+
+  describe("getDefaultRetryAfterSeconds", () => {
+    it("returns window size converted to seconds", () => {
+      // Arrange
+      const config: RateLimitConfig = {
+        maxTokens: 10,
+        refillRate: 1,
+        windowSizeMs: 65000, // 65 seconds -> should round to 65
+      };
+      const customRateLimiter = new RateLimiterServiceImpl(mockFirestore, config);
+
+      // Act
+      const result = customRateLimiter.getDefaultRetryAfterSeconds();
+
+      // Assert
+      expect(result).toBe(65);
+    });
+  });
 });

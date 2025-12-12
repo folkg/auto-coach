@@ -77,7 +77,7 @@ export class ExecutionServiceImpl implements ExecutionService {
             new EffectRateLimitError({
               message: error.message,
               code: "CIRCUIT_BREAKER_OPEN",
-              retryAfter: 60,
+              retryAfter: self.rateLimiter.getDefaultRetryAfterSeconds(),
             }),
         ),
       );

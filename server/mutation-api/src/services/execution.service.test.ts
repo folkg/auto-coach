@@ -111,6 +111,7 @@ function setupTest() {
     recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
     triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
     clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+    getDefaultRetryAfterSeconds: vi.fn().mockReturnValue(60),
   };
 
   const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
@@ -533,6 +534,7 @@ describe("ExecutionService", () => {
         recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+        getDefaultRetryAfterSeconds: vi.fn().mockReturnValue(60),
       };
 
       const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);
@@ -578,6 +580,7 @@ describe("ExecutionService", () => {
         recordFailure: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         triggerGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
         clearGlobalPause: vi.fn().mockReturnValue(Effect.succeed(undefined)),
+        getDefaultRetryAfterSeconds: vi.fn().mockReturnValue(60),
       };
 
       const executionService = new ExecutionServiceImpl(mockFirestore, mockRateLimiter);

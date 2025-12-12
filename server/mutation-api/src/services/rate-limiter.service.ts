@@ -32,6 +32,7 @@ export interface RateLimiterService {
   recordFailure(error: Error): Effect.Effect<void, never>;
   triggerGlobalPause(reason: string, durationMs?: number): Effect.Effect<void, never>;
   clearGlobalPause(): Effect.Effect<void, never>;
+  getDefaultRetryAfterSeconds(): number;
 }
 
 export class RateLimiterServiceImpl implements RateLimiterService {
@@ -311,6 +312,10 @@ export class RateLimiterServiceImpl implements RateLimiterService {
         },
       }),
     );
+  }
+
+  getDefaultRetryAfterSeconds(): number {
+    return Math.ceil(this.config.windowSizeMs / 1000);
   }
 }
 
