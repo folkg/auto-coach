@@ -24,7 +24,7 @@ export function errorToResponse(
   defaultRetryAfterSeconds: number,
 ): {
   response: ErrorResponse;
-  statusCode: 400 | 429 | 500;
+  statusCode: 400 | 429 | 500 | 503;
   retryAfter: number | undefined;
 } {
   const baseResponse: ErrorResponse = {
@@ -32,6 +32,18 @@ export function errorToResponse(
     message: error.message,
     code: error.code || error._tag,
   };
+
+  if (error._tag === "ServiceUnavailableError") {
+    const retryAfter = error.retryAfter;
+    return {
+      response: {
+        ...baseResponse,
+        retryAfter,
+      },
+      statusCode: 503,
+      retryAfter,
+    };
+  }
 
   if (error._tag === "RateLimitError") {
     const retryAfter = error.retryAfter ?? defaultRetryAfterSeconds;
@@ -45,7 +57,7 @@ export function errorToResponse(
     };
   }
 
-  let statusCode: 400 | 429 | 500 = 500;
+  let statusCode: 400 | 429 | 500 | 503 = 500;
   if (error._tag === "DomainError") {
     statusCode = 400;
   }
@@ -64,7 +76,6 @@ export function createExecutionRoutes(firestore: Firestore) {
   });
 
   const executionService = new ExecutionServiceImpl(firestore, rateLimiter);
-  const defaultRetryAfterSeconds = rateLimiter.getDefaultRetryAfterSeconds();
 
   // POST /mutation - Core worker endpoint for Cloud Tasks
   app.post("/mutation", validateExecuteMutation, async (c) => {
@@ -102,7 +113,7 @@ export function createExecutionRoutes(firestore: Firestore) {
             onFailure: (error) => {
               const { response, statusCode, retryAfter } = errorToResponse(
                 error,
-                defaultRetryAfterSeconds,
+                rateLimiter.getRetryAfterSeconds(),
               );
 
               // Set Retry-After header for rate limit errors so Cloud Tasks respects backoff

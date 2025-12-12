@@ -83,7 +83,16 @@ export class RateLimitError extends Schema.TaggedError<RateLimitError>()("RateLi
   retryAfter: Schema.optional(Schema.Number),
 }) {}
 
-export type MutationError = DomainError | SystemError | RateLimitError;
+export class ServiceUnavailableError extends Schema.TaggedError<ServiceUnavailableError>()(
+  "ServiceUnavailableError",
+  {
+    message: Schema.String,
+    code: Schema.String,
+    retryAfter: Schema.Number,
+  },
+) {}
+
+export type MutationError = DomainError | SystemError | RateLimitError | ServiceUnavailableError;
 
 // Task status updates
 export const TaskStatusUpdateSchema = Schema.Struct({

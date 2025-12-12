@@ -230,9 +230,9 @@ resource "google_cloud_tasks_queue" "mutation_queue" {
   retry_config {
     max_attempts       = 5
     min_backoff        = "1s"
-    max_backoff        = "60s"
+    max_backoff        = "300s"
     max_doublings      = 3
-    max_retry_duration = "300s"
+    max_retry_duration = "900s"
   }
 
   depends_on = [google_project_service.cloud_tasks_api]

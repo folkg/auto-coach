@@ -1,7 +1,12 @@
 import { Firestore } from "@google-cloud/firestore";
 import { describe, expect, it } from "vitest";
 
-import { DomainError, RateLimitError, SystemError } from "../types/api-schemas";
+import {
+  DomainError,
+  RateLimitError,
+  ServiceUnavailableError,
+  SystemError,
+} from "../types/api-schemas";
 import { createExecutionRoutes, errorToResponse } from "./execution";
 
 // Validation only; avoids executing downstream Firestore logic.
@@ -77,6 +82,41 @@ describe("errorToResponse", () => {
     expect(result.statusCode).toBe(500);
     expect(result.retryAfter).toBeUndefined();
     expect(result.response.code).toBe("INTERNAL_ERROR");
+  });
+
+  it("returns 503 with retryAfter for ServiceUnavailableError", () => {
+    // Arrange
+    const error = new ServiceUnavailableError({
+      message: "Yahoo API in maintenance mode",
+      code: "YAHOO_MAINTENANCE",
+      retryAfter: 8 * 60,
+    });
+
+    // Act
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
+
+    // Assert
+    expect(result.statusCode).toBe(503);
+    expect(result.retryAfter).toBe(480);
+    expect(result.response.retryAfter).toBe(480);
+    expect(result.response.code).toBe("YAHOO_MAINTENANCE");
+  });
+
+  it("returns 503 for circuit breaker open errors", () => {
+    // Arrange
+    const error = new ServiceUnavailableError({
+      message: "Circuit breaker is open",
+      code: "CIRCUIT_BREAKER_OPEN",
+      retryAfter: 5 * 60,
+    });
+
+    // Act
+    const result = errorToResponse(error, defaultRetryAfterSeconds);
+
+    // Assert
+    expect(result.statusCode).toBe(503);
+    expect(result.retryAfter).toBe(300);
+    expect(result.response.code).toBe("CIRCUIT_BREAKER_OPEN");
   });
 });
 
