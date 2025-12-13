@@ -3,6 +3,7 @@ import type { CollectionReference, DocumentReference, Firestore } from "@google-
 
 import { createMock } from "@common/utilities/createMock.js";
 import { AuthorizationError } from "@common/utilities/error.js";
+import { RevokedRefreshTokenError } from "@core/common/services/firebase/errors.js";
 import { Effect, Either } from "effect";
 import { assert, describe, expect, it, vi } from "vitest";
 
@@ -162,12 +163,12 @@ describe("ExecutionService", () => {
       expect(mockSetUsersLineup).toHaveBeenCalledWith("test-user-id", [mockTeam]);
     });
 
-    it("handles AuthorizationError as retryable system error", async () => {
+    it("handles AuthorizationError as non-retryable revoked access", async () => {
       // Arrange
       const { executionService } = setupTest();
       const mockTeam = createMockFirestoreTeam();
 
-      // Yahoo 401/403 after successful token fetch is treated as transient/retryable
+      // Yahoo 401/403 after successful token fetch is treated as revoked access
       mockSetUsersLineup.mockImplementation(() => {
         return Effect.fail(
           new AuthorizationError("Yahoo API authentication failed (HTTP 401)", 401, "test-user-id"),
@@ -193,9 +194,11 @@ describe("ExecutionService", () => {
         Effect.either(executionService.executeMutation(request)),
       );
 
-      // Assert - Should succeeed
+      // Assert - Should succeed (HTTP 200) but mark task as FAILED to stop retries
       assert(Either.isRight(result));
-      expect(result.right.status).toBe("COMPLETED");
+      expect(result.right.success).toBe(true);
+      expect(result.right.status).toBe("FAILED");
+      expect(result.right.message).toContain("revoked");
     });
 
     it("handles other SetLineupError as system error", async () => {
@@ -264,6 +267,50 @@ describe("ExecutionService", () => {
         expect(result.left).toBeInstanceOf(DomainError);
         expect(result.left.code).toBe("INVALID_PAYLOAD");
       }
+    });
+
+    it("marks task FAILED and returns success for RevokedRefreshTokenError", async () => {
+      // Arrange
+      const { executionService, mockFirestore } = setupTest();
+      const mockTeam = createMockFirestoreTeam();
+
+      mockSetUsersLineup.mockImplementation(() => {
+        return Effect.fail(
+          new RevokedRefreshTokenError(
+            "User test-user-id has revoked access. Stopping all actions for this user.",
+          ),
+        );
+      });
+
+      const request: ExecuteMutationRequest = {
+        task: {
+          id: "test-task-id",
+          type: "SET_LINEUP",
+          payload: {
+            uid: "test-user-id",
+            teams: [mockTeam],
+          },
+          userId: "test-user-id",
+          createdAt: "2023-01-01T00:00:00Z",
+          status: "PENDING",
+        },
+      };
+
+      // Act
+      const result = await Effect.runPromise(
+        Effect.either(executionService.executeMutation(request)),
+      );
+
+      // Assert - Should succeed (HTTP 200) but mark task as FAILED
+      assert(Either.isRight(result));
+      expect(result.right.success).toBe(true);
+      expect(result.right.taskId).toBe("test-task-id");
+      expect(result.right.status).toBe("FAILED");
+      expect(result.right.message).toContain("revoked");
+
+      // Verify task status was updated to FAILED in Firestore
+      const collectionMock = mockFirestore.collection as ReturnType<typeof vi.fn>;
+      expect(collectionMock).toHaveBeenCalledWith("mutationTasks");
     });
   });
 

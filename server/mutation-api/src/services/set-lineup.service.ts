@@ -11,6 +11,7 @@ import { Data, Effect } from "effect";
 
 import type { TopAvailablePlayers } from "../../../core/src/common/services/yahooAPI/yahooTopAvailablePlayersBuilder.service.js";
 
+import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
 import {
   getTodaysPostponedTeams,
   updateFirestoreTimestamp,
@@ -44,9 +45,13 @@ export class SetLineupError extends Data.TaggedError("SetLineupError")<{
   readonly uid?: string;
 }> {}
 
-export { ApiRateLimitError, AuthorizationError };
+export { ApiRateLimitError, AuthorizationError, RevokedRefreshTokenError };
 
-export type SetLineupServiceError = SetLineupError | ApiRateLimitError | AuthorizationError;
+export type SetLineupServiceError =
+  | SetLineupError
+  | ApiRateLimitError
+  | AuthorizationError
+  | RevokedRefreshTokenError;
 
 function toErrorMessage(error: unknown): string {
   if (error instanceof Error) {
@@ -60,6 +65,9 @@ function wrapError(error: unknown, message: string, uid?: string): SetLineupServ
     return error;
   }
   if (isAuthorizationError(error)) {
+    return error;
+  }
+  if (error instanceof RevokedRefreshTokenError) {
     return error;
   }
   return new SetLineupError({

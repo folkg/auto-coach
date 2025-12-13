@@ -114,10 +114,12 @@ export class ExecutionServiceImpl implements ExecutionService {
     const self = this;
 
     return Effect.gen(function* () {
-      // Handle RevokedRefreshTokenError specially - log but don't fail
+      // Handle RevokedRefreshTokenError specially - mark as FAILED but return success (HTTP 200) to stop retries
       if (error._tag === "DomainError" && error.code === "REVOKED_REFRESH_TOKEN") {
+        const message = "Task failed (user revoked Yahoo access, not retried)";
+
         yield* Effect.annotateLogs(
-          Effect.logWarning("Yahoo auth revoked - task marked completed"),
+          Effect.logWarning("Yahoo auth revoked - task marked failed without retry"),
           {
             errorCode: "REVOKED_REFRESH_TOKEN",
           },
@@ -125,15 +127,19 @@ export class ExecutionServiceImpl implements ExecutionService {
 
         yield* self.updateTaskStatus({
           taskId: task.id,
-          status: "COMPLETED",
-          message: "Task completed (user token revoked, logged)",
+          status: "FAILED",
+          message,
+          error: "REVOKED_REFRESH_TOKEN",
         });
+
+        // From a rate-limiter perspective, this is not a system/Yahoo failure
         yield* self.rateLimiter.recordSuccess();
+
         return {
           success: true,
           taskId: task.id,
-          status: "COMPLETED",
-          message: "Task completed (user token revoked, logged)",
+          status: "FAILED",
+          message,
           processedAt: new Date().toISOString(),
         };
       }
