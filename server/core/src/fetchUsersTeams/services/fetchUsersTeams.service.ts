@@ -16,9 +16,9 @@ import {
   getPositionCounts,
 } from "../../common/services/yahooAPI/yahooTeamProcesssing.services.js";
 
-const TeamStandingsSchema = type({
+export const TeamStandingsSchema = type({
   team_standings: {
-    rank: "string | number | null",
+    rank: type("string | number | null").default(null),
     "points_for?": "string | number",
     "points_against?": "string | number",
     "points_change?": "string | number",
