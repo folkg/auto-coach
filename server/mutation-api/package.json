@@ -33,7 +33,7 @@
     "@effect/language-service": "0.60.0",
     "@effect/vitest": "0.27.0",
     "@types/bun": "catalog:",
-    "msw": "2.12.4",
+    "msw": "2.12.7",
     "typescript": "catalog:",
     "vite-tsconfig-paths": "catalog:",
     "vitest": "catalog:"
