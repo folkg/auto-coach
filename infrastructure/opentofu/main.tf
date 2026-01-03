@@ -143,14 +143,14 @@ resource "google_artifact_registry_repository" "auto_coach_repo" {
 
   labels = local.common_labels
 
-  # Cleanup policy: delete PR images older than 7 days
+  # Cleanup policy: delete PR images older than 3 days
   cleanup_policies {
     id     = "delete-old-pr-images"
     action = "DELETE"
     condition {
       tag_state    = "TAGGED"
       tag_prefixes = ["pr-"]
-      older_than   = "604800s" # 7 days in seconds
+      older_than   = "259200s" # 3 days in seconds
     }
   }
 
@@ -164,22 +164,22 @@ resource "google_artifact_registry_repository" "auto_coach_repo" {
     }
   }
 
-  # Keep policy: always keep prod-latest and recent versioned images
+  # Keep policy: always keep prod-latest
   cleanup_policies {
     id     = "keep-prod-images"
     action = "KEEP"
     condition {
       tag_state    = "TAGGED"
-      tag_prefixes = ["v", "prod-latest"]
+      tag_prefixes = ["prod-latest"]
     }
   }
 
-  # Keep the 5 most recent versions of each package
+  # Keep the 2 most recent versions of each package
   cleanup_policies {
     id     = "keep-recent-versions"
     action = "KEEP"
     most_recent_versions {
-      keep_count = 5
+      keep_count = 2
     }
   }
 
@@ -365,7 +365,7 @@ resource "google_cloud_run_v2_service" "auto_coach_api" {
           memory = "512Mi"
         }
         cpu_idle          = true
-        startup_cpu_boost = true
+        # startup_cpu_boost = true # Disabled to save costs
       }
 
       ports {
