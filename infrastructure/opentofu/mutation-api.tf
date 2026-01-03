@@ -78,7 +78,7 @@ resource "google_cloud_run_v2_service" "mutation_api" {
       resources {
         limits = {
           cpu    = "1"
-          memory = "1Gi"
+          memory = "512Mi"
         }
         cpu_idle = true
       }
