@@ -15,7 +15,10 @@ import {
 } from "../../../core/src/common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js";
 import { SportsnetGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/SportsnetGamesResponse.js";
-import { YahooGamesResponseSchema } from "../../../core/src/scheduleSetLineup/interfaces/YahooGamesReponse.js";
+import {
+  YahooLeagueGameIdsByDateResponseSchema,
+  YahooScoreboardGameResponseSchema,
+} from "../../../core/src/scheduleSetLineup/interfaces/YahooGamesReponse.js";
 import { FirestoreTeamPayloadSchema } from "../types/schemas.js";
 
 export type FirestoreTeamPayload = Schema.Schema.Type<typeof FirestoreTeamPayloadSchema>;
@@ -193,7 +196,7 @@ function getGameTimesWithFallback(
       Effect.annotateLogs("league", league),
     );
 
-    const sportsnetResult = yield* Effect.either(getGameTimesSportsnet(league, todayDate));
+    const sportsnetResult = yield* Effect.either(getGameTimesSportsnet(league));
 
     if (Either.isRight(sportsnetResult)) {
       return sportsnetResult.right;
@@ -218,19 +221,21 @@ function getGameTimesYahoo(
 ): Effect.Effect<number[], SchedulingError> {
   return Effect.tryPromise({
     try: async () => {
-      const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
+      const season = todayDate.split("-")[0];
+      const url = `https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&leagues=${league}&dates=${todayDate}&season=${season}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
       const json: unknown = await response.json();
-      const data = ensureType(json, YahooGamesResponseSchema);
+      const data = ensureType(json, YahooLeagueGameIdsByDateResponseSchema);
 
-      const gamesJSON = data.league.games[0];
       const gameTimesSet: number[] = [];
-      for (const game of gamesJSON) {
-        const gameStart = Date.parse(game.game.start_time);
-        gameTimesSet.push(gameStart);
+      for (const leagueData of data.data.leagues) {
+        for (const game of leagueData.games) {
+          const gameStart = Date.parse(game.startTime);
+          gameTimesSet.push(gameStart);
+        }
       }
 
       return Array.from(new Set(gameTimesSet));
@@ -243,13 +248,10 @@ function getGameTimesYahoo(
   });
 }
 
-function getGameTimesSportsnet(
-  league: Leagues,
-  todayDate: string,
-): Effect.Effect<number[], SchedulingError> {
+function getGameTimesSportsnet(league: Leagues): Effect.Effect<number[], SchedulingError> {
   return Effect.tryPromise({
     try: async () => {
-      const url = `https://mobile-statsv2.sportsnet.ca/scores?league=${league}&team=&day=${todayDate}`;
+      const url = `https://stats-api.sportsnet.ca/ticker?league=${league}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -257,10 +259,9 @@ function getGameTimesSportsnet(
       const json: unknown = await response.json();
       const data = ensureType(json, SportsnetGamesResponseSchema);
 
-      const gamesJSON = data.data[0].games;
       const gameTimesSet: number[] = [];
-      for (const game of gamesJSON) {
-        const gameStart = game.details.timestamp * 1000;
+      for (const game of data.data.games) {
+        const gameStart = game.timestamp * 1000;
         gameTimesSet.push(gameStart);
       }
 
@@ -269,6 +270,37 @@ function getGameTimesSportsnet(
     catch: (error) =>
       SchedulingError.make({
         message: `Failed to fetch games from Sportsnet for ${league}`,
+        error,
+      }),
+  });
+}
+
+function getPostponedTeamsSportsnet(
+  league: Leagues,
+): Effect.Effect<readonly string[], SchedulingError> {
+  return Effect.tryPromise({
+    try: async () => {
+      const url = `https://stats-api.sportsnet.ca/ticker?league=${league}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      const json: unknown = await response.json();
+      const data = ensureType(json, SportsnetGamesResponseSchema);
+
+      const postponedTeams: string[] = [];
+      for (const game of data.data.games) {
+        if (game.game_status === "Postponed") {
+          postponedTeams.push(game.visiting_team.id);
+          postponedTeams.push(game.home_team.id);
+        }
+      }
+
+      return postponedTeams;
+    },
+    catch: (error) =>
+      SchedulingError.make({
+        message: `Failed to fetch postponed teams from Sportsnet for ${league}`,
         error,
       }),
   });
@@ -284,7 +316,7 @@ export const setTodaysPostponedTeams = Effect.fn("scheduling.setTodaysPostponedT
   const postponedTeams: string[] = [];
 
   for (const league of leagues) {
-    const teams = yield* getPostponedTeamsYahoo(league, today);
+    const teams = yield* getPostponedTeamsWithFallback(league, today);
     postponedTeams.push(...teams);
   }
 
@@ -312,8 +344,57 @@ export const setTodaysPostponedTeams = Effect.fn("scheduling.setTodaysPostponedT
   });
 });
 
+function getPostponedTeamsWithFallback(
+  league: Leagues,
+  todayDate: string,
+): Effect.Effect<readonly string[], SchedulingError> {
+  return Effect.gen(function* () {
+    const yahooResult = yield* Effect.either(getPostponedTeamsYahoo(league, todayDate));
+
+    if (Either.isRight(yahooResult)) {
+      return yahooResult.right;
+    }
+
+    yield* Effect.logError("Error fetching postponed teams from Yahoo API").pipe(
+      Effect.annotateLogs("phase", "scheduling"),
+      Effect.annotateLogs("event", "YAHOO_POSTPONED_FETCH_FAILED"),
+      Effect.annotateLogs("service", "yahoo"),
+      Effect.annotateLogs("league", league),
+      Effect.annotateLogs("errorMessage", yahooResult.left.message),
+      Effect.annotateLogs("outcome", "handled-error"),
+      Effect.annotateLogs("terminated", false),
+    );
+
+    yield* Effect.logInfo("Trying to get postponed teams from Sportsnet API").pipe(
+      Effect.annotateLogs("phase", "scheduling"),
+      Effect.annotateLogs("event", "SPORTSNET_POSTPONED_FALLBACK"),
+      Effect.annotateLogs("service", "sportsnet"),
+      Effect.annotateLogs("league", league),
+    );
+
+    const sportsnetResult = yield* Effect.either(getPostponedTeamsSportsnet(league));
+
+    if (Either.isRight(sportsnetResult)) {
+      return sportsnetResult.right;
+    }
+
+    yield* Effect.logError("Error fetching postponed teams from Sportsnet API").pipe(
+      Effect.annotateLogs("phase", "scheduling"),
+      Effect.annotateLogs("event", "SPORTSNET_POSTPONED_FETCH_FAILED"),
+      Effect.annotateLogs("service", "sportsnet"),
+      Effect.annotateLogs("league", league),
+      Effect.annotateLogs("errorMessage", sportsnetResult.left.message),
+      Effect.annotateLogs("outcome", "handled-error"),
+      Effect.annotateLogs("terminated", false),
+    );
+
+    return [];
+  });
+}
+
 /**
  * Gets postponed teams from Yahoo for a specific league.
+ * Uses the new Graphite API: first fetches game list, then fetches team IDs for postponed games.
  */
 export function getPostponedTeamsYahoo(
   league: Leagues,
@@ -321,27 +402,41 @@ export function getPostponedTeamsYahoo(
 ): Effect.Effect<readonly string[], SchedulingError> {
   return Effect.tryPromise({
     try: async () => {
-      const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      const season = todayDate.split("-")[0];
+      const listUrl = `https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&leagues=${league}&dates=${todayDate}&season=${season}`;
+      const listResponse = await fetch(listUrl);
+      if (!listResponse.ok) {
+        throw new Error(`HTTP ${listResponse.status}: ${listResponse.statusText}`);
       }
-      const json: unknown = await response.json();
-      const data = ensureType(json, YahooGamesResponseSchema);
+      const listJson: unknown = await listResponse.json();
+      const listData = ensureType(listJson, YahooLeagueGameIdsByDateResponseSchema);
 
-      const gamesJSON = data.league.games[0];
+      const postponedGameIds: string[] = [];
+      for (const leagueData of listData.data.leagues) {
+        for (const game of leagueData.games) {
+          if (game.status === "POSTPONED") {
+            postponedGameIds.push(game.gameId);
+          }
+        }
+      }
+
+      if (postponedGameIds.length === 0) {
+        return [];
+      }
+
       const postponedTeams: string[] = [];
+      for (const gameId of postponedGameIds) {
+        const gameUrl = `https://graphite.sports.yahoo.com/v1/query/shangrila/scoreboardGame?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&gameId=${gameId}&season=${season}`;
+        const gameResponse = await fetch(gameUrl);
+        if (!gameResponse.ok) {
+          continue;
+        }
+        const gameJson: unknown = await gameResponse.json();
+        const gameData = ensureType(gameJson, YahooScoreboardGameResponseSchema);
 
-      for (const game of gamesJSON) {
-        if (game.game.game_status.type === "status.type.postponed") {
-          const awayTeamId = game.game.team_ids[0]?.away_team_id;
-          const homeTeamId = game.game.team_ids[1]?.home_team_id;
-          if (awayTeamId) {
-            postponedTeams.push(awayTeamId);
-          }
-          if (homeTeamId) {
-            postponedTeams.push(homeTeamId);
-          }
+        for (const game of gameData.data.games) {
+          postponedTeams.push(game.awayTeamId);
+          postponedTeams.push(game.homeTeamId);
         }
       }
 
