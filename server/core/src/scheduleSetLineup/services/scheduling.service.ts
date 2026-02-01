@@ -11,7 +11,10 @@ import { db, storeTodaysPostponedTeams } from "../../common/services/firebase/fi
 import { getPacificTimeDateString, todayPacific } from "../../common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../common/services/yahooAPI/yahooStartingPlayer.service.js";
 import { SportsnetGamesResponseSchema } from "../interfaces/SportsnetGamesResponse.js";
-import { YahooGamesResponseSchema } from "../interfaces/YahooGamesReponse.js";
+import {
+  YahooLeagueGameIdsByDateResponseSchema,
+  YahooScoreboardGameResponseSchema,
+} from "../interfaces/YahooGamesReponse.js";
 
 /**
  * Determine the leagues that we will set lineups for at this time
@@ -121,7 +124,7 @@ export async function getTodaysGames(todayDate: string): Promise<GameStartTimes>
       // get gamestimes from Sportsnet as a backup plan
       logger.log("Trying to get games from Sportsnet API");
       try {
-        gameStartTimes[league] = await getGameTimesSportsnet(league, todayDate);
+        gameStartTimes[league] = await getGameTimesSportsnet(league);
       } catch (error: unknown) {
         logger.error("Error fetching games from Sportsnet API", error);
       }
@@ -134,41 +137,41 @@ export async function getTodaysGames(todayDate: string): Promise<GameStartTimes>
   return gameStartTimes;
 }
 /**
- * Get the game start times for a given league and date from the Yahoo API
+ * Get the game start times for a given league and date from the Yahoo Graphite API
  *
  * @async
  * @param {string} league - league to get games for
  * @param {string} todayDate - date to get games for
  */
 async function getGameTimesYahoo(league: Leagues, todayDate: string): Promise<number[]> {
-  const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
+  const season = todayDate.split("-")[0];
+  const url = `https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&leagues=${league}&dates=${todayDate}&season=${season}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
   }
   const json: unknown = await response.json();
-  const data = ensureType(json, YahooGamesResponseSchema);
+  const data = ensureType(json, YahooLeagueGameIdsByDateResponseSchema);
 
-  // get the game timestamp for each game in the response
-  const gamesJSON = data.league.games[0];
   const gameTimesSet: number[] = [];
-  for (const game of gamesJSON) {
-    const gameStart = Date.parse(game.game.start_time);
-    gameTimesSet.push(gameStart);
+  for (const leagueData of data.data.leagues) {
+    for (const game of leagueData.games) {
+      const gameStart = Date.parse(game.startTime);
+      gameTimesSet.push(gameStart);
+    }
   }
 
   return Array.from(new Set(gameTimesSet));
 }
 
 /**
- * Get the game start times for a given league and date from the Sportsnet API
+ * Get the game start times for a given league from the Sportsnet ticker API
  *
  * @async
  * @param {string} league - league to get games for
- * @param {string} todayDate - date to get games for
  */
-async function getGameTimesSportsnet(league: Leagues, todayDate: string): Promise<number[]> {
-  const url = `https://mobile-statsv2.sportsnet.ca/scores?league=${league}&team=&day=${todayDate}`;
+async function getGameTimesSportsnet(league: Leagues): Promise<number[]> {
+  const url = `https://stats-api.sportsnet.ca/ticker?league=${league}`;
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}: ${response.statusText}`);
@@ -176,13 +179,9 @@ async function getGameTimesSportsnet(league: Leagues, todayDate: string): Promis
   const json: unknown = await response.json();
   const data = ensureType(json, SportsnetGamesResponseSchema);
 
-  // get the game timestamp for each game in the response
-  const gamesJSON = data.data[0].games;
-
   const gameTimesSet: number[] = [];
-
-  for (const game of gamesJSON) {
-    const gameStart = game.details.timestamp * 1000;
+  for (const game of data.data.games) {
+    const gameStart = game.timestamp * 1000;
     gameTimesSet.push(gameStart);
   }
 
@@ -210,29 +209,51 @@ export async function setTodaysPostponedTeams(leagues: Leagues[]): Promise<void>
   await storeTodaysPostponedTeams(postponedTeams);
 }
 
+/**
+ * Gets postponed teams from Yahoo for a specific league using the Graphite API.
+ * First fetches game list, then fetches team IDs for postponed games.
+ */
 async function getPostponedTeamsYahoo(league: Leagues, todayDate: string): Promise<string[]> {
-  const url = `https://api-secure.sports.yahoo.com/v1/editorial/league/${league}/games;date=${todayDate}?format=json`;
-  const response = await fetch(url);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  const season = todayDate.split("-")[0];
+  const listUrl = `https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&leagues=${league}&dates=${todayDate}&season=${season}`;
+  const listResponse = await fetch(listUrl);
+  if (!listResponse.ok) {
+    throw new Error(`HTTP ${listResponse.status}: ${listResponse.statusText}`);
   }
-  const json: unknown = await response.json();
-  const data = ensureType(json, YahooGamesResponseSchema);
+  const listJson: unknown = await listResponse.json();
+  const listData = ensureType(listJson, YahooLeagueGameIdsByDateResponseSchema);
 
-  const gamesJSON = data.league.games[0];
+  const postponedGameIds: string[] = [];
+  for (const leagueData of listData.data.leagues) {
+    for (const game of leagueData.games) {
+      if (game.status === "POSTPONED") {
+        postponedGameIds.push(game.gameId);
+      }
+    }
+  }
+
+  if (postponedGameIds.length === 0) {
+    return [];
+  }
+
   const postponedTeams: string[] = [];
+  for (const gameId of postponedGameIds) {
+    const gameUrl = `https://graphite.sports.yahoo.com/v1/query/shangrila/scoreboardGame?lang=en-US&region=US&tz=America%2FEdmonton&ysp_platform=next-app-sports&gameId=${gameId}&season=${season}`;
+    const gameResponse = await fetch(gameUrl);
+    if (!gameResponse.ok) {
+      logger.warn(`Failed to fetch game ${gameId} for postponed team IDs`);
+      continue;
+    }
+    const gameJson: unknown = await gameResponse.json();
+    const gameData = ensureType(gameJson, YahooScoreboardGameResponseSchema);
 
-  for (const game of gamesJSON) {
-    if (game.game.game_status.type === "status.type.postponed") {
-      logger.info(`Postponed game found for ${league}`, game.game);
-      const awayTeamId = game.game.team_ids[0]?.away_team_id;
-      const homeTeamId = game.game.team_ids[1]?.home_team_id;
-      if (awayTeamId) {
-        postponedTeams.push(awayTeamId);
-      }
-      if (homeTeamId) {
-        postponedTeams.push(homeTeamId);
-      }
+    for (const game of gameData.data.games) {
+      logger.info(`Postponed game found for ${league}`, {
+        awayTeamId: game.awayTeamId,
+        homeTeamId: game.homeTeamId,
+      });
+      postponedTeams.push(game.awayTeamId);
+      postponedTeams.push(game.homeTeamId);
     }
   }
 

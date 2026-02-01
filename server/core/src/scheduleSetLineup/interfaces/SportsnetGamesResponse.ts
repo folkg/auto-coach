@@ -1,26 +1,27 @@
 import { type } from "arktype";
 
-const SportsnetTeamSchema = type({
-  id: "number",
+/**
+ * Schema for the new Sportsnet ticker API (https://stats-api.sportsnet.ca/ticker?league=)
+ * The old mobile-statsv2 endpoint is deprecated.
+ */
+const SportsnetTickerTeamSchema = type({
+  id: "string",
   name: "string",
   short_name: "string",
   city: "string",
 });
 
-const SportsnetGameSchema = type({
-  details: {
-    timestamp: "number",
-    status: "string",
-  },
-  visiting_team: SportsnetTeamSchema,
-  home_team: SportsnetTeamSchema,
+const SportsnetTickerGameSchema = type({
+  game_status: "string",
+  timestamp: "number",
+  visiting_team: SportsnetTickerTeamSchema,
+  home_team: SportsnetTickerTeamSchema,
 });
 
 export const SportsnetGamesResponseSchema = type({
+  status: "string",
   data: {
-    "0": {
-      games: SportsnetGameSchema.array(),
-    },
+    games: SportsnetTickerGameSchema.array(),
   },
 });
 

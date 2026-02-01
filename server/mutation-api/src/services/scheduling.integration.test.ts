@@ -2,28 +2,31 @@
  * Integration tests for SchedulingService using MSW to mock external APIs.
  *
  * These tests verify the end-to-end behavior of the scheduling service
- * when interacting with Yahoo and Sportsnet APIs.
+ * when interacting with Yahoo Graphite and Sportsnet APIs.
  */
 
-import { describe, expect, it, vi } from "@effect/vitest";
+import { afterEach, describe, expect, it, vi } from "@effect/vitest";
 import { Effect } from "effect";
 import { HttpResponse, http } from "msw";
 
 import {
-  createYahooGame,
-  createYahooGamesResponse,
+  createSportsnetTickerGame,
+  createSportsnetTickerResponse,
+  createYahooGraphiteGame,
+  createYahooLeagueGamesResponse,
   sportsnetHandlers,
   yahooHandlers,
 } from "../test/msw-handlers.js";
 import { server } from "../test/msw-server.js";
 import { getPostponedTeamsYahoo, getTodaysGames } from "./scheduling.service.js";
 
-// We need to re-export since the function is not exported
-// For testing we'll test the public API that uses it
-
 describe("SchedulingService Integration Tests", () => {
+  afterEach(() => {
+    yahooHandlers.clearPostponedState();
+  });
+
   describe("getTodaysGames", () => {
-    it("fetches game times for all leagues from Yahoo API", () =>
+    it("fetches game times for all leagues from Yahoo Graphite API", () =>
       Effect.gen(function* () {
         // Arrange
         const todayDate = "2024-01-15";
@@ -31,22 +34,22 @@ describe("SchedulingService Integration Tests", () => {
         gameTime.setMinutes(gameTime.getMinutes() + 30);
 
         server.use(
-          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*", () => {
-            return HttpResponse.json(
-              createYahooGamesResponse([createYahooGame({ startTime: gameTime.toISOString() })]),
-            );
-          }),
-          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nhl/games*", () => {
-            return HttpResponse.json(
-              createYahooGamesResponse([createYahooGame({ startTime: gameTime.toISOString() })]),
-            );
-          }),
-          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nfl/games*", () => {
-            return HttpResponse.json(createYahooGamesResponse([]));
-          }),
-          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/mlb/games*", () => {
-            return HttpResponse.json(createYahooGamesResponse([]));
-          }),
+          http.get(
+            "https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate*",
+            ({ request }) => {
+              const leaguesMatch = request.url.match(/leagues=([^&]+)/);
+              const league = leaguesMatch?.[1];
+
+              if (league === "nba" || league === "nhl") {
+                return HttpResponse.json(
+                  createYahooLeagueGamesResponse([
+                    createYahooGraphiteGame({ startTime: gameTime.toISOString() }),
+                  ]),
+                );
+              }
+              return HttpResponse.json(createYahooLeagueGamesResponse([]));
+            },
+          ),
         );
 
         // Act
@@ -59,7 +62,7 @@ describe("SchedulingService Integration Tests", () => {
         expect(result.mlb.length).toBe(0);
       }).pipe(Effect.provide(mockFirestoreLayer)));
 
-    it("falls back to Sportsnet API when Yahoo API fails", () =>
+    it("falls back to Sportsnet ticker API when Yahoo API fails", () =>
       Effect.gen(function* () {
         // Arrange
         const todayDate = "2024-01-15";
@@ -68,7 +71,7 @@ describe("SchedulingService Integration Tests", () => {
         server.use(
           // Yahoo fails for nba
           yahooHandlers.error("nba", 500),
-          // Sportsnet succeeds
+          // Sportsnet ticker succeeds
           sportsnetHandlers.gamesAtTimes("nba", [gameTimestamp]),
           // Other leagues work normally
           yahooHandlers.noGames("nhl"),
@@ -82,6 +85,37 @@ describe("SchedulingService Integration Tests", () => {
         // Assert - NBA should have games from Sportsnet fallback
         expect(result.nba.length).toBe(1);
         expect(result.nba[0]).toBe(gameTimestamp * 1000);
+      }).pipe(Effect.provide(mockFirestoreLayer)));
+
+    it("falls back to Sportsnet ticker API when Yahoo returns 404", () =>
+      Effect.gen(function* () {
+        // Arrange
+        const todayDate = "2024-01-15";
+        const gameTimestamp = Math.floor(Date.now() / 1000) + 1800;
+
+        server.use(
+          // Yahoo returns 404 for nhl (simulating the endpoint move)
+          yahooHandlers.error("nhl", 404),
+          // Sportsnet ticker succeeds
+          http.get("https://stats-api.sportsnet.ca/ticker*", () => {
+            return HttpResponse.json(
+              createSportsnetTickerResponse([
+                createSportsnetTickerGame({ timestamp: gameTimestamp }),
+              ]),
+            );
+          }),
+          // Other leagues work normally
+          yahooHandlers.noGames("nba"),
+          yahooHandlers.noGames("nfl"),
+          yahooHandlers.noGames("mlb"),
+        );
+
+        // Act
+        const result = yield* getTodaysGames(todayDate);
+
+        // Assert - NHL should have games from Sportsnet fallback after Yahoo 404
+        expect(result.nhl.length).toBe(1);
+        expect(result.nhl[0]).toBe(gameTimestamp * 1000);
       }).pipe(Effect.provide(mockFirestoreLayer)));
 
     it("returns empty array when both APIs fail", () =>
@@ -109,26 +143,27 @@ describe("SchedulingService Integration Tests", () => {
   });
 
   describe("getPostponedTeamsYahoo", () => {
-    it("returns postponed team IDs from Yahoo API", () =>
+    it("returns postponed team IDs from Yahoo Graphite API", () =>
       Effect.gen(function* () {
         // Arrange
         const todayDate = "2024-01-15";
 
         server.use(
           yahooHandlers.postponedGames("nba", [
-            { away: "team-1", home: "team-2" },
-            { away: "team-3", home: "team-4" },
+            { away: "nba.t.1", home: "nba.t.2" },
+            { away: "nba.t.3", home: "nba.t.4" },
           ]),
+          yahooHandlers.scoreboardGameForPostponed(),
         );
 
         // Act
         const result = yield* getPostponedTeamsYahoo("nba", todayDate);
 
         // Assert
-        expect(result).toContain("team-1");
-        expect(result).toContain("team-2");
-        expect(result).toContain("team-3");
-        expect(result).toContain("team-4");
+        expect(result).toContain("nba.t.1");
+        expect(result).toContain("nba.t.2");
+        expect(result).toContain("nba.t.3");
+        expect(result).toContain("nba.t.4");
         expect(result.length).toBe(4);
       }));
 
@@ -138,11 +173,14 @@ describe("SchedulingService Integration Tests", () => {
         const todayDate = "2024-01-15";
 
         server.use(
-          http.get("https://api-secure.sports.yahoo.com/v1/editorial/league/nba/games*", () => {
-            return HttpResponse.json(
-              createYahooGamesResponse([createYahooGame({ status: "status.type.scheduled" })]),
-            );
-          }),
+          http.get(
+            "https://graphite.sports.yahoo.com/v1/query/shangrila/leagueGameIdsByDate*",
+            () => {
+              return HttpResponse.json(
+                createYahooLeagueGamesResponse([createYahooGraphiteGame({ status: "PREGAME" })]),
+              );
+            },
+          ),
         );
 
         // Act
