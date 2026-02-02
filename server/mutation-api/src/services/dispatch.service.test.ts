@@ -20,7 +20,11 @@ import {
   WeeklyTransactionsService,
 } from "./dispatch.service.js";
 import { PositionalScarcityError } from "./positional-scarcity.service.js";
-import { type FirestoreTeamPayload, SchedulingError } from "./scheduling.service.js";
+import {
+  type FirestoreTeamPayload,
+  SchedulingError,
+  type ScheduleInfo,
+} from "./scheduling.service.js";
 import { WeeklyTransactionsError } from "./weekly-transactions.service.js";
 
 const mockSetLineupRequest: SetLineupRequest = {
@@ -63,9 +67,12 @@ function createMockTeamPayload(
     allow_add_drops: true,
     allow_waiver_adds: true,
     automated_transaction_processing: false,
-    last_updated: Date.now(),
+    last_updated: -1,
     is_subscribed: true,
     is_setting_lineups: true,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
+    lineup_paused_at: -1,
     ...overrides,
   };
 }
@@ -90,9 +97,20 @@ function createTestTimeService(hour: number) {
   });
 }
 
+function createMockScheduleInfo(overrides?: Partial<ScheduleInfo>): ScheduleInfo {
+  return {
+    leagues: [
+      { league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+      { league: "nhl" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+    ],
+    leaguesWithGamesToday: ["nba", "nhl"] as readonly Leagues[],
+    ...overrides,
+  };
+}
+
 function createTestSchedulingService(overrides: {
-  readonly leagues?: readonly Leagues[];
-  readonly leaguesError?: SchedulingError;
+  readonly scheduleInfo?: ScheduleInfo;
+  readonly scheduleInfoError?: SchedulingError;
   readonly postponedTeamsError?: SchedulingError;
   readonly startingPlayersError?: SchedulingError;
   readonly activeUsers?: Map<string, FirestoreTeamPayload[]>;
@@ -100,11 +118,13 @@ function createTestSchedulingService(overrides: {
   readonly enqueueError?: SchedulingError;
 }) {
   return Layer.succeed(SchedulingService, {
-    leaguesToSetLineupsFor: () => {
-      if (overrides.leaguesError) {
-        return Effect.fail(overrides.leaguesError);
+    getScheduleInfo: () => {
+      if (overrides.scheduleInfoError) {
+        return Effect.fail(overrides.scheduleInfoError);
       }
-      return Effect.succeed(overrides.leagues ?? []);
+      return Effect.succeed(
+        overrides.scheduleInfo ?? createMockScheduleInfo({ leaguesWithGamesToday: [] }),
+      );
     },
     setTodaysPostponedTeams: (_leagues) => {
       if (overrides.postponedTeamsError) {
@@ -118,7 +138,7 @@ function createTestSchedulingService(overrides: {
       }
       return Effect.void;
     },
-    mapUsersToActiveTeams: (_teamsSnapshot) => {
+    mapUsersToActiveTeams: (_teamsSnapshot, _scheduleInfo) => {
       if (overrides.activeUsers) {
         return Effect.succeed(overrides.activeUsers);
       }
@@ -209,7 +229,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(result.taskCount).toBe(0);
-      expect(result.message).toBe("Skipping midnight run (hour 0)");
+      expect(result.message).toContain("Skipping midnight run");
     }).pipe(
       Effect.provide(createTestTimeService(0)),
       Effect.provide(createTestSchedulingService({})),
@@ -229,7 +249,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(1)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba", "nhl"],
+          scheduleInfo: createMockScheduleInfo(),
           enqueuedTasks: [{ uid: "user-1" }, { uid: "user-2" }],
         }),
       ),
@@ -249,7 +269,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(15)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo(),
           enqueuedTasks: [{ uid: "user-1" }, { uid: "user-2" }],
         }),
       ),
@@ -257,7 +277,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
     ),
   );
 
-  it.effect("returns early when no leagues have games starting soon", () =>
+  it.effect("returns early when no leagues have games today", () =>
     Effect.gen(function* () {
       // Arrange & Act
       const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
@@ -265,28 +285,32 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       // Assert
       expect(result.success).toBe(true);
       expect(result.taskCount).toBe(0);
-      expect(result.message).toBe("No leagues with games starting soon");
-    }).pipe(
-      Effect.provide(createTestTimeService(10)),
-      Effect.provide(createTestSchedulingService({ leagues: [] })),
-      Effect.provide(createTestFirestoreService({})),
-    ),
-  );
-
-  it.effect("returns early when no active users found", () =>
-    Effect.gen(function* () {
-      // Arrange & Act
-      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
-
-      // Assert
-      expect(result.success).toBe(true);
-      expect(result.taskCount).toBe(0);
-      expect(result.message).toBe("No active users to set lineups for");
+      expect(result.message).toBe("No leagues with games today");
     }).pipe(
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo({ leaguesWithGamesToday: [] }),
+        }),
+      ),
+      Effect.provide(createTestFirestoreService({})),
+    ),
+  );
+
+  it.effect("returns early when no eligible teams found", () =>
+    Effect.gen(function* () {
+      // Arrange & Act
+      const result = yield* dispatchService.dispatchSetLineup(mockSetLineupRequest);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.taskCount).toBe(0);
+      expect(result.message).toContain("No eligible teams");
+    }).pipe(
+      Effect.provide(createTestTimeService(10)),
+      Effect.provide(
+        createTestSchedulingService({
+          scheduleInfo: createMockScheduleInfo(),
           activeUsers: new Map(),
         }),
       ),
@@ -307,7 +331,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo(),
           enqueuedTasks: [{ uid: "user-1" }, { uid: "user-2" }, { uid: "user-3" }],
         }),
       ),
@@ -327,14 +351,16 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba", "mlb"],
+          scheduleInfo: createMockScheduleInfo({
+            leaguesWithGamesToday: ["nba", "mlb"] as readonly Leagues[],
+          }),
         }),
       ),
       Effect.provide(createTestFirestoreService({})),
     ),
   );
 
-  it.effect("fails when leaguesToSetLineupsFor fails", () =>
+  it.effect("fails when getScheduleInfo fails", () =>
     Effect.gen(function* () {
       // Arrange & Act
       const result = yield* Effect.flip(dispatchService.dispatchSetLineup(mockSetLineupRequest));
@@ -346,7 +372,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leaguesError: new SchedulingError({
+          scheduleInfoError: new SchedulingError({
             message: "Failed to fetch schedule",
           }),
         }),
@@ -366,7 +392,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       expect(result.message).toContain("Firestore connection failed");
     }).pipe(
       Effect.provide(createTestTimeService(10)),
-      Effect.provide(createTestSchedulingService({ leagues: ["nba"] })),
+      Effect.provide(createTestSchedulingService({ scheduleInfo: createMockScheduleInfo() })),
       Effect.provide(
         createTestFirestoreService({
           firestoreError: new Error("Firestore connection failed"),
@@ -387,7 +413,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo(),
           enqueueError: new SchedulingError({
             message: "Cloud Tasks API unavailable",
           }),
@@ -408,7 +434,7 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo(),
           postponedTeamsError: new SchedulingError({
             message: "Failed to fetch postponed teams",
           }),
@@ -429,12 +455,55 @@ describe("DispatchServiceImpl.dispatchSetLineup", () => {
       Effect.provide(createTestTimeService(10)),
       Effect.provide(
         createTestSchedulingService({
-          leagues: ["nba"],
+          scheduleInfo: createMockScheduleInfo(),
           startingPlayersError: new SchedulingError({
             message: "Failed to fetch starting players",
           }),
         }),
       ),
+      Effect.provide(createTestFirestoreService({})),
+    ),
+  );
+
+  it.effect("processes all leagues when skipGamesCheck is true", () =>
+    Effect.gen(function* () {
+      // Arrange
+      const request = { ...mockSetLineupRequest, skipGamesCheck: true };
+
+      // Act
+      const result = yield* dispatchService.dispatchSetLineup(request);
+
+      // Assert
+      expect(result.success).toBe(true);
+      expect(result.message).toContain("nba");
+      expect(result.message).toContain("nhl");
+      expect(result.message).toContain("nfl");
+      expect(result.message).toContain("mlb");
+    }).pipe(
+      Effect.provide(createTestTimeService(10)),
+      Effect.provide(
+        createTestSchedulingService({
+          // getScheduleInfo won't be called when skipGamesCheck is true
+        }),
+      ),
+      Effect.provide(createTestFirestoreService({})),
+    ),
+  );
+
+  it.effect("allows midnight dispatch when skipGamesCheck is true", () =>
+    Effect.gen(function* () {
+      // Arrange
+      const request = { ...mockSetLineupRequest, skipGamesCheck: true };
+
+      // Act
+      const result = yield* dispatchService.dispatchSetLineup(request);
+
+      // Assert - should NOT skip, should proceed with all leagues
+      expect(result.success).toBe(true);
+      expect(result.taskCount).toBe(1);
+    }).pipe(
+      Effect.provide(createTestTimeService(0)), // midnight
+      Effect.provide(createTestSchedulingService({})),
       Effect.provide(createTestFirestoreService({})),
     ),
   );

@@ -10,7 +10,10 @@ import {
   storeTodaysPostponedTeams,
 } from "../../../core/src/common/services/firebase/firestore.service.js";
 import {
+  getCurrentPacificNumDay,
+  getPacificStartOfDay,
   getPacificTimeDateString,
+  isTodayPacific,
   todayPacific,
 } from "../../../core/src/common/services/utilities.service.js";
 import { fetchStartingPlayers } from "../../../core/src/common/services/yahooAPI/yahooStartingPlayer.service.js";
@@ -45,37 +48,61 @@ interface EnqueuedTask {
   readonly teams: readonly FirestoreTeamPayload[];
 }
 
-/**
- * Determine the leagues that we will set lineups for at this time.
- * Games starting in the next hour will be set.
- * All leagues with games today will be set if this is the first execution of the day.
- */
-export const leaguesToSetLineupsFor = Effect.fn("scheduling.leaguesToSetLineupsFor")(function* () {
-  const todayDate = getPacificTimeDateString(new Date());
-  const { loadedFromDB, gameStartTimes } = yield* loadTodaysGames(todayDate);
+export type LeagueScheduleInfo = {
+  readonly league: Leagues;
+  readonly hasGamesToday: boolean;
+  readonly hasGameNextHour: boolean;
+};
 
-  if (loadedFromDB) {
-    const leagues = findLeaguesPlayingNextHour(gameStartTimes);
-    if (leagues.length === 0) {
-      yield* Effect.logInfo("No games starting in the next hour").pipe(
-        Effect.annotateLogs("phase", "scheduling"),
-        Effect.annotateLogs("event", "NO_GAMES_NEXT_HOUR"),
-      );
-      return [];
+export type ScheduleInfo = {
+  readonly leagues: readonly LeagueScheduleInfo[];
+  readonly leaguesWithGamesToday: readonly Leagues[];
+};
+
+/** Maximum number of failures before a team is blocked for the day */
+export const MAX_DAILY_FAILURES = 3;
+
+/**
+ * Gets schedule info for all leagues - which leagues have games today and next hour.
+ * This is the main entry point for determining what work needs to be done.
+ */
+export const getScheduleInfo = Effect.fn("scheduling.getScheduleInfo")(function* () {
+  const todayDate = getPacificTimeDateString(new Date());
+  const { gameStartTimes } = yield* loadTodaysGames(todayDate);
+
+  const now = Date.now();
+  const nextHour = now + 3600000;
+
+  const leagues: LeagueScheduleInfo[] = [];
+  const leaguesWithGamesToday: Leagues[] = [];
+
+  for (const [league, timestamps] of Object.entries(gameStartTimes) as [
+    Leagues,
+    readonly number[],
+  ][]) {
+    const hasGamesToday = timestamps.length > 0;
+    const hasGameNextHour = timestamps.some((ts) => ts > now && ts < nextHour);
+
+    if (hasGamesToday) {
+      leaguesWithGamesToday.push(league);
+      leagues.push({ league, hasGamesToday, hasGameNextHour });
     }
-    yield* Effect.logInfo("Found leagues with games starting soon").pipe(
-      Effect.annotateLogs("phase", "scheduling"),
-      Effect.annotateLogs("event", "LEAGUES_FOUND"),
-      Effect.annotateLogs("leagues", leagues.join(",")),
-    );
-    return leagues;
   }
 
-  yield* Effect.logInfo("First run of day - processing all leagues").pipe(
+  yield* Effect.logInfo("Computed schedule info").pipe(
     Effect.annotateLogs("phase", "scheduling"),
-    Effect.annotateLogs("event", "FIRST_RUN_OF_DAY"),
+    Effect.annotateLogs("event", "SCHEDULE_INFO_COMPUTED"),
+    Effect.annotateLogs("leaguesWithGamesToday", leaguesWithGamesToday.join(",")),
+    Effect.annotateLogs(
+      "leaguesWithGamesNextHour",
+      leagues
+        .filter((l) => l.hasGameNextHour)
+        .map((l) => l.league)
+        .join(","),
+    ),
   );
-  return Object.keys(gameStartTimes) as Leagues[];
+
+  return { leagues, leaguesWithGamesToday } as ScheduleInfo;
 });
 
 /**
@@ -496,10 +523,11 @@ export function setStartingPlayersForToday(
 }
 
 /**
- * Maps users to their active teams from a Firestore snapshot.
- * Validates each team document against the schema.
+ * Maps users to their teams from a Firestore snapshot with minimal filtering.
+ * Only validates schema and checks start_date. Used for weekly transactions
+ * where set-lineup-specific filtering (paused, weekly deadline, last-set-today) is not needed.
  */
-export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams")(function* (
+export const mapUsersToTeamsSimple = Effect.fn("scheduling.mapUsersToTeamsSimple")(function* (
   teamsSnapshot: QuerySnapshot<DocumentData>,
 ) {
   if (teamsSnapshot.size === 0) {
@@ -510,8 +538,10 @@ export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams
     return new Map<string, FirestoreTeamPayload[]>();
   }
 
+  const now = Date.now();
   const result = new Map<string, FirestoreTeamPayload[]>();
-  let skippedCount = 0;
+  let skippedValidation = 0;
+  let skippedNotStarted = 0;
 
   for (const doc of teamsSnapshot?.docs ?? []) {
     const rawData = doc.data();
@@ -529,28 +559,185 @@ export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams
         Effect.annotateLogs("errorMessage", parseResult.left.message),
         Effect.annotateLogs("outcome", "handled-error"),
       );
-      skippedCount++;
+      skippedValidation++;
       continue;
     }
 
     const team = parseResult.right;
     const uid = team.uid;
 
-    if (team.start_date <= Date.now()) {
-      const userTeams = result.get(uid);
-      if (userTeams === undefined) {
-        result.set(uid, [team]);
-      } else {
-        userTeams.push(team);
-      }
+    if (team.start_date > now) {
+      skippedNotStarted++;
+      continue;
+    }
+
+    const userTeams = result.get(uid);
+    if (userTeams === undefined) {
+      result.set(uid, [team]);
+    } else {
+      userTeams.push(team);
     }
   }
 
-  if (skippedCount > 0) {
-    yield* Effect.logWarning("Some team documents were skipped due to validation errors").pipe(
+  if (skippedValidation > 0 || skippedNotStarted > 0) {
+    yield* Effect.logInfo("Team filtering summary (simple)").pipe(
       Effect.annotateLogs("phase", "scheduling"),
-      Effect.annotateLogs("event", "TEAMS_SKIPPED_SUMMARY"),
-      Effect.annotateLogs("skippedCount", skippedCount),
+      Effect.annotateLogs("event", "TEAM_FILTERING_SUMMARY_SIMPLE"),
+      Effect.annotateLogs("skippedValidation", skippedValidation),
+      Effect.annotateLogs("skippedNotStarted", skippedNotStarted),
+    );
+  }
+
+  yield* Effect.logInfo("Mapped users to teams (simple)").pipe(
+    Effect.annotateLogs("phase", "scheduling"),
+    Effect.annotateLogs("event", "USERS_MAPPED_SIMPLE"),
+    Effect.annotateLogs("userCount", result.size),
+    Effect.annotateLogs("totalTeams", teamsSnapshot.size - skippedValidation - skippedNotStarted),
+  );
+
+  return result;
+});
+
+/**
+ * Maps users to their active teams from a Firestore snapshot.
+ * Validates each team document against the schema and applies eligibility filtering.
+ *
+ * A team is eligible for lineup setting if:
+ * 1. Its schema is valid
+ * 2. Its start_date has passed
+ * 3. It is not paused today
+ * 4. Its weekly_deadline matches today or is empty/intraday
+ * 5. Either:
+ *    a. Its lineup has NOT been set today (last_updated not today), OR
+ *    b. Its league has a game starting in the next hour
+ * 6. It has not exceeded the daily failure limit
+ */
+export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams")(function* (
+  teamsSnapshot: QuerySnapshot<DocumentData>,
+  scheduleInfo: ScheduleInfo,
+) {
+  if (teamsSnapshot.size === 0) {
+    yield* Effect.logDebug("No teams in snapshot").pipe(
+      Effect.annotateLogs("phase", "scheduling"),
+      Effect.annotateLogs("event", "EMPTY_TEAMS_SNAPSHOT"),
+    );
+    return new Map<string, FirestoreTeamPayload[]>();
+  }
+
+  const now = Date.now();
+  const todayDateString = todayPacific();
+  const todayStartMs = getPacificStartOfDay(todayDateString);
+  const currentDayOfWeek = getCurrentPacificNumDay();
+
+  // Build a lookup for which leagues have games in the next hour
+  const leagueHasGameNextHour = new Map<string, boolean>();
+  for (const leagueInfo of scheduleInfo.leagues) {
+    leagueHasGameNextHour.set(leagueInfo.league, leagueInfo.hasGameNextHour);
+  }
+
+  const result = new Map<string, FirestoreTeamPayload[]>();
+  let skippedValidation = 0;
+  let skippedPaused = 0;
+  let skippedWeeklyDeadline = 0;
+  let skippedAlreadySetToday = 0;
+  let skippedFailureLimit = 0;
+  let skippedNotStarted = 0;
+
+  for (const doc of teamsSnapshot?.docs ?? []) {
+    const rawData = doc.data();
+    const dataWithKey = { ...rawData, team_key: doc.id };
+
+    // Step 1: Validate schema
+    const parseResult = yield* Effect.either(
+      Schema.decodeUnknown(FirestoreTeamPayloadSchema)(dataWithKey),
+    );
+
+    if (Either.isLeft(parseResult)) {
+      yield* Effect.logWarning("Skipping invalid team document").pipe(
+        Effect.annotateLogs("phase", "scheduling"),
+        Effect.annotateLogs("event", "INVALID_TEAM_DOCUMENT"),
+        Effect.annotateLogs("teamKey", doc.id),
+        Effect.annotateLogs("errorMessage", parseResult.left.message),
+        Effect.annotateLogs("outcome", "handled-error"),
+      );
+      skippedValidation++;
+      continue;
+    }
+
+    const team = parseResult.right;
+    const uid = team.uid;
+
+    // Step 2: Check if team has started
+    if (team.start_date > now) {
+      skippedNotStarted++;
+      continue;
+    }
+
+    // Step 3: Check if team is paused today
+    if (isTodayPacific(team.lineup_paused_at)) {
+      skippedPaused++;
+      continue;
+    }
+
+    // Step 4: Check weekly deadline matches today
+    // Valid deadlines: empty string, "intraday", or matches current day of week
+    const validDeadlines = ["", "intraday", currentDayOfWeek.toString()];
+    if (!validDeadlines.includes(team.weekly_deadline)) {
+      skippedWeeklyDeadline++;
+      continue;
+    }
+
+    // Step 5: Check eligibility based on last-set-today OR next-hour game
+    // We use last_updated as the proxy for "lineup last set" since it's updated on successful lineup sets
+    const lastUpdatedAt = team.last_updated ?? -1;
+    const lastSetIsToday = lastUpdatedAt >= todayStartMs;
+    const hasGameNextHour = leagueHasGameNextHour.get(team.game_code) ?? false;
+
+    // Team is eligible if NOT set today, OR if there's a game in the next hour
+    if (lastSetIsToday && !hasGameNextHour) {
+      skippedAlreadySetToday++;
+      continue;
+    }
+
+    // Step 6: Check failure limit
+    const failureCount = team.lineup_failure_count ?? 0;
+    const lastFailureAt = team.last_lineup_failure_at ?? -1;
+    const failureIsToday = lastFailureAt >= todayStartMs;
+
+    if (failureIsToday && failureCount >= MAX_DAILY_FAILURES) {
+      skippedFailureLimit++;
+      continue;
+    }
+
+    // Team passes all filters - add to result
+    const userTeams = result.get(uid);
+    if (userTeams === undefined) {
+      result.set(uid, [team]);
+    } else {
+      userTeams.push(team);
+    }
+  }
+
+  // Log filtering summary
+  const totalSkipped =
+    skippedValidation +
+    skippedPaused +
+    skippedWeeklyDeadline +
+    skippedAlreadySetToday +
+    skippedFailureLimit +
+    skippedNotStarted;
+
+  if (totalSkipped > 0) {
+    yield* Effect.logInfo("Team filtering summary").pipe(
+      Effect.annotateLogs("phase", "scheduling"),
+      Effect.annotateLogs("event", "TEAM_FILTERING_SUMMARY"),
+      Effect.annotateLogs("skippedValidation", skippedValidation),
+      Effect.annotateLogs("skippedPaused", skippedPaused),
+      Effect.annotateLogs("skippedWeeklyDeadline", skippedWeeklyDeadline),
+      Effect.annotateLogs("skippedAlreadySetToday", skippedAlreadySetToday),
+      Effect.annotateLogs("skippedFailureLimit", skippedFailureLimit),
+      Effect.annotateLogs("skippedNotStarted", skippedNotStarted),
+      Effect.annotateLogs("totalSkipped", totalSkipped),
     );
   }
 
@@ -558,7 +745,7 @@ export const mapUsersToActiveTeams = Effect.fn("scheduling.mapUsersToActiveTeams
     Effect.annotateLogs("phase", "scheduling"),
     Effect.annotateLogs("event", "USERS_MAPPED"),
     Effect.annotateLogs("userCount", result.size),
-    Effect.annotateLogs("totalTeams", teamsSnapshot.size - skippedCount),
+    Effect.annotateLogs("eligibleTeams", teamsSnapshot.size - totalSkipped),
   );
 
   return result;

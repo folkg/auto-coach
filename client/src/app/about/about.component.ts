@@ -89,6 +89,8 @@ function getSampleTeam(
     uid: "",
     roster_positions: {},
     lineup_paused_at: lineupPausedAt,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
   };
 }
 

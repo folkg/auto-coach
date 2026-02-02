@@ -11,7 +11,7 @@ import { Effect, Schema } from "effect";
 
 import { getTomorrowsActiveWeeklyTeams } from "../../../core/src/common/services/firebase/firestore.service.js";
 import { getTopAvailablePlayers } from "../../../core/src/transactions/services/processTransactions.service.js";
-import { enqueueUsersTeams, mapUsersToActiveTeams } from "./scheduling.service.js";
+import { enqueueUsersTeams, mapUsersToTeamsSimple } from "./scheduling.service.js";
 import { processTomorrowsTransactions } from "./set-lineup.service.js";
 
 export class WeeklyTransactionsError extends Schema.TaggedError<WeeklyTransactionsError>()(
@@ -64,8 +64,8 @@ export const scheduleWeeklyLeagueTransactions = Effect.fn(
       }),
   });
 
-  // Step 2: Map users to their active teams (now an Effect with validation)
-  const activeUsers = yield* mapUsersToActiveTeams(teamsSnapshot);
+  // Step 2: Map users to their teams (simple validation, no set-lineup-specific filtering)
+  const activeUsers = yield* mapUsersToTeamsSimple(teamsSnapshot);
 
   if (activeUsers.size === 0) {
     yield* Effect.logInfo("No users to process weekly transactions for");

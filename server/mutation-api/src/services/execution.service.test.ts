@@ -81,6 +81,8 @@ function createMockFirestoreTeam(overrides?: Partial<FirestoreTeam>): FirestoreT
     automated_transaction_processing: true,
     last_updated: Date.now(),
     lineup_paused_at: -1,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
     uid: "test-user-id",
     is_subscribed: true,
     is_setting_lineups: true,

@@ -57,6 +57,8 @@ function createMockFirestoreTeam(overrides: Partial<FirestoreTeam> = {}): Firest
     automated_transaction_processing: false,
     last_updated: Date.now(),
     lineup_paused_at: -1,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
     ...overrides,
   };
 }
