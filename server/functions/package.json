@@ -1,5 +1,8 @@
 {
   "name": "@auto-coach/functions",
+  "private": true,
+  "type": "module",
+  "main": "lib/server/functions/index.js",
   "scripts": {
     "build": "tsc -b",
     "build:watch": "tsc -b --watch",
@@ -13,11 +16,6 @@
     "pp": "bun run build",
     "logs": "firebase functions:log"
   },
-  "engines": {
-    "node": "22"
-  },
-  "type": "module",
-  "main": "lib/server/functions/index.js",
   "dependencies": {
     "@sendgrid/mail": "8.1.6",
     "dotenv": "17.2.3",
@@ -29,5 +27,7 @@
     "@types/bun": "catalog:",
     "firebase-functions-test": "3.4.1"
   },
-  "private": true
+  "engines": {
+    "node": "22"
+  }
 }
