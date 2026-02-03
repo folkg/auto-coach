@@ -8,8 +8,10 @@ import type { MutationTask } from "../types/schemas.js";
 import type { RateLimiterService } from "./rate-limiter.service.js";
 
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
-import { recordTeamLineupFailure } from "../../../core/src/common/services/firebase/firestore.service.js";
-import { handleYahooAuthRevoked } from "../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js";
+import {
+  recordAuthFailureAndMaybeRevoke,
+  recordTeamLineupFailure,
+} from "../../../core/src/common/services/firebase/firestore.service.js";
 import { isYahooMaintenanceError } from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import {
   RateLimitError as EffectRateLimitError,
@@ -353,9 +355,10 @@ export class ExecutionServiceImpl implements ExecutionService {
             }
 
             if (isAuthorizationError(error)) {
+              // Record auth failure - only revoke after 3 failures to handle transient errors
               return Effect.ignore(
                 Effect.tryPromise({
-                  try: () => handleYahooAuthRevoked(uid),
+                  try: () => recordAuthFailureAndMaybeRevoke(uid),
                   catch: () => undefined,
                 }),
               ).pipe(
@@ -464,9 +467,10 @@ export class ExecutionServiceImpl implements ExecutionService {
             }
 
             if (isAuthorizationError(error)) {
+              // Record auth failure - only revoke after 3 failures to handle transient errors
               return Effect.ignore(
                 Effect.tryPromise({
-                  try: () => handleYahooAuthRevoked(uid),
+                  try: () => recordAuthFailureAndMaybeRevoke(uid),
                   catch: () => undefined,
                 }),
               ).pipe(
