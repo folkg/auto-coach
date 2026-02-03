@@ -9,6 +9,8 @@ import {
   type FirestoreTeamPayload,
   type GameStartTimes,
   mapUsersToActiveTeams,
+  MAX_DAILY_FAILURES,
+  type ScheduleInfo,
 } from "./scheduling.service.js";
 
 /**
@@ -34,9 +36,12 @@ function createMockTeamPayload(
     allow_add_drops: true,
     allow_waiver_adds: true,
     automated_transaction_processing: false,
-    last_updated: Date.now(),
+    last_updated: -1, // default to -1 so teams are considered "not set today" by default
     is_subscribed: true,
     is_setting_lineups: true,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
+    lineup_paused_at: -1,
     ...overrides,
   };
 }
@@ -53,6 +58,19 @@ function createMockTeamsSnapshot(
     size: docs.length,
     docs,
   } as unknown as QuerySnapshot<DocumentData>;
+}
+
+function createMockScheduleInfo(overrides?: Partial<ScheduleInfo>): ScheduleInfo {
+  return {
+    leagues: [
+      { league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+      { league: "nhl" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+      { league: "mlb" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+      { league: "nfl" as Leagues, hasGamesToday: false, hasGameNextHour: false },
+    ],
+    leaguesWithGamesToday: ["nba", "nhl", "mlb"] as Leagues[],
+    ...overrides,
+  };
 }
 
 describe("findLeaguesPlayingNextHour", () => {
@@ -186,9 +204,10 @@ describe("mapUsersToActiveTeams", () => {
   it("returns empty map when no teams in snapshot", async () => {
     // Arrange
     const snapshot = createMockTeamsSnapshot([]);
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     expect(result.size).toBe(0);
@@ -223,9 +242,10 @@ describe("mapUsersToActiveTeams", () => {
         }),
       },
     ]);
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     expect(result.size).toBe(2);
@@ -246,9 +266,10 @@ describe("mapUsersToActiveTeams", () => {
         }),
       },
     ]);
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     const userTeams = result.get("user1");
@@ -277,9 +298,10 @@ describe("mapUsersToActiveTeams", () => {
         }),
       },
     ]);
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     expect(result.get("user1")).toHaveLength(1);
@@ -299,9 +321,10 @@ describe("mapUsersToActiveTeams", () => {
         }),
       },
     ]);
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     expect(result.get("user1")).toHaveLength(1);
@@ -313,9 +336,10 @@ describe("mapUsersToActiveTeams", () => {
       size: 0,
       docs: undefined,
     } as unknown as QuerySnapshot<DocumentData>;
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert
     expect(result.size).toBe(0);
@@ -343,13 +367,233 @@ describe("mapUsersToActiveTeams", () => {
         },
       ],
     } as unknown as QuerySnapshot<DocumentData>;
+    const scheduleInfo = createMockScheduleInfo();
 
     // Act
-    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot));
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
 
     // Assert - should only have the valid team
     expect(result.size).toBe(1);
     expect(result.get("user2")).toHaveLength(1);
     expect(result.get("user1")).toBeUndefined();
+  });
+
+  it("excludes teams paused today", async () => {
+    // Arrange
+    const now = Date.now();
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "paused-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 1000,
+          lineup_paused_at: now - 1000, // paused today
+        }),
+      },
+      {
+        id: "active-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nhl" as Leagues,
+          start_date: now - 1000,
+          lineup_paused_at: -1, // not paused
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo();
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert
+    expect(result.get("user1")).toHaveLength(1);
+    expect(result.get("user1")?.[0]?.game_code).toBe("nhl");
+  });
+
+  it("excludes teams with non-matching weekly deadline", async () => {
+    // Arrange
+    const now = Date.now();
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "wrong-deadline-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 1000,
+          weekly_deadline: "5", // wrong day
+        }),
+      },
+      {
+        id: "intraday-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nhl" as Leagues,
+          start_date: now - 1000,
+          weekly_deadline: "intraday",
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo();
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - only intraday team should be included (deadline "5" won't match today)
+    expect(result.get("user1")?.some((t) => t.weekly_deadline === "intraday")).toBe(true);
+  });
+
+  it("excludes teams already set today when no game in next hour", async () => {
+    // Arrange
+    const now = Date.now();
+    const todayEarlyMorning = now - 3600000; // 1 hour ago (still today)
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "already-set-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 86400000,
+          last_updated: todayEarlyMorning, // set earlier today
+        }),
+      },
+      {
+        id: "not-set-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nhl" as Leagues,
+          start_date: now - 86400000,
+          last_updated: -1, // never set
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo({
+      leagues: [
+        { league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+        { league: "nhl" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+      ],
+    });
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - only the not-set team should be included
+    expect(result.get("user1")).toHaveLength(1);
+    expect(result.get("user1")?.[0]?.game_code).toBe("nhl");
+  });
+
+  it("includes team already set today when league has game in next hour", async () => {
+    // Arrange
+    const now = Date.now();
+    const todayEarlyMorning = now - 3600000; // 1 hour ago
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "already-set-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 86400000,
+          last_updated: todayEarlyMorning,
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo({
+      leagues: [{ league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: true }],
+    });
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - team should be included because game is in next hour
+    expect(result.get("user1")).toHaveLength(1);
+  });
+
+  it("excludes teams that exceeded daily failure limit", async () => {
+    // Arrange
+    const now = Date.now();
+    const todayEarlyMorning = now - 3600000; // 1 hour ago
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "failed-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 86400000,
+          last_updated: -1,
+          lineup_failure_count: MAX_DAILY_FAILURES,
+          last_lineup_failure_at: todayEarlyMorning, // failed today
+        }),
+      },
+      {
+        id: "working-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nhl" as Leagues,
+          start_date: now - 86400000,
+          last_updated: -1,
+          lineup_failure_count: 0,
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo();
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - only working team should be included
+    expect(result.get("user1")).toHaveLength(1);
+    expect(result.get("user1")?.[0]?.game_code).toBe("nhl");
+  });
+
+  it("includes teams with failures from previous day", async () => {
+    // Arrange
+    const now = Date.now();
+    const yesterday = now - 86400000 * 2; // 2 days ago
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "recovered-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 86400000 * 30,
+          last_updated: -1,
+          lineup_failure_count: MAX_DAILY_FAILURES,
+          last_lineup_failure_at: yesterday, // failed yesterday, not today
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo();
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - team should be included because failures were from a previous day
+    expect(result.get("user1")).toHaveLength(1);
+  });
+
+  it("includes teams with fewer failures than limit today", async () => {
+    // Arrange
+    const now = Date.now();
+    const todayEarlyMorning = now - 3600000;
+    const snapshot = createMockTeamsSnapshot([
+      {
+        id: "retrying-team",
+        data: createMockTeamPayload({
+          uid: "user1",
+          game_code: "nba" as Leagues,
+          start_date: now - 86400000,
+          last_updated: -1,
+          lineup_failure_count: MAX_DAILY_FAILURES - 1, // one less than limit
+          last_lineup_failure_at: todayEarlyMorning,
+        }),
+      },
+    ]);
+    const scheduleInfo = createMockScheduleInfo();
+
+    // Act
+    const result = await Effect.runPromise(mapUsersToActiveTeams(snapshot, scheduleInfo));
+
+    // Assert - team should be included because it hasn't hit the limit yet
+    expect(result.get("user1")).toHaveLength(1);
   });
 });

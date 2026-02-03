@@ -8,6 +8,7 @@ import type { MutationTask } from "../types/schemas.js";
 import type { RateLimiterService } from "./rate-limiter.service.js";
 
 import { RevokedRefreshTokenError } from "../../../core/src/common/services/firebase/errors.js";
+import { recordTeamLineupFailure } from "../../../core/src/common/services/firebase/firestore.service.js";
 import { handleYahooAuthRevoked } from "../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js";
 import { isYahooMaintenanceError } from "../../../core/src/common/services/yahooAPI/yahooHttp.service.js";
 import {
@@ -114,6 +115,12 @@ export class ExecutionServiceImpl implements ExecutionService {
     const self = this;
 
     return Effect.gen(function* () {
+      // For SET_LINEUP tasks with retryable errors, record failures for each team
+      // This helps the scheduler track daily failure counts and stop retrying after N failures
+      if (task.type === "SET_LINEUP" && self.isRetryableError(error)) {
+        yield* self.recordLineupFailuresForTask(task);
+      }
+
       // Handle RevokedRefreshTokenError specially - mark as FAILED but return success (HTTP 200) to stop retries
       if (error._tag === "DomainError" && error.code === "REVOKED_REFRESH_TOKEN") {
         const message = "Task failed (user revoked Yahoo access, not retried)";
@@ -207,6 +214,53 @@ export class ExecutionServiceImpl implements ExecutionService {
       });
       return yield* Effect.fail(error);
     });
+  }
+
+  private isRetryableError(error: MutationError): boolean {
+    // Rate limit and system errors are retryable
+    if (error._tag === "RateLimitError") {
+      return true;
+    }
+    if (error._tag === "SystemError" && error.retryable) {
+      return true;
+    }
+    // Service unavailable (e.g., Yahoo maintenance) is retryable
+    if (error._tag === "ServiceUnavailableError") {
+      return true;
+    }
+    return false;
+  }
+
+  private recordLineupFailuresForTask(task: MutationTask): Effect.Effect<void, never> {
+    return Effect.gen(function* () {
+      const parseResult = yield* Effect.either(
+        Schema.decodeUnknown(SetLineupPayloadSchema)(task.payload),
+      );
+
+      if (parseResult._tag === "Left") {
+        // Can't parse payload, skip failure recording
+        yield* Effect.logWarning("Could not parse SET_LINEUP payload for failure recording");
+        return;
+      }
+
+      const { uid, teams } = parseResult.right;
+
+      // Record failure for each team in the payload
+      yield* Effect.forEach(
+        teams,
+        (team) =>
+          Effect.tryPromise({
+            try: () => recordTeamLineupFailure(uid, team.team_key),
+            catch: () => undefined, // Ignore errors in failure recording
+          }),
+        { concurrency: "unbounded" },
+      );
+
+      yield* Effect.annotateLogs(Effect.logInfo("Recorded lineup failures for teams"), {
+        teamCount: teams.length,
+        userId: uid,
+      });
+    }).pipe(Effect.catchAll(() => Effect.void)); // Never fail, just log
   }
 
   private handleTaskSuccess(task: MutationTask): Effect.Effect<ExecuteMutationResponse, never> {

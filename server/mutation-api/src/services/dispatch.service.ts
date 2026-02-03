@@ -19,8 +19,9 @@ import {
 import {
   enqueueUsersTeams,
   type FirestoreTeamPayload,
-  leaguesToSetLineupsFor,
+  getScheduleInfo,
   mapUsersToActiveTeams,
+  type ScheduleInfo,
   type SchedulingError,
   setStartingPlayersForToday,
   setTodaysPostponedTeams,
@@ -62,7 +63,7 @@ export class TimeService extends Context.Tag("TimeService")<
 export class SchedulingService extends Context.Tag("SchedulingService")<
   SchedulingService,
   {
-    readonly leaguesToSetLineupsFor: () => Effect.Effect<readonly Leagues[], SchedulingError>;
+    readonly getScheduleInfo: () => Effect.Effect<ScheduleInfo, SchedulingError>;
     readonly setTodaysPostponedTeams: (
       leagues: readonly Leagues[],
     ) => Effect.Effect<void, SchedulingError>;
@@ -71,6 +72,7 @@ export class SchedulingService extends Context.Tag("SchedulingService")<
     ) => Effect.Effect<void, SchedulingError>;
     readonly mapUsersToActiveTeams: (
       teamsSnapshot: QuerySnapshot<DocumentData>,
+      scheduleInfo: ScheduleInfo,
     ) => Effect.Effect<Map<string, FirestoreTeamPayload[]>, never>;
     readonly enqueueUsersTeams: (
       activeUsers: Map<string, FirestoreTeamPayload[]>,
@@ -79,7 +81,7 @@ export class SchedulingService extends Context.Tag("SchedulingService")<
   }
 >() {
   static readonly live = Layer.succeed(SchedulingService, {
-    leaguesToSetLineupsFor,
+    getScheduleInfo,
     setTodaysPostponedTeams,
     setStartingPlayersForToday,
     mapUsersToActiveTeams,
@@ -162,30 +164,46 @@ export class DispatchServiceImpl implements DispatchService {
       const firestoreService = yield* FirestoreService;
 
       // Step 1: Check if current Pacific hour > 0 (skip midnight run) - unless skipGamesCheck is true
+      // Yahoo typically hasn't rolled over to the next day by midnight Pacific time,
+      // so running at hour 0 would use stale schedule data. We skip this run to avoid
+      // incorrect game schedule lookups.
       const currentHour = timeService.getCurrentPacificHour();
       if (currentHour === 0 && !request.skipGamesCheck) {
         return {
           success: true,
           taskCount: 0,
-          message: "Skipping midnight run (hour 0)",
+          message: "Skipping midnight run (hour 0) - Yahoo schedule not yet rolled over",
         };
       }
 
-      // Step 2: Determine active leagues - skip games check if requested
+      // Step 2: Get schedule info for all leagues
+      // This tells us which leagues have games today and which have games in the next hour
+      let scheduleInfo: ScheduleInfo;
       let leagues: readonly Leagues[];
+
       if (request.skipGamesCheck) {
+        // Manual override: process all leagues regardless of schedule
         leagues = ["nba", "nhl", "nfl", "mlb"];
+        scheduleInfo = {
+          leagues: leagues.map((league) => ({
+            league,
+            hasGamesToday: true,
+            hasGameNextHour: true,
+          })),
+          leaguesWithGamesToday: leagues,
+        };
         yield* Effect.logInfo("Skipping games check - processing all leagues");
       } else {
-        leagues = yield* schedulingService.leaguesToSetLineupsFor();
+        scheduleInfo = yield* schedulingService.getScheduleInfo();
+        leagues = scheduleInfo.leaguesWithGamesToday;
       }
 
-      // Step 3: If no leagues, return early
+      // Step 3: If no leagues have games today, return early
       if (leagues.length === 0) {
         return {
           success: true,
           taskCount: 0,
-          message: "No leagues with games starting soon",
+          message: "No leagues with games today",
         };
       }
 
@@ -200,7 +218,7 @@ export class DispatchServiceImpl implements DispatchService {
           ),
       );
 
-      // Step 5: Fetch active teams from Firestore
+      // Step 5: Fetch active teams from Firestore (single query for all leagues with games today)
       const teamsSnapshot: QuerySnapshot<DocumentData> = yield* Effect.tryPromise({
         try: () => firestoreService.getActiveTeamsForLeagues([...leagues]),
         catch: (error: unknown) =>
@@ -220,14 +238,22 @@ export class DispatchServiceImpl implements DispatchService {
           ),
       );
 
-      // Step 7: Call mapUsersToActiveTeams(teamsSnapshot) - now an Effect with validation
-      const activeUsers = yield* schedulingService.mapUsersToActiveTeams(teamsSnapshot);
+      // Step 7: Filter teams based on eligibility rules:
+      // - Not paused today
+      // - Weekly deadline matches or is empty/intraday
+      // - Either: lineup not set today OR league has game in next hour
+      // - Not over daily failure limit
+      const activeUsers = yield* schedulingService.mapUsersToActiveTeams(
+        teamsSnapshot,
+        scheduleInfo,
+      );
 
       if (activeUsers.size === 0) {
         return {
           success: true,
           taskCount: 0,
-          message: "No active users to set lineups for",
+          message:
+            "No eligible teams to set lineups for (all teams either already set today with no imminent games, paused, or over failure limit)",
         };
       }
 

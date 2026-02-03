@@ -20,7 +20,7 @@ import {
   WeeklyTransactionsService,
 } from "./dispatch.service.js";
 import { PositionalScarcityError } from "./positional-scarcity.service.js";
-import { type FirestoreTeamPayload } from "./scheduling.service.js";
+import { type FirestoreTeamPayload, type ScheduleInfo } from "./scheduling.service.js";
 import { WeeklyTransactionsError } from "./weekly-transactions.service.js";
 
 /**
@@ -45,9 +45,20 @@ function createMockTeamPayload(
     allow_add_drops: true,
     allow_waiver_adds: true,
     automated_transaction_processing: false,
-    last_updated: Date.now(),
+    last_updated: -1,
     is_subscribed: true,
     is_setting_lineups: true,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
+    lineup_paused_at: -1,
+    ...overrides,
+  };
+}
+
+function createMockScheduleInfo(overrides?: Partial<ScheduleInfo>): ScheduleInfo {
+  return {
+    leagues: [],
+    leaguesWithGamesToday: [],
     ...overrides,
   };
 }
@@ -82,7 +93,7 @@ describe("DispatchService Integration Tests", () => {
             getCurrentPacificHour: () => 0,
           }),
           Layer.succeed(SchedulingService, {
-            leaguesToSetLineupsFor: () => Effect.succeed([]),
+            getScheduleInfo: () => Effect.succeed(createMockScheduleInfo()),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
             mapUsersToActiveTeams: () => Effect.succeed(new Map()),
@@ -119,7 +130,7 @@ describe("DispatchService Integration Tests", () => {
             getCurrentPacificHour: () => 10,
           }),
           Layer.succeed(SchedulingService, {
-            leaguesToSetLineupsFor: () => Effect.succeed([]),
+            getScheduleInfo: () => Effect.succeed(createMockScheduleInfo()),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
             mapUsersToActiveTeams: () => Effect.succeed(new Map()),
@@ -184,7 +195,16 @@ describe("DispatchService Integration Tests", () => {
             getCurrentPacificHour: () => 10,
           }),
           Layer.succeed(SchedulingService, {
-            leaguesToSetLineupsFor: () => Effect.succeed(["nba", "nhl"]),
+            getScheduleInfo: () =>
+              Effect.succeed(
+                createMockScheduleInfo({
+                  leagues: [
+                    { league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+                    { league: "nhl" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+                  ],
+                  leaguesWithGamesToday: ["nba", "nhl"] as readonly Leagues[],
+                }),
+              ),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
             mapUsersToActiveTeams: () => Effect.succeed(activeUsers),
@@ -241,7 +261,15 @@ describe("DispatchService Integration Tests", () => {
             getCurrentPacificHour: () => 10,
           }),
           Layer.succeed(SchedulingService, {
-            leaguesToSetLineupsFor: () => Effect.succeed(["nba"]),
+            getScheduleInfo: () =>
+              Effect.succeed(
+                createMockScheduleInfo({
+                  leagues: [
+                    { league: "nba" as Leagues, hasGamesToday: true, hasGameNextHour: false },
+                  ],
+                  leaguesWithGamesToday: ["nba"] as readonly Leagues[],
+                }),
+              ),
             setTodaysPostponedTeams: () => Effect.void,
             setStartingPlayersForToday: () => Effect.void,
             mapUsersToActiveTeams: () => Effect.succeed(new Map()),
@@ -265,7 +293,7 @@ describe("DispatchService Integration Tests", () => {
         // Assert
         expect(result.success).toBe(true);
         expect(result.taskCount).toBe(0);
-        expect(result.message).toContain("No active users");
+        expect(result.message).toContain("No eligible");
       }));
   });
 

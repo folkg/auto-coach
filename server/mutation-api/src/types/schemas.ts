@@ -25,6 +25,10 @@ const FirestoreTeamPayloadBase = Schema.Struct({
   uid: Schema.String,
   is_subscribed: Schema.Boolean,
   is_setting_lineups: Schema.Boolean,
+  // Scheduling fields for tracking lineup setting failures (with defaults for backwards compatibility)
+  lineup_failure_count: Schema.optionalWith(Schema.Number, { default: () => 0 }),
+  last_lineup_failure_at: Schema.optionalWith(Schema.Number, { default: () => -1 }),
+  lineup_paused_at: Schema.optionalWith(Schema.Number, { default: () => -1 }),
 });
 
 // Allow additional fields from Firestore that we don't validate

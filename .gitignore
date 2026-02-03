@@ -88,6 +88,9 @@ lib/
 **/*.d.ts.map
 **/*.js
 **/*.js.map
+
+# Explicitly ignore compiled JS in common package source (prevents stale file issues)
+common/src/**/*.js
 # But keep config files and other intentional JS files
 !*.config.js
 !*.config.mjs

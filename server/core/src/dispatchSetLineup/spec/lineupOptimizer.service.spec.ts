@@ -1512,5 +1512,7 @@ function mapFirestoreTeams(team: {
     roster_positions: {},
     num_teams: 0,
     lineup_paused_at: team.lineup_paused_at ?? -1,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
   };
 }

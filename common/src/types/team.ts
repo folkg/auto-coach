@@ -23,6 +23,9 @@ const OptionsTeam = type({
   automated_transaction_processing: "boolean?",
   last_updated: "number",
   lineup_paused_at: "number = -1",
+  // Scheduling fields for tracking lineup setting failures
+  lineup_failure_count: "number = 0",
+  last_lineup_failure_at: "number = -1",
 });
 
 const YahooTeam = CommonTeam.and(
@@ -139,6 +142,8 @@ export function yahooToFirestore(team: InfoTeam, uid: string): FirestoreTeam {
     automated_transaction_processing: false,
     last_updated: -1,
     lineup_paused_at: -1,
+    lineup_failure_count: 0,
+    last_lineup_failure_at: -1,
   };
 
   return {

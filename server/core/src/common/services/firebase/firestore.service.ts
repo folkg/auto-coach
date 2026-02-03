@@ -7,6 +7,7 @@ import {
 import { assertType } from "@common/utilities/checks.js";
 import { getApps, initializeApp } from "firebase-admin/app";
 import {
+  FieldValue,
   type DocumentData,
   type DocumentSnapshot,
   getFirestore,
@@ -332,7 +333,8 @@ export async function syncTeamsInFirestore(
 }
 
 /**
- * Update the last_updated timestamp in Firestore
+ * Updates the Firestore timestamp for a team after a successful lineup set.
+ * Also resets failure count since the lineup was set successfully.
  *
  * @async
  * @param uid The firebase uid
@@ -343,6 +345,7 @@ export async function updateFirestoreTimestamp(uid: string, teamKey: string): Pr
   try {
     await teamRef.update({
       last_updated: Date.now(),
+      lineup_failure_count: 0,
     });
   } catch (error) {
     structuredLogger.error(
@@ -352,6 +355,50 @@ export async function updateFirestoreTimestamp(uid: string, teamKey: string): Pr
         service: "firebase",
         event: "UPDATE_TIMESTAMP_FAILED",
         operation: "updateFirestoreTimestamp",
+        userId: uid,
+        teamKey,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
+  }
+}
+
+/**
+ * Records a lineup setting failure for a team.
+ * Increments the failure count and updates the last failure timestamp.
+ *
+ * @async
+ * @param uid The firebase uid
+ * @param teamKey The team key
+ */
+export async function recordTeamLineupFailure(uid: string, teamKey: string): Promise<void> {
+  const teamRef = db.collection(`users/${uid}/teams`).doc(teamKey);
+  const now = Date.now();
+  try {
+    // Use FieldValue.increment to atomically increment the failure count
+    await teamRef.update({
+      lineup_failure_count: FieldValue.increment(1),
+      last_lineup_failure_at: now,
+    });
+    structuredLogger.info("Recorded lineup failure for team", {
+      phase: "firebase",
+      service: "firebase",
+      event: "LINEUP_FAILURE_RECORDED",
+      operation: "recordTeamLineupFailure",
+      userId: uid,
+      teamKey,
+      outcome: "success",
+    });
+  } catch (error) {
+    structuredLogger.error(
+      "Error recording lineup failure",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "RECORD_FAILURE_FAILED",
+        operation: "recordTeamLineupFailure",
         userId: uid,
         teamKey,
         outcome: "handled-error",
