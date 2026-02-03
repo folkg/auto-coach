@@ -61,6 +61,9 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
     throw new Error(`No access token found for user ${uid}`);
   }
   if (docData.refreshToken === "-1") {
+    // Self-healing: ensure teams are disabled for users with revoked tokens
+    // This handles users who had tokens revoked before we added the team disabling logic
+    await disableLineupSettingForUser(uid);
     throw new RevokedRefreshTokenError(
       `User ${uid} has revoked access. Stopping all actions for this user.`,
     );
@@ -94,7 +97,8 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
           parsedData?.error === "invalid_grant" &&
           parsedData?.error_description === "Invalid refresh token"
         ) {
-          await handleYahooAuthRevoked(uid);
+          // Record auth failure - only revoke after sufficient failures to handle transient errors
+          await recordAuthFailureAndMaybeRevoke(uid);
         }
         throw new Error(
           `Could not refresh access token for user: ${uid} : ${parsedData?.error} ${parsedData?.error_description}`,
@@ -107,6 +111,8 @@ export async function loadYahooAccessToken(uid: string): Promise<ReturnCredentia
         .collection("users")
         .doc(uid)
         .update({ ...token });
+      // Reset auth failure count on successful token refresh
+      await resetAuthFailureCount(uid);
     } catch (error) {
       structuredLogger.error(
         "Error storing token in Firestore",
@@ -163,6 +169,95 @@ export async function flagRefreshToken(uid: string): Promise<void> {
   }
 }
 
+/** Number of auth failures required before revoking a user's refresh token */
+const AUTH_FAILURE_THRESHOLD = 3;
+
+/**
+ * Records an auth failure for a user and revokes their token if threshold is reached.
+ * This prevents revoking tokens on transient errors - we require sufficient failures before revoking.
+ *
+ * @returns true if the token was revoked, false if just recorded a failure
+ */
+export async function recordAuthFailureAndMaybeRevoke(uid: string): Promise<boolean> {
+  try {
+    const userRef = db.collection("users").doc(uid);
+
+    // Atomically increment the failure count
+    await userRef.update({
+      authFailureCount: FieldValue.increment(1),
+      lastAuthFailureAt: Date.now(),
+    });
+
+    // Read the updated count
+    const userDoc = await userRef.get();
+    const failureCount = userDoc.data()?.authFailureCount ?? 1;
+
+    structuredLogger.info("Recorded auth failure", {
+      phase: "firebase",
+      service: "firebase",
+      event: "AUTH_FAILURE_RECORDED",
+      operation: "recordAuthFailureAndMaybeRevoke",
+      userId: uid,
+      failureCount,
+      threshold: AUTH_FAILURE_THRESHOLD,
+      outcome: "success",
+    });
+
+    if (failureCount >= AUTH_FAILURE_THRESHOLD) {
+      structuredLogger.warn("Auth failure threshold reached, revoking token", {
+        phase: "firebase",
+        service: "firebase",
+        event: "AUTH_FAILURE_THRESHOLD_REACHED",
+        operation: "recordAuthFailureAndMaybeRevoke",
+        userId: uid,
+        failureCount,
+        outcome: "success",
+      });
+      await handleYahooAuthRevoked(uid);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    structuredLogger.error(
+      "Error recording auth failure",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "RECORD_AUTH_FAILURE_FAILED",
+        operation: "recordAuthFailureAndMaybeRevoke",
+        userId: uid,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
+    return false;
+  }
+}
+
+/**
+ * Resets the auth failure count for a user after successful token refresh.
+ */
+export async function resetAuthFailureCount(uid: string): Promise<void> {
+  try {
+    await db.collection("users").doc(uid).update({
+      authFailureCount: 0,
+    });
+  } catch (_error) {
+    // Don't fail if we can't reset - it's not critical
+    structuredLogger.warn("Could not reset auth failure count", {
+      phase: "firebase",
+      service: "firebase",
+      event: "RESET_AUTH_FAILURE_FAILED",
+      operation: "resetAuthFailureCount",
+      userId: uid,
+      outcome: "handled-error",
+      terminated: false,
+    });
+  }
+}
+
 /**
  * Fetches all teams from Firestore for the user
  *
@@ -200,6 +295,63 @@ export async function fetchTeamsFirestore(uid: string): Promise<FirestoreTeam[]>
 }
 
 /**
+ * Disables lineup setting for all of a user's teams.
+ * Called when Yahoo auth is revoked to prevent teams from being scheduled.
+ *
+ * @export
+ * @async
+ * @param uid - The user id
+ */
+export async function disableLineupSettingForUser(uid: string): Promise<void> {
+  try {
+    const teamsRef = db.collection(`users/${uid}/teams`);
+    const teamsSnapshot = await teamsRef.where("is_setting_lineups", "==", true).get();
+
+    if (teamsSnapshot.empty) {
+      structuredLogger.info("No teams with lineup setting enabled", {
+        phase: "firebase",
+        service: "firebase",
+        event: "NO_TEAMS_TO_DISABLE",
+        operation: "disableLineupSettingForUser",
+        userId: uid,
+        outcome: "success",
+      });
+      return;
+    }
+
+    const batch = db.batch();
+    for (const doc of teamsSnapshot.docs) {
+      batch.update(doc.ref, { is_setting_lineups: false });
+    }
+    await batch.commit();
+
+    structuredLogger.info("Disabled lineup setting for all user teams", {
+      phase: "firebase",
+      service: "firebase",
+      event: "LINEUP_SETTING_DISABLED",
+      operation: "disableLineupSettingForUser",
+      userId: uid,
+      teamsDisabled: teamsSnapshot.size,
+      outcome: "success",
+    });
+  } catch (error) {
+    structuredLogger.error(
+      "Error disabling lineup setting for user teams",
+      {
+        phase: "firebase",
+        service: "firebase",
+        event: "DISABLE_LINEUP_SETTING_FAILED",
+        operation: "disableLineupSettingForUser",
+        userId: uid,
+        outcome: "handled-error",
+        terminated: false,
+      },
+      error,
+    );
+  }
+}
+
+/**
  * Fetches all teams from Firestore for the user that are actively setting
  * lineups
  *
@@ -218,7 +370,7 @@ export async function getActiveTeamsForLeagues(
       .where("is_setting_lineups", "==", true)
       .where("end_date", ">=", Date.now())
       .where("game_code", "in", leagues)
-      .where("weekly_deadline", "in", ["", "intraday", getCurrentPacificNumDay().toString()])
+      .where("weekly_deadline", "in", ["", "intraday", getCurrentPacificNumDay().toString()]) // TODO: Since we have this in here, do we need it in the JS check later? OR should we remove it from here?
       .get();
   } catch (error) {
     return Promise.reject(error instanceof Error ? error : new Error(String(error)));

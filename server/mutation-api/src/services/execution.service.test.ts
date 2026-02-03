@@ -54,9 +54,10 @@ vi.mock("./positional-scarcity.service.js", () => ({
   recalculateScarcityOffsetsForAll: () => mockRecalculateScarcityOffsetsForAll(),
 }));
 
-// Mock handleYahooAuthRevoked to avoid real Firebase calls
-vi.mock("../../../core/src/common/services/firebase/handleYahooAuthRevoked.service.js", () => ({
-  handleYahooAuthRevoked: vi.fn().mockResolvedValue(undefined),
+// Mock recordAuthFailureAndMaybeRevoke to avoid real Firebase calls
+vi.mock("../../../core/src/common/services/firebase/firestore.service.js", () => ({
+  recordAuthFailureAndMaybeRevoke: vi.fn().mockResolvedValue(false),
+  recordTeamLineupFailure: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock Firestore

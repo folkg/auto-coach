@@ -1,9 +1,11 @@
 import { sendUserEmail } from "../email/email.service.js";
 import { structuredLogger } from "../structured-logger.js";
+import { disableLineupSettingForUser } from "./firestore.service.js";
 import { revokeRefreshToken } from "./revokeRefreshToken.service.js";
 
 /**
  * Handles Yahoo auth revocation: revokes Firebase tokens + flags Firestore + sends user email.
+ * Also disables lineup setting for all user's teams to prevent them from being scheduled.
  * Call this when Yahoo API returns 401/403 or when refresh token is invalid.
  *
  * @param uid - The user ID
@@ -17,6 +19,8 @@ export async function handleYahooAuthRevoked(uid: string): Promise<void> {
   });
 
   await revokeRefreshToken(uid);
+
+  await disableLineupSettingForUser(uid);
 
   const emailSent = await sendUserEmail(
     uid,
