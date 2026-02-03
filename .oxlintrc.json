@@ -119,7 +119,8 @@
     "@typescript-eslint/only-throw-error": "error",
     "block-scoped-var": "error",
     "eqeqeq": "error",
-    "no-var": "error"
+    "no-var": "error",
+    "vitest/warn-todo": "warn"
   },
   "globals": {
     "structuredClone": "readonly",

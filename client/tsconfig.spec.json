@@ -3,8 +3,8 @@
   "compilerOptions": {
     "types": ["vitest/globals", "node", "vite/client"],
     "outDir": "./dist/test",
-    "noPropertyAccessFromIndexSignature": false,
+    "noPropertyAccessFromIndexSignature": false
   },
   "files": ["src/test-setup.ts"],
-  "include": ["src/**/*.spec.ts", "src/**/*.ts"],
+  "include": ["src/**/*.spec.ts", "src/**/*.ts"]
 }

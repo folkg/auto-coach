@@ -13,9 +13,9 @@
 
     "paths": {
       "@common/*": ["../../common/src/*"],
-      "@core/*": ["../core/src/*"],
-    },
+      "@core/*": ["../core/src/*"]
+    }
   },
   "exclude": ["node_modules", "lib"],
-  "include": ["*.ts"],
+  "include": ["*.ts"]
 }

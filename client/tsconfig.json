@@ -19,15 +19,15 @@
     "paths": {
       "@common/*": ["../common/src/*"],
       "@server/api/*": ["../server/api/*"],
-      "@core/*": ["../server/core/src/*"],
-    },
+      "@core/*": ["../server/core/src/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true,
+    "strictTemplates": true
   },
   "include": ["src/**/*.ts", "src/env.types.ts", "env.d.ts"],
-  "exclude": ["node_modules", "dist"],
+  "exclude": ["node_modules", "dist"]
 }

@@ -19,18 +19,18 @@
     "prepare": "command -v effect-language-service >/dev/null 2>&1 && effect-language-service patch --dir ../../node_modules/typescript || true"
   },
   "dependencies": {
-    "@effect/platform": "0.93.6",
-    "@google-cloud/firestore": "8.0.0",
+    "@effect/platform": "0.94.2",
+    "@google-cloud/firestore": "8.2.0",
     "@google-cloud/tasks": "6.2.1",
     "@hono/effect-validator": "1.2.0",
     "arktype": "catalog:",
     "dotenv": "17.2.3",
-    "effect": "3.19.9",
+    "effect": "3.19.15",
     "firebase-admin": "13.6.0",
     "hono": "catalog:"
   },
   "devDependencies": {
-    "@effect/language-service": "0.60.0",
+    "@effect/language-service": "0.72.1",
     "@effect/vitest": "0.27.0",
     "@types/bun": "catalog:",
     "msw": "2.12.7",
