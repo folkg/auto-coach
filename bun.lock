@@ -37,7 +37,7 @@
         "@angular/platform-browser": "21.1.2",
         "@angular/platform-browser-dynamic": "21.1.2",
         "@angular/router": "21.1.2",
-        "@angular/ssr": "21.1.2",
+        "@angular/ssr": "21.1.5",
         "arktype": "catalog:",
         "firebase": "12.8.0",
         "hono": "catalog:",
@@ -225,7 +225,7 @@
 
     "@angular/router": ["@angular/router@21.1.2", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "21.1.2", "@angular/core": "21.1.2", "@angular/platform-browser": "21.1.2", "rxjs": "^6.5.3 || ^7.4.0" } }, "sha512-APl4tkTJIrpejlULLrGtIdLuJkNctPy0pnVijrJLR52nEV0xX165ulXk3XrL9QnMk0iy950aTYtoTal4aMw16Q=="],
 
-    "@angular/ssr": ["@angular/ssr@21.1.2", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "^21.0.0", "@angular/core": "^21.0.0", "@angular/platform-server": "^21.0.0", "@angular/router": "^21.0.0" }, "optionalPeers": ["@angular/platform-server"] }, "sha512-bmLnCbXh/Q7o9O/LiXHvtPZ3PvAW14RlpAPAs1NKXpTRcIkUaTI38a85ev4Z3+0ZkrFA8ieqAZmvcwl/Lcnbeg=="],
+    "@angular/ssr": ["@angular/ssr@21.1.5", "", { "dependencies": { "tslib": "^2.3.0" }, "peerDependencies": { "@angular/common": "^21.0.0", "@angular/core": "^21.0.0", "@angular/platform-server": "^21.0.0", "@angular/router": "^21.0.0" }, "optionalPeers": ["@angular/platform-server"] }, "sha512-e+lDOJN0Ttg6mLoVIiGK4OZKIT1ei3o/IBOjuHm84Nv6Q7XIL/5pN940e5nYoNaY40lzonKEXA0caAm+BGN5Ow=="],
 
     "@ark/schema": ["@ark/schema@0.56.0", "", { "dependencies": { "@ark/util": "0.56.0" } }, "sha512-ECg3hox/6Z/nLajxXqNhgPtNdHWC9zNsDyskwO28WinoFEnWow4IsERNz9AnXRhTZJnYIlAJ4uGn3nlLk65vZA=="],
 
