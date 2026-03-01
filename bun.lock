@@ -73,7 +73,7 @@
         "@sendgrid/mail": "8.1.6",
         "arktype": "catalog:",
         "dotenv": "17.2.3",
-        "fast-xml-parser": "5.3.6",
+        "fast-xml-parser": "5.3.8",
         "firebase-admin": "13.6.0",
         "firebase-functions": "6.5.0",
         "google-auth-library": "10.5.0",
@@ -94,7 +94,7 @@
         "@sendgrid/mail": "8.1.6",
         "arktype": "catalog:",
         "dotenv": "17.2.3",
-        "fast-xml-parser": "5.3.6",
+        "fast-xml-parser": "5.3.8",
         "firebase-admin": "13.6.0",
         "firebase-functions": "6.5.0",
         "google-auth-library": "10.5.0",
@@ -111,7 +111,7 @@
       "dependencies": {
         "@sendgrid/mail": "8.1.6",
         "dotenv": "17.2.3",
-        "fast-xml-parser": "5.3.6",
+        "fast-xml-parser": "5.3.8",
         "firebase-admin": "13.6.0",
         "firebase-functions": "6.5.0",
       },
@@ -1397,7 +1397,7 @@
 
     "fast-uri": ["fast-uri@3.1.0", "", {}, "sha512-iPeeDKJSWf4IEOasVVrknXpaBV0IApz/gp7S2bb7Z4Lljbl2MGJRqInZiUrQwV16cpzw/D3S5j5Julj/gT52AA=="],
 
-    "fast-xml-parser": ["fast-xml-parser@5.3.6", "", { "dependencies": { "strnum": "^2.1.2" }, "bin": { "fxparser": "src/cli/cli.js" } }, "sha512-QNI3sAvSvaOiaMl8FYU4trnEzCwiRr8XMWgAHzlrWpTSj+QaCSvOf1h82OEP1s4hiAXhnbXSyFWCf4ldZzZRVA=="],
+    "fast-xml-parser": ["fast-xml-parser@5.3.8", "", { "dependencies": { "strnum": "^2.1.2" }, "bin": { "fxparser": "src/cli/cli.js" } }, "sha512-53jIF4N6u/pxvaL1eb/hEZts/cFLWZ92eCfLrNyCI0k38lettCG/Bs40W9pPwoPXyHQlKu2OUbQtiEIZK/J6Vw=="],
 
     "fastq": ["fastq@1.19.1", "", { "dependencies": { "reusify": "^1.0.4" } }, "sha512-GwLTyxkCXjXbxqIhTsMI2Nui8huMPtnxg7krajPJAjnEG/iiOS7i+zCtWGZR9G0NBKbXKh6X9m9UIsYX/N6vvQ=="],
 
