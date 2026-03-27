@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "yaml": "2.8.1"
+    "yaml": "2.8.3"
   },
   "devDependencies": {
     "@types/bun": "catalog:"
