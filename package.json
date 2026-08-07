@@ -16,7 +16,7 @@
     "dev:client": "bun run --cwd client start",
     "dev:emulators": "firebase emulators:start",
     "test": "bunx vitest --silent passed-only",
-    "test:ci": "bunx vitest run --silent passed-only",
+    "test:ci": "bunx vitest run --silent passed-only --pool=forks",
     "test:server": "bunx vitest run --project=server-core --project=server-functions --project=mutation-api",
     "test:client": "bun run --cwd client test:ci",
     "lint": "bunx oxlint --type-aware --type-check",
