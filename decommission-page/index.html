@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Fantasy AutoCoach has shut down. Yahoo no longer allows the write access needed to set lineups."
+    />
+    <title>Fantasy AutoCoach · Shut down</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --purple-950: #211637;
+        --ink: #2c2340;
+        --muted: #665d77;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        color: var(--ink);
+        background: #f5f2fa;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Helvetica,
+          Arial,
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .wrap {
+        width: min(760px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 34px 0 60px;
+      }
+
+      .masthead {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid rgba(68, 45, 114, 0.14);
+        font-weight: 700;
+      }
+
+      .masthead img {
+        width: 26px;
+        height: 26px;
+      }
+
+      .card {
+        margin-top: 44px;
+        padding: clamp(28px, 5vw, 52px);
+        border-radius: 18px;
+        background: #fffdfb;
+        box-shadow: 0 18px 50px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .card img.mark {
+        width: 44px;
+        height: 44px;
+      }
+
+      h1 {
+        margin: 18px 0 0;
+        color: var(--purple-950);
+        font-size: clamp(2rem, 5vw, 3rem);
+        letter-spacing: -0.03em;
+        line-height: 1.02;
+        text-wrap: balance;
+      }
+
+      .card p {
+        max-width: 46ch;
+        margin: 16px auto 0;
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .roby {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 26px;
+        color: var(--muted);
+        font-size: 0.875rem;
+      }
+
+      .roby img {
+        width: 100px;
+        height: 100px;
+        border: 1px solid rgba(68, 45, 114, 0.14);
+        border-radius: 14px;
+        object-fit: contain;
+        background: #ffffff;
+      }
+
+      a:focus-visible {
+        outline: 3px solid #7a5c2e;
+        outline-offset: 3px;
+        border-radius: 8px;
+      }
+
+      @media (max-width: 560px) {
+        .card {
+          margin-top: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="masthead">
+        <img src="assets/auto-coach-mark.png" alt="" />
+        <span>Fantasy AutoCoach</span>
+      </header>
+
+      <main>
+        <div class="card">
+          <h1>Fantasy AutoCoach has shut down.</h1>
+          <p>
+            Unfortunately, Yahoo no longer allows us the write access needed to set your lineups.
+            Thank you for trusting us with your beloved fantasy teams over the years.
+          </p>
+          <div class="roby">
+            <img src="assets/roby-hockey.png" alt="Roby, the Fantasy AutoCoach robot" />
+            <span>Good luck with your season!</span>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
