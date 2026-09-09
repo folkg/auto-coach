@@ -1,0 +1,13 @@
+{
+  "hosting": {
+    "site": "auto-gm-372620",
+    "public": "decommission-page",
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
