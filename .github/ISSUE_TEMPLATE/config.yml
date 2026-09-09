@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Report a security vulnerability
+    url: https://github.com/folkg/auto-coach/security/advisories/new
+    about: Report security vulnerabilities privately instead of opening a public issue.
+  - name: Contribution guide
+    url: https://github.com/folkg/auto-coach/blob/main/CONTRIBUTING.md
+    about: Read the setup, testing, and pull request guidance before contributing.

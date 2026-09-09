@@ -34,17 +34,14 @@ Required variables:
 # Set up environment variables (first time only)
 source .env.deployment
 
-# Deploy API to prod
-bun run deploy:api:prod
+# Run checks before a deployment
+bun run checks:ci
 
-# Deploy client to prod
-bun run deploy:client:prod
+# Deploy a versioned API to prod
+bun run deploy -- --component api --env prod --version v1.2.3
 
-# Deploy full stack to prod with version
-bun run deploy:full:prod --version v1.2.3
-
-# Test deployment without changes
-bun run deploy api --env prod --version v1.2.3 --dry-run
+# Deploy the client to prod
+bun run deploy -- --component client --env prod
 ```
 
 ## Commands
@@ -52,58 +49,44 @@ bun run deploy api --env prod --version v1.2.3 --dry-run
 ### Deploy API
 
 ```bash
-bun run deploy api --env prod [--version v1.2.3]
+bun run deploy -- --component api --env prod --version v1.2.3
 ```
 
-Builds, containerizes, and deploys the API service to Cloud Run.
-
-**Prod deployment:**
-
-- Tags: `v1.2.3`, `prod-latest`
-- Cloud Run service: `auto-coach-api-prod`
-- **Requires:** `--version` flag with semantic version (e.g., v1.2.3)
+Builds, containerizes, and deploys the API service to Cloud Run. A semantic `--version` is required for API, Mutation API, and full-stack deployments.
 
 ### Deploy Mutation API
 
 ```bash
-bun run deploy:mutation-api:prod --version v1.2.3
+bun run deploy -- --component mutation-api --env prod --version v1.2.3
 ```
 
 Builds, containerizes, and deploys the Mutation API service to Cloud Run.
 
 **Key details:**
 
-- Only `prod` environment is supported (no dev environment exists)
-- Tags: `v1.2.3`, `prod-latest`
-- Cloud Run service: `mutation-api-prod`
-- **Requires:** `--version` flag with semantic version (e.g., v1.2.3)
-- Deploys directly via `gcloud run deploy` (not OpenTofu, to avoid shared tag conflicts)
-
-**Options:**
-
-- `--version, -v`: Required semantic version (e.g., v1.2.3)
-- `--skip-build`: Skip building, use existing container image
-- `--dry-run`: Test deployment without making changes
+- Only `prod` environment is supported (no dev environment exists).
+- The service is `mutation-api-prod`.
+- Deployment is performed directly with `gcloud run deploy` to avoid shared container-tag conflicts.
 
 ### Deploy Client
 
 ```bash
-bun run deploy client --env prod [--channel <name>]
+bun run deploy -- --component client --env prod [--channel <name>]
 ```
 
 Builds and deploys the Angular client to Firebase Hosting.
 
 **Prod deployment:**
 
-- Site: `app-prod`
-- Rewrites `/api/**` to `auto-coach-api-prod`
-- Use `--channel` for preview channels (e.g., `--channel pr-123`)
-- Deploys to live channel
+- Site: `auto-gm-372620`.
+- Rewrites `/api/**` to `auto-coach-api-prod`.
+- Use `--channel` only for an explicitly authorized Firebase Hosting preview channel.
+- Without `--channel`, deploys to the live channel.
 
 ### Deploy Functions
 
 ```bash
-bun run deploy functions --env <prod>
+bun run deploy -- --component functions --env prod
 ```
 
 Builds and deploys Firebase Functions.
@@ -111,27 +94,36 @@ Builds and deploys Firebase Functions.
 ### Deploy Firestore
 
 ```bash
-bun run deploy firestore --env <prod>
+bun run deploy -- --component firestore --env prod
 ```
 
 Deploys Firestore rules and indexes.
 
+### Deploy Infrastructure
+
+```bash
+bun run deploy -- --component infrastructure --env prod
+```
+
+Plans and applies the OpenTofu-managed infrastructure. This component requires the Yahoo and SendGrid values listed above.
+
 ### Deploy Full Stack
 
 ```bash
-bun run deploy full --env prod [--version v1.2.3]
+bun run deploy -- --component full --env prod --version v1.2.3
 ```
 
-Deploys API, Functions, and Client in sequence.
-
-**Requires:** `--version` flag
+Deploys API, Functions, and Client in sequence. Deploy infrastructure separately with `--component infrastructure`.
 
 ## Options
 
-- `--env, -e`: Environment (`prod`)
-- `--version, -v`: Semantic version for deployments (e.g., `v1.2.3`)
-- `--channel, -c`: Preview channel name for client deployments
-- `--dry-run`: Test deployment without making changes
+- `--env, -e`: Environment (`prod`).
+- `--version, -v`: Semantic version for API, Mutation API, or full-stack deployments.
+- `--channel, -c`: Firebase Hosting channel name for a client deployment.
+- `--skip-build`: Use existing build artifacts.
+- `--skip-deploy`: Build and validate without applying a deployment where supported.
+
+The deploy CLI does not provide a no-op dry-run for every component. Run the relevant checks and builds before deploying.
 
 ## Environment Configuration
 
@@ -154,7 +146,7 @@ The client uses **relative `/api` calls** (no hardcoded API URLs).
 
 Firebase Hosting rewrites proxy `/api/**` to the Cloud Run service:
 
-- **app-prod** site -> rewrites to `auto-coach-api-prod`
+- **auto-gm-372620** site -> rewrites to `auto-coach-api-prod`
 
 This eliminates the need to inject API URLs at build time.
 
@@ -186,65 +178,65 @@ ops/
 
 ## CI/CD Integration
 
-The `.github/workflows/ci.yml` workflow uses the orchestrator for automated deployments:
+Pull requests run unprivileged validation in `.github/workflows/ci.yml`. They do not deploy, receive production credentials, or access production Firebase resources.
 
-**On push to main:**
+Changes merged to the protected `main` branch can trigger the component-specific production workflows:
 
-- Detects changed components
-- Runs tests and builds
-- Deploys to production using orchestrator
+- `deploy-api.yml` for the API service;
+- `deploy-mutation-api.yml` for the mutation API;
+- `deploy-client.yml` for Firebase Hosting;
+- `deploy-functions.yml` for Firebase Functions;
+- `deploy-firestore.yml` for Firestore rules and indexes; and
+- `deploy-infrastructure.yml` for OpenTofu-managed infrastructure.
 
-**On pull requests:**
-
-- Deploys client preview
+Each production workflow uses the `production` GitHub environment. The environment requires maintainer approval and is restricted to protected branches. Manual dispatch is available to the maintainer when an explicit deployment is needed.
 
 ## Required Environment Variables
 
-Set these before deploying:
+For local deployments, copy `.env.deployment.example` to `.env.deployment`, fill it with credentials for the intended project, and source it:
 
 ```bash
-export GCP_PROJECT_ID="your-gcp-project-id"
-export FIREBASE_PROJECT_ID="auto-gm-372620"
+cp .env.deployment.example .env.deployment
+source .env.deployment
 ```
 
-**For manual API deployments, also set:**
+Required values include:
 
-```bash
-export YAHOO_APP_ID="..."
-export YAHOO_CLIENT_ID="..."
-export YAHOO_CLIENT_SECRET="..."
-export SENDGRID_API_KEY="..."
-```
+- `GCP_PROJECT_ID` and `FIREBASE_PROJECT_ID`;
+- `YAHOO_APP_ID`, `YAHOO_CLIENT_ID`, and `YAHOO_CLIENT_SECRET`; and
+- `SENDGRID_API_KEY`.
 
-(CI sets these from GitHub secrets)
+Do not use these credentials for pull-request tests. Never commit `.env.deployment` or service-account files.
 
 ## Examples
 
-**Deploy API with version:**
+**Deploy the API with a version:**
 
 ```bash
-bun run checks
-bun run deploy api --env prod --version v1.2.3
+bun run checks:ci
+bun run deploy -- --component api --env prod --version v1.2.3
 ```
 
-**Deploy client preview for PR:**
+**Deploy the mutation API:**
 
 ```bash
-bun run deploy client --env prod --channel pr-456
+bun run deploy -- --component mutation-api --env prod --version v1.2.3
 ```
 
-**Full prod deployment:**
+**Deploy the client:**
 
 ```bash
-bun run checks
-bun run deploy full --env prod --version v2.0.0
+bun run deploy -- --component client --env prod
 ```
 
-**Dry run to test prod deployment:**
+**Deploy the full stack:**
 
 ```bash
-bun run deploy full --env prod --version v2.0.0 --dry-run
+bun run checks:ci
+bun run deploy -- --component full --env prod --version v2.0.0
 ```
+
+Use `--skip-build` or `--skip-deploy` only when the consequences are understood. The deploy CLI does not provide a no-op dry-run for every component; prefer running the relevant build and CI checks before a production deployment.
 
 ## Troubleshooting
 
@@ -266,13 +258,7 @@ cd infrastructure/opentofu && tofu output
 firebase hosting:sites:list
 ```
 
-**Check active preview channels:**
-
-```bash
-firebase hosting:channel:list
-```
-
-**Test API health:**
+**Check API health:**
 
 ```bash
 curl https://auto-coach-api-prod-xxxxx.run.app/health
@@ -280,12 +266,8 @@ curl https://auto-coach-api-prod-xxxxx.run.app/health
 
 ## Development Workflow
 
-1. Make code changes
-2. Run checks: `bun run checks`
-3. Test locally
-4. Create PR (triggers preview deployment)
-5. Merge to main (auto-deploys to prod)
-
----
-
-For full deployment guide, see [DEPLOYMENT.md](../DEPLOYMENT.md)
+1. Make code changes using a development project or emulator.
+2. Run `bun run checks:ci` and relevant builds.
+3. Open a pull request; only unprivileged validation runs.
+4. Obtain required maintainer approval and resolve all conversations.
+5. Merge with squash merging; production deployment then requires the protected environment approval.

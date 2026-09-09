@@ -1,0 +1,36 @@
+name: Feature request
+description: Suggest a focused improvement to Auto Coach.
+title: "[Feature]: "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or maintainer problem would this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: Describe the behavior you would like and any alternatives considered.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and safety
+      description: Note privacy, security, API, infrastructure, cost, or migration considerations.
+    validations:
+      required: true
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope
+      options:
+        - label: I searched existing issues and pull requests.
+          required: true
+        - label: This request does not require sharing credentials or production data.
+          required: true

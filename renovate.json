@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:js-app", ":automergeMinor"],
+  "extends": ["config:js-app"],
   "timezone": "America/Edmonton",
   "description": "before 7am on the first day of the month",
   "schedule": ["* 0-7 1 * *"],
