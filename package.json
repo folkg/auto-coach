@@ -54,7 +54,7 @@
     "clean:modules": "find . -type d -name 'node_modules' -prune -exec rm -rf '{}' +"
   },
   "dependencies": {
-    "yaml": "2.8.2"
+    "yaml": "2.8.3"
   },
   "devDependencies": {
     "@analogjs/vite-plugin-angular": "2.2.3",
