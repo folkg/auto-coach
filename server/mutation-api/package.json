@@ -19,7 +19,7 @@
     "prepare": "command -v effect-language-service >/dev/null 2>&1 && effect-language-service patch --dir ../../node_modules/typescript || true"
   },
   "dependencies": {
-    "@effect/platform": "0.94.2",
+    "@effect/platform": "0.97.1",
     "@google-cloud/firestore": "8.2.0",
     "@google-cloud/tasks": "6.2.1",
     "@hono/effect-validator": "1.2.0",
